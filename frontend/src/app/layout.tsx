@@ -1,17 +1,20 @@
-// Import styles of packages that you've installed.
-// All packages except `@mantine/hooks` require styles imports
 import '@mantine/core/styles.css';
 
 import {
   ColorSchemeScript,
   MantineProvider,
+  createTheme,
   mantineHtmlProps,
 } from '@mantine/core';
 
 export const metadata = {
-  title: 'My Mantine app',
-  description: 'I have followed setup instructions carefully',
+  title: 'Odontolog',
+  description: 'Sistema de gestão de prontuários da FOUFAL',
 };
+
+const theme = createTheme({
+  fontFamily: 'Open Sans, sans-serif',
+});
 
 export default function RootLayout({
   children,
@@ -24,7 +27,7 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>{children}</MantineProvider>
+        <MantineProvider theme={theme}>{children}</MantineProvider>
       </body>
     </html>
   );
