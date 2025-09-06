@@ -1,0 +1,53 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "eslint",
+    "fix": "eslint --fix",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@mantine/charts": "^8.2.8",
+    "@mantine/core": "^8.2.8",
+    "@mantine/dates": "^8.2.8",
+    "@mantine/dropzone": "^8.2.8",
+    "@mantine/form": "^8.2.8",
+    "@mantine/hooks": "^8.2.8",
+    "@mantine/modals": "^8.2.8",
+    "@mantine/notifications": "^8.2.8",
+    "@mantine/spotlight": "^8.2.8",
+    "@mantine/tiptap": "^8.2.8",
+    "@tiptap/extension-link": "^3.3.1",
+    "@tiptap/pm": "^3.3.1",
+    "@tiptap/react": "^3.3.1",
+    "@tiptap/starter-kit": "^3.3.1",
+    "dayjs": "^1.11.18",
+    "next": "15.5.2",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "recharts": "^3.1.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@eslint/js": "^9.34.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9.34.0",
+    "eslint-config-mantine": "^4.0.3",
+    "eslint-config-next": "15.5.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "postcss": "^8.5.6",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5",
+    "typescript-eslint": "^8.42.0"
+  }
+}
