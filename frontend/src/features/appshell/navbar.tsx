@@ -1,4 +1,4 @@
-
+'use client';
 import { ActionIcon, Avatar, Group } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import styles from './navbar.module.css';
@@ -12,7 +12,7 @@ export default function Navbar() {
     clinic: 5,
     enrollment: 21109965,
     semester: 2025.1,
-    image: null
+    image: null,
   };
 
   return (
@@ -22,7 +22,12 @@ export default function Navbar() {
           <Search />
         </div>
         <Group>
-          <ActionIcon variant="subtle" color="gray/90" radius="xl">
+          <ActionIcon
+            variant="subtle"
+            color="gray/90"
+            radius="xl"
+            onClick={() => console.log('Criar novo prontuário')}
+          >
             <IconPlus />
           </ActionIcon>
           <Avatar
