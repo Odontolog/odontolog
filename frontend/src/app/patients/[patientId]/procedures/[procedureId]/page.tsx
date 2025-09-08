@@ -3,12 +3,18 @@ import { getProcedureSupervisors } from '@/features/procedure/requests';
 import SupervisorSelector from '@/features/procedure/ui/supervisor-selector';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
-export default async function PatientProcedurePage({
+interface ProcedureParams {
+  patientId: string;
+  procedureId: string;
+}
+
+export default async function ProcedurePage({
   params,
 }: {
-  params: { patientId: string; procedureId: string };
+  params: ProcedureParams;
 }) {
   const { procedureId } = await params;
+
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({

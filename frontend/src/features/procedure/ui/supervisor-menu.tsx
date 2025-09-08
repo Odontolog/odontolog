@@ -9,22 +9,50 @@ import {
   Loader,
   ScrollArea,
   Menu,
+  ActionIcon,
 } from '@mantine/core';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Supervisor } from '../models';
+import { SupervisorAndReview } from '../models';
 import { getAvailableSupervisors, saveSupervisors } from '../requests';
+import { IconEdit } from '@tabler/icons-react';
 
 interface SupervisorMenuProps {
   procedureId: string;
-  currentSupervisors: Supervisor[];
+  currentSupervisors: SupervisorAndReview[];
+}
+
+export default function SupervisorMenu(props: SupervisorMenuProps) {
+  const [menuOpened, setMenuOpened] = useState<boolean>(false);
+
+  return (
+    <Menu
+      withinPortal
+      position="bottom"
+      shadow="sm"
+      opened={menuOpened}
+      onChange={setMenuOpened}
+    >
+      <Menu.Target>
+        <ActionIcon variant="subtle" color="gray">
+          <IconEdit size={16} />
+        </ActionIcon>
+      </Menu.Target>
+      <Menu.Dropdown>
+        <SupervisorMenuContent {...props} setMenuOpened={setMenuOpened} />
+      </Menu.Dropdown>
+    </Menu>
+  );
+}
+
+interface SupervisorMenuContentProps extends SupervisorMenuProps {
   setMenuOpened: (value: boolean) => void;
 }
 
-export default function SupervisorMenu({
+function SupervisorMenuContent({
   procedureId,
   currentSupervisors,
   setMenuOpened,
-}: SupervisorMenuProps) {
+}: SupervisorMenuContentProps) {
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -58,12 +86,12 @@ export default function SupervisorMenu({
   return (
     <>
       <Menu.Label>
-        <Text fw={600} size="xs">
+        <Text fw={600} size="sm">
           Selecione supervisores
         </Text>
       </Menu.Label>
       <Stack p="xs" gap="sm" w={180}>
-        <ScrollArea h={150} scrollbars="y">
+        <ScrollArea.Autosize mah={150} scrollbars="y">
           <Stack p="none" gap="xs">
             {data?.map((sup) => (
               <Checkbox
@@ -79,7 +107,7 @@ export default function SupervisorMenu({
               />
             ))}
           </Stack>
-        </ScrollArea>
+        </ScrollArea.Autosize>
         <Button
           size="xs"
           onClick={() => mutation.mutate(selectedIds)}
@@ -87,7 +115,6 @@ export default function SupervisorMenu({
         >
           Salvar
         </Button>
-        {mutation.isError && 'DEU RUIM'}
       </Stack>
     </>
   );
