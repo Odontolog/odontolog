@@ -11,12 +11,10 @@
 
 .navbarMain {
   flex: 1;
-  /* margin-top: var(--mantine-spacing-sm); */
 }
 
 .link {
   width: 100%;
-  /* height: 50px; */
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm) ;
   border-radius: var(--mantine-radius-md);
   display: flex;

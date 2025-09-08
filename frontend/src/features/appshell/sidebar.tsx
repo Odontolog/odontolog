@@ -9,7 +9,7 @@ import {
 } from '@tabler/icons-react';
 import { Center, Divider, Stack, Tooltip, UnstyledButton } from '@mantine/core';
 import classes from './sidebar.module.css';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 interface NavbarLinkProps {
@@ -33,7 +33,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
   );
 }
 
-const mockdata = [
+const sidebarLinks = [
   //   { icon: IconBuildingHospital, label: 'Clínicas', route: '' },
   { icon: IconDental, label: 'Pacientes', route: '/patients' },
   { icon: IconUsers, label: 'Alunos', route: '/students' },
@@ -41,10 +41,13 @@ const mockdata = [
 ];
 
 export function Sidebar() {
-  const [active, setActive] = useState(2);
+  const pathname = usePathname();
+  const [active, setActive] = useState<number>(() =>
+    sidebarLinks.findIndex((d) => pathname.includes(d.route)),
+  );
   const router = useRouter();
 
-  const links = mockdata.map((link, index) => (
+  const links = sidebarLinks.map((link, index) => (
     <NavbarLink
       {...link}
       key={link.label}
