@@ -3,16 +3,17 @@ import { ActionIcon, Avatar, Group } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import styles from './navbar.module.css';
 import Search from './search';
+import { Student } from '@/shared/models';
 
 export default function Navbar() {
-  const user = {
+  const user: Student  = {
     role: 'student',
     name: 'Pedro Sebastião',
     email: 'pedro.sebastiao@foufal.ufal.br',
     clinic: 5,
     enrollment: 21109965,
     semester: 2025.1,
-    image: null,
+    avatarUrl: undefined,
   };
 
   return (
@@ -24,7 +25,7 @@ export default function Navbar() {
         <Group>
           <ActionIcon
             variant="subtle"
-            color="gray/90"
+            c="gray"
             radius="xl"
             onClick={() => console.log('Criar novo prontuário')}
           >
@@ -35,7 +36,7 @@ export default function Navbar() {
             href={`/students/${user?.enrollment}`}
             color="initials"
             name={user.name}
-            src={user.image}
+            src={user.avatarUrl}
           />
         </Group>
       </Group>
