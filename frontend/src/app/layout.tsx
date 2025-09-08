@@ -1,22 +1,15 @@
 import '@mantine/core/styles.css';
 import '@mantine/spotlight/styles.css';
 
-import {
-  ColorSchemeScript,
-  MantineProvider,
-  createTheme,
-  mantineHtmlProps,
-} from '@mantine/core';
+import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
+
+import Providers from './providers';
 import Navbar from '@/features/appshell/navbar';
 
 export const metadata = {
   title: 'Odontolog',
   description: 'Sistema de gestão de prontuários da FOUFAL',
 };
-
-const theme = createTheme({
-  fontFamily: 'Open Sans, sans-serif',
-});
 
 export default function RootLayout({
   children,
@@ -29,10 +22,10 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider theme={theme}>
+        <Providers>
           <Navbar />
           {children}
-        </MantineProvider>
+        </Providers>
       </body>
     </html>
   );
