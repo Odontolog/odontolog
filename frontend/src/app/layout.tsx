@@ -1,4 +1,5 @@
 import '@mantine/core/styles.css';
+import '@mantine/spotlight/styles.css';
 
 import {
   ColorSchemeScript,
@@ -6,6 +7,7 @@ import {
   createTheme,
   mantineHtmlProps,
 } from '@mantine/core';
+import Navbar from '@/features/appshell/navbar';
 
 export const metadata = {
   title: 'Odontolog',
@@ -27,7 +29,10 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <MantineProvider theme={theme}>
+          <Navbar />
+          {children}
+        </MantineProvider>
       </body>
     </html>
   );
