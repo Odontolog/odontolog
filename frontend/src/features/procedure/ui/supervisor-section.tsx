@@ -18,13 +18,13 @@ import SupervisorMenu from './supervisor-menu';
 import { useQuery } from '@tanstack/react-query';
 import { getProcedureSupervisors } from '@/features/procedure/requests';
 
-interface SupervisorSelectorProps {
+interface SupervisorSectionProps {
   procedureId: string;
 }
 
-export default function SupervisorSelector({
+export default function SupervisorSection({
   procedureId,
-}: SupervisorSelectorProps) {
+}: SupervisorSectionProps) {
   const {
     data: supervisors,
     isLoading,
@@ -63,7 +63,7 @@ export default function SupervisorSelector({
               <IconExclamationCircle size={24} />
             </ThemeIcon>
             <Text size="sm" c="red" py="none">
-              Erro ao carregar supervisores:
+              Erro ao carregar supervisores
             </Text>
           </Flex>
         )}

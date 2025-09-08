@@ -1,6 +1,6 @@
 import { getQueryClient } from '@/app/get-query-client';
 import { getProcedureSupervisors } from '@/features/procedure/requests';
-import SupervisorSelector from '@/features/procedure/ui/supervisor-selector';
+import SupervisorSection from '@/features/procedure/ui/supervisor-section';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 interface ProcedureParams {
@@ -26,7 +26,7 @@ export default async function ProcedurePage({
     <div style={{ padding: '24px' }}>
       <p>Página de um procedimento</p>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <SupervisorSelector procedureId={procedureId} />
+        <SupervisorSection procedureId={procedureId} />
       </HydrationBoundary>
     </div>
   );
