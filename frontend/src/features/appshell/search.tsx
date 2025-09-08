@@ -15,9 +15,9 @@ import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
 import styles from './navbar.module.css';
-import { Pacient } from '@/shared/models';
+import { Patient } from '@/shared/models';
 
-const data: Pacient[] = [
+const data: Patient[] = [
   {
     id: 1,
     avatarUrl: 'https://img.icons8.com/clouds/256/000000/futurama-bender.png',
