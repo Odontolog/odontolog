@@ -1,8 +1,10 @@
 import '@mantine/core/styles.css';
+import '@mantine/spotlight/styles.css';
 
 import { ColorSchemeScript, mantineHtmlProps } from '@mantine/core';
 
 import Providers from './providers';
+import Navbar from '@/features/appshell/navbar';
 
 export const metadata = {
   title: 'Odontolog',
@@ -20,7 +22,10 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );
