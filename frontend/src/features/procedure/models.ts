@@ -16,3 +16,8 @@ export type Supervisor = {
 export type SupervisorAndReview = Supervisor & {
   lastReview: SupervisorReview;
 };
+
+export type ProcedureDetail = {
+  notes: string;
+  diagnostic?: string;
+};
