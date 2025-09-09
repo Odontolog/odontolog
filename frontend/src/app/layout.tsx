@@ -25,16 +25,40 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>
-          <Flex direction="row" visibleFrom="md">
+          {/* Versão Desktop */}
+          <Flex direction="row" visibleFrom="md" mih="100vh">
             <Sidebar />
-            <div style={{ flex: 1 }}>
+            <Flex
+              direction="column"
+              style={{
+                flex: 1,
+              }}
+            >
               <Navbar />
+              <div
+                style={{
+                  flex: 1,
+                  backgroundColor: 'var(--mantine-color-gray-0)',
+                  padding: '0 var(--mantine-spacing-lg)'
+                }}
+              >
+                {children}
+              </div>
+            </Flex>
+          </Flex>
+
+          {/* Versão Mobile */}
+          <Flex direction="column" hiddenFrom="md" mih="100vh">
+            <NavbarMobile />
+            <div
+              style={{
+                flex: 1,
+                backgroundColor: 'var(--mantine-color-gray-0)',
+                padding: 'var(--mantine-spacing-md)'
+              }}
+            >
               {children}
             </div>
-          </Flex>
-          <Flex direction="column" hiddenFrom="md">
-            <NavbarMobile />
-            {children}
           </Flex>
         </Providers>
       </body>

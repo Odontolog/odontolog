@@ -62,7 +62,6 @@ export default function NavbarMobile() {
           alt="Odontolog Logo"
           width={40}
           height={40}
-          style={{ marginBottom: '0.5rem' }}
         />
         <Drawer.Root
           position="right"
