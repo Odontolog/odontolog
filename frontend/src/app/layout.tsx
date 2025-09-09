@@ -6,6 +6,7 @@ import { ColorSchemeScript, Flex, mantineHtmlProps } from '@mantine/core';
 import Providers from './providers';
 import Navbar from '@/features/appshell/navbar';
 import { Sidebar } from '@/features/appshell/sidebar';
+import NavbarMobile from '@/features/appshell/navbar-mobile';
 
 export const metadata = {
   title: 'Odontolog',
@@ -24,12 +25,16 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>
-          <Flex>
+          <Flex direction="row" visibleFrom="md">
             <Sidebar />
             <div style={{ flex: 1 }}>
               <Navbar />
               {children}
             </div>
+          </Flex>
+          <Flex direction="column" hiddenFrom="md">
+            <NavbarMobile />
+            {children}
           </Flex>
         </Providers>
       </body>
