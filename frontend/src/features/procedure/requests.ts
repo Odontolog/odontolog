@@ -55,14 +55,15 @@ export async function getDetails(
   procedureId: string,
 ): Promise<ProcedureDetail> {
   console.log('fething detail for procedureID: ', procedureId);
-  await new Promise((resolve) => setTimeout(resolve, 2500));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   console.log(Superdata);
   return Superdata;
 }
 
 export async function saveDetails(procedureId: string, data: ProcedureDetail) {
-  await new Promise((resolve) => setTimeout(resolve, 2500));
+  await new Promise((resolve) => setTimeout(resolve, 2000));
   console.log('saving data', data, procedureId);
   // throw new Error('error saving data');
   Superdata = data;
+  return Superdata;
 }

@@ -14,7 +14,7 @@ import {
   ActionIcon,
 } from '@mantine/core';
 import { ProcedureDetail } from '../models';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getDetails, saveDetails } from '../requests';
 import { IconEdit } from '@tabler/icons-react';
 
@@ -33,6 +33,7 @@ export default function DetailSection({ procedureId }: DetailSectionProps) {
   const { data, isLoading } = useQuery({
     queryKey: ['procedureDetails', procedureId],
     queryFn: () => getDetails(procedureId),
+    enabled: false,
   });
 
   return (
@@ -88,9 +89,12 @@ function DetailSectionContent({
   setEditing,
   procedureId,
 }: DetailSectionContentProps) {
-  const originalData = { ...data };
+  const queryClient = useQueryClient();
 
-  const [values, setValues] = useState<ProcedureDetail>(data);
+  // NOTE: This is necessary to make reactive UI changes and keep the useState
+  //       in sync with the query.
+  const [values, setValues] = useState({});
+  const displayValues = editing ? { ...data, ...values } : data;
 
   function handleChange(key: string, value: string) {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -98,17 +102,19 @@ function DetailSectionContent({
 
   const mutation = useMutation({
     mutationFn: (values: ProcedureDetail) => saveDetails(procedureId, values),
-    onSuccess: () => {
+    onSuccess: async (data) => {
+      queryClient.setQueryData(['procedureDetails', procedureId], data);
+      setValues({});
       setEditing(false);
     },
   });
 
   async function handleSave() {
-    await mutation.mutateAsync(values);
+    await mutation.mutateAsync(displayValues);
   }
 
   function handleCancel() {
-    setValues(originalData);
+    setValues(data);
     setEditing(false);
     mutation.reset();
   }
@@ -116,7 +122,7 @@ function DetailSectionContent({
   return (
     <>
       <Flex direction="column" gap="sm">
-        {Object.entries(values).map(([key, value]) => (
+        {Object.entries(displayValues).map(([key, value]) => (
           <div key={key}>
             <Text size="sm" fw={600}>
               {LABELS[key]}
