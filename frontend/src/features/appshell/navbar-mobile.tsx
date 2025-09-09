@@ -75,6 +75,7 @@ export default function NavbarMobile() {
             <Drawer.Header
               className={classes.user}
               onClick={() => {
+                close();
                 router.push(`/students/${user?.enrollment}`);
               }}
             >
@@ -104,7 +105,9 @@ export default function NavbarMobile() {
                 leftSection={<IconLogout />}
                 c="red"
                 color="red"
-                onClick={() => {console.log('Sair da conta')}}
+                onClick={() => {
+                  console.log('Sair da conta');
+                }}
               />
             </Drawer.Body>
           </Drawer.Content>
