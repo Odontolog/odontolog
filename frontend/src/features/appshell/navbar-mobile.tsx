@@ -1,5 +1,6 @@
 'use client';
 import {
+  ActionIcon,
   Avatar,
   Burger,
   Divider,
@@ -18,10 +19,12 @@ import {
   IconChevronRight,
   IconDental,
   IconLogout,
+  IconSearch,
   IconUsers,
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Student } from '@/shared/models';
+import Search from './search';
 
 const navLinks = [
   { icon: <IconDental />, label: 'Pacientes', route: '/patients' },
@@ -57,62 +60,71 @@ export default function NavbarMobile() {
   return (
     <nav className={classes.navbar}>
       <Group justify="space-between" h="100%">
-        <Image
-          src="/odontolog.svg"
-          alt="Odontolog Logo"
-          width={40}
-          height={40}
-        />
-        <Drawer.Root
-          position="right"
-          opened={opened}
-          onClose={close}
-          size="80%"
-          padding="md"
-        >
-          <Drawer.Overlay />
-          <Drawer.Content>
-            <Drawer.Header
-              className={classes.user}
-              onClick={() => {
-                close();
-                router.push(`/students/${user?.enrollment}`);
-              }}
-            >
-              <Group justify="space-between" w="100%">
-                <Group>
-                  <Avatar
-                    size="lg"
-                    color="blue"
-                    variant="light"
-                    name={user.name}
-                  />
-                  <Stack gap={0}>
-                    <Title order={4}>{user.name}</Title>
-                    <Text size="xs" c="dimmed">
-                      {user.email}
-                    </Text>
-                  </Stack>
-                </Group>
-                <IconChevronRight color="gray" />
-              </Group>
-            </Drawer.Header>
-            <Drawer.Body>
-              <Stack gap="sm">{links}</Stack>
-              <Divider my="sm" />
-              <NavLink
-                label="Sair"
-                leftSection={<IconLogout />}
-                c="red"
-                color="red"
+        <Group>
+          <Burger
+            opened={opened}
+            onClick={open}
+            aria-label="Toggle navigation"
+          />
+          <Image
+            src="/odontolog.svg"
+            alt="Odontolog Logo"
+            width={40}
+            height={40}
+          />
+          <Drawer.Root
+            position="right"
+            opened={opened}
+            onClose={close}
+            size="80%"
+            padding="md"
+          >
+            <Drawer.Overlay />
+            <Drawer.Content>
+              <Drawer.Header
+                className={classes.user}
                 onClick={() => {
-                  console.log('Sair da conta');
+                  close();
+                  router.push(`/students/${user?.enrollment}`);
                 }}
-              />
-            </Drawer.Body>
-          </Drawer.Content>
-        </Drawer.Root>
-        <Burger opened={opened} onClick={open} aria-label="Toggle navigation" />
+              >
+                <Group justify="space-between" w="100%">
+                  <Group>
+                    <Avatar
+                      size="lg"
+                      color="blue"
+                      variant="light"
+                      name={user.name}
+                    />
+                    <Stack gap={0}>
+                      <Title order={4}>{user.name}</Title>
+                      <Text size="xs" c="dimmed">
+                        {user.email}
+                      </Text>
+                    </Stack>
+                  </Group>
+                  <IconChevronRight color="gray" />
+                </Group>
+              </Drawer.Header>
+              <Drawer.Body>
+                <Stack gap="sm">{links}</Stack>
+                <Divider my="sm" />
+                <NavLink
+                  label="Sair"
+                  leftSection={<IconLogout />}
+                  c="red"
+                  color="red"
+                  onClick={() => {
+                    console.log('Sair da conta');
+                  }}
+                />
+              </Drawer.Body>
+            </Drawer.Content>
+          </Drawer.Root>
+        </Group>
+        <Group>
+          <Search />
+        </Group>
       </Group>
     </nav>
   );

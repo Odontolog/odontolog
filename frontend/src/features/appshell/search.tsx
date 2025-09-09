@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Spotlight, spotlight } from '@mantine/spotlight';
 import {
+  ActionIcon,
   Avatar,
   Badge,
   Center,
@@ -187,7 +188,11 @@ export default function Search() {
 
   return (
     <>
-      <UnstyledButton onClick={spotlight.open} style={{ width: 300 }}>
+      <UnstyledButton
+        onClick={spotlight.open}
+        style={{ width: 300 }}
+        visibleFrom="md"
+      >
         <TextInput
           readOnly
           placeholder="Buscar por Paciente..."
@@ -198,6 +203,16 @@ export default function Search() {
           style={{ cursor: 'pointer', pointerEvents: 'none' }}
         />
       </UnstyledButton>
+
+      <ActionIcon
+        onClick={spotlight.open}
+        variant="default"
+        size="lg"
+        aria-label="Pesquisar pacientes"
+        color="gray"
+      >
+        <IconSearch />
+      </ActionIcon>
 
       <Spotlight.Root
         query={query}
