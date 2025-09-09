@@ -11,10 +11,12 @@ import {
   Center,
   Loader,
   Flex,
+  ActionIcon,
 } from '@mantine/core';
 import { ProcedureDetail } from '../models';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { getDetails, saveDetails } from '../requests';
+import { IconEdit } from '@tabler/icons-react';
 
 const LABELS: Record<string, string> = {
   diagnostic: 'Diagnóstico',
@@ -41,21 +43,21 @@ export default function DetailSection({ procedureId }: DetailSectionProps) {
             Detalhes
           </Text>
           {!editing && (
-            <Button
-              size="xs"
-              variant="default"
-              onClick={() => setEditing(true)}
+            <ActionIcon
+              variant="subtle"
+              color="gray"
               disabled={isLoading}
+              onClick={() => setEditing(true)}
             >
-              Editar
-            </Button>
+              <IconEdit size={16} />
+            </ActionIcon>
           )}
         </Group>
       </Card.Section>
 
       <Divider my="none" />
 
-      <Card.Section inheritPadding p="md">
+      <Card.Section inheritPadding px="md" py="sm">
         {isLoading || !data ? (
           <Center py="md">
             <Loader size="sm" />
@@ -113,29 +115,40 @@ function DetailSectionContent({
 
   return (
     <>
-      {Object.entries(values).map(([key, value]) => (
-        <div key={key}>
-          <Text size="sm" fw={500}>
-            {LABELS[key]}
-          </Text>
-          {!editing ? (
-            <Text size="sm" c={value ? 'black' : 'dimmed'}>
-              {value || 'Nenhum valor definido'}
+      <Flex direction="column" gap="sm">
+        {Object.entries(values).map(([key, value]) => (
+          <div key={key}>
+            <Text size="sm" fw={600}>
+              {LABELS[key]}
             </Text>
-          ) : (
-            <Textarea
-              value={value}
-              onChange={(e) => handleChange(key, e.currentTarget.value)}
-              autosize
-              minRows={2}
-            />
-          )}
-        </div>
-      ))}
+            {!editing ? (
+              <Text
+                size="sm"
+                c={value ? 'black' : 'dimmed'}
+                style={{ whiteSpace: 'pre-line', textAlign: 'justify' }}
+              >
+                {value || 'Nenhum valor definido'}
+              </Text>
+            ) : (
+              <Textarea
+                value={value}
+                onChange={(e) => handleChange(key, e.currentTarget.value)}
+                autosize
+                minRows={2}
+              />
+            )}
+          </div>
+        ))}
+      </Flex>
       {editing && (
-        <Flex justify="space-between" align="center" direction="row-reverse">
-          <Group mt="sm">
-            <Button variant="default" onClick={handleCancel}>
+        <Flex
+          justify="space-between"
+          align="center"
+          direction="row-reverse"
+          mt="sm"
+        >
+          <Group gap="xs">
+            <Button variant="default" fw="normal" onClick={handleCancel}>
               Cancelar
             </Button>
             <Button onClick={handleSave} loading={mutation.isPending}>
@@ -143,7 +156,7 @@ function DetailSectionContent({
             </Button>
           </Group>
           {mutation.isError && (
-            <Text c="red" size="sm">
+            <Text c="red" size="sm" fw={600}>
               Erro ao salvar dados. Tente novamente mais tarde.
             </Text>
           )}
