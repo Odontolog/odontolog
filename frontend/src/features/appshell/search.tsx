@@ -210,6 +210,7 @@ export default function Search() {
         size="lg"
         aria-label="Pesquisar pacientes"
         color="gray"
+        hiddenFrom='md'
       >
         <IconSearch />
       </ActionIcon>

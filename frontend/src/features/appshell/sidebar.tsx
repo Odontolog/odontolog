@@ -27,7 +27,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
         className={classes.link}
         data-active={active || undefined}
       >
-        <Icon size={22} stroke={2} />
+        <Icon size={24} />
       </UnstyledButton>
     </Tooltip>
   );
@@ -76,7 +76,7 @@ export function Sidebar() {
       />
 
       <div className={classes.navbarMain}>
-        <Stack justify="center" gap={4}>
+        <Stack justify="center" gap={8}>
           {links}
         </Stack>
       </div>
