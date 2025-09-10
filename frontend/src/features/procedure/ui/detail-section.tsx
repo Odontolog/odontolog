@@ -141,6 +141,7 @@ function DetailSectionContent({
                 onChange={(e) => handleChange(key, e.currentTarget.value)}
                 autosize
                 minRows={2}
+                error={mutation.isError}
               />
             )}
           </div>
