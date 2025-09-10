@@ -19,7 +19,7 @@ import {
   IconChevronRight,
   IconDental,
   IconLogout,
-  IconSearch,
+  IconPlus,
   IconUsers,
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -73,7 +73,7 @@ export default function NavbarMobile() {
             height={40}
           />
           <Drawer.Root
-            position="right"
+            position="left"
             opened={opened}
             onClose={close}
             size="80%"
@@ -92,7 +92,7 @@ export default function NavbarMobile() {
                   <Group>
                     <Avatar
                       size="lg"
-                      color="blue"
+                      color="dark"
                       variant="light"
                       name={user.name}
                     />
@@ -124,6 +124,15 @@ export default function NavbarMobile() {
         </Group>
         <Group>
           <Search />
+          <ActionIcon
+            variant="default"
+            color="black"
+            size="lg"
+            aria-label="Criar um novo prontuário"
+            onClick={() => console.log('Criar novo prontuário')}
+          >
+            <IconPlus />
+          </ActionIcon>
         </Group>
       </Group>
     </nav>
