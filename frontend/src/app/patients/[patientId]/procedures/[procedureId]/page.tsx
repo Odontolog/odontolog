@@ -1,9 +1,12 @@
 import { getQueryClient } from '@/app/get-query-client';
-import { getProcedureSupervisors } from '@/features/procedure/requests';
-import ProcedureHeader from '@/features/procedure/ui/procedure-header';
-import SupervisorSection from '@/features/procedure/ui/supervisor-section';
 import { Box } from '@mantine/core';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import {
+  getDetails,
+  getProcedureSupervisors,
+} from '@/features/procedure/requests';
+import ProcedureHeader from '@/features/procedure/ui/procedure-header';
+import TreatmentPlanCreationProcedure from '@/features/procedure/ui/tpcp';
 
 interface ProcedureParams {
   patientId: string;
@@ -19,10 +22,16 @@ export default async function ProcedurePage({
 
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ['procedureSupervisors', procedureId],
-    queryFn: async () => getProcedureSupervisors(procedureId),
-  });
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ['procedureSupervisors', procedureId],
+      queryFn: async () => getProcedureSupervisors(procedureId),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['procedureDetails', procedureId],
+      queryFn: () => getDetails(procedureId),
+    }),
+  ]);
 
   return (
     <div>
@@ -35,9 +44,7 @@ export default async function ProcedurePage({
         studentName="Pedro Sebastião"
       />
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <Box style={{ padding: '24px' }}>
-          <SupervisorSection procedureId={procedureId} />
-        </Box>
+        <TreatmentPlanCreationProcedure procedureId={procedureId} />
       </HydrationBoundary>
     </div>
   );
