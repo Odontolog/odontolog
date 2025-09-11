@@ -5,17 +5,12 @@ import {
   Breadcrumbs,
   Button,
   Group,
-  Menu,
   Stack,
   Text,
   Title,
 } from '@mantine/core';
-import {
-  IconCheck,
-  IconChevronDown,
-  IconSlash,
-  IconX,
-} from '@tabler/icons-react';
+import { IconChevronDown, IconSlash } from '@tabler/icons-react';
+import ReviewMenu from './review-menu';
 
 interface ProcedureHeaderProps {
   type: 'procedure' | 'treatmentPlan';
@@ -26,9 +21,10 @@ interface ProcedureHeaderProps {
 
 const typeTranslations: { [key: string]: string } = {
   treatmentPlan: 'Plano de Tratamento',
-  procedures: 'Procedimentos',
+  procedure: 'Procedimento',
 };
 
+// NOTE: falta considerar se é supervisor ou student; falta ver como puxar o id do treatmentPlan se for Procedure (linha 114)
 export default async function ProcedureHeader(props: ProcedureHeaderProps) {
   const { procedureId, patientId } = props;
 
@@ -81,13 +77,6 @@ export default async function ProcedureHeader(props: ProcedureHeaderProps) {
     }
   }
 
-  const data = {
-    id: procedureId,
-    status: 'not_started',
-    studentName: 'Pedro Sebastião',
-    creationDate: new Date(),
-  };
-
   return (
     <header
       style={{
@@ -101,48 +90,42 @@ export default async function ProcedureHeader(props: ProcedureHeaderProps) {
           {breadcrumbsItems}
         </Breadcrumbs>
         <Group justify="space-between">
-          <Stack gap={0}>
+          <Stack gap={8}>
             <Title>
-              Criação de Plano de Tratamento{' '}
+              {props.mode === 'edit' ? 'Criação de ' : ''}
+              {typeTranslations[props.type]}{' '}
               <span style={{ color: 'var(--mantine-color-dimmed)' }}>
-                #{data.id}
+                #{procedureId}
               </span>
             </Title>
             <Group gap={8}>
-              <Badge variant="light" {...getBadgeProps(data.status)} />
+              <Badge variant="light" {...getBadgeProps(patient.status)} />
               <Text size="sm">
-                Criado por <b>{data.studentName}</b> às{' '}
-                {data.creationDate.toLocaleString('pt-BR', {
+                Última atualização por <b>{patient.assignee.name}</b> às{' '}
+                {patient.lastModified.toLocaleString('pt-BR', {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',
                   hour: '2-digit',
                   minute: '2-digit',
-                })}
+                })}{' '}
+                {props.type === 'procedure' ? (
+                  <span>
+                    no <b>Plano de Tratamento #{12}</b>
+                  </span>
+                ) : (
+                  ''
+                )}
               </Text>
             </Group>
           </Stack>
-          {/* <Menu
-            trigger="click-hover"
-            openDelay={100}
-            closeDelay={400}
-            shadow="md"
-            width={200}
-          >
-            <Menu.Target>
-              <Button fw={500} rightSection={<IconChevronDown />}>
-                a
-              </Button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item leftSection={<IconCheck size={14} />}>
-                Aprovar
-              </Menu.Item>
-              <Menu.Item leftSection={<IconX size={14} />}>
-                Pedir ajustes
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu> */}
+          {props.mode === 'edit' ? (
+            <Button fw={500} rightSection={<IconChevronDown />}>
+              Enviar para validação
+            </Button>
+          ) : (
+            <ReviewMenu />
+          )}
         </Group>
       </Stack>
     </header>
