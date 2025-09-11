@@ -40,7 +40,6 @@ export default function RootLayout({
                 style={{
                   flex: 1,
                   backgroundColor: 'var(--mantine-color-gray-0)',
-                  padding: '0 var(--mantine-spacing-lg)'
                 }}
               >
                 {children}

@@ -18,7 +18,7 @@ export default async function ProcedurePage({
 }: {
   params: ProcedureParams;
 }) {
-  const { procedureId } = await params;
+  const { procedureId, patientId } = await params;
 
   const queryClient = getQueryClient();
 
@@ -38,14 +38,14 @@ export default async function ProcedurePage({
       <ProcedureHeader
         mode="edit"
         type="treatmentPlan"
-        id={2}
-        status="finished"
-        creationDate={new Date()}
-        studentName="Pedro Sebastião"
+        patientId={patientId}
+        procedureId={procedureId}
       />
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <TreatmentPlanCreationProcedure procedureId={procedureId} />
-      </HydrationBoundary>
+      <Box style={{ padding: 'var(--mantine-spacing-md)' }}>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <TreatmentPlanCreationProcedure procedureId={procedureId} />
+        </HydrationBoundary>
+      </Box>
     </div>
   );
 }

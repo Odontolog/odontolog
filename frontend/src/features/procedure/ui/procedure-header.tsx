@@ -1,4 +1,4 @@
-'use client';
+import { getPatientById } from '@/features/patient/requests';
 import {
   Anchor,
   Badge,
@@ -16,33 +16,36 @@ import {
   IconSlash,
   IconX,
 } from '@tabler/icons-react';
-import { procedureStatus } from '../models';
-import { usePathname } from 'next/navigation';
 
 interface ProcedureHeaderProps {
   type: 'procedure' | 'treatmentPlan';
   mode: 'edit' | 'read';
-  id: number;
-  status: procedureStatus;
-  studentName: string;
-  creationDate: Date;
+  procedureId: string;
+  patientId: string;
 }
 
-export default function ProcedureHeader(props: ProcedureHeaderProps) {
-  const pathname = usePathname().split('/');
+const typeTranslations: { [key: string]: string } = {
+  treatmentPlan: 'Plano de Tratamento',
+  procedures: 'Procedimentos',
+};
+
+export default async function ProcedureHeader(props: ProcedureHeaderProps) {
+  const { procedureId, patientId } = props;
+
+  const patient = await getPatientById(patientId);
 
   const breadcrumbsData = [
     { title: 'Pacientes', href: '/patients' },
-    { title: 'João da Silva', href: '/patients/2' },
-    { title: 'Plano de Tratamento #2', href: '' },
+    { title: `${patient.name}`, href: `/patients/${patientId}` },
+    { title: `${typeTranslations[props.type]} #${procedureId}` },
   ];
 
-  const items = breadcrumbsData.map((item, index) => {
+  const breadcrumbsItems = breadcrumbsData.map((item, index) => {
     const isLast = index === breadcrumbsData.length - 1;
 
     if (isLast) {
       return (
-        <Text size="xs" fw={700} key={index}>
+        <Text size="sm" fw={700} key={index}>
           {item.title}
         </Text>
       );
@@ -78,29 +81,38 @@ export default function ProcedureHeader(props: ProcedureHeaderProps) {
     }
   }
 
+  const data = {
+    id: procedureId,
+    status: 'not_started',
+    studentName: 'Pedro Sebastião',
+    creationDate: new Date(),
+  };
+
   return (
     <header
       style={{
         padding: 'var(--mantine-spacing-md) var(--mantine-spacing-lg)',
         borderBottom: '1px solid var(--mantine-color-default-border)',
+        backgroundColor: 'var(--mantine-color-body)',
       }}
     >
       <Stack>
-        <Breadcrumbs separator={<IconSlash size={16} />}>{items}</Breadcrumbs>
-        <p>{pathname}</p>
+        <Breadcrumbs separator={<IconSlash size={16} />}>
+          {breadcrumbsItems}
+        </Breadcrumbs>
         <Group justify="space-between">
           <Stack gap={0}>
             <Title>
               Criação de Plano de Tratamento{' '}
               <span style={{ color: 'var(--mantine-color-dimmed)' }}>
-                #{props.id}
+                #{data.id}
               </span>
             </Title>
             <Group gap={8}>
-              <Badge variant="light" {...getBadgeProps(props.status)} />
+              <Badge variant="light" {...getBadgeProps(data.status)} />
               <Text size="sm">
-                Criado por <b>{props.studentName}</b> às{' '}
-                {props.creationDate.toLocaleString('pt-BR', {
+                Criado por <b>{data.studentName}</b> às{' '}
+                {data.creationDate.toLocaleString('pt-BR', {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',
@@ -110,7 +122,7 @@ export default function ProcedureHeader(props: ProcedureHeaderProps) {
               </Text>
             </Group>
           </Stack>
-          <Menu
+          {/* <Menu
             trigger="click-hover"
             openDelay={100}
             closeDelay={400}
@@ -130,7 +142,7 @@ export default function ProcedureHeader(props: ProcedureHeaderProps) {
                 Pedir ajustes
               </Menu.Item>
             </Menu.Dropdown>
-          </Menu>
+          </Menu> */}
         </Group>
       </Stack>
     </header>
