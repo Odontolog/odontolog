@@ -13,25 +13,24 @@ import {
   ThemeIcon,
 } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { SupervisorAndReview } from '../models';
+import { HasReviewable } from '../models';
+
 import SupervisorMenu from './supervisor-menu';
-import { useQuery } from '@tanstack/react-query';
-import { getProcedureSupervisors } from '@/features/procedure/requests';
+import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 
 interface SupervisorSectionProps {
-  procedureId: string;
+  queryOptions: UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
 }
 
 export default function SupervisorSection({
-  procedureId,
+  queryOptions,
 }: SupervisorSectionProps) {
-  const {
-    data: supervisors,
-    isLoading,
-    isError,
-  } = useQuery<SupervisorAndReview[]>({
-    queryKey: ['procedureSupervisors', procedureId],
-    queryFn: async () => getProcedureSupervisors(procedureId),
+  const { data, isLoading, isError } = useQuery({
+    ...queryOptions,
+    select: (data) => ({
+      reviews: data.reviewable.reviews,
+      reviewableId: data.reviewableId,
+    }),
   });
 
   return (
@@ -41,10 +40,11 @@ export default function SupervisorSection({
           <Text fw={600} size="sm">
             Supervisores
           </Text>
-          {supervisors && (
+          {data && (
             <SupervisorMenu
-              procedureId={procedureId}
-              currentSupervisors={supervisors}
+              queryOptions={queryOptions}
+              reviewableId={data.reviewableId}
+              currentReviews={data.reviews}
             />
           )}
         </Group>
@@ -68,33 +68,33 @@ export default function SupervisorSection({
           </Flex>
         )}
 
-        {supervisors && supervisors.length === 0 && (
+        {data?.reviews && data?.reviews.length === 0 && (
           <Text size="sm" c="dimmed" ta="center">
             Nenhum supervisor selecionado
           </Text>
         )}
 
         <Flex gap="xs" direction="column">
-          {supervisors &&
-            supervisors.map((supervisor) => (
-              <Group key={supervisor.id} justify="space-between" gap="xs">
+          {data &&
+            data.reviews.map((review) => (
+              <Group key={review.id} justify="space-between" gap="xs">
                 <Group gap="xs">
                   <Avatar
-                    src={supervisor.avatarUrl}
+                    src={review.supervisor.avatarUrl}
                     size="xs"
                     variant="filled"
                   />
-                  <Text size="xs">{supervisor.name}</Text>
+                  <Text size="xs">{review.supervisor.name}</Text>
                 </Group>
                 <Indicator
                   size={8}
                   position="middle-center"
                   color={
-                    supervisor.lastReview.status === 'approved'
+                    review.status === 'approved'
                       ? 'green'
-                      : supervisor.lastReview.status === 'rejected'
+                      : review.status === 'rejected'
                         ? 'red'
-                        : supervisor.lastReview.status === 'draft'
+                        : review.status === 'draft'
                           ? 'gray'
                           : 'yellow'
                   }

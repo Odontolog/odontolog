@@ -1,41 +1,9 @@
-import { Supervisor, SupervisorAndReview } from '@/features/procedure/models';
-
-export let supervisorsAndReviews: SupervisorAndReview[] = [
-  {
-    id: '1',
-    name: 'Dr. Théo',
-    email: 'theo@foufal.ufal.br',
-    specialty: 'Emergência',
-    siape: '12345',
-    avatarUrl: '',
-    lastReview: {
-      note: 'something',
-      grade: 7.0,
-      status: 'approved',
-    },
-  },
-  {
-    id: '2',
-    name: 'Dr. Alexandre',
-    email: 'alexandre@foufal.ufal.br',
-    specialty: 'Periodontia',
-    siape: '12345',
-    avatarUrl: '',
-    lastReview: {
-      note: 'something',
-      grade: 8.5,
-      status: 'approved',
-    },
-  },
-];
-
-export function setSupervisorsAndReviews(sar: SupervisorAndReview[]) {
-  supervisorsAndReviews = sar;
-}
+import { Supervisor } from '../shared/models';
 
 export const supervisors: Supervisor[] = [
   {
     id: '1',
+    role: 'supervisor',
     name: 'Dr. Théo',
     email: 'theo@foufal.ufal.br',
     specialty: 'Emergência',
@@ -44,6 +12,7 @@ export const supervisors: Supervisor[] = [
   },
   {
     id: '2',
+    role: 'supervisor',
     name: 'Dr. Alexandre',
     email: 'alexandre@foufal.ufal.br',
     specialty: 'Periodontia',
@@ -52,6 +21,7 @@ export const supervisors: Supervisor[] = [
   },
   {
     id: '3',
+    role: 'supervisor',
     name: 'Dr. Marcos',
     email: 'marcos@foufal.ufal.br',
     specialty: 'Dentística',
@@ -60,6 +30,7 @@ export const supervisors: Supervisor[] = [
   },
   {
     id: '4',
+    role: 'supervisor',
     email: 'joao@ufal.br',
     name: 'Dr. João Silva',
     specialty: 'Endodontia',
@@ -68,10 +39,20 @@ export const supervisors: Supervisor[] = [
   },
   {
     id: '5',
+    role: 'supervisor',
     email: 'maria@ufal.br',
     name: 'Dra. Maria Souza',
     specialty: 'Prótese',
     siape: '67890',
     avatarUrl: '',
+  },
+  {
+    id: '6',
+    name: 'Dr. Ana Souza',
+    email: 'ana.souza@clinica.edu',
+    role: 'supervisor',
+    avatarUrl: '',
+    specialty: 'Ortodontia',
+    siape: '123456',
   },
 ];

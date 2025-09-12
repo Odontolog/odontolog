@@ -11,14 +11,20 @@ import {
   Menu,
   ActionIcon,
 } from '@mantine/core';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { SupervisorAndReview } from '../models';
-import { getAvailableSupervisors, saveSupervisors } from '../requests';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
+import { HasReviewable, Review } from '../models';
+import { getAvailableSupervisors, saveSupervisors } from './requests';
 import { IconEdit } from '@tabler/icons-react';
 
 interface SupervisorMenuProps {
-  procedureId: string;
-  currentSupervisors: SupervisorAndReview[];
+  reviewableId: string;
+  queryOptions: UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
+  currentReviews: Review[];
 }
 
 export default function SupervisorMenu(props: SupervisorMenuProps) {
@@ -49,8 +55,9 @@ interface SupervisorMenuContentProps extends SupervisorMenuProps {
 }
 
 function SupervisorMenuContent({
-  procedureId,
-  currentSupervisors,
+  reviewableId,
+  queryOptions,
+  currentReviews,
   setMenuOpened,
 }: SupervisorMenuContentProps) {
   const queryClient = useQueryClient();
@@ -61,16 +68,14 @@ function SupervisorMenuContent({
   });
 
   const [selectedIds, setSelectedIds] = useState<string[]>(
-    currentSupervisors.map((s) => s.id),
+    currentReviews.map((s) => s.supervisor.id),
   );
 
   const mutation = useMutation({
     mutationFn: (supervisors: string[]) =>
-      saveSupervisors(procedureId, supervisors),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['procedureSupervisors', procedureId],
-      });
+      saveSupervisors(reviewableId, supervisors),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       setMenuOpened(false);
     },
   });
