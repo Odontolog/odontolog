@@ -40,7 +40,7 @@ export default function RootLayout({
                 style={{
                   flex: 1,
                   backgroundColor: 'var(--mantine-color-gray-0)',
-                  padding: '0 var(--mantine-spacing-lg)'
+                  padding: '0 var(--mantine-spacing-lg)',
                 }}
               >
                 {children}
@@ -55,7 +55,7 @@ export default function RootLayout({
               style={{
                 flex: 1,
                 backgroundColor: 'var(--mantine-color-gray-0)',
-                padding: 'var(--mantine-spacing-md)'
+                padding: 'var(--mantine-spacing-md)',
               }}
             >
               {children}

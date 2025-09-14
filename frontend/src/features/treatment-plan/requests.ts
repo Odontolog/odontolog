@@ -1,7 +1,8 @@
+import { queryOptions } from '@tanstack/react-query';
+
 import { treatmentPlanMock } from '@/mocks/treatment-plan';
 import { TreatmentPlan } from '@/shared/models';
 import { createReviewableOptions } from '@/shared/reviewable/requests';
-import { queryOptions } from '@tanstack/react-query';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
   return queryOptions({

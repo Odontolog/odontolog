@@ -17,9 +17,10 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { HasReviewable, Review } from '../models';
-import { getAvailableSupervisors, saveSupervisors } from './requests';
 import { IconEdit } from '@tabler/icons-react';
+
+import { HasReviewable, Review } from '@/shared/models';
+import { getAvailableSupervisors, saveSupervisors } from './requests';
 
 interface SupervisorMenuProps {
   reviewableId: string;

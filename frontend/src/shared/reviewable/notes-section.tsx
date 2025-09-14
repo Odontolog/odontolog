@@ -21,7 +21,8 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
-import { HasReviewable } from '../models';
+
+import { HasReviewable } from '@/shared/models';
 import { saveDetails } from './requests';
 
 interface NotesSectionProps {

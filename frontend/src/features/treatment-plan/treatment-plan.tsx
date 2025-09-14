@@ -1,8 +1,8 @@
 'use client';
 
 import SupervisorSection from '@/shared/reviewable/supervisor-section';
-import { getTreatmentPlanReviewableOptions } from './requests';
 import NotesSection from '@/shared/reviewable/notes-section';
+import { getTreatmentPlanReviewableOptions } from './requests';
 
 interface TreatmentPlanProps {
   patientId: string;

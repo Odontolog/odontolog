@@ -1,11 +1,12 @@
+import { queryOptions, UseQueryOptions } from '@tanstack/react-query';
+
 import { supervisors } from '@/mocks/supervisor';
-import { HasReviewable, Review, Supervisor } from '../models';
+import { HasReviewable, Review, Supervisor } from '@/shared/models';
 import {
   updateReviews,
   treatmentPlanMock,
   setNote,
 } from '@/mocks/treatment-plan';
-import { queryOptions, UseQueryOptions } from '@tanstack/react-query';
 
 export function createReviewableOptions<T extends HasReviewable>(
   queryKey: string[],

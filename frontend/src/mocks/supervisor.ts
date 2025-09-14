@@ -1,4 +1,4 @@
-import { Supervisor } from '../shared/models';
+import { Supervisor } from '@/shared/models';
 
 export const supervisors: Supervisor[] = [
   {

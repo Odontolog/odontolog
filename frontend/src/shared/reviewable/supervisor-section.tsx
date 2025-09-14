@@ -12,11 +12,11 @@ import {
   Flex,
   ThemeIcon,
 } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
-import { HasReviewable } from '../models';
-
-import SupervisorMenu from './supervisor-menu';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
+import { IconExclamationCircle } from '@tabler/icons-react';
+
+import { HasReviewable } from '@/shared/models';
+import SupervisorMenu from './supervisor-menu';
 
 interface SupervisorSectionProps {
   queryOptions: UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
