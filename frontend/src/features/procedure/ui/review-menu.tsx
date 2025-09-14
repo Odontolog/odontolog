@@ -1,8 +1,17 @@
 'use client';
 import { Menu, Button } from '@mantine/core';
 import { IconChevronDown, IconCheck, IconX } from '@tabler/icons-react';
+import type { ComponentPropsWithoutRef } from 'react';
 
-export default function ReviewMenu() {
+type ReviewMenuProps = ComponentPropsWithoutRef<typeof Menu> & {
+  buttonProps?: ComponentPropsWithoutRef<typeof Button>;
+};
+
+export default function ReviewMenu({
+  buttonProps,
+  children,
+  ...menuProps
+}: ReviewMenuProps) {
   return (
     <Menu
       trigger="click-hover"
@@ -10,10 +19,11 @@ export default function ReviewMenu() {
       closeDelay={400}
       shadow="md"
       width={200}
+      {...menuProps}
     >
       <Menu.Target>
-        <Button fw={500} rightSection={<IconChevronDown />}>
-          Revisar
+        <Button fw={500} rightSection={<IconChevronDown />} {...buttonProps}>
+          {children}
         </Button>
       </Menu.Target>
       <Menu.Dropdown>

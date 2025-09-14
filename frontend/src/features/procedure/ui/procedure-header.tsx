@@ -143,7 +143,9 @@ export default function ProcedureHeader(props: ProcedureHeaderProps) {
               Enviar para validação
             </Button>
           ) : (
-            <ReviewMenu />
+            <ReviewMenu buttonProps={{ fullWidth: titleSize === 'h3' }}>
+              Revisar
+            </ReviewMenu>
           )}
         </Group>
       </Stack>
