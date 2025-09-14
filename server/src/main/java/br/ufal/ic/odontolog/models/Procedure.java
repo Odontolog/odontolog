@@ -1,17 +1,17 @@
 package br.ufal.ic.odontolog.models;
 
-import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "treatment_plans")
-public class TreatmentPlan {
+public class Procedure {
     @Id
     private Long id;
-
-    private TreatmentPlanStatus status;
+    private String name;
 
     @OneToOne
     @JoinColumn(name = "reviewable_id", referencedColumnName = "id")
