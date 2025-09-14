@@ -1,8 +1,11 @@
 package br.ufal.ic.odontolog.models;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
+@Data
 public class Student extends User {
     int clinic_number;
     String enrollment_code;
