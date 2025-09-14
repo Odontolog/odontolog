@@ -7,6 +7,7 @@ import {
 } from '@/features/procedure/requests';
 import ProcedureHeader from '@/features/procedure/ui/procedure-header';
 import TreatmentPlanCreationProcedure from '@/features/procedure/ui/tpcp';
+import { getPatientById } from '@/features/patient/requests';
 
 interface ProcedureParams {
   patientId: string;
@@ -30,6 +31,10 @@ export default async function ProcedurePage({
     queryClient.prefetchQuery({
       queryKey: ['procedureDetails', procedureId],
       queryFn: () => getDetails(procedureId),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['patient', patientId],
+      queryFn: () => getPatientById(patientId),
     }),
   ]);
 

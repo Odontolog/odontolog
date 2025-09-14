@@ -53,8 +53,7 @@ export default function RootLayout({
             <div
               style={{
                 flex: 1,
-                backgroundColor: 'var(--mantine-color-gray-0)',
-                padding: 'var(--mantine-spacing-md)'
+                backgroundColor: 'var(--mantine-color-gray-0)'
               }}
             >
               {children}

@@ -1,3 +1,5 @@
+'use client';
+
 import { getPatientById } from '@/features/patient/requests';
 import {
   Anchor,
@@ -8,9 +10,12 @@ import {
   Stack,
   Text,
   Title,
+  useMatches,
 } from '@mantine/core';
 import { IconChevronDown, IconSlash } from '@tabler/icons-react';
 import ReviewMenu from './review-menu';
+import { useQuery } from '@tanstack/react-query';
+import { Patient } from '@/shared/models';
 
 interface ProcedureHeaderProps {
   type: 'procedure' | 'treatmentPlan';
@@ -24,18 +29,20 @@ const typeTranslations: { [key: string]: string } = {
   procedure: 'Procedimento',
 };
 
-// NOTE: falta considerar se é supervisor ou student; falta ver como puxar o id do treatmentPlan se for Procedure (linha 114)
-export default async function ProcedureHeader(props: ProcedureHeaderProps) {
+// NOTE: falta considerar se é supervisor ou student; falta ver como puxar o id do treatmentPlan se for Procedure (linha 114); conferir as requisições
+export default function ProcedureHeader(props: ProcedureHeaderProps) {
   const { procedureId, patientId } = props;
 
-  const patient = await getPatientById(patientId);
+  const { data: patient } = useQuery<Patient>({
+    queryKey: ['patient', patientId],
+    queryFn: async () => getPatientById(patientId),
+  });
 
   const breadcrumbsData = [
     { title: 'Pacientes', href: '/patients' },
-    { title: `${patient.name}`, href: `/patients/${patientId}` },
+    { title: `${patient?.name}`, href: `/patients/${patientId}` },
     { title: `${typeTranslations[props.type]} #${procedureId}` },
   ];
-
   const breadcrumbsItems = breadcrumbsData.map((item, index) => {
     const isLast = index === breadcrumbsData.length - 1;
 
@@ -58,6 +65,11 @@ export default async function ProcedureHeader(props: ProcedureHeaderProps) {
         {item.title}
       </Anchor>
     );
+  });
+
+  const titleSize = useMatches({
+    base: 'h3',
+    md: 'h1',
   });
 
   function getBadgeProps(status: string) {
@@ -91,7 +103,7 @@ export default async function ProcedureHeader(props: ProcedureHeaderProps) {
         </Breadcrumbs>
         <Group justify="space-between">
           <Stack gap={8}>
-            <Title>
+            <Title size={titleSize}>
               {props.mode === 'edit' ? 'Criação de ' : ''}
               {typeTranslations[props.type]}{' '}
               <span style={{ color: 'var(--mantine-color-dimmed)' }}>
@@ -99,10 +111,13 @@ export default async function ProcedureHeader(props: ProcedureHeaderProps) {
               </span>
             </Title>
             <Group gap={8}>
-              <Badge variant="light" {...getBadgeProps(patient.status)} />
+              <Badge
+                variant="light"
+                {...getBadgeProps(patient?.status ?? '')}
+              />
               <Text size="sm">
-                Última atualização por <b>{patient.assignee.name}</b> às{' '}
-                {patient.lastModified.toLocaleString('pt-BR', {
+                Última atualização por <b>{patient?.assignee.name}</b> às{' '}
+                {patient?.lastModified.toLocaleString('pt-BR', {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',
@@ -120,7 +135,11 @@ export default async function ProcedureHeader(props: ProcedureHeaderProps) {
             </Group>
           </Stack>
           {props.mode === 'edit' ? (
-            <Button fw={500} rightSection={<IconChevronDown />}>
+            <Button
+              fw={500}
+              rightSection={<IconChevronDown />}
+              fullWidth={titleSize === 'h3'}
+            >
               Enviar para validação
             </Button>
           ) : (
