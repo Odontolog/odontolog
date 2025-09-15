@@ -36,6 +36,7 @@ export type Activity = {
   id: string;
   type: ActivityType;
   actor: Supervisor | Student;
+  description: string;
   metadata?: Record<string, any>;
   createdAt: Date;
 };
@@ -52,14 +53,14 @@ export type Review = {
 export type Reviewable = {
   id: string;
   author: Supervisor | Student;
-  assignee?: Supervisor | Student;
+  assignee: Supervisor | Student;
   createdAt: Date;
   updatedAt: Date;
   reviews: Review[];
   notes: string;
   history: Activity[];
   type: 'treatment_plan' | 'procedure';
-  status: 'not_started' | 'in_progress' | 'in_review' | 'finished';
+  status: 'draft' | 'in_review' | 'approved';
 };
 
 export interface HasReviewable {
@@ -81,6 +82,7 @@ export type ProcedureDetail = {
 // ReviewablePants
 export type Procedure = {
   id: string;
+  name: string;
   attachments: Attachments[];
   studySector: string;
   tooth: string[];
@@ -88,6 +90,7 @@ export type Procedure = {
   reviewableId: string;
   reviewable: Reviewable;
   type: 'pre_procedure' | 'tratment_plan_procedure';
+  status: 'in_creation' | 'not_started' | 'in_progress' | 'done';
 };
 
 // PreProcedurePants
@@ -96,6 +99,7 @@ export type PreProcedure = Procedure;
 // TreatmentPlanProcedurePants
 export type TreatmentPlanProcedure = Procedure & {
   treatmentPlanId: string;
+  plannedSession: number;
 };
 
 export type ReviewableShort = {
@@ -103,20 +107,23 @@ export type ReviewableShort = {
   assignee: Supervisor | Student;
   updatedAt: Date;
   notes: string;
-  status: 'not_started' | 'in_progress' | 'in_review' | 'finished';
+  status: 'draft' | 'in_review' | 'approved';
 };
 
 export type TreatmentPlanProcedureShort = {
   id: string;
+  name: string;
   studySector: string;
+  plannedSession: number;
   tooth: string[];
   treatmentPlanId: string;
   reviewable: ReviewableShort;
+  status: 'in_creation' | 'not_started' | 'in_progress' | 'done';
 };
 
 export type TreatmentPlan = {
   id: string;
-  status: 'draft' | 'pending' | 'active' | 'completed';
+  status: 'in_creation' | 'in_progress' | 'done';
   procedures: TreatmentPlanProcedureShort[];
   reviewableId: string;
   reviewable: Reviewable;
