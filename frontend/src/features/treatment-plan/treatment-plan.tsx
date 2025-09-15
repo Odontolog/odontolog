@@ -3,6 +3,7 @@
 import SupervisorSection from '@/shared/reviewable/supervisor-section';
 import NotesSection from '@/shared/reviewable/notes-section';
 import { getTreatmentPlanReviewableOptions } from './requests';
+import AssigneeSection from '@/shared/reviewable/assignee-section';
 
 interface TreatmentPlanProps {
   patientId: string;
@@ -19,6 +20,7 @@ export default function TreatmentPlan({
 
   return (
     <div>
+      <AssigneeSection queryOptions={options} />
       <SupervisorSection queryOptions={options} />
       <NotesSection queryOptions={options} />
     </div>
