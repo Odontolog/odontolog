@@ -1,6 +1,6 @@
 import { Review, Student, Supervisor, TreatmentPlan } from '@/shared/models';
 
-const supervisor: Supervisor = {
+export const supervisorMock: Supervisor = {
   id: '6',
   name: 'Dr. Ana Souza',
   email: 'ana.souza@clinica.edu',
@@ -10,7 +10,7 @@ const supervisor: Supervisor = {
   siape: '123456',
 };
 
-const student: Student = {
+export const studentMock: Student = {
   id: '1',
   name: 'Carlos Silva',
   email: 'carlos.silva@aluno.edu',
@@ -23,40 +23,46 @@ const student: Student = {
 
 export const treatmentPlanMock: TreatmentPlan = {
   id: 'tp-1',
-  status: 'active',
+  status: 'in_progress',
   procedures: [
     {
-      id: 'proc-1',
-      studySector: 'Setor A',
+      id: '120',
+      name: 'Canal',
+      studySector: 'Endodontia',
+      plannedSession: 1,
       tooth: ['11', '12'],
       treatmentPlanId: 'tp-1',
+      status: 'in_creation',
       reviewable: {
         id: 'rev-1',
-        assignee: supervisor,
+        assignee: supervisorMock,
         updatedAt: new Date('2025-09-01T10:00:00Z'),
         notes: 'Necessário avaliar radiografia complementar.',
         status: 'in_review',
       },
     },
     {
-      id: 'proc-2',
-      studySector: 'Setor B',
+      id: '121',
+      name: 'Restauração',
+      studySector: 'Dentística',
+      plannedSession: 2,
+      status: 'in_creation',
       tooth: ['21'],
       treatmentPlanId: 'tp-1',
       reviewable: {
         id: 'rev-2',
-        assignee: student,
+        assignee: studentMock,
         updatedAt: new Date('2025-09-05T14:30:00Z'),
         notes: 'Aluno iniciou execução prática.',
-        status: 'in_progress',
+        status: 'draft',
       },
     },
   ],
   reviewableId: 'rev-tp-1',
   reviewable: {
     id: 'rev-tp-1',
-    author: student,
-    assignee: supervisor,
+    author: studentMock,
+    assignee: supervisorMock,
     createdAt: new Date('2025-08-28T09:00:00Z'),
     updatedAt: new Date('2025-09-05T14:30:00Z'),
     reviews: [
@@ -65,7 +71,7 @@ export const treatmentPlanMock: TreatmentPlan = {
         note: 'Plano inicial bem estruturado.',
         grade: 9,
         status: 'approved',
-        supervisor,
+        supervisor: supervisorMock,
       },
     ],
     notes: 'Plano de tratamento focado em ortodontia.',
@@ -73,13 +79,15 @@ export const treatmentPlanMock: TreatmentPlan = {
       {
         id: 'act-1',
         type: 'created',
-        actor: student,
+        actor: studentMock,
+        description: '',
         createdAt: new Date('2025-08-28T09:00:00Z'),
       },
       {
         id: 'act-2',
         type: 'review_approved',
-        actor: supervisor,
+        actor: supervisorMock,
+        description: '',
         createdAt: new Date('2025-08-29T16:00:00Z'),
         metadata: { feedback: 'Aprovado com ajustes mínimos.' },
       },
