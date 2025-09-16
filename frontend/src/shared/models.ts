@@ -1,3 +1,5 @@
+import { procedureStatus } from '@/features/procedure/models';
+
 export type Patient = {
   id: number;
   avatarUrl: string;

@@ -7,7 +7,7 @@ import { MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 
 const theme = createTheme({
-  fontFamily: 'Open Sans, sans-serif',
+  fontFamily: 'Roboto, sans-serif',
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {

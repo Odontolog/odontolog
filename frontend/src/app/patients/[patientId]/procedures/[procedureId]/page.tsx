@@ -11,7 +11,7 @@ export default async function ProcedurePage({
 }: {
   params: ProcedureParams;
 }) {
-  const { procedureId } = await params;
+  const { procedureId, patientId } = await params;
 
   const queryClient = getQueryClient();
 
