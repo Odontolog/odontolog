@@ -1,15 +1,7 @@
-export type procedureStatus =
-  | 'draft'
-  | 'not_started'
-  | 'in_progress'
-  | 'in_review'
-  | 'finished';
-export type reviewStatus = 'draft' | 'pending' | 'approved' | 'rejected';
-
 export type SupervisorReview = {
   note: string;
   grade: number;
-  status: reviewStatus;
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
 };
 
 export type Supervisor = {

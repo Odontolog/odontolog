@@ -6,7 +6,7 @@ import Search from './search';
 import { Student } from '@/shared/models';
 
 export default function Navbar() {
-  const user: Student = {
+  const user: Student  = {
     role: 'student',
     name: 'Pedro Sebastião',
     email: 'pedro.sebastiao@foufal.ufal.br',
@@ -24,8 +24,9 @@ export default function Navbar() {
         </div>
         <Group>
           <ActionIcon
-            variant="default"
-            color="black"
+            variant="subtle"
+            c="gray"
+            radius="xl"
             onClick={() => console.log('Criar novo prontuário')}
           >
             <IconPlus />

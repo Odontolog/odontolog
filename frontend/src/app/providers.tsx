@@ -4,10 +4,9 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { getQueryClient } from '@/app/get-query-client';
 import type * as React from 'react';
 import { MantineProvider, createTheme } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
 
 const theme = createTheme({
-  fontFamily: 'Roboto, sans-serif',
+  fontFamily: 'Open Sans, sans-serif',
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -15,10 +14,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MantineProvider theme={theme}>
-        <Notifications />
-        {children}
-      </MantineProvider>
+      <MantineProvider theme={theme}>{children}</MantineProvider>
     </QueryClientProvider>
   );
 }
