@@ -17,10 +17,6 @@ import java.util.Set;
 @NoArgsConstructor()
 @Table(name = "treatment_plans")
 public class TreatmentPlan extends Reviewable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Enumerated(EnumType.STRING)
     private TreatmentPlanStatus treatmentPlanStatus;
 

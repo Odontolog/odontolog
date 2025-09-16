@@ -19,10 +19,6 @@ import java.util.Set;
 // @DiscriminatorColumn(name = "type", discriminatorType =
 // DiscriminatorType.STRING)
 public abstract class Procedure extends Reviewable {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-
         private String name;
         private Integer planned_session;
 
