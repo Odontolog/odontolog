@@ -12,9 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -45,18 +43,19 @@ public class Reviewable {
     // FIXME: I don't know if this cascade type is correct. Check if this is
     // necessary.
     // Or if I should use CascadeType.PERSIST only.
-    @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final Set<Review> reviews = new HashSet<>();
+    @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Review> reviews;
 
     private String notes;
 
-    @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Activity> history;
 
     @Enumerated(EnumType.STRING)
     private ReviewableType type;
 
     @Enumerated(EnumType.STRING)
+    // FIXME: Remove this, and use the status from the subclasses.
     private ReviewableStatus reviewableStatus;
 
     public Reviewable(User author, User assignee, String notes, ReviewableType type,

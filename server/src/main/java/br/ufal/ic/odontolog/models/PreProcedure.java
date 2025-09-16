@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@DiscriminatorValue("PRE_PROCEDURE")
+// @DiscriminatorValue("PRE_PROCEDURE")
 @Table(name = "pre_procedures")
 public class PreProcedure extends Procedure {
     //
