@@ -25,10 +25,11 @@ package br.ufal.ic.odontolog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class OdontologApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(OdontologApplication.class, args);
 	}

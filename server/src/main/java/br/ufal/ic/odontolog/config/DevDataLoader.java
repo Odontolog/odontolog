@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,16 +26,19 @@ public class DevDataLoader implements CommandLineRunner {
         private final AttachmentRepository attachmentRepository;
         private final PreProcedureRepository preProcedureRepository;
         private final ActivityRepository activityRepository;
+        private final PasswordEncoder passwordEncoder;
 
         public DevDataLoader(StudentRepository studentRepository, SupervisorRepository supervisorRepository,
                         TreatmentPlanRepository treatmentPlanRepository, AttachmentRepository attachmentRepository,
-                        PreProcedureRepository preProcedureRepository, ActivityRepository activityRepository) {
+                        PreProcedureRepository preProcedureRepository, ActivityRepository activityRepository,
+                             PasswordEncoder passwordEncoder) {
                 this.studentRepository = studentRepository;
                 this.supervisorRepository = supervisorRepository;
                 this.treatmentPlanRepository = treatmentPlanRepository;
                 this.attachmentRepository = attachmentRepository;
                 this.preProcedureRepository = preProcedureRepository;
                 this.activityRepository = activityRepository;
+                this.passwordEncoder = passwordEncoder;
         }
 
         @Override
@@ -44,6 +48,7 @@ public class DevDataLoader implements CommandLineRunner {
                 Student studentTest001 = studentRepository.save(new Student(
                                 "Student_Test_001",
                                 "student.test.001@test.com",
+                                    passwordEncoder.encode("password1"),
                                 1,
                                 "20250914",
                                 2025,
@@ -53,6 +58,7 @@ public class DevDataLoader implements CommandLineRunner {
                 Supervisor supervisorTest001 = supervisorRepository.save(new Supervisor(
                                 "Supervisor_Test_001",
                                 "supervisor.test.001@test.com",
+                        passwordEncoder.encode("password2"),
                                 "Surgery",
                                 "20250832"));
                 logger.info("Supervisor created: {}", supervisorTest001.getName());
