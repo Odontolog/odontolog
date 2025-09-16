@@ -1,4 +1,10 @@
-import { Review, Student, Supervisor, TreatmentPlan } from '@/shared/models';
+import {
+  Review,
+  Student,
+  Supervisor,
+  TreatmentPlan,
+  TreatmentPlanProcedureShort,
+} from '@/shared/models';
 
 export const supervisorMock: Supervisor = {
   id: '6',
@@ -103,4 +109,19 @@ export function updateReviews(reviews: Review[]) {
 
 export function setNote(notes: string) {
   treatmentPlanMock.reviewable.notes = notes;
+}
+
+export function addProcedure(procedure: TreatmentPlanProcedureShort) {
+  treatmentPlanMock.procedures.push(procedure);
+}
+
+export function editProcedure(procedure: TreatmentPlanProcedureShort) {
+  for (let i = 0; i < treatmentPlanMock.procedures.length; i++) {
+    if (treatmentPlanMock.procedures[i].id === procedure.id) {
+      treatmentPlanMock.procedures[i] = {
+        ...treatmentPlanMock.procedures[i],
+        ...procedure,
+      };
+    }
+  }
 }
