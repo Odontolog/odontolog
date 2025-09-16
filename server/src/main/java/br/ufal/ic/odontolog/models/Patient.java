@@ -1,5 +1,11 @@
 package br.ufal.ic.odontolog.models;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
+
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
 import jakarta.persistence.Entity;
@@ -8,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
@@ -22,8 +29,9 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "patients")
 public class Patient {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
     private String name;
     private String address;
 
@@ -44,6 +52,15 @@ public class Patient {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
+    private String birthDate;
+
     @Enumerated(EnumType.STRING)
     private MaritalStatus maritalStatus;
+    private String profession;
+
+    @OneToMany(mappedBy = "patient")
+    private final Set<TreatmentPlan> treatmentPlans = new HashSet<>();
+
+    @OneToMany(mappedBy = "patient")
+    private final Set<Procedure> procedures = new HashSet<>();
 }

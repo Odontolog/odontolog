@@ -21,6 +21,10 @@ public class TreatmentPlan extends Reviewable {
     @Enumerated(EnumType.STRING)
     private TreatmentPlanStatus status;
 
+    @ManyToOne
+    @JoinColumn(name = "patient_id", nullable = false)
+    private Patient patient;
+
     @OneToMany(mappedBy = "treatmentPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<TreatmentPlanProcedure> procedures = new java.util.HashSet<>();
 

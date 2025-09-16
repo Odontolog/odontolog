@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
-import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 
 @Entity
 @Getter
@@ -19,11 +18,13 @@ import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "procedures")
-// @DiscriminatorColumn(name = "type", discriminatorType =
-// DiscriminatorType.STRING)
 public abstract class Procedure extends Reviewable {
         private String name;
         private Integer planned_session;
+
+        @ManyToOne
+        @JoinColumn(name = "patient_id", nullable = false)
+        private Patient patient;
 
         // TODO: Add state machine to manage the status transitions
         // For now, we will just use the enum directly

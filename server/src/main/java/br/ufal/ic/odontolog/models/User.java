@@ -1,5 +1,9 @@
 package br.ufal.ic.odontolog.models;
 
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
+
 import br.ufal.ic.odontolog.enums.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,8 +17,9 @@ import lombok.NoArgsConstructor;
 public class User {
     // TODO: Add UserDetails and other Spring Security related fields
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     private Role role;
