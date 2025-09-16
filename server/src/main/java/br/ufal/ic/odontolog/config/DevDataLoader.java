@@ -39,6 +39,8 @@ public class DevDataLoader implements CommandLineRunner {
 
         @Override
         public void run(String... args) throws Exception {
+                logger.info("Loading dev data...");
+
                 Student studentTest001 = studentRepository.save(new Student(
                                 "Student_Test_001",
                                 "student.test.001@test.com",
@@ -46,12 +48,14 @@ public class DevDataLoader implements CommandLineRunner {
                                 "20250914",
                                 2025,
                                 1));
+                logger.info("Student created: {}", studentTest001.getName());
 
                 Supervisor supervisorTest001 = supervisorRepository.save(new Supervisor(
                                 "Supervisor_Test_001",
                                 "supervisor.test.001@test.com",
                                 "Surgery",
                                 "20250832"));
+                logger.info("Supervisor created: {}", supervisorTest001.getName());
 
                 TreatmentPlan treatmentPlanTest001 = treatmentPlanRepository.save(TreatmentPlan.builder()
                                 .treatmentPlanStatus(TreatmentPlanStatus.DRAFT)
@@ -61,6 +65,7 @@ public class DevDataLoader implements CommandLineRunner {
                                 .notes("Test Notes")
                                 .type(ReviewableType.TREATMENT_PLAN)
                                 .build());
+                logger.info("Treatment Plan created: {}", treatmentPlanTest001.getId());
 
                 TreatmentPlanProcedure treatmentPlanProcedureTest001 = TreatmentPlanProcedure.builder()
                                 .name("Treatment_Plan_Procedure_Test_001")
@@ -77,6 +82,8 @@ public class DevDataLoader implements CommandLineRunner {
 
                 treatmentPlanTest001.addProcedure(treatmentPlanProcedureTest001);
                 treatmentPlanTest001 = treatmentPlanRepository.save(treatmentPlanTest001);
+                logger.info("Treatment Plan Procedure created: {}",
+                                treatmentPlanProcedureTest001.getName());
 
                 Attachment attachmentTest001 = attachmentRepository.save(Attachment.builder()
                                 .filename("Attachment_Test_001.pdf")
@@ -84,11 +91,15 @@ public class DevDataLoader implements CommandLineRunner {
                                 .location("/test/path/Attachment_Test_001.pdf")
                                 .uploader(studentTest001)
                                 .build());
+                logger.info("Attachment created: {}", attachmentTest001.getFilename());
 
                 if (treatmentPlanTest001.getProcedures().stream().findFirst().isPresent()) {
                         treatmentPlanTest001.getProcedures().stream().findFirst().get().getAttachments()
                                         .add(attachmentTest001);
                         treatmentPlanTest001 = treatmentPlanRepository.save(treatmentPlanTest001);
+                        logger.info("Attachment {} added to Procedure {}",
+                                        attachmentTest001.getFilename(),
+                                        treatmentPlanTest001.getProcedures().stream().findFirst().get().getName());
                 } else {
                         logger.error("No procedure found in treatment plan while trying to add attachment");
                 }
@@ -108,6 +119,7 @@ public class DevDataLoader implements CommandLineRunner {
 
                 preProcedureTest001.getAttachments().add(attachmentTest001);
                 preProcedureTest001 = preProcedureRepository.save(preProcedureTest001);
+                logger.info("Pre Procedure created: {}", preProcedureTest001.getName());
 
                 Activity activityTest001 = Activity.builder()
                                 .description("Created Treatment Plan")
@@ -115,8 +127,8 @@ public class DevDataLoader implements CommandLineRunner {
                                 .actor(studentTest001)
                                 .type(ActivityType.CREATED)
                                 .build();
-
                 activityRepository.save(activityTest001);
+                logger.info("Activity created: {}", activityTest001.getDescription());
 
                 Activity activityTest002 = Activity.builder()
                                 .description("Created Pre Procedure")
@@ -124,8 +136,8 @@ public class DevDataLoader implements CommandLineRunner {
                                 .actor(studentTest001)
                                 .type(ActivityType.CREATED)
                                 .build();
-
                 activityRepository.save(activityTest002);
+                logger.info("Activity created: {}", activityTest002.getDescription());
 
                 Review reviewTest001 = Review.builder()
                                 .comments("Looks good to me")
@@ -133,9 +145,9 @@ public class DevDataLoader implements CommandLineRunner {
                                 .grade(5)
                                 .supervisor(supervisorTest001)
                                 .build();
-
                 treatmentPlanTest001.addReview(reviewTest001);
                 treatmentPlanRepository.save(treatmentPlanTest001);
+                logger.info("Review added to Treatment Plan: {}", treatmentPlanTest001.getId());
 
                 logger.info("Dev data loaded successfully");
         }
