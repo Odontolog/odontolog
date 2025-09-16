@@ -1,8 +1,8 @@
 package br.ufal.ic.odontolog.config;
 
 import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.ReviewStatus;
-import br.ufal.ic.odontolog.enums.ReviewableStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
@@ -58,8 +58,7 @@ public class DevDataLoader implements CommandLineRunner {
                 logger.info("Supervisor created: {}", supervisorTest001.getName());
 
                 TreatmentPlan treatmentPlanTest001 = treatmentPlanRepository.save(TreatmentPlan.builder()
-                                .treatmentPlanStatus(TreatmentPlanStatus.DRAFT)
-                                .reviewableStatus(ReviewableStatus.DRAFT)
+                                .status(TreatmentPlanStatus.DRAFT)
                                 .author(studentTest001)
                                 .assignee(supervisorTest001)
                                 .notes("Test Notes")
@@ -74,7 +73,7 @@ public class DevDataLoader implements CommandLineRunner {
                                 .assignee(supervisorTest001)
                                 .notes("Test Notes")
                                 .type(ReviewableType.PROCEDURE)
-                                .reviewableStatus(ReviewableStatus.DRAFT)
+                                .status(ProcedureStatus.DRAFT)
                                 .studySector("Surgery")
                                 .procedureDetail(new ProcedureDetail(
                                                 "Test Procedure Detail"))
@@ -111,7 +110,7 @@ public class DevDataLoader implements CommandLineRunner {
                                 .assignee(supervisorTest001)
                                 .notes("Test Notes")
                                 .type(ReviewableType.PROCEDURE)
-                                .reviewableStatus(ReviewableStatus.DRAFT)
+                                .status(ProcedureStatus.DRAFT)
                                 .studySector("Surgery")
                                 .procedureDetail(new ProcedureDetail(
                                                 "Test Procedure Detail"))

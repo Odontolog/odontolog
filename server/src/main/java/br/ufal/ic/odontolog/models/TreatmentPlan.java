@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,16 +16,13 @@ import java.util.Set;
 @NoArgsConstructor()
 @Table(name = "treatment_plans")
 public class TreatmentPlan extends Reviewable {
+    // TODO: Add state machine to manage the status transitions
+    // For now, we will just use the enum directly
     @Enumerated(EnumType.STRING)
-    private TreatmentPlanStatus treatmentPlanStatus;
+    private TreatmentPlanStatus status;
 
     @OneToMany(mappedBy = "treatmentPlan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final Set<TreatmentPlanProcedure> procedures = new HashSet<>();
-
-    // @OneToOne(cascade = CascadeType.ALL)
-    // @JoinColumn(name = "reviewable_id", referencedColumnName = "id", nullable =
-    // false)
-    // private Reviewable reviewable;
+    private final Set<TreatmentPlanProcedure> procedures = new java.util.HashSet<>();
 
     public void addProcedure(TreatmentPlanProcedure treatmentPlanProcedure) {
         this.procedures.add(treatmentPlanProcedure);

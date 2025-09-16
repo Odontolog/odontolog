@@ -1,6 +1,5 @@
 package br.ufal.ic.odontolog.models;
 
-import br.ufal.ic.odontolog.enums.ReviewableStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor()
 @Table(name = "reviewables")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Reviewable {
+public abstract class Reviewable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,28 +43,15 @@ public class Reviewable {
     // necessary.
     // Or if I should use CascadeType.PERSIST only.
     @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Review> reviews;
+    private final Set<Review> reviews = new java.util.HashSet<>();
 
     private String notes;
 
     @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Activity> history;
+    private final Set<Activity> history = new java.util.HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private ReviewableType type;
-
-    @Enumerated(EnumType.STRING)
-    // FIXME: Remove this, and use the status from the subclasses.
-    private ReviewableStatus reviewableStatus;
-
-    public Reviewable(User author, User assignee, String notes, ReviewableType type,
-            ReviewableStatus reviewableStatus) {
-        this.author = author;
-        this.assignee = assignee;
-        this.notes = notes;
-        this.type = type;
-        this.reviewableStatus = reviewableStatus;
-    }
 
     public void addReview(Review review) {
         this.reviews.add(review);
