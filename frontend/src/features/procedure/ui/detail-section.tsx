@@ -13,10 +13,11 @@ import {
   Flex,
   ActionIcon,
 } from '@mantine/core';
-import { ProcedureDetail } from '../models';
+import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
+import { ProcedureDetail } from '../models';
 import { getDetails, saveDetails } from '../requests';
-import { IconEdit } from '@tabler/icons-react';
 
 const LABELS: Record<string, string> = {
   diagnostic: 'Diagnóstico',
@@ -107,6 +108,15 @@ function DetailSectionContent({
       setValues({});
       setEditing(false);
     },
+    onError(error) {
+      notifications.show({
+        title: 'Não foi possível salvar os dados',
+        message: `Um erro inesperado aconteceu e não foi possível salvar suas alterações nos detalhes. Tente novamente mais tarde. ${error}`,
+        color: 'red',
+        icon: <IconExclamationCircle />,
+        autoClose: 5000,
+      });
+    },
   });
 
   async function handleSave() {
@@ -161,11 +171,6 @@ function DetailSectionContent({
               Salvar
             </Button>
           </Group>
-          {mutation.isError && (
-            <Text c="red" size="sm" fw={600}>
-              Erro ao salvar dados. Tente novamente mais tarde.
-            </Text>
-          )}
         </Flex>
       )}
     </>
