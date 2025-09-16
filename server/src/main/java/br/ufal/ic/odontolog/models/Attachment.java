@@ -1,15 +1,17 @@
 package br.ufal.ic.odontolog.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @SuperBuilder
+@Table(name = "attachments")
 public class Attachment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

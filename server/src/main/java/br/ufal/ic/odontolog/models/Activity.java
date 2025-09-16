@@ -2,7 +2,11 @@ package br.ufal.ic.odontolog.models;
 
 import br.ufal.ic.odontolog.enums.ActivityType;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -10,9 +14,14 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 
 @Entity
-@Data
+@SuperBuilder
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "activities")
 public class Activity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -28,7 +37,8 @@ public class Activity {
 
     private String description;
 
-    // TODO: Improve this approach to store metadata, correctly mapping based on the type of activity.
+    // TODO: Improve this approach to store metadata, correctly mapping based on the
+    // type of activity.
     // Also see https://www.baeldung.com/java-jackson-polymorphic-deserialization
     // and https://www.baeldung.com/hibernate-persist-json-object
     @JdbcTypeCode(SqlTypes.JSON)
