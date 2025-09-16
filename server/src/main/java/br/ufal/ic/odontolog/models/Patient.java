@@ -1,0 +1,49 @@
+package br.ufal.ic.odontolog.models;
+
+import br.ufal.ic.odontolog.enums.MaritalStatus;
+import br.ufal.ic.odontolog.enums.Sex;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+@Entity
+@Getter
+@Setter
+@SuperBuilder
+@NoArgsConstructor()
+@Table(name = "patients")
+public class Patient {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String address;
+
+    // TODO: Add validation for CPF
+    private String CPF;
+
+    // TODO: Add validation for phone number
+    private String phoneNumber;
+
+    // TODO: Add validation for RG
+    private String RG;
+
+    private String city;
+    private String state;
+    private String race;
+
+    // TODO: This must be Sex or Gender?
+    @Enumerated(EnumType.STRING)
+    private Sex sex;
+
+    @Enumerated(EnumType.STRING)
+    private MaritalStatus maritalStatus;
+}
