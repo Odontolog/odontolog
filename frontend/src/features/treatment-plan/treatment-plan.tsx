@@ -1,9 +1,14 @@
 'use client';
 
+import { Stack } from '@mantine/core';
 import SupervisorSection from '@/shared/reviewable/supervisor-section';
 import NotesSection from '@/shared/reviewable/notes-section';
-import { getTreatmentPlanReviewableOptions } from './requests';
+import {
+  getTreatmentPlanReviewableOptions,
+  getTratmentPlanOptions,
+} from './requests';
 import AssigneeSection from '@/shared/reviewable/assignee-section';
+import ProcedureSection from './procedure-section';
 
 interface TreatmentPlanProps {
   patientId: string;
@@ -16,13 +21,18 @@ export default function TreatmentPlan({
 }: TreatmentPlanProps) {
   console.log(patientId, treatmentPlanId);
 
-  const options = getTreatmentPlanReviewableOptions(treatmentPlanId);
+  const reviewableOptions = getTreatmentPlanReviewableOptions(treatmentPlanId);
+  const options = getTratmentPlanOptions(treatmentPlanId);
 
   return (
-    <div>
+    <Stack gap="md">
       <AssigneeSection queryOptions={options} />
-      <SupervisorSection queryOptions={options} />
-      <NotesSection queryOptions={options} />
-    </div>
+      <SupervisorSection queryOptions={reviewableOptions} />
+      <NotesSection queryOptions={reviewableOptions} />
+      <ProcedureSection
+        queryOptions={options}
+        treatmentPlanId={treatmentPlanId}
+      />
+    </Stack>
   );
 }
