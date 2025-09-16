@@ -12,8 +12,8 @@ import {
 } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { HasReviewable } from '@/shared/models';
-// import AssigneeMenu from './assignee-menu';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import AssigneeMenu from './assignee-menu';
 
 interface AssigneeSectionProps {
   queryOptions: UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
@@ -27,6 +27,7 @@ export default function AssigneeSection({
     select: (data) => ({
       assignee: data.reviewable.assignee,
       reviewableId: data.reviewableId,
+      currentAssignee: data.reviewable.assignee,
     }),
   });
 
@@ -37,12 +38,13 @@ export default function AssigneeSection({
           <Text fw={600} size="sm">
             Aluno
           </Text>
-          {/* {data?.assignee && (
-            // <AssigneeMenu
-            //   procedureId={procedureId}
-            //   currentAssignee={data.assignee}
-            // />
-          )} */}
+          {data?.assignee && (
+            <AssigneeMenu
+              queryOptions={queryOptions}
+              reviewableId={data.reviewableId}
+              currentAssignee={data.currentAssignee}
+            />
+          )}
         </Group>
       </Card.Section>
 
@@ -73,6 +75,11 @@ export default function AssigneeSection({
                 variant="filled"
               />
               <Text size="xs">{data.assignee.name}</Text>
+              {data.assignee.role === 'student' && (
+                <Text size="xs" c="dimmed">
+                  Matrícula: {(data.assignee as any).enrollment}
+                </Text>
+              )}
             </Group>
           )}
         </Flex>
