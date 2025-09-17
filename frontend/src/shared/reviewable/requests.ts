@@ -1,23 +1,11 @@
-import { queryOptions, UseQueryOptions } from '@tanstack/react-query';
-
 import { supervisors } from '@/mocks/supervisor';
 import { students } from '@/mocks/students';
-import { HasReviewable, Review, Student, Supervisor } from '@/shared/models';
+import { Review, Student, Supervisor } from '@/shared/models';
 import {
   updateReviews,
   treatmentPlanMock,
   setNote,
 } from '@/mocks/treatment-plan';
-
-export function createReviewableOptions<T extends HasReviewable>(
-  queryKey: string[],
-  queryFn: () => Promise<T>,
-) {
-  return queryOptions({
-    queryKey,
-    queryFn,
-  }) as UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
-}
 
 export async function getAvailableStudents(): Promise<Student[]> {
   await new Promise((resolve) => setTimeout(resolve, 500));
@@ -51,7 +39,7 @@ export async function saveSupervisors(
     .filter((val) => val !== undefined);
 
   const reviews = selectedSupervisors.map((sup) => {
-    const existingReview = treatmentPlanMock.reviewable.reviews.find(
+    const existingReview = treatmentPlanMock.reviews.find(
       (rev) => rev.supervisor.id === sup.id,
     );
     if (existingReview) {

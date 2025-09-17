@@ -2,11 +2,11 @@ import { queryOptions } from '@tanstack/react-query';
 
 import {
   addProcedure,
-  supervisorMock,
+  patient,
+  supervisor,
   treatmentPlanMock,
 } from '@/mocks/treatment-plan';
 import { TreatmentPlan } from '@/shared/models';
-import { createReviewableOptions } from '@/shared/reviewable/requests';
 import { ProcedureFormValues } from './models';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
@@ -14,12 +14,6 @@ export function getTratmentPlanOptions(treatmentPlanId: string) {
     queryKey: ['treatmentPlan', treatmentPlanId],
     queryFn: () => getTreatmentPlan(treatmentPlanId),
   });
-}
-
-export function getTreatmentPlanReviewableOptions(treatmentPlanId: string) {
-  return createReviewableOptions(['treatmentPlan', treatmentPlanId], () =>
-    getTreatmentPlan(treatmentPlanId),
-  );
 }
 
 async function getTreatmentPlan(
@@ -56,7 +50,7 @@ export async function editTreatmentPlanProcedure(
     name: procedure.name,
     studySector: procedure.studySector,
     plannedSession: procedure.plannedSession,
-    tooth: procedure.tooth,
+    teeth: procedure.tooth,
   };
 
   return { success: true };
@@ -67,7 +61,7 @@ export async function createTreatmentPlanProcedure(
   procedure: ProcedureFormValues,
 ) {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log('creating new procedure  ', procedure.name);
+  console.log('creating new procedure  ', procedure.name, treatmentPlanId);
 
   if (!procedure.plannedSession) {
     throw new Error('error saving data');
@@ -78,16 +72,14 @@ export async function createTreatmentPlanProcedure(
     name: procedure.name,
     studySector: procedure.studySector,
     plannedSession: procedure.plannedSession,
-    tooth: procedure.tooth,
-    treatmentPlanId,
-    status: 'in_creation',
-    reviewable: {
-      id: 'rev-1',
-      assignee: supervisorMock,
-      updatedAt: new Date('2025-09-01T10:00:00Z'),
-      notes: 'Necessário avaliar radiografia complementar.',
-      status: 'in_review',
-    },
+    teeth: procedure.tooth,
+    status: 'draft',
+    reviews: [],
+    type: 'treatment_plan_procedure',
+    patient,
+    assignee: supervisor,
+    updatedAt: new Date('2025-09-01T10:00:00Z'),
+    notes: 'Necessário avaliar radiografia complementar.',
   });
 
   return { success: true };
@@ -103,6 +95,8 @@ export async function getProcedureNames(): Promise<string[]> {
     'Aplicação de flúor',
     'Canal',
     'Restauração',
+    'Obturação',
+    'Extração',
   ];
 }
 

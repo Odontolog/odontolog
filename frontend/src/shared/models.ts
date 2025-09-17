@@ -1,10 +1,7 @@
-import { procedureStatus } from '@/features/procedure/models';
-
-export type Patient = {
+export type PatientShort = {
   id: number;
   avatarUrl: string;
   name: string;
-  lastModified: Date;
 };
 
 export type User = {
@@ -12,7 +9,7 @@ export type User = {
   role: 'student' | 'supervisor' | 'admin';
   name: string;
   email: string;
-  avatarUrl?: string;
+  avatarUrl: string;
 };
 
 export type Student = User & {
@@ -26,7 +23,7 @@ export type Supervisor = User & {
   siape: string;
 };
 
-type ActivityType =
+export type ActivityType =
   | 'created'
   | 'edited'
   | 'review_requested'
@@ -37,7 +34,7 @@ type ActivityType =
 export type Activity = {
   id: string;
   type: ActivityType;
-  actor: Supervisor | Student;
+  actor: User;
   description: string;
   metadata?: Record<string, any>;
   createdAt: Date;
@@ -48,32 +45,58 @@ export type Review = {
   note: string;
   grade: number;
   status: 'draft' | 'pending' | 'approved' | 'rejected';
-  supervisor: Supervisor;
+  supervisor: User;
 };
 
-// ReviewablePants
-export type Reviewable = {
+export type ProcedureShort = {
   id: string;
-  author: Supervisor | Student;
-  assignee: Supervisor | Student;
-  createdAt: Date;
+  status: 'draft' | 'not_started' | 'in_progress' | 'in_review' | 'done';
+  name: string;
+  studySector: string;
+  plannedSession: number;
+  assignee: User;
+  patient: PatientShort;
+  teeth: string[];
   updatedAt: Date;
   reviews: Review[];
   notes: string;
-  history: Activity[];
-  type: 'treatment_plan' | 'procedure';
-  status: 'draft' | 'in_review' | 'approved';
+  type: 'treatment_plan_procedure' | 'pre_procedure';
 };
 
-export interface HasReviewable {
-  reviewable: Reviewable;
-  reviewableId: string;
-}
+export type TreatmentPlanShort = {
+  id: string;
+  status: 'draft' | 'in_review' | 'in_progress' | 'done';
+  assignee: User;
+  patient: PatientShort;
+  updatedAt: Date;
+  notes: string;
+  type: 'treatment_plan' | 'procedure';
+};
+
+export type Reviewable = {
+  id: string;
+  author: User;
+  assignee: User;
+  patient: PatientShort;
+  createdAt: Date;
+  updatedAt: Date;
+  notes: string;
+  reviews: Review[];
+  history: Activity[];
+  type: 'treatment_plan' | 'procedure';
+};
+
+export type TreatmentPlan = Reviewable & {
+  id: string;
+  status: 'draft' | 'in_review' | 'in_progress' | 'done';
+  reviewableType: 'treatment_plan' | 'procedure';
+  procedures: ProcedureShort[];
+};
 
 export type Attachments = {
   url: string;
   filename: string;
-  uploader: Supervisor | Student;
+  uploader: User;
   size: number;
 };
 
@@ -81,52 +104,15 @@ export type ProcedureDetail = {
   diagnostic: string;
 };
 
-// ReviewablePants
-export type Procedure = {
+export type Procedure = Reviewable & {
   id: string;
+  status: 'draft' | 'not_started' | 'in_progress' | 'in_review' | 'done';
+  reviewableType: 'treatment_plan' | 'procedure';
   name: string;
   attachments: Attachments[];
   studySector: string;
-  tooth: string[];
+  teeth: string[];
   details: ProcedureDetail;
-  reviewableId: string;
-  reviewable: Reviewable;
-  type: 'pre_procedure' | 'tratment_plan_procedure';
-  status: 'in_creation' | 'not_started' | 'in_progress' | 'done';
-};
-
-// PreProcedurePants
-export type PreProcedure = Procedure;
-
-// TreatmentPlanProcedurePants
-export type TreatmentPlanProcedure = Procedure & {
-  treatmentPlanId: string;
-  plannedSession: number;
-};
-
-export type ReviewableShort = {
-  id: string;
-  assignee: Supervisor | Student;
-  updatedAt: Date;
-  notes: string;
-  status: 'draft' | 'in_review' | 'approved';
-};
-
-export type TreatmentPlanProcedureShort = {
-  id: string;
-  name: string;
-  studySector: string;
-  plannedSession: number;
-  tooth: string[];
-  treatmentPlanId: string;
-  reviewable: ReviewableShort;
-  status: 'in_creation' | 'not_started' | 'in_progress' | 'done';
-};
-
-export type TreatmentPlan = {
-  id: string;
-  status: 'in_creation' | 'in_progress' | 'done';
-  procedures: TreatmentPlanProcedureShort[];
-  reviewableId: string;
-  reviewable: Reviewable;
+  procedureType: 'pre_procedure' | 'tratment_plan_procedure';
+  treatmentPlanId?: string;
 };

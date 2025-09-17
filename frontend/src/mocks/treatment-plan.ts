@@ -1,121 +1,149 @@
 import {
-  Review,
-  Student,
-  Supervisor,
   TreatmentPlan,
-  TreatmentPlanProcedureShort,
+  User,
+  PatientShort,
+  Review,
+  Activity,
+  ProcedureShort,
 } from '@/shared/models';
 
-export const supervisorMock: Supervisor = {
-  id: '6',
-  name: 'Dr. Ana Souza',
-  email: 'ana.souza@clinica.edu',
+// Usuários
+export const supervisor: User = {
+  id: '7',
   role: 'supervisor',
+  name: 'Dr. João Silva',
+  email: 'joao.silva@clinic.com',
   avatarUrl: '',
-  specialty: 'Ortodontia',
-  siape: '123456',
 };
 
-export const studentMock: Student = {
-  id: '1',
-  name: 'Carlos Silva',
-  email: 'carlos.silva@aluno.edu',
+export const supervisor2: User = {
+  id: '8',
+  role: 'supervisor',
+  name: 'Dr. João Martino',
+  email: 'joao.martino@clinic.com',
+  avatarUrl: '',
+};
+
+export const student: User = {
+  id: '2',
   role: 'student',
-  avatarUrl: '',
-  clinic: 2,
-  enrollment: 202301,
-  semester: 4,
+  name: 'Maria Souza',
+  email: 'maria.souza@aluno.ufal.br',
+  avatarUrl: 'https://example.com/avatar-student.png',
 };
 
-export const treatmentPlanMock: TreatmentPlan = {
-  id: 'tp-1',
-  status: 'in_progress',
-  procedures: [
-    {
-      id: '120',
-      name: 'Canal',
-      studySector: 'Endodontia',
-      plannedSession: 1,
-      tooth: ['11', '12'],
-      treatmentPlanId: 'tp-1',
-      status: 'in_creation',
-      reviewable: {
-        id: 'rev-1',
-        assignee: supervisorMock,
-        updatedAt: new Date('2025-09-01T10:00:00Z'),
-        notes: 'Necessário avaliar radiografia complementar.',
-        status: 'in_review',
-      },
-    },
-    {
-      id: '121',
-      name: 'Restauração',
-      studySector: 'Dentística',
-      plannedSession: 2,
-      status: 'in_creation',
-      tooth: ['21'],
-      treatmentPlanId: 'tp-1',
-      reviewable: {
-        id: 'rev-2',
-        assignee: studentMock,
-        updatedAt: new Date('2025-09-05T14:30:00Z'),
-        notes: 'Aluno iniciou execução prática.',
-        status: 'draft',
-      },
-    },
-  ],
-  reviewableId: 'rev-tp-1',
-  reviewable: {
-    id: 'rev-tp-1',
-    author: studentMock,
-    assignee: supervisorMock,
-    createdAt: new Date('2025-08-28T09:00:00Z'),
-    updatedAt: new Date('2025-09-05T14:30:00Z'),
-    reviews: [
-      {
-        id: '1',
-        note: 'Plano inicial bem estruturado.',
-        grade: 9,
-        status: 'approved',
-        supervisor: supervisorMock,
-      },
-    ],
-    notes: 'Plano de tratamento focado em ortodontia.',
-    history: [
-      {
-        id: 'act-1',
-        type: 'created',
-        actor: studentMock,
-        description: '',
-        createdAt: new Date('2025-08-28T09:00:00Z'),
-      },
-      {
-        id: 'act-2',
-        type: 'review_approved',
-        actor: supervisorMock,
-        description: '',
-        createdAt: new Date('2025-08-29T16:00:00Z'),
-        metadata: { feedback: 'Aprovado com ajustes mínimos.' },
-      },
-    ],
-    type: 'treatment_plan',
-    status: 'in_review',
+// Paciente
+export const patient: PatientShort = {
+  id: 1,
+  avatarUrl: 'https://example.com/patient1.png',
+  name: 'Carlos Pereira',
+};
+
+// Reviews
+const reviews: Review[] = [
+  {
+    id: '1',
+    note: 'Plano inicial bem detalhado.',
+    grade: 9,
+    status: 'approved',
+    supervisor,
   },
+  {
+    id: '2',
+    note: 'Falta detalhar dente 14.',
+    grade: 7,
+    status: 'pending',
+    supervisor: supervisor2,
+  },
+];
+
+// Histórico
+const history: Activity[] = [
+  {
+    id: '1',
+    type: 'created',
+    actor: student,
+    description: 'Plano criado pelo aluno.',
+    createdAt: new Date('2025-09-01T10:00:00Z'),
+  },
+  {
+    id: '2',
+    type: 'review_requested',
+    actor: student,
+    description: 'Solicitação de revisão enviada.',
+    createdAt: new Date('2025-09-03T09:30:00Z'),
+  },
+  {
+    id: '3',
+    type: 'review_approved',
+    actor: supervisor,
+    description: 'Plano aprovado pelo supervisor.',
+    createdAt: new Date('2025-09-05T14:00:00Z'),
+  },
+];
+
+// Procedimentos curtos
+const procedures: ProcedureShort[] = [
+  {
+    id: '1',
+    status: 'in_review',
+    name: 'Obturação',
+    studySector: 'Endodontia',
+    plannedSession: 1,
+    assignee: student,
+    patient,
+    teeth: ['12'],
+    updatedAt: new Date('2025-09-05T13:00:00Z'),
+    reviews,
+    notes: 'Revisar técnica de isolamento.',
+    type: 'treatment_plan_procedure',
+  },
+  {
+    id: '2',
+    status: 'not_started',
+    name: 'Extração',
+    studySector: 'Cirurgia',
+    plannedSession: 2,
+    assignee: supervisor,
+    patient,
+    teeth: ['14'],
+    updatedAt: new Date('2025-09-07T16:30:00Z'),
+    reviews: [],
+    notes: 'Aguardando autorização do paciente.',
+    type: 'treatment_plan_procedure',
+  },
+];
+
+// Mock TreatmentPlan
+export const treatmentPlanMock: TreatmentPlan = {
+  id: '1',
+  author: student,
+  assignee: supervisor,
+  patient,
+  createdAt: new Date('2025-09-01T10:00:00Z'),
+  updatedAt: new Date('2025-09-07T17:00:00Z'),
+  notes: 'Plano de tratamento inicial do paciente Carlos Pereira.',
+  reviews,
+  history,
+  type: 'treatment_plan',
+  status: 'in_review',
+  reviewableType: 'treatment_plan',
+  procedures,
 };
 
 export function updateReviews(reviews: Review[]) {
-  treatmentPlanMock.reviewable.reviews = reviews;
+  treatmentPlanMock.reviews = reviews;
 }
 
 export function setNote(notes: string) {
-  treatmentPlanMock.reviewable.notes = notes;
+  treatmentPlanMock.notes = notes;
 }
 
-export function addProcedure(procedure: TreatmentPlanProcedureShort) {
+export function addProcedure(procedure: ProcedureShort) {
   treatmentPlanMock.procedures.push(procedure);
 }
 
-export function editProcedure(procedure: TreatmentPlanProcedureShort) {
+export function editProcedure(procedure: ProcedureShort) {
   for (let i = 0; i < treatmentPlanMock.procedures.length; i++) {
     if (treatmentPlanMock.procedures[i].id === procedure.id) {
       treatmentPlanMock.procedures[i] = {

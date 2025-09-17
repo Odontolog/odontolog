@@ -55,4 +55,22 @@ export const supervisors: Supervisor[] = [
     specialty: 'Ortodontia',
     siape: '123456',
   },
+  {
+    id: '7',
+    role: 'supervisor',
+    name: 'Dr. João Silva',
+    email: 'joao.silva@clinic.com',
+    avatarUrl: '',
+    specialty: 'Ortodontia',
+    siape: '123456',
+  },
+  {
+    id: '8',
+    role: 'supervisor',
+    name: 'Dr. João Martino',
+    email: 'joao.martino@clinic.com',
+    avatarUrl: '',
+    specialty: 'Ortodontia',
+    siape: '123456',
+  },
 ];

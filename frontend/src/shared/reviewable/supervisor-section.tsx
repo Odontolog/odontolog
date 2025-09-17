@@ -15,21 +15,21 @@ import {
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { IconExclamationCircle } from '@tabler/icons-react';
 
-import { HasReviewable } from '@/shared/models';
+import { Reviewable } from '@/shared/models';
 import SupervisorMenu from './supervisor-menu';
 
-interface SupervisorSectionProps {
-  queryOptions: UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
+interface SupervisorSectionProps<T extends Reviewable> {
+  queryOptions: UseQueryOptions<T, Error, T, string[]>;
 }
 
-export default function SupervisorSection({
+export default function SupervisorSection<T extends Reviewable>({
   queryOptions,
-}: SupervisorSectionProps) {
+}: SupervisorSectionProps<T>) {
   const { data, isLoading, isError } = useQuery({
     ...queryOptions,
     select: (data) => ({
-      reviews: data.reviewable.reviews,
-      reviewableId: data.reviewableId,
+      reviews: data.reviews,
+      id: data.id,
     }),
   });
 
@@ -43,7 +43,7 @@ export default function SupervisorSection({
           {data && (
             <SupervisorMenu
               queryOptions={queryOptions}
-              reviewableId={data.reviewableId}
+              id={data.id}
               currentReviews={data.reviews}
             />
           )}

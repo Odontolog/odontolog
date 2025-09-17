@@ -1,4 +1,4 @@
-import { TreatmentPlan, TreatmentPlanProcedureShort } from '@/shared/models';
+import { useState } from 'react';
 import {
   ActionIcon,
   Badge,
@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import {
   IconPlus,
   IconCalendarClock,
@@ -19,10 +20,9 @@ import {
 } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
+import { TreatmentPlan, ProcedureShort } from '@/shared/models';
 import classes from './procedure-card.module.css';
 import ProcedureSectionModal from './procedure-modal';
-import { useDisclosure } from '@mantine/hooks';
-import { useState } from 'react';
 
 interface ProcedureSectionProps {
   treatmentPlanId: string;
@@ -35,7 +35,7 @@ export default function ProcedureSection({
 }: ProcedureSectionProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedProcedure, setSelectedProcedure] = useState<
-    TreatmentPlanProcedureShort | undefined
+    ProcedureShort | undefined
   >();
 
   const { data, isLoading } = useQuery({
@@ -105,29 +105,33 @@ export interface ProcedureCardData {
   studySector: string;
   plannedSession: number;
   notes: string;
-  status: 'in_creation' | 'not_started' | 'in_progress' | 'done';
+  status: 'draft' | 'not_started' | 'in_progress' | 'in_review' | 'done';
 }
 
 interface ProcedureCardProps {
-  data: TreatmentPlanProcedureShort;
+  data: ProcedureShort;
   open: () => void;
-  setSelectedProcedure: (data: TreatmentPlanProcedureShort) => void;
+  setSelectedProcedure: (data: ProcedureShort) => void;
 }
 
 const statusLabels: Record<
-  TreatmentPlanProcedureShort['status'],
+  ProcedureShort['status'],
   { title: string; color: string }
 > = {
-  in_creation: {
-    title: 'Em elaboração',
+  draft: {
+    title: 'Rascunho',
     color: 'gray',
   },
   not_started: {
     title: 'Não iniciado',
-    color: 'blue',
+    color: 'gray',
   },
   in_progress: {
     title: 'Em andamento',
+    color: 'blue',
+  },
+  in_review: {
+    title: 'Em revisão',
     color: 'yellow',
   },
   done: {
@@ -136,17 +140,15 @@ const statusLabels: Record<
   },
 };
 
-function getProcedureCardData(
-  data: TreatmentPlanProcedureShort,
-): ProcedureCardData {
+function getProcedureCardData(data: ProcedureShort): ProcedureCardData {
   return {
     id: data.id,
     name: data.name,
     plannedSession: data.plannedSession,
     studySector: data.studySector,
-    tooth: data.tooth,
+    tooth: data.teeth,
     status: data.status,
-    notes: data.reviewable.notes,
+    notes: data.notes,
   };
 }
 

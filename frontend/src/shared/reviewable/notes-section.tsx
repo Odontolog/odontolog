@@ -22,21 +22,23 @@ import {
 } from '@tanstack/react-query';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 
-import { HasReviewable } from '@/shared/models';
 import { saveDetails } from './requests';
+import { Reviewable } from '../models';
 
-interface NotesSectionProps {
-  queryOptions: UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
+interface NotesSectionProps<T extends Reviewable> {
+  queryOptions: UseQueryOptions<T, Error, T, string[]>;
 }
 
-export default function NotesSection({ queryOptions }: NotesSectionProps) {
+export default function NotesSection<T extends Reviewable>({
+  queryOptions,
+}: NotesSectionProps<T>) {
   const [editing, setEditing] = useState(false);
 
   const { data, isLoading } = useQuery({
     ...queryOptions,
     select: (data) => ({
-      reviewableId: data.reviewableId,
-      notes: data.reviewable.notes,
+      id: data.id,
+      notes: data.notes,
     }),
     enabled: false,
   });
@@ -70,7 +72,7 @@ export default function NotesSection({ queryOptions }: NotesSectionProps) {
           </Center>
         ) : (
           <DetailSectionContent
-            reviewableId={data.reviewableId}
+            id={data.id}
             notes={data.notes}
             editing={editing}
             setEditing={setEditing}
@@ -82,20 +84,21 @@ export default function NotesSection({ queryOptions }: NotesSectionProps) {
   );
 }
 
-interface DetailSectionContentProps extends NotesSectionProps {
-  reviewableId: string;
+interface DetailSectionContentProps<T extends Reviewable>
+  extends NotesSectionProps<T> {
+  id: string;
   notes: string;
   editing: boolean;
   setEditing: (value: boolean) => void;
 }
 
-function DetailSectionContent({
-  reviewableId,
+function DetailSectionContent<T extends Reviewable>({
+  id,
   notes,
   editing,
   setEditing,
   queryOptions,
-}: DetailSectionContentProps) {
+}: DetailSectionContentProps<T>) {
   const queryClient = useQueryClient();
 
   // NOTE: This is necessary to make reactive UI changes and keep the useState
@@ -104,7 +107,7 @@ function DetailSectionContent({
   const displayValue = editing ? value || notes : notes;
 
   const mutation = useMutation({
-    mutationFn: (value: string) => saveDetails(reviewableId, value),
+    mutationFn: (value: string) => saveDetails(id, value),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       setValue('');

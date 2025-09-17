@@ -11,23 +11,23 @@ import {
   ThemeIcon,
 } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { HasReviewable } from '@/shared/models';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+
+import { Reviewable } from '@/shared/models';
 import AssigneeMenu from './assignee-menu';
 
-interface AssigneeSectionProps {
-  queryOptions: UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
+interface AssigneeSectionProps<T extends Reviewable> {
+  queryOptions: UseQueryOptions<T, Error, T, string[]>;
 }
 
-export default function AssigneeSection({
+export default function AssigneeSection<T extends Reviewable>({
   queryOptions,
-}: AssigneeSectionProps) {
+}: AssigneeSectionProps<T>) {
   const { data, isLoading, isError } = useQuery({
     ...queryOptions,
     select: (data) => ({
-      assignee: data.reviewable.assignee,
-      reviewableId: data.reviewableId,
-      currentAssignee: data.reviewable.assignee,
+      assignee: data.assignee,
+      id: data.id,
     }),
   });
 
@@ -41,8 +41,8 @@ export default function AssigneeSection({
           {data?.assignee && (
             <AssigneeMenu
               queryOptions={queryOptions}
-              reviewableId={data.reviewableId}
-              currentAssignee={data.currentAssignee}
+              reviewableId={data.id}
+              currentAssignee={data.assignee}
             />
           )}
         </Group>

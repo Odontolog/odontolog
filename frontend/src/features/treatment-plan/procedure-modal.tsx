@@ -6,7 +6,6 @@ import {
   Select,
   Button,
   Flex,
-  Loader,
   MultiSelect,
   TextInput,
 } from '@mantine/core';
@@ -14,13 +13,14 @@ import { useForm } from '@mantine/form';
 
 import {
   useMutation,
-  useQueries,
   useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
 
-import { TreatmentPlan, TreatmentPlanProcedureShort } from '@/shared/models';
+import { TreatmentPlan, ProcedureShort } from '@/shared/models';
+import { teeth } from '@/shared/utils';
+
 import {
   editTreatmentPlanProcedure,
   createTreatmentPlanProcedure,
@@ -28,8 +28,6 @@ import {
   getStudySectors,
 } from './requests';
 import { ProcedureFormValues } from './models';
-import { IconAlertCircle } from '@tabler/icons-react';
-import { teeth } from '@/shared/utils';
 
 interface ProcedureSectionModalProps {
   treatmentPlanId: string;
@@ -37,7 +35,7 @@ interface ProcedureSectionModalProps {
   opened: boolean;
   open: () => void;
   close: () => void;
-  selectedProcedure?: TreatmentPlanProcedureShort;
+  selectedProcedure?: ProcedureShort;
 }
 
 export default function ProcedureSectionModal(
@@ -105,7 +103,7 @@ function ProcedureSectionModalForm({
 
   if (selectedProcedure) {
     initialValues.name = selectedProcedure.name;
-    initialValues.tooth = selectedProcedure.tooth;
+    initialValues.tooth = selectedProcedure.teeth;
     initialValues.plannedSession = selectedProcedure.plannedSession;
     initialValues.studySector = selectedProcedure.studySector;
 
@@ -127,6 +125,9 @@ function ProcedureSectionModalForm({
     mode: 'uncontrolled',
     initialValues,
   });
+
+  console.log(selectedProcedure?.name);
+  console.log(initialValues.name);
 
   // function refetch() {
   //   procedureNamesQuery.refetch();

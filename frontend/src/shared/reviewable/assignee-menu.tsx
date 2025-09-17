@@ -18,21 +18,24 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { Student, Supervisor, HasReviewable } from '@/shared/models';
-import { getAvailableStudents, saveStudent } from '../reviewable/requests';
 import { IconEdit } from '@tabler/icons-react';
+import { Student, Reviewable, User } from '@/shared/models';
+import {
+  getAvailableStudents,
+  saveStudent,
+} from '@/shared/reviewable/requests';
 
-interface AssigneeMenuProps {
-  queryOptions: UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
+interface AssigneeMenuProps<T extends Reviewable> {
+  queryOptions: UseQueryOptions<T, Error, T, string[]>;
   reviewableId: string;
-  currentAssignee: Student | Supervisor;
+  currentAssignee: User;
 }
 
-export default function AssigneeMenu({
+export default function AssigneeMenu<T extends Reviewable>({
   queryOptions,
   reviewableId,
   currentAssignee,
-}: AssigneeMenuProps) {
+}: AssigneeMenuProps<T>) {
   const [menuOpened, setMenuOpened] = useState<boolean>(false);
 
   return (
@@ -60,16 +63,17 @@ export default function AssigneeMenu({
   );
 }
 
-interface AssigneeMenuContentProps extends AssigneeMenuProps {
+interface AssigneeMenuContentProps<T extends Reviewable>
+  extends AssigneeMenuProps<T> {
   setMenuOpened: (value: boolean) => void;
 }
 
-function AssigneeMenuContent({
+function AssigneeMenuContent<T extends Reviewable>({
   queryOptions,
   reviewableId,
   currentAssignee,
   setMenuOpened,
-}: AssigneeMenuContentProps) {
+}: AssigneeMenuContentProps<T>) {
   const queryClient = useQueryClient();
 
   // Busca os estudantes disponíveis

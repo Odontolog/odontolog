@@ -19,16 +19,18 @@ import {
 } from '@tanstack/react-query';
 import { IconEdit } from '@tabler/icons-react';
 
-import { HasReviewable, Review } from '@/shared/models';
 import { getAvailableSupervisors, saveSupervisors } from './requests';
+import { Reviewable, Review } from '@/shared/models';
 
-interface SupervisorMenuProps {
-  reviewableId: string;
-  queryOptions: UseQueryOptions<HasReviewable, Error, HasReviewable, string[]>;
+interface SupervisorMenuProps<T extends Reviewable> {
+  id: string;
+  queryOptions: UseQueryOptions<T, Error, T, string[]>;
   currentReviews: Review[];
 }
 
-export default function SupervisorMenu(props: SupervisorMenuProps) {
+export default function SupervisorMenu<T extends Reviewable>(
+  props: SupervisorMenuProps<T>,
+) {
   const [menuOpened, setMenuOpened] = useState<boolean>(false);
 
   return (
@@ -51,16 +53,17 @@ export default function SupervisorMenu(props: SupervisorMenuProps) {
   );
 }
 
-interface SupervisorMenuContentProps extends SupervisorMenuProps {
+interface SupervisorMenuContentProps<T extends Reviewable>
+  extends SupervisorMenuProps<T> {
   setMenuOpened: (value: boolean) => void;
 }
 
-function SupervisorMenuContent({
-  reviewableId,
+function SupervisorMenuContent<T extends Reviewable>({
+  id,
   queryOptions,
   currentReviews,
   setMenuOpened,
-}: SupervisorMenuContentProps) {
+}: SupervisorMenuContentProps<T>) {
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -73,8 +76,7 @@ function SupervisorMenuContent({
   );
 
   const mutation = useMutation({
-    mutationFn: (supervisors: string[]) =>
-      saveSupervisors(reviewableId, supervisors),
+    mutationFn: (supervisors: string[]) => saveSupervisors(id, supervisors),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       setMenuOpened(false);
