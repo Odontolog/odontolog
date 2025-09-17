@@ -1,15 +1,12 @@
-import { Student } from '@/shared/models';
+import { User } from '@/shared/models';
 
-export const students: Student[] = [
+export const students: User[] = [
   {
     id: '1',
     role: 'student',
     name: 'Argel',
     email: 'abc@def.ufal.br',
     avatarUrl: '',
-    clinic: 1,
-    enrollment: 2,
-    semester: 8,
   },
   {
     id: '2',
@@ -17,9 +14,6 @@ export const students: Student[] = [
     name: 'José',
     email: 'abc@def.ufal.br',
     avatarUrl: '',
-    clinic: 2,
-    enrollment: 3,
-    semester: 5,
   },
   {
     id: '3',
@@ -27,9 +21,6 @@ export const students: Student[] = [
     name: 'Hélio',
     email: 'abc@def.ufal.br',
     avatarUrl: '',
-    clinic: 1,
-    enrollment: 2,
-    semester: 4,
   },
   {
     id: '4',
@@ -37,9 +28,6 @@ export const students: Student[] = [
     name: 'Cobalto',
     email: 'abc@def.ufal.br',
     avatarUrl: '',
-    clinic: 5,
-    enrollment: 4,
-    semester: 7,
   },
   {
     id: '5',
@@ -47,8 +35,5 @@ export const students: Student[] = [
     name: 'Alumínio',
     email: 'abc@def.ufal.br',
     avatarUrl: '',
-    clinic: 3,
-    enrollment: 2,
-    semester: 6,
   },
 ];

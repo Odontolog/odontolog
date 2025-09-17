@@ -26,28 +26,27 @@ import { saveDetails } from './requests';
 import { Reviewable } from '../models';
 
 interface NotesSectionProps<T extends Reviewable> {
+  reviewableId: string;
   queryOptions: UseQueryOptions<T, Error, T, string[]>;
 }
 
 export default function NotesSection<T extends Reviewable>({
+  reviewableId,
   queryOptions,
 }: NotesSectionProps<T>) {
   const [editing, setEditing] = useState(false);
 
-  const { data, isLoading } = useQuery({
+  const { data: notes, isLoading } = useQuery({
     ...queryOptions,
-    select: (data) => ({
-      id: data.id,
-      notes: data.notes,
-    }),
+    select: (data) => data.notes,
     enabled: false,
   });
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm">
-      <Card.Section inheritPadding py="xs">
+      <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
-          <Text fw={700} size="lg">
+          <Text fw={600} size="lg">
             Observações
           </Text>
           {!editing && (
@@ -66,14 +65,14 @@ export default function NotesSection<T extends Reviewable>({
       <Divider my="none" />
 
       <Card.Section inheritPadding px="md" py="sm">
-        {isLoading || !data ? (
+        {isLoading || !notes ? (
           <Center py="md">
             <Loader size="sm" />
           </Center>
         ) : (
           <DetailSectionContent
-            id={data.id}
-            notes={data.notes}
+            reviewableId={reviewableId}
+            notes={notes}
             editing={editing}
             setEditing={setEditing}
             queryOptions={queryOptions}
@@ -86,14 +85,14 @@ export default function NotesSection<T extends Reviewable>({
 
 interface DetailSectionContentProps<T extends Reviewable>
   extends NotesSectionProps<T> {
-  id: string;
+  reviewableId: string;
   notes: string;
   editing: boolean;
   setEditing: (value: boolean) => void;
 }
 
 function DetailSectionContent<T extends Reviewable>({
-  id,
+  reviewableId,
   notes,
   editing,
   setEditing,
@@ -107,7 +106,7 @@ function DetailSectionContent<T extends Reviewable>({
   const displayValue = editing ? value || notes : notes;
 
   const mutation = useMutation({
-    mutationFn: (value: string) => saveDetails(id, value),
+    mutationFn: (value: string) => saveDetails(reviewableId, value),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       setValue('');

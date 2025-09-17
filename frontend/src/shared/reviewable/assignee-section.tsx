@@ -9,6 +9,7 @@ import {
   Center,
   Flex,
   ThemeIcon,
+  Divider,
 } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
@@ -17,36 +18,41 @@ import { Reviewable } from '@/shared/models';
 import AssigneeMenu from './assignee-menu';
 
 interface AssigneeSectionProps<T extends Reviewable> {
+  reviewableId: string;
   queryOptions: UseQueryOptions<T, Error, T, string[]>;
 }
 
 export default function AssigneeSection<T extends Reviewable>({
+  reviewableId,
   queryOptions,
 }: AssigneeSectionProps<T>) {
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data: assignee,
+    isLoading,
+    isError,
+  } = useQuery({
     ...queryOptions,
-    select: (data) => ({
-      assignee: data.assignee,
-      id: data.id,
-    }),
+    select: (data) => data.assignee,
   });
 
   return (
-    <Card withBorder shadow="sm" radius="md">
-      <Card.Section withBorder inheritPadding px="sm" py="xs">
+    <Card withBorder shadow="sm" radius="md" px="sm">
+      <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
-          <Text fw={600} size="md">
-            Aluno
+          <Text fw={600} size="lg">
+            Encarregado
           </Text>
-          {data?.assignee && (
+          {assignee && (
             <AssigneeMenu
+              reviewableId={reviewableId}
               queryOptions={queryOptions}
-              reviewableId={data.id}
-              currentAssignee={data.assignee}
+              currentAssignee={assignee}
             />
           )}
         </Group>
       </Card.Section>
+
+      <Divider my="none" />
 
       <Card.Section inheritPadding p="md">
         {isLoading && (
@@ -67,19 +73,10 @@ export default function AssigneeSection<T extends Reviewable>({
         )}
 
         <Flex gap="xs" direction="column">
-          {data?.assignee && (
-            <Group key={data.assignee.id} gap="xs">
-              <Avatar
-                src={data.assignee.avatarUrl}
-                size="sm"
-                variant="filled"
-              />
-              <Text size="sm">{data.assignee.name}</Text>
-              {data.assignee.role === 'student' && (
-                <Text size="xs" c="dimmed">
-                  Matrícula: {(data.assignee as any).enrollment}
-                </Text>
-              )}
+          {assignee && (
+            <Group key={assignee.id} gap="xs">
+              <Avatar src={assignee.avatarUrl} size="sm" variant="filled" />
+              <Text size="sm">{assignee.name}</Text>
             </Group>
           )}
         </Flex>

@@ -11,6 +11,7 @@ import {
   Box,
   Flex,
   ThemeIcon,
+  Divider,
 } from '@mantine/core';
 import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { IconExclamationCircle } from '@tabler/icons-react';
@@ -19,36 +20,41 @@ import { Reviewable } from '@/shared/models';
 import SupervisorMenu from './supervisor-menu';
 
 interface SupervisorSectionProps<T extends Reviewable> {
+  reviewableId: string;
   queryOptions: UseQueryOptions<T, Error, T, string[]>;
 }
 
 export default function SupervisorSection<T extends Reviewable>({
+  reviewableId,
   queryOptions,
 }: SupervisorSectionProps<T>) {
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data: reviews,
+    isLoading,
+    isError,
+  } = useQuery({
     ...queryOptions,
-    select: (data) => ({
-      reviews: data.reviews,
-      id: data.id,
-    }),
+    select: (data) => data.reviews,
   });
 
   return (
-    <Card withBorder shadow="sm" radius="md">
-      <Card.Section withBorder inheritPadding px="sm" py="xs">
+    <Card withBorder shadow="sm" radius="md" px="sm">
+      <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
-          <Text fw={600} size="md">
+          <Text fw={600} size="lg">
             Supervisores
           </Text>
-          {data && (
+          {reviews && (
             <SupervisorMenu
+              reviewableId={reviewableId}
               queryOptions={queryOptions}
-              id={data.id}
-              currentReviews={data.reviews}
+              currentReviews={reviews}
             />
           )}
         </Group>
       </Card.Section>
+
+      <Divider my="none" />
 
       <Card.Section inheritPadding p="md">
         {isLoading && (
@@ -68,15 +74,15 @@ export default function SupervisorSection<T extends Reviewable>({
           </Flex>
         )}
 
-        {data?.reviews && data?.reviews.length === 0 && (
+        {reviews && reviews.length === 0 && (
           <Text size="sm" c="dimmed" ta="center">
             Nenhum supervisor selecionado
           </Text>
         )}
 
         <Flex gap="xs" direction="column">
-          {data &&
-            data.reviews.map((review) => (
+          {reviews &&
+            reviews.map((review) => (
               <Group key={review.id} justify="space-between" gap="xs">
                 <Group gap="xs">
                   <Avatar

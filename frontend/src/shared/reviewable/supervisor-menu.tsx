@@ -23,7 +23,7 @@ import { getAvailableSupervisors, saveSupervisors } from './requests';
 import { Reviewable, Review } from '@/shared/models';
 
 interface SupervisorMenuProps<T extends Reviewable> {
-  id: string;
+  reviewableId: string;
   queryOptions: UseQueryOptions<T, Error, T, string[]>;
   currentReviews: Review[];
 }
@@ -59,7 +59,7 @@ interface SupervisorMenuContentProps<T extends Reviewable>
 }
 
 function SupervisorMenuContent<T extends Reviewable>({
-  id,
+  reviewableId,
   queryOptions,
   currentReviews,
   setMenuOpened,
@@ -76,7 +76,8 @@ function SupervisorMenuContent<T extends Reviewable>({
   );
 
   const mutation = useMutation({
-    mutationFn: (supervisors: string[]) => saveSupervisors(id, supervisors),
+    mutationFn: (supervisors: string[]) =>
+      saveSupervisors(reviewableId, supervisors),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       setMenuOpened(false);

@@ -19,21 +19,19 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query';
 import { IconEdit } from '@tabler/icons-react';
-import { Student, Reviewable, User } from '@/shared/models';
-import {
-  getAvailableStudents,
-  saveStudent,
-} from '@/shared/reviewable/requests';
+
+import { Reviewable, User } from '@/shared/models';
+import { getAvailableUsers, saveAssignee } from '@/shared/reviewable/requests';
 
 interface AssigneeMenuProps<T extends Reviewable> {
-  queryOptions: UseQueryOptions<T, Error, T, string[]>;
   reviewableId: string;
+  queryOptions: UseQueryOptions<T, Error, T, string[]>;
   currentAssignee: User;
 }
 
 export default function AssigneeMenu<T extends Reviewable>({
-  queryOptions,
   reviewableId,
+  queryOptions,
   currentAssignee,
 }: AssigneeMenuProps<T>) {
   const [menuOpened, setMenuOpened] = useState<boolean>(false);
@@ -53,8 +51,8 @@ export default function AssigneeMenu<T extends Reviewable>({
       </Menu.Target>
       <Menu.Dropdown>
         <AssigneeMenuContent
-          queryOptions={queryOptions}
           reviewableId={reviewableId}
+          queryOptions={queryOptions}
           currentAssignee={currentAssignee}
           setMenuOpened={setMenuOpened}
         />
@@ -69,17 +67,16 @@ interface AssigneeMenuContentProps<T extends Reviewable>
 }
 
 function AssigneeMenuContent<T extends Reviewable>({
-  queryOptions,
   reviewableId,
+  queryOptions,
   currentAssignee,
   setMenuOpened,
 }: AssigneeMenuContentProps<T>) {
   const queryClient = useQueryClient();
 
-  // Busca os estudantes disponíveis
-  const { data: students, isLoading } = useQuery({
-    queryKey: ['availableStudents'],
-    queryFn: getAvailableStudents,
+  const { data: users, isLoading } = useQuery({
+    queryKey: ['availableUsers'],
+    queryFn: getAvailableUsers,
   });
 
   const combobox = useCombobox({
@@ -87,26 +84,32 @@ function AssigneeMenuContent<T extends Reviewable>({
   });
 
   const [search, setSearch] = useState('');
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(
-    currentAssignee?.role === 'student' ? (currentAssignee as Student) : null,
-  );
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (assigneeId: string) => saveStudent(reviewableId, assigneeId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
+    mutationFn: (assigneeId: string) => saveAssignee(reviewableId, assigneeId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       setMenuOpened(false);
     },
   });
 
-  const filteredStudents = (Array.isArray(students) ? students : []).filter(
-    (student) =>
-      student.name.toLowerCase().includes(search.toLowerCase().trim()),
+  const baseUsers = users
+    ? users.filter(
+        (user) =>
+          !user.name
+            .toLocaleLowerCase()
+            .includes(currentAssignee.name.toLocaleLowerCase()),
+      )
+    : [];
+
+  const filteredUsers = baseUsers.filter((user) =>
+    user.name.toLowerCase().includes(search.toLowerCase().trim()),
   );
 
-  const options = filteredStudents.map((student) => (
-    <Combobox.Option value={student.id} key={student.id}>
-      {student.name}
+  const options = filteredUsers.map((user) => (
+    <Combobox.Option value={user.id} key={user.id}>
+      {user.name}
     </Combobox.Option>
   ));
 
@@ -122,19 +125,21 @@ function AssigneeMenuContent<T extends Reviewable>({
     <>
       <Menu.Label>
         <Text fw={600} size="sm">
-          Atribuir aluno
+          Selecione o encarregado
         </Text>
       </Menu.Label>
       <Stack p="xs" gap="sm" w={250}>
         <Combobox
           store={combobox}
           withinPortal={false}
-          onOptionSubmit={(studentId) => {
-            const student = (Array.isArray(students) ? students : []).find(
-              (s) => s.id === studentId,
-            );
-            setSelectedStudent(student || null);
-            setSearch(student?.name || '');
+          onOptionSubmit={(userId) => {
+            const user = baseUsers.find((u) => u.id === userId);
+            setSearch(user?.name || '');
+
+            if (user) {
+              setSelectedUser(user);
+            }
+
             combobox.closeDropdown();
           }}
         >
@@ -151,7 +156,7 @@ function AssigneeMenuContent<T extends Reviewable>({
               onFocus={() => combobox.openDropdown()}
               onBlur={() => {
                 combobox.closeDropdown();
-                setSearch(selectedStudent?.name || '');
+                setSearch(selectedUser?.name || '');
               }}
               placeholder="Buscar aluno..."
               rightSectionPointerEvents="none"
@@ -172,12 +177,12 @@ function AssigneeMenuContent<T extends Reviewable>({
         <Button
           size="xs"
           onClick={() => {
-            if (selectedStudent) {
-              mutation.mutate(selectedStudent.id);
+            if (selectedUser) {
+              mutation.mutate(selectedUser.id);
             }
           }}
           loading={mutation.isPending}
-          disabled={!selectedStudent}
+          disabled={!selectedUser}
         >
           Salvar
         </Button>

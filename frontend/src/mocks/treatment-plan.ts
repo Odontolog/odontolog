@@ -29,13 +29,13 @@ export const student: User = {
   role: 'student',
   name: 'Maria Souza',
   email: 'maria.souza@aluno.ufal.br',
-  avatarUrl: 'https://example.com/avatar-student.png',
+  avatarUrl: '',
 };
 
 // Paciente
 export const patient: PatientShort = {
   id: 1,
-  avatarUrl: 'https://example.com/patient1.png',
+  avatarUrl: '',
   name: 'Carlos Pereira',
 };
 
@@ -104,7 +104,7 @@ const procedures: ProcedureShort[] = [
     name: 'Extração',
     studySector: 'Cirurgia',
     plannedSession: 2,
-    assignee: supervisor,
+    assignee: student,
     patient,
     teeth: ['14'],
     updatedAt: new Date('2025-09-07T16:30:00Z'),
@@ -118,7 +118,7 @@ const procedures: ProcedureShort[] = [
 export const treatmentPlanMock: TreatmentPlan = {
   id: '1',
   author: student,
-  assignee: supervisor,
+  assignee: student,
   patient,
   createdAt: new Date('2025-09-01T10:00:00Z'),
   updatedAt: new Date('2025-09-07T17:00:00Z'),

@@ -1,23 +1,20 @@
 import { supervisors } from '@/mocks/supervisor';
 import { students } from '@/mocks/students';
-import { Review, Student, Supervisor } from '@/shared/models';
+import { Review, Supervisor, User } from '@/shared/models';
 import {
   updateReviews,
   treatmentPlanMock,
   setNote,
 } from '@/mocks/treatment-plan';
 
-export async function getAvailableStudents(): Promise<Student[]> {
+export async function getAvailableUsers(): Promise<User[]> {
   await new Promise((resolve) => setTimeout(resolve, 500));
   return students;
 }
 
-export async function saveStudent(
-  reviewableId: string,
-  selectedAssigneeId: string,
-) {
+export async function saveAssignee(id: string, selectedAssigneeId: string) {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log('Saved to backend (mock):', { reviewableId, selectedAssigneeId });
+  console.log('Saved to backend (mock):', { id, selectedAssigneeId });
   return { success: true };
 }
 

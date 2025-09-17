@@ -1,12 +1,14 @@
 'use client';
 
 import { Group, Stack } from '@mantine/core';
+
 import SupervisorSection from '@/shared/reviewable/supervisor-section';
 import NotesSection from '@/shared/reviewable/notes-section';
-import { getTratmentPlanOptions } from './requests';
 import AssigneeSection from '@/shared/reviewable/assignee-section';
+import { getTratmentPlanOptions } from './requests';
 import ProcedureSection from './procedure-section';
 import TreatmentPlanHeader from './header';
+import styles from './treatment-plan.module.css';
 
 interface TreatmentPlanProps {
   patientId: string;
@@ -28,24 +30,24 @@ export default function TreatmentPlan({
         queryOptions={options}
         mode="edit"
       />
-      <Group
-        py="md"
-        px="xl"
-        gap="lg"
-        align="flex-start"
-        justify="space-between"
-      >
-        <Stack miw={440} style={{ flex: 1 }}>
+      <Group className={styles.container}>
+        <Stack className={styles.main}>
           <ProcedureSection
             queryOptions={options}
             treatmentPlanId={treatmentPlanId}
           />
-          <NotesSection queryOptions={options} />
+          <NotesSection reviewableId={treatmentPlanId} queryOptions={options} />
         </Stack>
 
-        <Stack miw={240} style={{ flexBasis: '16%' }}>
-          <AssigneeSection queryOptions={options} />
-          <SupervisorSection queryOptions={options} />
+        <Stack className={styles.side}>
+          <SupervisorSection
+            reviewableId={treatmentPlanId}
+            queryOptions={options}
+          />
+          <AssigneeSection
+            reviewableId={treatmentPlanId}
+            queryOptions={options}
+          />
         </Stack>
       </Group>
     </>

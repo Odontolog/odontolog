@@ -1,4 +1,3 @@
-/* TreatmentPlanHeader.module.css */
 .header {
   padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
   border-bottom: 1px solid var(--mantine-color-default-border);
@@ -9,20 +8,6 @@
   color: var(--mantine-color-dimmed);
 }
 
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-@media (max-width: 992px) {
-  .row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
 .title {
   margin: 0;
   font-weight: 700;
@@ -31,7 +16,7 @@
   color: var(--mantine-color-gray-9, #1a1b1e);
 }
 
-@media (min-width: 992px) {
+@media (min-width: 62em) {
   .title {
     font-size: 2rem;
   }
@@ -42,7 +27,7 @@
   min-width: 100px;
 }
 
-@media (max-width: 992px) {
+@media (max-width: 62em) {
   .button {
     width: 100%;
     min-width: 0;
