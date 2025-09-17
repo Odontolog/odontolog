@@ -34,10 +34,10 @@ export default function SupervisorSection<T extends Reviewable>({
   });
 
   return (
-    <Card withBorder shadow="sm" radius="md" w={220}>
+    <Card withBorder shadow="sm" radius="md">
       <Card.Section withBorder inheritPadding px="sm" py="xs">
         <Group justify="space-between">
-          <Text fw={600} size="sm">
+          <Text fw={600} size="md">
             Supervisores
           </Text>
           {data && (
@@ -81,10 +81,10 @@ export default function SupervisorSection<T extends Reviewable>({
                 <Group gap="xs">
                   <Avatar
                     src={review.supervisor.avatarUrl}
-                    size="xs"
+                    size="sm"
                     variant="filled"
                   />
-                  <Text size="xs">{review.supervisor.name}</Text>
+                  <Text size="sm">{review.supervisor.name}</Text>
                 </Group>
                 <Indicator
                   size={8}

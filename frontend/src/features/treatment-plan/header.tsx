@@ -1,6 +1,5 @@
 'use client';
 
-import { getPatientById } from '@/features/patient/requests';
 import {
   Anchor,
   Badge,
@@ -13,15 +12,15 @@ import {
   useMatches,
 } from '@mantine/core';
 import { IconChevronDown, IconSlash } from '@tabler/icons-react';
-import ReviewMenu from './review-menu';
-import { useQuery } from '@tanstack/react-query';
-import { Patient } from '@/shared/models';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
-interface ProcedureHeaderProps {
-  type: 'procedure' | 'treatmentPlan';
+import { TreatmentPlan } from '@/shared/models';
+import ReviewMenu from './review-menu';
+
+interface TreatmentPlanHeaderProps {
+  id: string;
+  queryOptions: UseQueryOptions<TreatmentPlan, Error, TreatmentPlan, string[]>;
   mode: 'edit' | 'read';
-  procedureId: string;
-  patientId: string;
 }
 
 const typeTranslations: { [key: string]: string } = {
@@ -30,25 +29,30 @@ const typeTranslations: { [key: string]: string } = {
 };
 
 // NOTE: falta considerar se é supervisor ou student; falta ver como puxar o id do treatmentPlan se for Procedure (linha 114); conferir as requisições
-export default function ProcedureHeader(props: ProcedureHeaderProps) {
-  const { procedureId, patientId } = props;
+export default function TreatmentPlanHeader(props: TreatmentPlanHeaderProps) {
+  const { id, queryOptions } = props;
 
-  const { data: patient } = useQuery<Patient>({
-    queryKey: ['patient', patientId],
-    queryFn: async () => getPatientById(patientId),
+  const { data, isLoading, isError } = useQuery({
+    ...queryOptions,
+    select: (data) => ({
+      patient: data.patient,
+      status: data.status,
+      updatedAt: data.updatedAt,
+      assignee: data.assignee,
+    }),
   });
 
   const breadcrumbsData = [
     { title: 'Pacientes', href: '/patients' },
-    { title: `${patient?.name}`, href: `/patients/${patientId}` },
-    { title: `${typeTranslations[props.type]} #${procedureId}` },
+    { title: `${data?.patient.name}`, href: `/patients/${data?.patient.id}` },
+    { title: `Plano de tratamento #${id}` },
   ];
   const breadcrumbsItems = breadcrumbsData.map((item, index) => {
     const isLast = index === breadcrumbsData.length - 1;
 
     if (isLast) {
       return (
-        <Text size="sm" fw={700} key={index}>
+        <Text size="sm" c="gray" fw={600} key={index}>
           {item.title}
         </Text>
       );
@@ -60,7 +64,7 @@ export default function ProcedureHeader(props: ProcedureHeaderProps) {
         underline="hover"
         href={item.href}
         key={index}
-        c="black"
+        c="gray.9"
       >
         {item.title}
       </Anchor>
@@ -76,12 +80,10 @@ export default function ProcedureHeader(props: ProcedureHeaderProps) {
     switch (status) {
       case 'draft':
         return { color: 'gray', children: 'EM ELABORAÇÃO' };
-      case 'not_started':
-        return { color: 'indigo', children: 'NÃO INICIADO' };
-      case 'in_progress':
-        return { color: 'blue', children: 'EM ANDAMENTO' };
       case 'in_review':
         return { color: 'orange', children: 'EM ANDAMENTO' };
+      case 'in_progress':
+        return { color: 'blue', children: 'EM ANDAMENTO' };
       case 'finished':
         return { color: 'teal', children: 'CONCLUÍDO' };
       default:
@@ -103,34 +105,30 @@ export default function ProcedureHeader(props: ProcedureHeaderProps) {
         </Breadcrumbs>
         <Group justify="space-between">
           <Stack gap={8}>
-            <Title size={titleSize}>
-              {props.mode === 'edit' ? 'Criação de ' : ''}
-              {typeTranslations[props.type]}{' '}
+            <Title size={titleSize} c="gray.9">
+              Plano de Tratamento{' '}
               <span style={{ color: 'var(--mantine-color-dimmed)' }}>
-                #{procedureId}
+                #{id}
               </span>
             </Title>
             <Group gap={8}>
-              <Badge
-                variant="light"
-                {...getBadgeProps(patient?.status ?? '')}
-              />
+              <Badge variant="light" {...getBadgeProps(data?.status ?? '')} />
               <Text size="sm">
-                Última atualização por <b>{patient?.assignee.name}</b> às{' '}
-                {patient?.lastModified.toLocaleString('pt-BR', {
+                Última atualização por <b>{data?.assignee.name}</b> às{' '}
+                {data?.updatedAt.toLocaleString('pt-BR', {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',
                   hour: '2-digit',
                   minute: '2-digit',
                 })}{' '}
-                {props.type === 'procedure' ? (
+                {/* {props.type === 'procedure' ? (
                   <span>
                     no <b>Plano de Tratamento #{12}</b>
                   </span>
                 ) : (
                   ''
-                )}
+                )} */}
               </Text>
             </Group>
           </Stack>

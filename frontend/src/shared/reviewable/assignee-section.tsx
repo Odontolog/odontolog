@@ -32,10 +32,10 @@ export default function AssigneeSection<T extends Reviewable>({
   });
 
   return (
-    <Card withBorder shadow="sm" radius="md" w={220}>
+    <Card withBorder shadow="sm" radius="md">
       <Card.Section withBorder inheritPadding px="sm" py="xs">
         <Group justify="space-between">
-          <Text fw={600} size="sm">
+          <Text fw={600} size="md">
             Aluno
           </Text>
           {data?.assignee && (
@@ -71,10 +71,10 @@ export default function AssigneeSection<T extends Reviewable>({
             <Group key={data.assignee.id} gap="xs">
               <Avatar
                 src={data.assignee.avatarUrl}
-                size="xs"
+                size="sm"
                 variant="filled"
               />
-              <Text size="xs">{data.assignee.name}</Text>
+              <Text size="sm">{data.assignee.name}</Text>
               {data.assignee.role === 'student' && (
                 <Text size="xs" c="dimmed">
                   Matrícula: {(data.assignee as any).enrollment}
