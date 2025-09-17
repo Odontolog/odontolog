@@ -96,7 +96,7 @@ const procedures: ProcedureShort[] = [
     updatedAt: new Date('2025-09-05T13:00:00Z'),
     reviews,
     notes: 'Revisar técnica de isolamento.',
-    type: 'treatment_plan_procedure',
+    procedureType: 'treatment_plan_procedure',
   },
   {
     id: '2',
@@ -110,7 +110,7 @@ const procedures: ProcedureShort[] = [
     updatedAt: new Date('2025-09-07T16:30:00Z'),
     reviews: [],
     notes: 'Aguardando autorização do paciente.',
-    type: 'treatment_plan_procedure',
+    procedureType: 'treatment_plan_procedure',
   },
 ];
 
@@ -127,7 +127,6 @@ export const treatmentPlanMock: TreatmentPlan = {
   history,
   type: 'treatment_plan',
   status: 'in_review',
-  reviewableType: 'treatment_plan',
   procedures,
 };
 

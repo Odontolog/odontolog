@@ -30,12 +30,10 @@ export default function TreatmentPlan({
       />
       <Group
         py="md"
-        // px="128px"
         px="xl"
         gap="lg"
         align="flex-start"
         justify="space-between"
-        style={{ boxSizing: 'border-box' }}
       >
         <Stack miw={440} style={{ flex: 1 }}>
           <ProcedureSection
@@ -45,7 +43,7 @@ export default function TreatmentPlan({
           <NotesSection queryOptions={options} />
         </Stack>
 
-        <Stack miw={220} style={{ flexBasis: '16%' }}>
+        <Stack miw={240} style={{ flexBasis: '16%' }}>
           <AssigneeSection queryOptions={options} />
           <SupervisorSection queryOptions={options} />
         </Stack>

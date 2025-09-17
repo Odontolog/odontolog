@@ -48,9 +48,16 @@ export type Review = {
   supervisor: User;
 };
 
+export type ProcedureStatus =
+  | 'draft'
+  | 'not_started'
+  | 'in_progress'
+  | 'in_review'
+  | 'done';
+
 export type ProcedureShort = {
   id: string;
-  status: 'draft' | 'not_started' | 'in_progress' | 'in_review' | 'done';
+  status: ProcedureStatus;
   name: string;
   studySector: string;
   plannedSession: number;
@@ -60,12 +67,18 @@ export type ProcedureShort = {
   updatedAt: Date;
   reviews: Review[];
   notes: string;
-  type: 'treatment_plan_procedure' | 'pre_procedure';
+  procedureType: 'treatment_plan_procedure' | 'pre_procedure';
 };
+
+export type TreatmentPlanStatus =
+  | 'draft'
+  | 'in_review'
+  | 'in_progress'
+  | 'done';
 
 export type TreatmentPlanShort = {
   id: string;
-  status: 'draft' | 'in_review' | 'in_progress' | 'done';
+  status: TreatmentPlanStatus;
   assignee: User;
   patient: PatientShort;
   updatedAt: Date;
@@ -88,8 +101,7 @@ export type Reviewable = {
 
 export type TreatmentPlan = Reviewable & {
   id: string;
-  status: 'draft' | 'in_review' | 'in_progress' | 'done';
-  reviewableType: 'treatment_plan' | 'procedure';
+  status: TreatmentPlanStatus;
   procedures: ProcedureShort[];
 };
 
@@ -107,8 +119,7 @@ export type ProcedureDetail = {
 
 export type Procedure = Reviewable & {
   id: string;
-  status: 'draft' | 'not_started' | 'in_progress' | 'in_review' | 'done';
-  reviewableType: 'treatment_plan' | 'procedure';
+  status: ProcedureStatus;
   name: string;
   attachments: Attachments[];
   studySector: string;
