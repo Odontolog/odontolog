@@ -16,11 +16,8 @@ interface TreatmentPlanProps {
 }
 
 export default function TreatmentPlan({
-  patientId,
   treatmentPlanId,
 }: TreatmentPlanProps) {
-  console.log(patientId, treatmentPlanId);
-
   const options = getTratmentPlanOptions(treatmentPlanId);
 
   return (

@@ -64,7 +64,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
 
   const breadcrumbsData = [
     { title: 'Pacientes', href: '/patients' },
-    { title: `${data.patient.name}`, href: `/patients/${data.patient.id}` },
+    { title: `${data.patient.name}`, href: `/patients/${data.patient.id}/procedures` },
     { title: `Plano de tratamento #${id}` },
   ];
 
