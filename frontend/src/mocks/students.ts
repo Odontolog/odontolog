@@ -37,3 +37,11 @@ export const students: User[] = [
     avatarUrl: '',
   },
 ];
+
+export const loggedUser: User = {
+  id: '10',
+  role: 'student',
+  name: 'Pedro Sebastião',
+  email: 'pedro.sebastiao@foufal.ufal.br',
+  avatarUrl: '',
+};
