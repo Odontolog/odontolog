@@ -2,6 +2,7 @@
   padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
   border-bottom: 1px solid var(--mantine-color-default-border);
   background-color: var(--mantine-color-body);
+  min-width: 360px;
 }
 
 .span {
@@ -28,6 +29,10 @@
 }
 
 @media (max-width: 62em) {
+  .header {
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-xs);
+  }
+
   .button {
     width: 100%;
     min-width: 0;
