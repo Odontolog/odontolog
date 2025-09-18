@@ -15,7 +15,7 @@
 
 .link {
   width: 100%;
-  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm) ;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
   border-radius: var(--mantine-radius-md);
   display: flex;
   align-items: center;

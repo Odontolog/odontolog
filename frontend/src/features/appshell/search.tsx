@@ -43,7 +43,7 @@ export default function Search() {
     .map((patient) => (
       <Spotlight.Action
         key={patient.name}
-        onClick={() => router.push(`/patients/${patient.id}`)}
+        onClick={() => router.push(`/patients/${patient.id}/procedures`)}
       >
         <Group wrap="nowrap" w="100%">
           {patient.avatarUrl && (

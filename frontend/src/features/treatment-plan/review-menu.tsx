@@ -1,7 +1,8 @@
 'use client';
+
+import type { ComponentPropsWithoutRef } from 'react';
 import { Menu, Button } from '@mantine/core';
 import { IconChevronDown, IconCheck, IconX } from '@tabler/icons-react';
-import type { ComponentPropsWithoutRef } from 'react';
 
 type ReviewMenuProps = ComponentPropsWithoutRef<typeof Menu> & {
   buttonProps?: ComponentPropsWithoutRef<typeof Button>;
