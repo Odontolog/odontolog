@@ -112,7 +112,7 @@ export type TreatmentPlan = Reviewable & {
 
 export type Attachments = {
   id: string;
-  url: string;
+  location: string;
   filename: string;
   uploader: User;
   size: number;
