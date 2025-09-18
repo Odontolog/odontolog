@@ -4,9 +4,11 @@ export type PatientShort = {
   name: string;
 };
 
+export type UserRole = 'student' | 'supervisor' | 'admin';
+
 export type User = {
   id: string;
-  role: 'student' | 'supervisor' | 'admin';
+  role: UserRole;
   name: string;
   email: string;
   avatarUrl: string;
@@ -40,11 +42,13 @@ export type Activity = {
   createdAt: Date;
 };
 
+export type ReviewStatus = 'draft' | 'pending' | 'approved' | 'rejected';
+
 export type Review = {
   id: string;
   note: string;
   grade: number;
-  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  status: ReviewStatus;
   supervisor: User;
 };
 
@@ -67,6 +71,7 @@ export type ProcedureShort = {
   updatedAt: Date;
   reviews: Review[];
   notes: string;
+  type: 'treatment_plan' | 'procedure';
   procedureType: 'treatment_plan_procedure' | 'pre_procedure';
 };
 

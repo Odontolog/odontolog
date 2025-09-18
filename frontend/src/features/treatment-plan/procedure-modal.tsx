@@ -10,22 +10,17 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-
 import {
   useMutation,
-  useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
 
 import { TreatmentPlan, ProcedureShort } from '@/shared/models';
-import { teeth } from '@/shared/utils';
-
+import { procedureNames, studySectors, teeth } from '@/shared/data';
 import {
   editTreatmentPlanProcedure,
   createTreatmentPlanProcedure,
-  getProcedureNames,
-  getStudySectors,
 } from './requests';
 import { ProcedureFormValues } from './models';
 
@@ -75,23 +70,6 @@ function ProcedureSectionModalForm({
 }: ProcedureSectionModalProps) {
   const queryClient = useQueryClient();
 
-  const procedureNamesQuery = useQuery({
-    queryKey: ['procedureNames'],
-    queryFn: getProcedureNames,
-  });
-
-  const studySectorsQuery = useQuery({
-    queryKey: ['studySectors'],
-    queryFn: getStudySectors,
-  });
-
-  const procedureNames = procedureNamesQuery.data;
-  const studySectors = studySectorsQuery.data;
-
-  // const isLoading =
-  //   procedureNamesQuery.isLoading || studySectorsQuery.isLoading;
-  // const isError = procedureNamesQuery.isError || studySectorsQuery.isError;
-
   const initialValues: ProcedureFormValues = {
     name: '',
     tooth: [],
@@ -125,36 +103,6 @@ function ProcedureSectionModalForm({
     mode: 'uncontrolled',
     initialValues,
   });
-
-  console.log(selectedProcedure?.name);
-  console.log(initialValues.name);
-
-  // function refetch() {
-  //   procedureNamesQuery.refetch();
-  //   studySectorsQuery.refetch();
-  // }
-
-  // if (isLoading) {
-  //   return (
-  //     <Stack p="xs" gap="sm" align="center">
-  //       <Loader size="sm" />
-  //     </Stack>
-  //   );
-  // }
-
-  // if (isError) {
-  //   return (
-  //     <Stack p="xl" gap="sm" align="center" justify="center">
-  //       <IconAlertCircle size={32} color="red" />
-  //       <Text c="red" ta="center">
-  //         Não foi possível carregar os dados.
-  //       </Text>
-  //       <Button size="xs" onClick={() => refetch()}>
-  //         Recarregar
-  //       </Button>
-  //     </Stack>
-  //   );
-  // }
 
   function handleSubmit(values: ProcedureFormValues) {
     if (selectedProcedure) {

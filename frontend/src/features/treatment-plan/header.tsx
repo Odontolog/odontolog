@@ -92,6 +92,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
     );
   });
 
+  // TODO: Fazer componente genérico
   function getBadgeProps(status: string) {
     switch (status) {
       case 'draft':

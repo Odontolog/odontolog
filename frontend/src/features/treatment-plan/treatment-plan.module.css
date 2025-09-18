@@ -7,12 +7,12 @@
 
 .main {
   flex: 1;
-  min-width: 440px;
+  min-width: 380px;
 }
 
 .side {
   flex-basis: 16%;
-  min-width: 240px;
+  min-width: 280px;
 }
 
 @media (max-width: 62em) {

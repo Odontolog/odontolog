@@ -75,7 +75,8 @@ export async function createTreatmentPlanProcedure(
     teeth: procedure.tooth,
     status: 'draft',
     reviews: [],
-    type: 'treatment_plan_procedure',
+    procedureType: 'treatment_plan_procedure',
+    type: 'procedure',
     patient,
     assignee: supervisor,
     updatedAt: new Date('2025-09-01T10:00:00Z'),
@@ -83,30 +84,4 @@ export async function createTreatmentPlanProcedure(
   });
 
   return { success: true };
-}
-
-export async function getProcedureNames(): Promise<string[]> {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return [
-    'Restauração com resina composta',
-    'Tratamento endodôntico',
-    'Extração dentária',
-    'Limpeza e profilaxia',
-    'Aplicação de flúor',
-    'Canal',
-    'Restauração',
-    'Obturação',
-    'Extração',
-  ];
-}
-
-export async function getStudySectors(): Promise<string[]> {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return [
-    'Dentística',
-    'Endodontia',
-    'Cirurgia oral',
-    'Periodontia',
-    'Ortodontia',
-  ];
 }

@@ -97,6 +97,7 @@ const procedures: ProcedureShort[] = [
     reviews,
     notes: 'Revisar técnica de isolamento.',
     procedureType: 'treatment_plan_procedure',
+    type: 'procedure',
   },
   {
     id: '2',
@@ -111,6 +112,7 @@ const procedures: ProcedureShort[] = [
     reviews: [],
     notes: 'Aguardando autorização do paciente.',
     procedureType: 'treatment_plan_procedure',
+    type: 'procedure',
   },
 ];
 
