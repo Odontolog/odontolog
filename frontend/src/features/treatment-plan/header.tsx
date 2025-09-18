@@ -17,6 +17,8 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { TreatmentPlan } from '@/shared/models';
 import ReviewMenu from './review-menu';
 import styles from './header.module.css';
+import { useDisclosure } from '@mantine/hooks';
+import RequestReviewModal from './ask-review-modal';
 
 interface TreatmentPlanHeaderProps {
   id: string;
@@ -41,7 +43,7 @@ interface TreatmentPlanHeaderContentProps {
 
 function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
   const { id, queryOptions } = props;
-
+  const [opened, { open, close }] = useDisclosure(false);
   const { data, isLoading } = useQuery({
     ...queryOptions,
     select: (data) => ({
@@ -64,7 +66,10 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
 
   const breadcrumbsData = [
     { title: 'Pacientes', href: '/patients' },
-    { title: `${data.patient.name}`, href: `/patients/${data.patient.id}/procedures` },
+    {
+      title: `${data.patient.name}`,
+      href: `/patients/${data.patient.id}/procedures`,
+    },
     { title: `Plano de tratamento #${id}` },
   ];
 
@@ -134,13 +139,17 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
           </Group>
         </Stack>
         {props.mode === 'edit' ? (
-          <Button
-            fw={500}
-            rightSection={<IconChevronDown />}
-            className={styles.button}
-          >
-            Enviar para validação
-          </Button>
+          <>
+            <Button
+              fw={500}
+              rightSection={<IconChevronDown />}
+              className={styles.button}
+              onClick={open}
+            >
+              Enviar para validação
+            </Button>
+            <RequestReviewModal close={close} open={open} opened={opened} />
+          </>
         ) : (
           <ReviewMenu buttonProps={{ className: styles.button }}>
             Revisar
