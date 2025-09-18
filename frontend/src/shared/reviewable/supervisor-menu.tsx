@@ -11,17 +11,26 @@ import {
   Menu,
   ActionIcon,
 } from '@mantine/core';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { SupervisorAndReview } from '../models';
-import { getAvailableSupervisors, saveSupervisors } from '../requests';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import { IconEdit } from '@tabler/icons-react';
 
-interface SupervisorMenuProps {
-  procedureId: string;
-  currentSupervisors: SupervisorAndReview[];
+import { getAvailableSupervisors, saveSupervisors } from './requests';
+import { Reviewable, Review } from '@/shared/models';
+
+interface SupervisorMenuProps<T extends Reviewable> {
+  reviewableId: string;
+  queryOptions: UseQueryOptions<T, Error, T, string[]>;
+  currentReviews: Review[];
 }
 
-export default function SupervisorMenu(props: SupervisorMenuProps) {
+export default function SupervisorMenu<T extends Reviewable>(
+  props: SupervisorMenuProps<T>,
+) {
   const [menuOpened, setMenuOpened] = useState<boolean>(false);
 
   return (
@@ -44,15 +53,17 @@ export default function SupervisorMenu(props: SupervisorMenuProps) {
   );
 }
 
-interface SupervisorMenuContentProps extends SupervisorMenuProps {
+interface SupervisorMenuContentProps<T extends Reviewable>
+  extends SupervisorMenuProps<T> {
   setMenuOpened: (value: boolean) => void;
 }
 
-function SupervisorMenuContent({
-  procedureId,
-  currentSupervisors,
+function SupervisorMenuContent<T extends Reviewable>({
+  reviewableId,
+  queryOptions,
+  currentReviews,
   setMenuOpened,
-}: SupervisorMenuContentProps) {
+}: SupervisorMenuContentProps<T>) {
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -61,16 +72,14 @@ function SupervisorMenuContent({
   });
 
   const [selectedIds, setSelectedIds] = useState<string[]>(
-    currentSupervisors.map((s) => s.id),
+    currentReviews.map((s) => s.supervisor.id),
   );
 
   const mutation = useMutation({
     mutationFn: (supervisors: string[]) =>
-      saveSupervisors(procedureId, supervisors),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['procedureSupervisors', procedureId],
-      });
+      saveSupervisors(reviewableId, supervisors),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       setMenuOpened(false);
     },
   });
