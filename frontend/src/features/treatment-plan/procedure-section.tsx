@@ -53,7 +53,7 @@ export default function ProcedureSection({
   }
 
   return (
-    <Card shadow="sm" radius="md" px="sm">
+    <Card withBorder shadow="sm" radius="md" px="sm">
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
           <Text fw={600} size="lg">
