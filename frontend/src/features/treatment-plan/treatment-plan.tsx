@@ -9,15 +9,14 @@ import { getTratmentPlanOptions } from './requests';
 import ProcedureSection from './procedure-section';
 import TreatmentPlanHeader from './header';
 import styles from './treatment-plan.module.css';
+import HistorySection from '@/shared/reviewable/history/history-section';
 
 interface TreatmentPlanProps {
   patientId: string;
   treatmentPlanId: string;
 }
 
-export default function TreatmentPlan({
-  treatmentPlanId,
-}: TreatmentPlanProps) {
+export default function TreatmentPlan({ treatmentPlanId }: TreatmentPlanProps) {
   const options = getTratmentPlanOptions(treatmentPlanId);
 
   return (
@@ -34,6 +33,10 @@ export default function TreatmentPlan({
             treatmentPlanId={treatmentPlanId}
           />
           <NotesSection reviewableId={treatmentPlanId} queryOptions={options} />
+          <HistorySection
+            reviewableId={treatmentPlanId}
+            queryOptions={options}
+          />
         </Stack>
 
         <Stack className={styles.side}>
