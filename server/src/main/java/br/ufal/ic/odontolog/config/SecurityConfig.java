@@ -3,16 +3,12 @@ package br.ufal.ic.odontolog.config;
 import br.ufal.ic.odontolog.JwtAuthenticationFilter;
 import br.ufal.ic.odontolog.services.UserDetailsService;
 import br.ufal.ic.odontolog.utils.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,41 +19,46 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private JwtAuthenticationFilter userAuthenticationFilter;
+  private JwtAuthenticationFilter userAuthenticationFilter;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http,
-                                           JwtUtil jwtUtil,
-                                           UserDetailsService uds) throws Exception {
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http, JwtUtil jwtUtil, UserDetailsService uds)
+      throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
-                        .anyRequest().permitAll());
+    http.csrf(csrf -> csrf.disable())
+        .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers("/api/auth/**")
+                    .permitAll()
+                    .requestMatchers("/api/public/**")
+                    .permitAll()
+                    .requestMatchers("/api/**")
+                    .authenticated()
+                    .anyRequest()
+                    .permitAll());
 
-        http.headers(h -> h.frameOptions(frame -> frame.disable())); // H2 console
+    http.headers(h -> h.frameOptions(frame -> frame.disable())); // H2 console
 
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, uds),
-                UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(
+        new JwtAuthenticationFilter(jwtUtil, uds), UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+    return http.build();
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
-        return cfg.getAuthenticationManager();
-    }
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg)
+      throws Exception {
+    return cfg.getAuthenticationManager();
+  }
 
-    @Bean
-    public JwtUtil jwtUtil(JwtProperties props) {
-        return new JwtUtil(props);
-    }
+  @Bean
+  public JwtUtil jwtUtil(JwtProperties props) {
+    return new JwtUtil(props);
+  }
 }

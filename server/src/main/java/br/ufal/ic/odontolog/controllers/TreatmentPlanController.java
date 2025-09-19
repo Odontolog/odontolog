@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
 public class TreatmentPlanController {
-    @PostMapping("/api/v1/treatment_plan")
-    TreatmentPlan createTreatmentPlan() {
-        // TODO: Implement the actual creation logic
-        return new TreatmentPlan();
-    }
+  @PostMapping("/api/v1/treatment_plan")
+  TreatmentPlan createTreatmentPlan() {
+    // TODO: Implement the actual creation logic
+    return new TreatmentPlan();
+  }
 }
