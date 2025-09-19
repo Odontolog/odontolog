@@ -128,7 +128,7 @@ export const treatmentPlanMock: TreatmentPlan = {
   reviews,
   history,
   type: 'treatment_plan',
-  status: 'in_review',
+  status: 'draft',
   procedures,
 };
 

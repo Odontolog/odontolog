@@ -85,3 +85,16 @@ export async function createTreatmentPlanProcedure(
 
   return { success: true };
 }
+
+export async function submitTreatmentPlanForReview(
+  treatmentPlanId: string,
+  note: string,
+) {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  console.log(`Submitting treatment plan ${treatmentPlanId} for review`);
+
+  treatmentPlanMock.notes = note;
+  treatmentPlanMock.status = 'in_review';
+
+  return { success: true };
+}

@@ -8,8 +8,11 @@ import {
   Textarea,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { submitTreatmentPlanForReview } from './requests';
 
 interface RequestReviewModalProps {
+  treatmentPlanId: string;
   opened: boolean;
   open: () => void;
   close: () => void;
@@ -42,7 +45,12 @@ export default function RequestReviewModal(props: RequestReviewModalProps) {
   );
 }
 
-function RequestReviewModalBody({ close }: RequestReviewModalProps) {
+function RequestReviewModalBody({
+  close,
+  treatmentPlanId,
+}: RequestReviewModalProps) {
+  const queryClient = useQueryClient();
+
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -50,9 +58,22 @@ function RequestReviewModalBody({ close }: RequestReviewModalProps) {
     },
   });
 
-  const handleSubmit = (values: typeof form.values) => {
-    console.log(values);
-  };
+  // TODO: Sistema de notificação
+  const mutation = useMutation({
+    mutationFn: (values: string) =>
+      submitTreatmentPlanForReview(treatmentPlanId, values),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['treatmentPlan', treatmentPlanId],
+      });
+      close();
+    },
+  });
+
+  function handleSubmit(values: typeof form.values) {
+    console.log('Saved to backend (mock):', values);
+    mutation.mutate(values.note);
+  }
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -60,6 +81,7 @@ function RequestReviewModalBody({ close }: RequestReviewModalProps) {
         <Textarea
           label="Observações adicionais"
           placeholder="Escreva aqui..."
+          data-autofocus
           autosize
           minRows={5}
           maxRows={8}

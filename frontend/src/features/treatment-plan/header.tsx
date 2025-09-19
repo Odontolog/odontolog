@@ -5,20 +5,26 @@ import {
   Badge,
   Breadcrumbs,
   Button,
+  Flex,
   Group,
   Skeleton,
   Stack,
   Text,
   Title,
+  Tooltip,
 } from '@mantine/core';
-import { IconChevronDown, IconSlash } from '@tabler/icons-react';
+import {
+  IconAlertTriangle,
+  IconChevronDown,
+  IconSlash,
+} from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { TreatmentPlan } from '@/shared/models';
 import ReviewMenu from './review-menu';
 import styles from './header.module.css';
 import { useDisclosure } from '@mantine/hooks';
-import RequestReviewModal from './ask-review-modal';
+import RequestReviewModal from './request-review-modal';
 
 interface TreatmentPlanHeaderProps {
   id: string;
@@ -51,6 +57,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       status: data.status,
       updatedAt: data.updatedAt,
       assignee: data.assignee,
+      reviews: data.reviews,
     }),
   });
 
@@ -139,17 +146,31 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
           </Group>
         </Stack>
         {props.mode === 'edit' ? (
-          <>
+          <Flex align="center" gap={8}>
+            {data.reviews.length === 0 ? (
+              <Tooltip
+                label="Escolha o(s) supervisor(es)"
+                color="red"
+                position='left'
+                withArrow
+                arrowSize={6}
+              >
+                <IconAlertTriangle color="red" size={20} />
+              </Tooltip>
+            ) : (
+              <></>
+            )}
             <Button
               fw={500}
               rightSection={<IconChevronDown />}
               className={styles.button}
               onClick={open}
+              disabled={data.reviews.length === 0}
             >
               Enviar para validação
             </Button>
-            <RequestReviewModal close={close} open={open} opened={opened} />
-          </>
+            <RequestReviewModal treatmentPlanId={id} close={close} open={open} opened={opened} />
+          </Flex>
         ) : (
           <ReviewMenu buttonProps={{ className: styles.button }}>
             Revisar

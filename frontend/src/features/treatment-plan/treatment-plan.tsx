@@ -15,9 +15,7 @@ interface TreatmentPlanProps {
   treatmentPlanId: string;
 }
 
-export default function TreatmentPlan({
-  treatmentPlanId,
-}: TreatmentPlanProps) {
+export default function TreatmentPlan({ treatmentPlanId }: TreatmentPlanProps) {
   const options = getTratmentPlanOptions(treatmentPlanId);
 
   return (
