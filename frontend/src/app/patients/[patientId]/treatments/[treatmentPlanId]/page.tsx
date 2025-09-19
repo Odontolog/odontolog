@@ -21,13 +21,8 @@ export default async function TreatmentPlanPage({
   await queryClient.prefetchQuery(getTratmentPlanOptions(treatmentPlanId));
 
   return (
-    <div>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <TreatmentPlan
-          patientId={patientId}
-          treatmentPlanId={treatmentPlanId}
-        />
-      </HydrationBoundary>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <TreatmentPlan patientId={patientId} treatmentPlanId={treatmentPlanId} />
+    </HydrationBoundary>
   );
 }

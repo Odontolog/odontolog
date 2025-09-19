@@ -3,13 +3,16 @@
 import {
   Anchor,
   Badge,
+  Box,
   Breadcrumbs,
   Button,
   Group,
+  Indicator,
   Skeleton,
   Stack,
   Text,
   Title,
+  Tooltip,
 } from '@mantine/core';
 import { IconChevronDown, IconSlash } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
@@ -17,6 +20,8 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { TreatmentPlan } from '@/shared/models';
 import ReviewMenu from './review-menu';
 import styles from './header.module.css';
+import { format, formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface TreatmentPlanHeaderProps {
   id: string;
@@ -64,8 +69,11 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
 
   const breadcrumbsData = [
     { title: 'Pacientes', href: '/patients' },
-    { title: `${data.patient.name}`, href: `/patients/${data.patient.id}/procedures` },
-    { title: `Plano de tratamento #${id}` },
+    {
+      title: `${data.patient.name}`,
+      href: `/patients/${data.patient.id}/procedures`,
+    },
+    { title: `Plano #${id}` },
   ];
 
   const breadcrumbsItems = breadcrumbsData.map((item, index) => {
@@ -109,27 +117,54 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
   }
 
   return (
-    <Stack>
-      <Breadcrumbs separator={<IconSlash size={16} />}>
+    <Stack gap="sm">
+      <Breadcrumbs separatorMargin="2" separator={<IconSlash size={16} />}>
         {breadcrumbsItems}
       </Breadcrumbs>
 
       <Group justify="space-between">
         <Stack gap={8}>
-          <Title c="gray.9" className={styles.title}>
-            Plano de Tratamento <span className={styles.span}>#{id}</span>
-          </Title>
+          <Group gap="xs" justify="start" align="center">
+            <Title c="gray.9" className={styles.title}>
+              Plano de Tratamento <span className={styles.span}>#{id}</span>
+            </Title>
+            <Tooltip
+              label={getBadgeProps(data.status ?? '').children}
+              withArrow
+              transitionProps={{ duration: 200 }}
+              className={styles.indicator}
+            >
+              <Indicator
+                size={8}
+                position="middle-center"
+                processing
+                color={getBadgeProps(data.status ?? '').color}
+              >
+                <Box w={8} h={8} />
+              </Indicator>
+            </Tooltip>
+          </Group>
           <Group gap="sm">
-            <Badge variant="light" {...getBadgeProps(data.status ?? '')} />
-            <Text size="sm">
-              Última atualização por <b>{data.assignee.name}</b> às{' '}
-              {data.updatedAt.toLocaleString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+            <Badge
+              className={styles.badge}
+              variant="light"
+              {...getBadgeProps(data.status ?? '')}
+            />
+            <Text size="sm" c="gray.9">
+              Última atualização por <b>{data.assignee.name}</b>{' '}
+              <Tooltip
+                label={format(data.updatedAt, 'dd/MM/yyyy HH:mm')}
+                withArrow
+                position="right"
+                transitionProps={{ duration: 200 }}
+              >
+                <Text span>
+                  {formatDistanceToNow(data.updatedAt, {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}
+                </Text>
+              </Tooltip>
             </Text>
           </Group>
         </Stack>

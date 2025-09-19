@@ -25,7 +25,7 @@ export const supervisor2: User = {
 };
 
 export const student: User = {
-  id: '2',
+  id: '6',
   role: 'student',
   name: 'Maria Souza',
   email: 'maria.souza@aluno.ufal.br',
@@ -63,22 +63,28 @@ const history: Activity[] = [
     id: '1',
     type: 'created',
     actor: student,
-    description: 'Plano criado pelo aluno.',
+    description: 'Plano de tratamento criado pelo aluno.',
     createdAt: new Date('2025-09-01T10:00:00Z'),
   },
   {
     id: '2',
     type: 'review_requested',
     actor: student,
-    description: 'Solicitação de revisão enviada.',
+    description: 'Solicitação de validação enviada para o(s) supervisor(es).',
     createdAt: new Date('2025-09-03T09:30:00Z'),
+    metadata: {
+      data: 'Coloquei apenas os procedimentos necessários. Acho que não seria adequado fazer o procedimento de canal.',
+    },
   },
   {
     id: '3',
     type: 'review_approved',
     actor: supervisor,
-    description: 'Plano aprovado pelo supervisor.',
+    description: 'Plano de tratamento aprovado pelo supervisor.',
     createdAt: new Date('2025-09-05T14:00:00Z'),
+    metadata: {
+      data: 'Sem problemas. Também acho que o canal não seria necessário. Caso o paciente venha a sentir dor, alternamos.',
+    },
   },
 ];
 
@@ -153,4 +159,8 @@ export function editProcedure(procedure: ProcedureShort) {
       };
     }
   }
+}
+
+export function updateAssignee(assignee: User) {
+  treatmentPlanMock.assignee = assignee;
 }

@@ -5,6 +5,7 @@ import {
   updateReviews,
   treatmentPlanMock,
   setNote,
+  updateAssignee,
 } from '@/mocks/treatment-plan';
 
 export async function getAvailableUsers(): Promise<User[]> {
@@ -15,6 +16,15 @@ export async function getAvailableUsers(): Promise<User[]> {
 export async function saveAssignee(id: string, selectedAssigneeId: string) {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   console.log('Saved to backend (mock):', { id, selectedAssigneeId });
+
+  const assignee = students.find((s) => s.id === selectedAssigneeId);
+
+  if (!assignee) {
+    throw new Error('User not found.');
+  }
+
+  updateAssignee(assignee);
+
   return { success: true };
 }
 
