@@ -1,6 +1,7 @@
 package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.models.TreatmentPlan;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,4 +12,6 @@ public class TreatmentPlanController {
         // TODO: Implement the actual creation logic
         return new TreatmentPlan();
     }
+
+
 }
