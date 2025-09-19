@@ -59,14 +59,26 @@ export default function RootLayout({
 
           {/* Versão Mobile */}
           <Flex direction="column" hiddenFrom="md" h="100vh">
-            <NavbarMobile />
+            <div
+              style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 100,
+                backgroundColor: 'white',
+              }}
+            >
+              <NavbarMobile />
+            </div>
+
             <div
               style={{
                 flex: 1,
                 backgroundColor: 'var(--mantine-color-gray-0)',
               }}
             >
-              <ScrollArea>{children}</ScrollArea>
+              <ScrollArea style={{ flex: 1, minHeight: 0 }}>
+                {children}
+              </ScrollArea>
             </div>
           </Flex>
         </Providers>
