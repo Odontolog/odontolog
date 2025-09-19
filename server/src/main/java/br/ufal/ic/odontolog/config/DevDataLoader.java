@@ -55,7 +55,7 @@ public class DevDataLoader implements CommandLineRunner {
 
     Student studentTest001 =
         studentRepository.save(
-             new Student(
+            new Student(
                 "Student_Test_001",
                 "student.test.001@test.com",
                 passwordEncoder.encode("password1"),
