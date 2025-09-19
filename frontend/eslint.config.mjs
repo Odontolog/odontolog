@@ -2,6 +2,7 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { FlatCompat } from '@eslint/eslintrc';
 import react from 'eslint-plugin-react';
+import tseslint from 'typescript-eslint';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,6 +50,7 @@ const mantineConfig = [
       'prefer-promise-reject-errors': 'error',
       'prefer-object-spread': 'error',
       'prefer-template': 'error',
+      'import/named': 'error',
       yoda: 'error',
       radix: 'error',
       eqeqeq: ['error', 'smart'],
@@ -56,8 +58,14 @@ const mantineConfig = [
     },
   },
   {
-    // TypeScript ESLint specific rules
-    // https://typescript-eslint.io/rules/
+    // Typescript specific rules
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
@@ -83,6 +91,10 @@ const mantineConfig = [
           ignoreRestSiblings: true,
         },
       ],
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unsafe-assignment': 'error',
+      '@typescript-eslint/strict-boolean-expressions': 'error',
+      '@typescript-eslint/await-thenable': 'off',
     },
   },
   {
@@ -120,7 +132,14 @@ const mantineConfig = [
 ];
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript', 'prettier'),
+  ...compat.extends(
+    'next',
+    'next/core-web-vitals',
+    'next/typescript',
+    'prettier',
+  ),
+  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
   ...mantineConfig,
   {
     ignores: [
@@ -129,6 +148,12 @@ const eslintConfig = [
       'out/**',
       'build/**',
       'next-env.d.ts',
+      '*.config.{js,mjs,cjs,ts}',
+      '*.config.*.{js,mjs,cjs,ts}',
+      'eslint.config.mjs',
+      'postcss.config.cjs',
+      'prettier.config.mjs',
+      'tailwind.config.ts',
     ],
   },
 ];
