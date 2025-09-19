@@ -1,0 +1,34 @@
+name: CI (Nextjs Frontend)
+
+on:
+  push:
+    branches: [ "dev", "main" ]
+  pull_request:
+    branches: [ "**" ]
+
+env:
+  NODE_VERSION: "22"
+  FRONTEND_DIR: "frontend" 
+
+defaults:
+  run:
+    working-directory: ${{ env.FRONTEND_DIR }}
+
+jobs:
+  frontend:
+    name: Frontend (ESLint + Prettier)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - run: npm ci
+    - run: npm run lint
+    - run: npm run format-check
