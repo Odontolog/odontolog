@@ -1,0 +1,64 @@
+name: CI (Frontend + Spring Backend)
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  JAVA_VERSION: "17"
+  BACKEND_DIR: "server" 
+  SPRING_PROFILES_ACTIVE: "test"
+  SPRING_DOCKER_COMPOSE_ENABLED: "false" 
+
+jobs:
+  backend:
+    name: Backend (Spotless + Tests)
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event_name, 'workflow_dispatch') ||
+      contains(join(github.event.pull_request.labels.*.name), 'run-backend') ||
+      github.event_name == 'push' || github.event_name == 'pull_request'
+    defaults:
+      run:
+        working-directory: ${{ env.BACKEND_DIR }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate backend path
+        run: |
+          test -f "pom.xml" || (echo "pom.xml não encontrado em $PWD" && exit 1)
+
+      - name: Set up Temurin ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Maven - Spotless check
+        run: |
+          mvn -B -DskipTests -Dspring.profiles.active=${{ env.SPRING_PROFILES_ACTIVE }} spotless:check
+
+      - name: Maven - Tests (unit + integration)
+        run: |
+          mvn -B -Dspring.profiles.active=${{ env.SPRING_PROFILES_ACTIVE }} test
+
+      - name: Upload Surefire reports (sempre)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: |
+            ${{ env.BACKEND_DIR }}/**/target/surefire-reports/*
+            ${{ env.BACKEND_DIR }}/**/target/failsafe-reports/*
+          if-no-files-found: ignore
