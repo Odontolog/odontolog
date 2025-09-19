@@ -39,7 +39,7 @@ export default function HistorySection<T extends Reviewable>({
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
           <Text fw={600} size="lg">
-            Histórico do Plano de Tratamento
+            Histórico de atividades
           </Text>
         </Group>
       </Card.Section>
@@ -59,14 +59,14 @@ export default function HistorySection<T extends Reviewable>({
               <IconExclamationCircle size={24} />
             </ThemeIcon>
             <Text size="sm" c="red" py="none">
-              Erro ao carregar supervisores
+              Erro ao carregar dados.
             </Text>
           </Flex>
         )}
 
         {history && history.length === 0 && (
           <Text size="sm" c="dimmed" ta="center">
-            Nenhuma ação realizada.
+            Nenhuma atividade realizada.
           </Text>
         )}
 
