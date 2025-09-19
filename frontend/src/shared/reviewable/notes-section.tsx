@@ -65,7 +65,7 @@ export default function NotesSection<T extends Reviewable>({
       <Divider my="none" />
 
       <Card.Section inheritPadding px="md" py="sm">
-        {isLoading || !notes ? (
+        {isLoading || notes == null ? (
           <Center py="md">
             <Loader size="sm" />
           </Center>
@@ -123,8 +123,8 @@ function DetailSectionContent<T extends Reviewable>({
     },
   });
 
-  async function handleSave() {
-    await mutation.mutateAsync(displayValue);
+  function handleSave() {
+    mutation.mutate(displayValue);
   }
 
   function handleCancel() {

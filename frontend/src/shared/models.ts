@@ -38,7 +38,7 @@ export type Activity = {
   type: ActivityType;
   actor: User;
   description: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   createdAt: Date;
 };
 

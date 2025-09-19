@@ -134,7 +134,7 @@ function AssigneeMenuContent<T extends Reviewable>({
           withinPortal={false}
           onOptionSubmit={(userId) => {
             const user = baseUsers.find((u) => u.id === userId);
-            setSearch(user?.name || '');
+            setSearch(user?.name ?? '');
 
             if (user) {
               setSelectedUser(user);
@@ -156,7 +156,7 @@ function AssigneeMenuContent<T extends Reviewable>({
               onFocus={() => combobox.openDropdown()}
               onBlur={() => {
                 combobox.closeDropdown();
-                setSearch(selectedUser?.name || '');
+                setSearch(selectedUser?.name ?? '');
               }}
               placeholder="Buscar aluno..."
               rightSectionPointerEvents="none"
