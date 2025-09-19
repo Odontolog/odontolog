@@ -36,6 +36,13 @@ export const students: User[] = [
     email: 'abc@def.ufal.br',
     avatarUrl: '',
   },
+  {
+    id: '6',
+    role: 'student',
+    name: 'Maria Souza',
+    email: 'maria.souza@aluno.ufal.br',
+    avatarUrl: '',
+  },
 ];
 
 export const loggedUser: User = {

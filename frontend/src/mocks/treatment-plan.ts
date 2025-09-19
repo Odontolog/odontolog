@@ -25,7 +25,7 @@ export const supervisor2: User = {
 };
 
 export const student: User = {
-  id: '2',
+  id: '6',
   role: 'student',
   name: 'Maria Souza',
   email: 'maria.souza@aluno.ufal.br',
@@ -159,4 +159,8 @@ export function editProcedure(procedure: ProcedureShort) {
       };
     }
   }
+}
+
+export function updateAssignee(assignee: User) {
+  treatmentPlanMock.assignee = assignee;
 }
