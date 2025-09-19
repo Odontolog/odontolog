@@ -52,13 +52,3 @@ jobs:
       - name: Maven - Tests (unit + integration)
         run: |
           mvn -B -Dspring.profiles.active=${{ env.SPRING_PROFILES_ACTIVE }} test
-
-      - name: Upload Surefire reports (sempre)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: surefire-reports
-          path: |
-            ${{ env.BACKEND_DIR }}/**/target/surefire-reports/*
-            ${{ env.BACKEND_DIR }}/**/target/failsafe-reports/*
-          if-no-files-found: ignore
