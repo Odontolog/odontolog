@@ -1,4 +1,4 @@
-name: CI (Frontend + Spring Backend)
+name: CI (Spring Backend)
 
 on:
   push:
