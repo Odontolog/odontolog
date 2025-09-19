@@ -6,19 +6,21 @@ on:
   pull_request:
     branches: [ "**" ]
 
+permissions:
+  contents: read
+
 env:
   NODE_VERSION: "22"
-  FRONTEND_DIR: "frontend" 
-
-defaults:
-  run:
-    working-directory: ${{ env.FRONTEND_DIR }}
 
 jobs:
   frontend:
     name: Frontend (ESLint + Prettier)
     runs-on: ubuntu-latest
     
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
