@@ -28,6 +28,14 @@
   min-width: 100px;
 }
 
+.indicator {
+  display: none;
+}
+
+.badge {
+  display: block;
+}
+
 @media (max-width: 62em) {
   .header {
     padding: var(--mantine-spacing-sm) var(--mantine-spacing-xs);
@@ -37,5 +45,13 @@
     width: 100%;
     min-width: 0;
     display: block;
+  }
+
+  .indicator {
+    display: block;
+  }
+
+  .badge {
+    display: none;
   }
 }

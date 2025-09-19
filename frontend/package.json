@@ -27,6 +27,7 @@
     "@tiptap/pm": "^3.3.1",
     "@tiptap/react": "^3.3.1",
     "@tiptap/starter-kit": "^3.3.1",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.18",
     "next": "15.5.2",
     "react": "19.1.0",
