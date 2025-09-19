@@ -29,7 +29,7 @@ function getMetadataText(activity: Activity) {
     return '';
   }
 
-  return metadata.data;
+  return metadata.data as string;
 }
 
 export default function ActivityItem({ activity }: ActivityItemProps) {
