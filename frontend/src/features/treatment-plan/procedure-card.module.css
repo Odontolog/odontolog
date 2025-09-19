@@ -1,0 +1,4 @@
+.root {
+  border-left: 1px solid var(--paper-border-color);
+  flex: 1;
+}

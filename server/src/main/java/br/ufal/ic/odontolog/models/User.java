@@ -1,5 +1,9 @@
 package br.ufal.ic.odontolog.models;
 
+import java.util.UUID;
+
+import org.hibernate.annotations.UuidGenerator;
+
 import br.ufal.ic.odontolog.enums.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

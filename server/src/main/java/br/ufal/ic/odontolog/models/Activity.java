@@ -8,10 +8,12 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.UUID;
 
 @Entity
 @SuperBuilder
@@ -21,8 +23,9 @@ import java.util.HashMap;
 @Table(name = "activities")
 public class Activity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     private ActivityType type;

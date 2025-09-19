@@ -1,9 +1,11 @@
 package br.ufal.ic.odontolog.config;
 
 import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.ReviewStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
+import br.ufal.ic.odontolog.enums.Sex;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
@@ -26,11 +28,13 @@ public class DevDataLoader implements CommandLineRunner {
         private final AttachmentRepository attachmentRepository;
         private final PreProcedureRepository preProcedureRepository;
         private final ActivityRepository activityRepository;
+        private final PatientRepository patientRepository;
         private final PasswordEncoder passwordEncoder;
 
         public DevDataLoader(StudentRepository studentRepository, SupervisorRepository supervisorRepository,
                         TreatmentPlanRepository treatmentPlanRepository, AttachmentRepository attachmentRepository,
                         PreProcedureRepository preProcedureRepository, ActivityRepository activityRepository,
+                        PatientRepository patientRepository,
                              PasswordEncoder passwordEncoder) {
                 this.studentRepository = studentRepository;
                 this.supervisorRepository = supervisorRepository;
@@ -38,6 +42,7 @@ public class DevDataLoader implements CommandLineRunner {
                 this.attachmentRepository = attachmentRepository;
                 this.preProcedureRepository = preProcedureRepository;
                 this.activityRepository = activityRepository;
+                this.patientRepository = patientRepository;
                 this.passwordEncoder = passwordEncoder;
         }
 
@@ -63,7 +68,23 @@ public class DevDataLoader implements CommandLineRunner {
                                 "20250832"));
                 logger.info("Supervisor created: {}", supervisorTest001.getName());
 
+                Patient patientTest001 = patientRepository.save(Patient.builder()
+                                .name("Patient_Test_001")
+                                .birthDate("1990-01-01")
+                                .CPF("123.456.789-00")
+                                .RG("12.345.678-9")
+                                .sex(Sex.MALE)
+                                .profession("Tester")
+                                .race("Black")
+                                .maritalStatus(MaritalStatus.SINGLE)
+                                .phoneNumber("(12) 34567-8901")
+                                .address("123 Test St, Test City, TS")
+                                .city("Test City")
+                                .state("TS")
+                                .build());
+
                 TreatmentPlan treatmentPlanTest001 = treatmentPlanRepository.save(TreatmentPlan.builder()
+                                .patient(patientTest001)
                                 .status(TreatmentPlanStatus.DRAFT)
                                 .author(studentTest001)
                                 .assignee(supervisorTest001)
@@ -75,6 +96,7 @@ public class DevDataLoader implements CommandLineRunner {
                 TreatmentPlanProcedure treatmentPlanProcedureTest001 = TreatmentPlanProcedure.builder()
                                 .name("Treatment_Plan_Procedure_Test_001")
                                 .planned_session(1)
+                                .patient(patientTest001)
                                 .author(studentTest001)
                                 .assignee(supervisorTest001)
                                 .notes("Test Notes")
@@ -112,6 +134,7 @@ public class DevDataLoader implements CommandLineRunner {
                 PreProcedure preProcedureTest001 = preProcedureRepository.save(PreProcedure.builder()
                                 .name("Pre_Procedure_Test_001")
                                 .planned_session(1)
+                                .patient(patientTest001)
                                 .author(studentTest001)
                                 .assignee(supervisorTest001)
                                 .notes("Test Notes")

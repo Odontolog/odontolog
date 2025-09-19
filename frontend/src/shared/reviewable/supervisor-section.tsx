@@ -11,44 +11,50 @@ import {
   Box,
   Flex,
   ThemeIcon,
+  Divider,
 } from '@mantine/core';
+import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { SupervisorAndReview } from '../models';
-import SupervisorMenu from './supervisor-menu';
-import { useQuery } from '@tanstack/react-query';
-import { getProcedureSupervisors } from '@/features/procedure/requests';
 
-interface SupervisorSectionProps {
-  procedureId: string;
+import { Reviewable } from '@/shared/models';
+import SupervisorMenu from './supervisor-menu';
+
+interface SupervisorSectionProps<T extends Reviewable> {
+  reviewableId: string;
+  queryOptions: UseQueryOptions<T, Error, T, string[]>;
 }
 
-export default function SupervisorSection({
-  procedureId,
-}: SupervisorSectionProps) {
+export default function SupervisorSection<T extends Reviewable>({
+  reviewableId,
+  queryOptions,
+}: SupervisorSectionProps<T>) {
   const {
-    data: supervisors,
+    data: reviews,
     isLoading,
     isError,
-  } = useQuery<SupervisorAndReview[]>({
-    queryKey: ['procedureSupervisors', procedureId],
-    queryFn: async () => getProcedureSupervisors(procedureId),
+  } = useQuery({
+    ...queryOptions,
+    select: (data) => data.reviews,
   });
 
   return (
-    <Card withBorder shadow="sm" radius="md" w={220}>
-      <Card.Section withBorder inheritPadding px="sm" py="xs">
+    <Card withBorder shadow="sm" radius="md" px="sm">
+      <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
-          <Text fw={600} size="sm">
+          <Text fw={600} size="lg">
             Supervisores
           </Text>
-          {supervisors && (
+          {reviews && (
             <SupervisorMenu
-              procedureId={procedureId}
-              currentSupervisors={supervisors}
+              reviewableId={reviewableId}
+              queryOptions={queryOptions}
+              currentReviews={reviews}
             />
           )}
         </Group>
       </Card.Section>
+
+      <Divider my="none" />
 
       <Card.Section inheritPadding p="md">
         {isLoading && (
@@ -68,33 +74,33 @@ export default function SupervisorSection({
           </Flex>
         )}
 
-        {supervisors && supervisors.length === 0 && (
+        {reviews && reviews.length === 0 && (
           <Text size="sm" c="dimmed" ta="center">
             Nenhum supervisor selecionado
           </Text>
         )}
 
         <Flex gap="xs" direction="column">
-          {supervisors &&
-            supervisors.map((supervisor) => (
-              <Group key={supervisor.id} justify="space-between" gap="xs">
+          {reviews &&
+            reviews.map((review) => (
+              <Group key={review.id} justify="space-between" gap="xs">
                 <Group gap="xs">
                   <Avatar
-                    src={supervisor.avatarUrl}
-                    size="xs"
+                    src={review.supervisor.avatarUrl}
+                    size="sm"
                     variant="filled"
                   />
-                  <Text size="xs">{supervisor.name}</Text>
+                  <Text size="sm">{review.supervisor.name}</Text>
                 </Group>
                 <Indicator
                   size={8}
                   position="middle-center"
                   color={
-                    supervisor.lastReview.status === 'approved'
+                    review.status === 'approved'
                       ? 'green'
-                      : supervisor.lastReview.status === 'rejected'
+                      : review.status === 'rejected'
                         ? 'red'
-                        : supervisor.lastReview.status === 'draft'
+                        : review.status === 'draft'
                           ? 'gray'
                           : 'yellow'
                   }

@@ -1,6 +1,5 @@
 package br.ufal.ic.odontolog.models;
 
-import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -16,7 +15,6 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@DiscriminatorValue("TREATMENT_PLAN_PROCEDURE")
 @Table(name = "treatment_plan_procedures")
 public class TreatmentPlanProcedure extends Procedure {
     @ManyToOne
