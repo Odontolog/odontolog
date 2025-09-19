@@ -2,7 +2,12 @@ import '@mantine/core/styles.css';
 import '@mantine/spotlight/styles.css';
 import '@mantine/notifications/styles.css';
 
-import { ColorSchemeScript, Flex, mantineHtmlProps } from '@mantine/core';
+import {
+  ColorSchemeScript,
+  Flex,
+  mantineHtmlProps,
+  ScrollArea,
+} from '@mantine/core';
 
 import Providers from './providers';
 import Navbar from '@/features/appshell/navbar';
@@ -27,11 +32,13 @@ export default function RootLayout({
       <body>
         <Providers>
           {/* Versão Desktop */}
-          <Flex direction="row" visibleFrom="md" mih="100vh">
+          <Flex direction="row" visibleFrom="md" h="100vh">
             <Sidebar />
-            <Flex
-              direction="column"
+            <div
               style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100vh',
                 flex: 1,
               }}
             >
@@ -39,16 +46,19 @@ export default function RootLayout({
               <div
                 style={{
                   flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
                   backgroundColor: 'var(--mantine-color-gray-0)',
+                  minHeight: 0,
                 }}
               >
                 {children}
               </div>
-            </Flex>
+            </div>
           </Flex>
 
           {/* Versão Mobile */}
-          <Flex direction="column" hiddenFrom="md" mih="100vh">
+          <Flex direction="column" hiddenFrom="md" h="100vh">
             <NavbarMobile />
             <div
               style={{
@@ -56,7 +66,7 @@ export default function RootLayout({
                 backgroundColor: 'var(--mantine-color-gray-0)',
               }}
             >
-              {children}
+              <ScrollArea>{children}</ScrollArea>
             </div>
           </Flex>
         </Providers>
