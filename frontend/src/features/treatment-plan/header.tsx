@@ -147,18 +147,16 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
         </Stack>
         {props.mode === 'edit' ? (
           <Flex align="center" gap={8}>
-            {data.reviews.length === 0 ? (
+            {data.reviews.length === 0 && (
               <Tooltip
                 label="Escolha o(s) supervisor(es)"
                 color="red"
-                position='left'
+                position="left"
                 withArrow
                 arrowSize={6}
               >
                 <IconAlertTriangle color="red" size={20} />
               </Tooltip>
-            ) : (
-              <></>
             )}
             <Button
               fw={500}
@@ -169,7 +167,12 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
             >
               Enviar para validação
             </Button>
-            <RequestReviewModal treatmentPlanId={id} close={close} open={open} opened={opened} />
+            <RequestReviewModal
+              treatmentPlanId={id}
+              close={close}
+              open={open}
+              opened={opened}
+            />
           </Flex>
         ) : (
           <ReviewMenu buttonProps={{ className: styles.button }}>

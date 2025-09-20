@@ -8,6 +8,7 @@ import {
 } from '@/mocks/treatment-plan';
 import { TreatmentPlan } from '@/shared/models';
 import { ProcedureFormValues } from './models';
+import { loggedUser } from '@/mocks/students';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
   return queryOptions({
@@ -93,8 +94,17 @@ export async function submitTreatmentPlanForReview(
   await new Promise((resolve) => setTimeout(resolve, 1000));
   console.log(`Submitting treatment plan ${treatmentPlanId} for review`);
 
-  treatmentPlanMock.notes = note;
   treatmentPlanMock.status = 'in_review';
+  treatmentPlanMock.history.push({
+    id: (treatmentPlanMock.history.length + 1).toString(),
+    type: 'review_requested',
+    actor: loggedUser,
+    description: 'Solicitação de validação enviada para o(s) supervisor(es).',
+    createdAt: new Date(),
+    metadata: {
+      data: note,
+    },
+  });
 
   return { success: true };
 }

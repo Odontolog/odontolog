@@ -66,6 +66,7 @@ function RequestReviewModalBody({
       await queryClient.invalidateQueries({
         queryKey: ['treatmentPlan', treatmentPlanId],
       });
+      form.reset();
       close();
     },
   });
@@ -90,7 +91,13 @@ function RequestReviewModalBody({
         />
       </Stack>
       <Flex direction="row-reverse" gap="xs" ml="auto" mt="md">
-        <Button type="submit">Enviar</Button>
+        <Button
+          type="submit"
+          loading={mutation.isPending}
+          disabled={mutation.isPending}
+        >
+          Enviar
+        </Button>
         <Button variant="default" fw="normal" onClick={close}>
           Cancelar
         </Button>
