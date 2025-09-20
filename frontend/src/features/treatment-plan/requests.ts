@@ -8,6 +8,7 @@ import {
 } from '@/mocks/treatment-plan';
 import { TreatmentPlan } from '@/shared/models';
 import { ProcedureFormValues } from './models';
+import { loggedUser } from '@/mocks/students';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
   return queryOptions({
@@ -81,6 +82,28 @@ export async function createTreatmentPlanProcedure(
     assignee: supervisor,
     updatedAt: new Date('2025-09-01T10:00:00Z'),
     notes: 'Necessário avaliar radiografia complementar.',
+  });
+
+  return { success: true };
+}
+
+export async function submitTreatmentPlanForReview(
+  treatmentPlanId: string,
+  note: string,
+) {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  console.log(`Submitting treatment plan ${treatmentPlanId} for review`);
+
+  treatmentPlanMock.status = 'in_review';
+  treatmentPlanMock.history.push({
+    id: (treatmentPlanMock.history.length + 1).toString(),
+    type: 'review_requested',
+    actor: loggedUser,
+    description: 'Solicitação de validação enviada para o(s) supervisor(es).',
+    createdAt: new Date(),
+    metadata: {
+      data: note,
+    },
   });
 
   return { success: true };

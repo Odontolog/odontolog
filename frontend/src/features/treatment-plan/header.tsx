@@ -6,6 +6,7 @@ import {
   Box,
   Breadcrumbs,
   Button,
+  Flex,
   Group,
   Indicator,
   Skeleton,
@@ -14,12 +15,18 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { IconChevronDown, IconSlash } from '@tabler/icons-react';
+import {
+  IconAlertTriangle,
+  IconChevronDown,
+  IconSlash,
+} from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
 import { TreatmentPlan } from '@/shared/models';
 import ReviewMenu from './review-menu';
 import styles from './header.module.css';
+import { useDisclosure } from '@mantine/hooks';
+import RequestReviewModal from './request-review-modal';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -46,7 +53,7 @@ interface TreatmentPlanHeaderContentProps {
 
 function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
   const { id, queryOptions } = props;
-
+  const [opened, { open, close }] = useDisclosure(false);
   const { data, isLoading } = useQuery({
     ...queryOptions,
     select: (data) => ({
@@ -54,6 +61,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       status: data.status,
       updatedAt: data.updatedAt,
       assignee: data.assignee,
+      reviews: data.reviews,
     }),
   });
 
@@ -169,13 +177,34 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
           </Group>
         </Stack>
         {props.mode === 'edit' ? (
-          <Button
-            fw={500}
-            rightSection={<IconChevronDown />}
-            className={styles.button}
-          >
-            Enviar para validação
-          </Button>
+          <Flex align="center" gap={8}>
+            {data.reviews.length === 0 && (
+              <Tooltip
+                label="Escolha o(s) supervisor(es)"
+                color="red"
+                position="left"
+                withArrow
+                arrowSize={6}
+              >
+                <IconAlertTriangle color="red" size={20} />
+              </Tooltip>
+            )}
+            <Button
+              fw={500}
+              rightSection={<IconChevronDown />}
+              className={styles.button}
+              onClick={open}
+              disabled={data.reviews.length === 0}
+            >
+              Enviar para validação
+            </Button>
+            <RequestReviewModal
+              treatmentPlanId={id}
+              close={close}
+              open={open}
+              opened={opened}
+            />
+          </Flex>
         ) : (
           <ReviewMenu buttonProps={{ className: styles.button }}>
             Revisar
