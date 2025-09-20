@@ -41,7 +41,7 @@ export async function editTreatmentPlanProcedure(
     );
   }
 
-  if (!procedure.plannedSession) {
+  if (procedure.plannedSession === undefined) {
     throw new Error('error saving data');
   }
 
@@ -64,7 +64,7 @@ export async function createTreatmentPlanProcedure(
   await new Promise((resolve) => setTimeout(resolve, 1000));
   console.log('creating new procedure  ', procedure.name, treatmentPlanId);
 
-  if (!procedure.plannedSession) {
+  if (procedure.plannedSession === undefined) {
     throw new Error('error saving data');
   }
 

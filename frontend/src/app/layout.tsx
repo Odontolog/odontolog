@@ -2,7 +2,12 @@ import '@mantine/core/styles.css';
 import '@mantine/spotlight/styles.css';
 import '@mantine/notifications/styles.css';
 
-import { ColorSchemeScript, Flex, mantineHtmlProps } from '@mantine/core';
+import {
+  ColorSchemeScript,
+  Flex,
+  mantineHtmlProps,
+  ScrollArea,
+} from '@mantine/core';
 
 import Providers from './providers';
 import Navbar from '@/features/appshell/navbar';
@@ -27,11 +32,13 @@ export default function RootLayout({
       <body>
         <Providers>
           {/* Versão Desktop */}
-          <Flex direction="row" visibleFrom="md" mih="100vh">
+          <Flex direction="row" visibleFrom="md" h="100vh">
             <Sidebar />
-            <Flex
-              direction="column"
+            <div
               style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100vh',
                 flex: 1,
               }}
             >
@@ -39,24 +46,39 @@ export default function RootLayout({
               <div
                 style={{
                   flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
                   backgroundColor: 'var(--mantine-color-gray-0)',
+                  minHeight: 0,
                 }}
               >
                 {children}
               </div>
-            </Flex>
+            </div>
           </Flex>
 
           {/* Versão Mobile */}
-          <Flex direction="column" hiddenFrom="md" mih="100vh">
-            <NavbarMobile />
+          <Flex direction="column" hiddenFrom="md" h="100vh">
+            <div
+              style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 100,
+                backgroundColor: 'white',
+              }}
+            >
+              <NavbarMobile />
+            </div>
+
             <div
               style={{
                 flex: 1,
                 backgroundColor: 'var(--mantine-color-gray-0)',
               }}
             >
-              {children}
+              <ScrollArea style={{ flex: 1, minHeight: 0 }}>
+                {children}
+              </ScrollArea>
             </div>
           </Flex>
         </Providers>

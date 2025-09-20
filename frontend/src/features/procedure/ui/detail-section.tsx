@@ -104,7 +104,7 @@ function DetailSectionContent({
   const mutation = useMutation({
     mutationFn: (values: ProcedureDetail) => saveDetails(procedureId, values),
     onSuccess: async (data) => {
-      queryClient.setQueryData(['procedureDetails', procedureId], data);
+      await queryClient.setQueryData(['procedureDetails', procedureId], data);
       setValues({});
       setEditing(false);
     },
@@ -119,8 +119,8 @@ function DetailSectionContent({
     },
   });
 
-  async function handleSave() {
-    await mutation.mutateAsync(displayValues);
+  function handleSave() {
+    mutation.mutate(displayValues);
   }
 
   function handleCancel() {

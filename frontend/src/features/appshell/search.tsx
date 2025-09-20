@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from 'react';
 import { Spotlight, spotlight } from '@mantine/spotlight';
 import {
@@ -15,11 +16,13 @@ import {
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
+import {
+  getAllPatients,
+  PatientAndTreatmentPlan,
+} from '@/features/patient/requests';
 import styles from './navbar.module.css';
-import { Patient } from '@/shared/models';
-import { getAllPatients } from '../patient/requests';
 
-const data: Patient[] = await getAllPatients();
+const data: PatientAndTreatmentPlan[] = await getAllPatients();
 
 export default function Search() {
   const [query, setQuery] = useState('');
@@ -62,7 +65,7 @@ export default function Search() {
             <Text c="dimmed" size="xs">
               Última modificação{' '}
               <b>
-                {patient.lastModified.toLocaleString('pt-BR', {
+                {patient.updatedAt.toLocaleString('pt-BR', {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',

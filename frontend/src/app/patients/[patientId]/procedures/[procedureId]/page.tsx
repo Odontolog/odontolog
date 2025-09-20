@@ -17,7 +17,9 @@ export default async function ProcedurePage({
 
   return (
     <div style={{ padding: '24px' }}>
-      <p>Página de um procedimento</p>
+      <p>
+        Página de um procedimento id={procedureId},{patientId}
+      </p>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <div>Em construção</div>
       </HydrationBoundary>
