@@ -9,14 +9,15 @@ import lombok.*;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Supervisor extends User {
-    String specialization;
+  String specialization;
 
-    // TODO: Add supervisor's SIAPE validation
-    String siape;
+  // TODO: Add supervisor's SIAPE validation
+  String siape;
 
-    public Supervisor(String name, String email, String specialization, String siape) {
-        super(name, email, Role.SUPERVISOR);
-        this.specialization = specialization;
-        this.siape = siape;
-    }
+  public Supervisor(
+      String name, String email, String password, String specialization, String siape) {
+    super(name, email, password, Role.SUPERVISOR);
+    this.specialization = specialization;
+    this.siape = siape;
+  }
 }

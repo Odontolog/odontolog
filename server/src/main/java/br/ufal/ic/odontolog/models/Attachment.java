@@ -1,14 +1,12 @@
 package br.ufal.ic.odontolog.models;
 
-import java.util.UUID;
-
-import org.hibernate.annotations.UuidGenerator;
-
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Getter
@@ -17,21 +15,18 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Table(name = "attachments")
 public class Attachment {
-    @Id
-    @GeneratedValue
-    @UuidGenerator
-    private UUID id;
+  @Id @GeneratedValue @UuidGenerator private UUID id;
 
-    private String filename;
+  private String filename;
 
-    // TODO: Probably we must use a URL instead of a String
-    // using String for now.
-    private String location;
+  // TODO: Probably we must use a URL instead of a String
+  // using String for now.
+  private String location;
 
-    @ManyToOne
-    @JoinColumn(name = "uploader_id")
-    private User uploader;
+  @ManyToOne
+  @JoinColumn(name = "uploader_id")
+  private User uploader;
 
-    // Size in bytes
-    private Integer size;
+  // Size in bytes
+  private Integer size;
 }
