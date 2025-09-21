@@ -11,6 +11,10 @@
   display: block;
 }
 
+.cardClickable:hover {
+  cursor: pointer;
+}
+
 @media (max-width: 62em) {
   .indicator {
     display: inline-block;
