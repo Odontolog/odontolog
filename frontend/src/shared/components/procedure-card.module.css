@@ -1,0 +1,24 @@
+.root {
+  border-left: 1px solid var(--paper-border-color);
+  flex: 1;
+}
+
+.indicator {
+  display: none;
+}
+
+.badge {
+  display: block;
+}
+
+@media (max-width: 62em) {
+  .indicator {
+    display: inline-block;
+    margin-left: 0.5rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .badge {
+    display: none;
+  }
+}

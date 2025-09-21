@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import {
   ActionIcon,
-  Badge,
   Card,
   Center,
   Divider,
@@ -11,21 +9,12 @@ import {
   Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import {
-  IconPlus,
-  IconCalendarClock,
-  IconDental,
-  IconNotebook,
-  IconEdit,
-} from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useState } from 'react';
 
-import {
-  TreatmentPlan,
-  ProcedureShort,
-  ProcedureStatus,
-} from '@/shared/models';
-import classes from './procedure-card.module.css';
+import ProcedureCard from '@/shared/components/procedure-card';
+import { ProcedureShort, TreatmentPlan } from '@/shared/models';
 import ProcedureSectionModal from './procedure-modal';
 
 interface ProcedureSectionProps {
@@ -50,6 +39,15 @@ export default function ProcedureSection({
   function handleClose() {
     close();
     setSelectedProcedure(undefined);
+  }
+
+  function handleProcedureEdit(procedure: ProcedureShort) {
+    open();
+    setSelectedProcedure(procedure);
+  }
+
+  function handleProcedureDelete(procedure: ProcedureShort) {
+    console.log(`handle delete of ${procedure.name}`);
   }
 
   return (
@@ -81,8 +79,8 @@ export default function ProcedureSection({
                 <ProcedureCard
                   key={p.id}
                   procedure={p}
-                  open={open}
-                  setSelectedProcedure={setSelectedProcedure}
+                  onEdit={handleProcedureEdit}
+                  onDelete={handleProcedureDelete}
                 />
               ))}
           </Stack>
@@ -96,113 +94,6 @@ export default function ProcedureSection({
         close={handleClose}
         selectedProcedure={selectedProcedure}
       />
-    </Card>
-  );
-}
-
-export interface ProcedureCardData {
-  id: string;
-  name: string;
-  tooth: string[];
-  studySector: string;
-  plannedSession: number;
-  notes: string;
-  status: ProcedureStatus;
-}
-
-interface ProcedureCardProps {
-  procedure: ProcedureShort;
-  open: () => void;
-  setSelectedProcedure: (procedure: ProcedureShort) => void;
-}
-
-const statusLabels: Record<ProcedureStatus, { title: string; color: string }> =
-  {
-    draft: {
-      title: 'Rascunho',
-      color: 'gray',
-    },
-    not_started: {
-      title: 'Não iniciado',
-      color: 'gray',
-    },
-    in_progress: {
-      title: 'Em andamento',
-      color: 'blue',
-    },
-    in_review: {
-      title: 'Em revisão',
-      color: 'yellow',
-    },
-    done: {
-      title: 'Concluído',
-      color: 'green',
-    },
-  };
-
-function ProcedureCard({
-  procedure,
-  open,
-  setSelectedProcedure,
-}: ProcedureCardProps) {
-  function handleEdit() {
-    open();
-    setSelectedProcedure(procedure);
-  }
-
-  return (
-    <Card shadow="sm" padding="none" radius="md" withBorder>
-      <Group gap={0}>
-        <Group p="lg" gap={4}>
-          <IconCalendarClock size={20} color="gray" />
-          <Text size="md" c="dimmed">
-            {procedure.plannedSession}
-          </Text>
-        </Group>
-
-        <Stack p="md" gap="sm" className={classes.root}>
-          <Group justify="space-between" align="center">
-            <Text fw={600}>
-              {procedure.name}{' '}
-              <Text span c="dimmed" fw={600}>
-                #{procedure.id}
-              </Text>
-            </Text>
-            <Group gap="sm">
-              <Badge
-                variant="light"
-                color={statusLabels[procedure.status].color}
-              >
-                {statusLabels[procedure.status].title}
-              </Badge>
-              <ActionIcon variant="subtle" color="gray" onClick={handleEdit}>
-                <IconEdit size={16} color="gray" />
-              </ActionIcon>
-            </Group>
-          </Group>
-
-          {procedure.notes && (
-            <Text size="sm" c="dimmed">
-              {procedure.notes}
-            </Text>
-          )}
-
-          <Group gap="md">
-            <Group gap={4}>
-              <IconDental size={16} color="gray" />
-              <Text size="sm" c="dimmed">
-                {procedure.teeth.join(', ')}
-              </Text>
-            </Group>
-            <Group gap={4}>
-              <IconNotebook size={16} color="gray" />
-              <Text size="sm" c="dimmed">
-                {procedure.studySector}
-              </Text>
-            </Group>
-          </Group>
-        </Stack>
-      </Group>
     </Card>
   );
 }
