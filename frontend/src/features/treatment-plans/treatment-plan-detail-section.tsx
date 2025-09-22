@@ -1,16 +1,17 @@
 'use client';
 
-import { Card, Center, Divider, Group, Loader, Text } from '@mantine/core';
-import { getTratmentPlanOptions } from '../treatment-plan/requests';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
+import { Card, Center, Divider, Group, Loader, Text } from '@mantine/core';
+
+import { getTratmentPlanOptions } from '@/features/treatment-plan/requests';
 
 export default function TreatmentPlanDetailSection() {
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
+    <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
       {active !== null ? (
         <TreatmentPlanDetailContent treatmentPlanId={active} />
       ) : (

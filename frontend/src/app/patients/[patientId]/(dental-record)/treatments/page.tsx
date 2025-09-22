@@ -1,9 +1,7 @@
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { Box, Group } from '@mantine/core';
 
-import PatientTreatmentPlans from '@/features/treatment-plans/treatment-plans';
-import { Group } from '@mantine/core';
-import TreatmentPlansSection from '@/features/treatment-plans/treatment-plans-section';
 import TreatmentPlanDetailSection from '@/features/treatment-plans/treatment-plan-detail-section';
+import TreatmentPlansSection from '@/features/treatment-plans/treatment-plans-section';
 
 interface PatientTreatmentPlansParams {
   patientId: string;
@@ -18,13 +16,13 @@ export default async function PatientTreatmentPlansPage({
 
   return (
     <Group align="flex-start" py="md" px="lg" h="100%">
-      <div style={{ flex: 1, height: '100%' }}>
+      <Box flex="1" h="100%">
         <TreatmentPlansSection patientId={patientId} />
-      </div>
+      </Box>
 
-      <div style={{ flex: 1, height: '100%' }}>
-        <TreatmentPlanDetailSection patientId={patientId} />
-      </div>
+      <Box flex="1" h="100%">
+        <TreatmentPlanDetailSection />
+      </Box>
     </Group>
   );
 }

@@ -6,18 +6,18 @@ import {
   Center,
   Divider,
   Group,
-  Loader,
+  Skeleton,
   Stack,
   Text,
   Timeline,
 } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
-import { getPatientTratmentPlansOptions } from './requests';
-import { useQuery } from '@tanstack/react-query';
 import { TreatmentPlanShort } from '@/shared/models';
+import { getPatientTratmentPlansOptions } from './requests';
 
 interface TreatmentPlansSectionProps {
   patientId: string;
@@ -26,34 +26,14 @@ interface TreatmentPlansSectionProps {
 export default function TreatmentPlansSection({
   patientId,
 }: TreatmentPlansSectionProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const active = searchParams.get('active');
-
   const options = getPatientTratmentPlansOptions(patientId);
 
   const { data, isLoading } = useQuery({
     ...options,
   });
 
-  const treatmentPlans = data?.reduce((acc, tp) => {
-    const year = tp.updatedAt.getFullYear().toString();
-    if (acc.has(year)) {
-      acc.get(year)!.push(tp);
-    } else {
-      acc.set(year, [tp]);
-    }
-    return acc;
-  }, new Map<string, TreatmentPlanShort[]>());
-
-  function onTreatmentPlanSelect(treatmentPlanId: string) {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.set('active', treatmentPlanId);
-    router.push(`?${newParams.toString()}`, { scroll: false });
-  }
-
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
+    <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
           <Text fw={600} size="lg">
@@ -72,40 +52,90 @@ export default function TreatmentPlansSection({
 
       <Divider my="none" />
 
-      <Card.Section inheritPadding px="md" py="sm">
-        {isLoading || treatmentPlans === undefined ? (
-          <Center py="md">
-            <Loader size="sm" />
-          </Center>
+      <Card.Section inheritPadding px="md" py="sm" h="100%">
+        {isLoading || data === undefined ? (
+          <Stack h="100%" gap="xs">
+            <Skeleton height={120} radius="none" />
+            <Skeleton height={120} radius="none" />
+            <Skeleton height={120} radius="none" />
+            <Skeleton height={120} radius="none" />
+            <Skeleton height={120} radius="none" />
+          </Stack>
         ) : (
-          <Timeline bulletSize={16}>
-            {Array.from(treatmentPlans.entries())
-              .sort(([a], [b]) => Number(b) - Number(a))
-              .map(([year, plans]) => (
-                <Timeline.Item key={year} title={year}>
-                  <Stack gap="sm" my="xs">
-                    {plans.map((tp) => (
-                      <TreatmentPlanCard
-                        key={tp.id}
-                        treatmentPlan={tp}
-                        selected={tp.id === active?.toString()}
-                        onSelect={onTreatmentPlanSelect}
-                      />
-                    ))}
-                  </Stack>
-                </Timeline.Item>
-              ))}
-            {(() => {
-              const years = Array.from(treatmentPlans.keys()).map(Number);
-              if (years.length > 0) {
-                const minYear = Math.min(...years);
-                return <Timeline.Item title={(minYear - 1).toString()} />;
-              }
-              return null;
-            })()}
-          </Timeline>
+          <TreatmentPlansContent data={data} />
         )}
       </Card.Section>
     </Card>
+  );
+}
+
+function getLastEmptyYear(
+  tpByYear: Map<string, TreatmentPlanShort[]>,
+): React.ReactNode | null {
+  const years = Array.from(tpByYear.keys()).map(Number);
+
+  if (years.length > 0) {
+    const minYear = Math.min(...years);
+    return <Timeline.Item title={(minYear - 1).toString()} />;
+  }
+
+  return null;
+}
+
+function TreatmentPlansContent({ data }: { data: TreatmentPlanShort[] }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const active = searchParams.get('active');
+
+  function onTreatmentPlanSelect(treatmentPlanId: string) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('active', treatmentPlanId);
+    router.push(`?${newParams.toString()}`, { scroll: false });
+  }
+
+  if (data.length === 0) {
+    return (
+      <Center py="md" h="100%" px="lg">
+        <Stack align="center">
+          <Text fw={600} size="lg" c="dimmed" ta="center">
+            O paciente não tem planos de tratamento.
+            <br />
+            Clique no botão acima para criar um.
+          </Text>
+        </Stack>
+      </Center>
+    );
+  }
+
+  const treatmentPlansByYear = data.reduce((acc, tp) => {
+    const year = tp.updatedAt.getFullYear().toString();
+    if (acc.has(year)) {
+      acc.get(year)!.push(tp);
+    } else {
+      acc.set(year, [tp]);
+    }
+    return acc;
+  }, new Map<string, TreatmentPlanShort[]>());
+
+  return (
+    <Timeline bulletSize={16}>
+      {Array.from(treatmentPlansByYear.entries())
+        .sort(([a], [b]) => Number(b) - Number(a))
+        .map(([year, plans]) => (
+          <Timeline.Item key={year} title={year}>
+            <Stack gap="sm" my="xs">
+              {plans.map((tp) => (
+                <TreatmentPlanCard
+                  key={tp.id}
+                  treatmentPlan={tp}
+                  selected={tp.id === active?.toString()}
+                  onSelect={onTreatmentPlanSelect}
+                />
+              ))}
+            </Stack>
+          </Timeline.Item>
+        ))}
+      {getLastEmptyYear(treatmentPlansByYear)}
+    </Timeline>
   );
 }
