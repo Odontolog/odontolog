@@ -102,6 +102,12 @@ function ProcedureSectionModalForm({
   const form = useForm({
     mode: 'uncontrolled',
     initialValues,
+    validate: {
+      plannedSession: (value) =>
+        value !== undefined && isNaN(value)
+          ? 'A sessão planejada deve ser um número.'
+          : null,
+    },
   });
 
   function handleSubmit(values: ProcedureFormValues) {
@@ -142,7 +148,8 @@ function ProcedureSectionModalForm({
           key={form.key('tooth')}
           {...form.getInputProps('tooth')}
         />
-        <Group grow>
+
+        <Group grow align="start">
           <TextInput
             label="Sessão planejada"
             required
