@@ -1,68 +1,116 @@
 'use client';
-import { Avatar, Group, Stack, Title, Text, ActionIcon } from '@mantine/core';
+
+import { useRouter } from 'next/navigation';
+import {
+  Group,
+  Stack,
+  Title,
+  Text,
+  ActionIcon,
+  Tabs,
+  Box,
+  Avatar,
+  Button,
+  Collapse,
+  Paper,
+  SimpleGrid,
+} from '@mantine/core';
 import {
   IconCalendar,
+  IconCheckupList,
+  IconChevronDown,
+  IconDental,
   IconEdit,
   IconGenderAgender,
   IconGenderFemale,
   IconGenderMale,
   IconMapPin,
+  IconMicroscope,
+  IconReportSearch,
+  IconSettings2,
 } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+
 import { Patient } from '@/shared/models';
+import classes from './header.module.css';
+
+const tabs = [
+  {
+    value: 'procedures',
+    icon: <IconDental size={14} />,
+    label: 'Histórico Geral',
+  },
+  {
+    value: 'preprocedures',
+    icon: <IconMicroscope size={14} />,
+    label: 'Pré-Procedimentos',
+  },
+  {
+    value: 'treatments',
+    icon: <IconCheckupList size={14} />,
+    label: 'Tratamentos',
+  },
+  {
+    value: 'documents',
+    icon: <IconReportSearch size={14} />,
+    label: 'Documentos',
+  },
+  {
+    value: 'settings',
+    icon: <IconSettings2 size={14} />,
+    label: 'Configurações',
+  },
+];
 
 export default function PatientHeader({ patient }: { patient: Patient }) {
+  const router = useRouter();
   return (
-    <Group justify="space-between" bg="white" p="sm">
-      <LeftContent patient={patient} />
-      <RightContent patient={patient} />
-    </Group>
+    <>
+      {/* Versão Desktop */}
+      <Stack bg="white" px="sm" visibleFrom="md" >
+        <Stack  pt="sm">
+          <Group justify="space-between">
+            <LeftContent patient={patient} />
+            <RightContent patient={patient} />
+          </Group>
+        </Stack>
+        <Tabs
+          classNames={{
+            tab: classes.tab,
+          }}
+          defaultValue="procedures"
+          variant="outline"
+          onChange={(value) => {
+            void router.push(`/patients/${patient.id}/${value}`);
+          }}
+        >
+          <Tabs.List>
+            {tabs.map((tab) => (
+              <Tabs.Tab
+                key={tab.value}
+                value={tab.value}
+                leftSection={tab.icon}
+              >
+                {tab.label}
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
+        </Tabs>
+      </Stack>
+
+      {/* Versão Mobile */}
+      <Box hiddenFrom="md">
+        <PatientHeaderMobile patient={patient} />
+      </Box>
+    </>
   );
 }
 
-function LeftContent({ patient }: { patient: Patient }) {
-  return (
-    <Group>
-      <Avatar
-        size={150}
-        color="dark"
-        variant="light"
-        name={patient.name}
-        src={patient.avatarUrl}
-      />
-      <Stack gap={4}>
-        <Title>{patient.name}</Title>
-        <Group>
-          <Group gap={4}>
-            <IconCalendar size={16} />
-            <Text>{patient.birthDate.toLocaleDateString('pt-BR')}</Text>
-          </Group>
-          <Group gap={4}>
-            {patient.gender === 'male' ? (
-              <>
-                <IconGenderMale size={16} />
-                <Text>Masculino</Text>
-              </>
-            ) : patient.gender === 'female' ? (
-              <>
-                <IconGenderFemale size={16} />
-                <Text>Feminino</Text>
-              </>
-            ) : (
-              <>
-                <IconGenderAgender size={16} />
-                <Text>Outro</Text>
-              </>
-            )}
-          </Group>
-        </Group>
-        <Group gap={4}>
-          <IconMapPin size={16} />
-          <Text>{patient.address}</Text>
-        </Group>
-      </Stack>
-    </Group>
-  );
-}
+const genderMap = {
+  male: { icon: <IconGenderMale size={16} />, label: 'Masculino' },
+  female: { icon: <IconGenderFemale size={16} />, label: 'Feminino' },
+  other: { icon: <IconGenderAgender size={16} />, label: 'Outro' },
+};
 
 const ethnicityMap: Record<string, string> = {
   white: 'Branca',
@@ -82,10 +130,41 @@ const maritalStatusMap: Record<string, string> = {
   other: 'Outra',
 };
 
+function LeftContent({ patient }: { patient: Patient }) {
+  return (
+    <Group>
+      <Avatar
+        size={150}
+        color="dark"
+        variant="light"
+        name={patient.name}
+        src={patient.avatarUrl}
+      />
+      <Stack gap={4}>
+        <Title>{patient.name}</Title>
+        <Group>
+          <Group gap={4}>
+            <IconCalendar size={16} />
+            <Text>{patient.birthDate.toLocaleDateString('pt-BR')}</Text>
+          </Group>
+          <Group gap={4}>
+            {genderMap[patient.gender].icon}
+            <Text>{genderMap[patient.gender].label}</Text>
+          </Group>
+        </Group>
+        <Group gap={4}>
+          <IconMapPin size={16} />
+          <Text>{patient.address}</Text>
+        </Group>
+      </Stack>
+    </Group>
+  );
+}
+
 function RightContent({ patient }: { patient: Patient }) {
   return (
-    <Group align="start" gap={128}>
-      <Stack gap={4}>
+    <Group align="start" gap={32}>
+      <SimpleGrid cols={2} spacing="xs">
         <Text>
           <b>CPF:</b> {patient.cpf}
         </Text>
@@ -99,8 +178,7 @@ function RightContent({ patient }: { patient: Patient }) {
         <Text>
           <b>Cor:</b> {ethnicityMap[patient.ethnicity]}
         </Text>
-      </Stack>
-      <Stack gap={4}>
+
         <Text>
           <b>RG:</b> {patient.rg} {patient.ssp}
         </Text>
@@ -113,13 +191,119 @@ function RightContent({ patient }: { patient: Patient }) {
         <Text>
           <b>Estado Cívil:</b> {maritalStatusMap[patient.maritalStatus]}
         </Text>
-      </Stack>
+      </SimpleGrid>
+
       <ActionIcon
+        aria-label="Editar paciente"
         onClick={() => console.log('Editar infos do paciente em um prontuário')}
         variant="subtle"
       >
         <IconEdit size={24} />
       </ActionIcon>
     </Group>
+  );
+}
+
+function DetailItem({ label, value }: { label: string; value: string }) {
+  return (
+    <Box>
+      <Text size="xs" c="dimmed">
+        {label}
+      </Text>
+      <Text size="sm">{value}</Text>
+    </Box>
+  );
+}
+
+export function PatientHeaderMobile({ patient }: { patient: Patient }) {
+  const router = useRouter();
+  const [detailsOpened, { toggle: toggleDetails }] = useDisclosure(false);
+
+  return (
+    <Paper px="md" pt="md">
+      <Stack>
+        <Group justify="space-between" align="flex-start">
+          <Group>
+            <Avatar
+              size="xl"
+              color="dark"
+              variant="light"
+              name={patient.name}
+              src={patient.avatarUrl}
+            />
+            <Stack gap={0}>
+              <Title order={2}>{patient.name}</Title>
+              <Text size="sm" c="dimmed">
+                {patient.birthDate.toLocaleDateString('pt-BR')} •{' '}
+                {genderMap[patient.gender].label}
+              </Text>
+            </Stack>
+          </Group>
+          <ActionIcon variant="default" aria-label="Editar paciente">
+            <IconEdit size="1rem" />
+          </ActionIcon>
+        </Group>
+
+        <Button
+          fullWidth
+          variant="light"
+          onClick={toggleDetails}
+          rightSection={
+            <IconChevronDown
+              size="1rem"
+              style={{
+                transform: detailsOpened ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease',
+              }}
+            />
+          }
+        >
+          {detailsOpened ? 'Ocultar detalhes' : 'Ver todos os detalhes'}
+        </Button>
+
+        <Collapse in={detailsOpened}>
+          <SimpleGrid cols={2} spacing="md" mt="md">
+            <DetailItem label="CPF" value={patient.cpf} />
+            <DetailItem label="RG" value={`${patient.rg} ${patient.ssp}`} />
+            <DetailItem
+              label="Contato"
+              value={patient.phone.replace(
+                /^(\d{2})(\d{5})(\d{4})$/,
+                '($1) $2-$3',
+              )}
+            />
+            <DetailItem label="Profissão" value={patient.occupation} />
+            <DetailItem label="Cidade" value={patient.city} />
+            <DetailItem label="Estado" value={patient.state} />
+            <DetailItem label="Cor" value={ethnicityMap[patient.ethnicity]} />
+            <DetailItem
+              label="Estado Civil"
+              value={maritalStatusMap[patient.maritalStatus]}
+            />
+          </SimpleGrid>
+        </Collapse>
+
+        <Tabs
+          classNames={{
+            tab: classes.tab,
+          }}
+          defaultValue="procedures"
+          variant="outline"
+          onChange={(value) => {
+            void router.push(`/patients/${patient.id}/${value}`);
+          }}
+        >
+          <Tabs.List>
+            {tabs.map((tab) => (
+              <Tabs.Tab
+                key={tab.value}
+                value={tab.value}
+                leftSection={tab.icon}
+              />
+            ))}
+          </Tabs.List>
+        </Tabs>
+      </Stack>
+    </Paper>
   );
 }
