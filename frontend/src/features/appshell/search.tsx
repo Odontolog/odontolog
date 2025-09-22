@@ -16,10 +16,7 @@ import {
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
-import {
-  getAllPatients,
-  PatientAndTreatmentPlan,
-} from '@/features/patient/requests';
+import { getAllPatients, PatientAndTreatmentPlan } from './requests';
 import styles from './navbar.module.css';
 
 const data: PatientAndTreatmentPlan[] = await getAllPatients();

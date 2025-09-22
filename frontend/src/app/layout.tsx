@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" {...mantineHtmlProps}>
+    <html lang="pt-br" {...mantineHtmlProps}>
       <head>
         <ColorSchemeScript />
       </head>
