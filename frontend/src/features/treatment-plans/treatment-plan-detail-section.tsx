@@ -5,12 +5,7 @@ import { getTratmentPlanOptions } from '../treatment-plan/requests';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 
-interface TreatmentPlanDetailSectionProps {
-  patientId: string;
-}
-export default function TreatmentPlanDetailSection({
-  patientId,
-}: TreatmentPlanDetailSectionProps) {
+export default function TreatmentPlanDetailSection() {
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 

@@ -18,7 +18,7 @@ export default function PatientTreatmentPlans({
       </div>
 
       <div style={{ flex: 1, height: '100%' }}>
-        <TreatmentPlanDetailSection patientId={patientId} />
+        <TreatmentPlanDetailSection />
       </div>
     </Group>
   );

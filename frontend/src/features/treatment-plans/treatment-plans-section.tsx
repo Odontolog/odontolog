@@ -17,6 +17,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
 import { getPatientTratmentPlansOptions } from './requests';
 import { useQuery } from '@tanstack/react-query';
+import { TreatmentPlanShort } from '@/shared/models';
 
 interface TreatmentPlansSectionProps {
   patientId: string;
@@ -31,9 +32,19 @@ export default function TreatmentPlansSection({
 
   const options = getPatientTratmentPlansOptions(patientId);
 
-  const { data: treatmentPlans, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     ...options,
   });
+
+  const treatmentPlans = data?.reduce((acc, tp) => {
+    const year = tp.updatedAt.getFullYear().toString();
+    if (acc.has(year)) {
+      acc.get(year)!.push(tp);
+    } else {
+      acc.set(year, [tp]);
+    }
+    return acc;
+  }, new Map<string, TreatmentPlanShort[]>());
 
   function onTreatmentPlanSelect(treatmentPlanId: string) {
     const newParams = new URLSearchParams(searchParams);
@@ -68,21 +79,30 @@ export default function TreatmentPlansSection({
           </Center>
         ) : (
           <Timeline bulletSize={16}>
-            <Timeline.Item title="2025">
-              <Stack gap="sm" my="xs">
-                {treatmentPlans.map((tp) => (
-                  <TreatmentPlanCard
-                    key={tp.id}
-                    treatmentPlan={tp}
-                    selected={tp.id === active?.toString()}
-                    onSelect={onTreatmentPlanSelect}
-                  />
-                ))}
-              </Stack>
-            </Timeline.Item>
-            <Timeline.Item title="2024" mt="sm">
-              {' '}
-            </Timeline.Item>
+            {Array.from(treatmentPlans.entries())
+              .sort(([a], [b]) => Number(b) - Number(a))
+              .map(([year, plans]) => (
+                <Timeline.Item key={year} title={year}>
+                  <Stack gap="sm" my="xs">
+                    {plans.map((tp) => (
+                      <TreatmentPlanCard
+                        key={tp.id}
+                        treatmentPlan={tp}
+                        selected={tp.id === active?.toString()}
+                        onSelect={onTreatmentPlanSelect}
+                      />
+                    ))}
+                  </Stack>
+                </Timeline.Item>
+              ))}
+            {(() => {
+              const years = Array.from(treatmentPlans.keys()).map(Number);
+              if (years.length > 0) {
+                const minYear = Math.min(...years);
+                return <Timeline.Item title={(minYear - 1).toString()} />;
+              }
+              return null;
+            })()}
           </Timeline>
         )}
       </Card.Section>
