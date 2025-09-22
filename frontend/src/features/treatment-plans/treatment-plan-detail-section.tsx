@@ -1,3 +1,5 @@
+'use client';
+
 import { Card, Center, Divider, Group, Loader, Text } from '@mantine/core';
 import { getTratmentPlanOptions } from '../treatment-plan/requests';
 import { useQuery } from '@tanstack/react-query';
@@ -13,11 +15,15 @@ export default function TreatmentPlanDetailSection({
   const active = searchParams.get('active');
 
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm">
+    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
       {active !== null ? (
         <TreatmentPlanDetailContent treatmentPlanId={active} />
       ) : (
-        <div>Selecione um procedimento</div>
+        <Center py="md" h="100%">
+          <Text fw={600} size="lg" c="dimmed">
+            Selecione um procedimento
+          </Text>
+        </Center>
       )}
     </Card>
   );
@@ -40,8 +46,8 @@ export function TreatmentPlanDetailContent({
 
   if (isLoading) {
     return (
-      <Center py="md">
-        <Loader size="sm" />
+      <Center py="md" h="100%">
+        <Loader size="lg" />
       </Center>
     );
   }
