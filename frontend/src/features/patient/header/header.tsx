@@ -240,7 +240,13 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
               </Text>
             </Stack>
           </Group>
-          <ActionIcon onClick={() => console.log('Editar infos do paciente em um prontuário')} variant="default" aria-label="Editar paciente">
+          <ActionIcon
+            onClick={() =>
+              console.log('Editar infos do paciente em um prontuário')
+            }
+            variant="default"
+            aria-label="Editar paciente"
+          >
             <IconEdit size="1rem" />
           </ActionIcon>
         </Group>
