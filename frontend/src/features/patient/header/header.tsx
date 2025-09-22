@@ -33,6 +33,7 @@ import { useDisclosure } from '@mantine/hooks';
 
 import { Patient } from '@/shared/models';
 import classes from './header.module.css';
+import { JSX } from 'react';
 
 const tabs = [
   {
@@ -67,8 +68,8 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
   return (
     <>
       {/* Versão Desktop */}
-      <Stack bg="white" px="sm" visibleFrom="md" >
-        <Stack  pt="sm">
+      <Stack bg="white" px="sm" visibleFrom="md">
+        <Stack pt="sm">
           <Group justify="space-between">
             <LeftContent patient={patient} />
             <RightContent patient={patient} />
@@ -106,7 +107,7 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
   );
 }
 
-const genderMap = {
+const genderMap: Record<string, { icon: JSX.Element; label: string }> = {
   male: { icon: <IconGenderMale size={16} />, label: 'Masculino' },
   female: { icon: <IconGenderFemale size={16} />, label: 'Feminino' },
   other: { icon: <IconGenderAgender size={16} />, label: 'Outro' },
@@ -239,7 +240,7 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
               </Text>
             </Stack>
           </Group>
-          <ActionIcon variant="default" aria-label="Editar paciente">
+          <ActionIcon onClick={() => console.log('Editar infos do paciente em um prontuário')} variant="default" aria-label="Editar paciente">
             <IconEdit size="1rem" />
           </ActionIcon>
         </Group>
