@@ -34,7 +34,7 @@ export const student: User = {
 
 // Paciente
 export const patient: PatientShort = {
-  id: 1,
+  id: '1',
   avatarUrl: '',
   name: 'Carlos Pereira',
 };

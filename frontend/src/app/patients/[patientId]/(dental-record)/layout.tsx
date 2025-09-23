@@ -8,7 +8,7 @@ export default async function PatientPageLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { patientId: string };
+  params: Promise<{ patientId: string }>;
 }) {
   const { patientId } = await params;
   const patient = await getPatientById(patientId);
