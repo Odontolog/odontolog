@@ -30,10 +30,10 @@ import {
   IconSettings2,
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
+import { JSX } from 'react';
 
 import { Patient } from '@/shared/models';
 import classes from './header.module.css';
-import { JSX } from 'react';
 
 const tabs = [
   {
@@ -68,8 +68,8 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
   return (
     <>
       {/* Versão Desktop */}
-      <Stack bg="white" px="sm" visibleFrom="md">
-        <Stack pt="sm">
+      <Stack bg="white" visibleFrom="md">
+        <Stack pt="sm" m="md">
           <Group justify="space-between">
             <LeftContent patient={patient} />
             <RightContent patient={patient} />
@@ -86,6 +86,7 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
           }}
         >
           <Tabs.List>
+            <Box w="16px"> </Box>
             {tabs.map((tab) => (
               <Tabs.Tab
                 key={tab.value}

@@ -1,3 +1,5 @@
+import { notFound } from 'next/navigation';
+
 import PatientHeader from '@/features/patient/header/header';
 import { getPatientById } from '@/features/patient/requests';
 
@@ -11,9 +13,9 @@ export default async function PatientPageLayout({
   const { patientId } = await params;
   const patient = await getPatientById(patientId);
 
-  // TODO: Ver sobre um aviso de não ter o paciente
-  if (!patient) {
-    return <div>Patient not found.</div>;
+  if (patient === undefined) {
+    notFound();
+    return;
   }
 
   return (
