@@ -1,7 +1,22 @@
 export type PatientShort = {
-  id: number;
+  id: string;
   avatarUrl: string;
   name: string;
+};
+
+export type Patient = PatientShort & {
+  birthDate: Date;
+  phone: string;
+  cpf: string;
+  rg: string;
+  ssp: string;
+  maritalStatus: 'single' | 'married' | 'divorced' | 'widowed' | 'civil_union';
+  gender: 'female' | 'male' | 'other';
+  ethnicity: 'white' | 'black' | 'brown' | 'yellow' | 'indigenous' | 'other';
+  address: string;
+  city: string;
+  state: string;
+  occupation: string;
 };
 
 export type UserRole = 'student' | 'supervisor' | 'admin';

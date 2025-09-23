@@ -35,7 +35,7 @@ export const student: User = {
 
 // Paciente
 export const patient: PatientShort = {
-  id: 1,
+  id: '1',
   avatarUrl: '',
   name: 'Carlos Pereira',
 };
@@ -151,7 +151,7 @@ export const mockTreatmentPlans: TreatmentPlanShort[] = [
       avatarUrl: '',
     },
     patient: {
-      id: 201,
+      id: '201',
       avatarUrl: '',
       name: 'Carlos Pereira',
     },
@@ -170,7 +170,7 @@ export const mockTreatmentPlans: TreatmentPlanShort[] = [
       avatarUrl: '',
     },
     patient: {
-      id: 202,
+      id: '202',
       avatarUrl: '',
       name: 'Mariana Costa',
     },
@@ -189,7 +189,7 @@ export const mockTreatmentPlans: TreatmentPlanShort[] = [
       avatarUrl: '',
     },
     patient: {
-      id: 203,
+      id: '203',
       avatarUrl: '',
       name: 'João Ricardo',
     },

@@ -19,8 +19,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { getAllPatients } from '@/features/patient/requests';
 import styles from './navbar.module.css';
+import { getAllPatients } from './requests';
 
 export default function Search() {
   const [query, setQuery] = useState('');
