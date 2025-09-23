@@ -20,7 +20,7 @@ export default async function PatientPageLayout({
   return (
     <>
       <PatientHeader patient={patient} />
-      <div>{children}</div>
+      {children}
     </>
   );
 }

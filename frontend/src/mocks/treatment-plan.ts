@@ -5,6 +5,7 @@ import {
   Review,
   Activity,
   ProcedureShort,
+  TreatmentPlanShort,
 } from '@/shared/models';
 
 // Usuários
@@ -137,6 +138,66 @@ export const treatmentPlanMock: TreatmentPlan = {
   status: 'draft',
   procedures,
 };
+
+export const mockTreatmentPlans: TreatmentPlanShort[] = [
+  {
+    id: '3',
+    status: 'draft',
+    assignee: {
+      id: '101',
+      role: 'student',
+      name: 'Ana Souza',
+      email: 'ana.souza@example.com',
+      avatarUrl: '',
+    },
+    patient: {
+      id: 201,
+      avatarUrl: '',
+      name: 'Carlos Pereira',
+    },
+    updatedAt: new Date('2024-09-10T14:30:00'),
+    notes: 'Necessita avaliação inicial para confirmar diagnóstico.',
+    type: 'treatment_plan',
+  },
+  {
+    id: '6',
+    status: 'in_progress',
+    assignee: {
+      id: '102',
+      role: 'student',
+      name: 'Bruno Lima',
+      email: 'bruno.lima@example.com',
+      avatarUrl: '',
+    },
+    patient: {
+      id: 202,
+      avatarUrl: '',
+      name: 'Mariana Costa',
+    },
+    updatedAt: new Date('2024-09-15T09:00:00'),
+    notes: 'Extração do dente 38 realizada. Próxima sessão: obturação.',
+    type: 'treatment_plan',
+  },
+  {
+    id: '9',
+    status: 'in_review',
+    assignee: {
+      id: '103',
+      role: 'supervisor',
+      name: 'Dra. Fernanda Alves',
+      email: 'fernanda.alves@example.com',
+      avatarUrl: '',
+    },
+    patient: {
+      id: 203,
+      avatarUrl: '',
+      name: 'João Ricardo',
+    },
+    updatedAt: new Date('2022-09-18T16:45:00'),
+    notes: 'Plano em revisão. Ajustar sequência de procedimentos.',
+    type: 'treatment_plan',
+  },
+];
 
 export function updateReviews(reviews: Review[]) {
   treatmentPlanMock.reviews = reviews;
