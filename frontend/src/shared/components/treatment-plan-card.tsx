@@ -1,8 +1,8 @@
 'use client';
 
-import { Card, Flex, Group, Stack, Text } from '@mantine/core';
+import { Card, Flex, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { IconCalendar, IconSchool, IconUser } from '@tabler/icons-react';
-import { formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import { TreatmentPlanShort } from '@/shared/models';
@@ -39,10 +39,20 @@ function getTreatmentPlanCardInfoProps(
     case 'updated':
       return {
         icon: IconCalendar,
-        text: formatDistanceToNow(treatmentPlan.updatedAt, {
-          addSuffix: true,
-          locale: ptBR,
-        }),
+        text: (
+          <Tooltip
+            label={format(treatmentPlan.updatedAt, 'dd/MM/yyyy HH:mm')}
+            withArrow
+            transitionProps={{ duration: 200 }}
+          >
+            <span>
+              {formatDistanceToNow(treatmentPlan.updatedAt, {
+                addSuffix: true,
+                locale: ptBR,
+              })}
+            </span>
+          </Tooltip>
+        ),
       };
     default:
       throw new Error('Procedure card info type not supported.');

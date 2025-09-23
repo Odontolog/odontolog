@@ -8,6 +8,7 @@ import {
   Menu,
   Stack,
   Text,
+  Tooltip,
 } from '@mantine/core';
 import {
   IconCalendar,
@@ -21,13 +22,13 @@ import {
   IconTrash,
   IconUser,
 } from '@tabler/icons-react';
-import { formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import { ProcedureShort } from '@/shared/models';
+import CardInfo, { CardInfoProps } from './card-info';
 import styles from './card.module.css';
 import { StatusBadge, StatusIndicator } from './status';
-import CardInfo, { CardInfoProps } from './card-info';
 
 type ProcedureCardField =
   | 'assignee'
@@ -71,10 +72,20 @@ function getProcedureCardInfoProps(
     case 'updated':
       return {
         icon: IconCalendar,
-        text: formatDistanceToNow(procedure.updatedAt, {
-          addSuffix: true,
-          locale: ptBR,
-        }),
+        text: (
+          <Tooltip
+            label={format(procedure.updatedAt, 'dd/MM/yyyy HH:mm')}
+            withArrow
+            transitionProps={{ duration: 200 }}
+          >
+            <span>
+              {formatDistanceToNow(procedure.updatedAt, {
+                addSuffix: true,
+                locale: ptBR,
+              })}
+            </span>
+          </Tooltip>
+        ),
       };
     case 'reviews':
       return {
