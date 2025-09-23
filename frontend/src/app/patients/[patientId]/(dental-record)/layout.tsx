@@ -15,7 +15,6 @@ export default async function PatientPageLayout({
 
   if (patient === undefined) {
     notFound();
-    return;
   }
 
   return (

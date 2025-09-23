@@ -1,20 +1,20 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import {
-  Group,
-  Stack,
-  Title,
-  Text,
   ActionIcon,
-  Tabs,
-  Box,
   Avatar,
+  Box,
   Button,
   Collapse,
+  Group,
   Paper,
   SimpleGrid,
+  Stack,
+  Tabs,
+  Text,
+  Title,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import {
   IconCalendar,
   IconCheckupList,
@@ -29,7 +29,7 @@ import {
   IconReportSearch,
   IconSettings2,
 } from '@tabler/icons-react';
-import { useDisclosure } from '@mantine/hooks';
+import { useRouter } from 'next/navigation';
 import { JSX } from 'react';
 
 import { Patient } from '@/shared/models';
@@ -222,8 +222,8 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
   const [detailsOpened, { toggle: toggleDetails }] = useDisclosure(false);
 
   return (
-    <Paper px="md" pt="md">
-      <Stack>
+    <Paper>
+      <Stack px="md" pt="md">
         <Group justify="space-between" align="flex-start">
           <Group>
             <Avatar
@@ -290,28 +290,29 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
             />
           </SimpleGrid>
         </Collapse>
-
-        <Tabs
-          classNames={{
-            tab: classes.tab,
-          }}
-          defaultValue="procedures"
-          variant="outline"
-          onChange={(value) => {
-            void router.push(`/patients/${patient.id}/${value}`);
-          }}
-        >
-          <Tabs.List>
-            {tabs.map((tab) => (
-              <Tabs.Tab
-                key={tab.value}
-                value={tab.value}
-                leftSection={tab.icon}
-              />
-            ))}
-          </Tabs.List>
-        </Tabs>
       </Stack>
+      <Tabs
+        pt="1rem"
+        classNames={{
+          tab: classes.tab,
+        }}
+        defaultValue="procedures"
+        variant="outline"
+        onChange={(value) => {
+          void router.push(`/patients/${patient.id}/${value}`);
+        }}
+      >
+        <Tabs.List>
+          <Box w="16px"> </Box>
+          {tabs.map((tab) => (
+            <Tabs.Tab
+              key={tab.value}
+              value={tab.value}
+              leftSection={tab.icon}
+            />
+          ))}
+        </Tabs.List>
+      </Tabs>
     </Paper>
   );
 }
