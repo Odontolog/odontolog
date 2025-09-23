@@ -1,6 +1,9 @@
 .root {
   padding-top: 80px;
   padding-bottom: 80px;
+  margin: 0px;
+  align-self: center;
+  width: 100%;
 }
 
 .inner {
@@ -11,7 +14,7 @@
   position: absolute;
   inset: 0;
   opacity: 0.75;
-  color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  color: light-dark(var(--mantine-color-blue-0), var(--mantine-color-dark-6));
 }
 
 .content {
