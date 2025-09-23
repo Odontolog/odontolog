@@ -102,14 +102,14 @@ function DetailSectionContent<T extends Reviewable>({
 
   // NOTE: This is necessary to make reactive UI changes and keep the useState
   //       in sync with the query. Ref: https://tkdodo.eu/blog/deriving-client-state-from-server-state
-  const [value, setValue] = useState('');
-  const displayValue = editing ? value || notes : notes;
+  const [value, setValue] = useState<string | null>(null);
+  const displayValue = editing ? (value === null ? notes : value) : notes;
 
   const mutation = useMutation({
     mutationFn: (value: string) => saveDetails(reviewableId, value),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
-      setValue('');
+      setValue(null);
       setEditing(false);
     },
     onError: (error) => {
@@ -128,7 +128,7 @@ function DetailSectionContent<T extends Reviewable>({
   }
 
   function handleCancel() {
-    setValue(notes);
+    setValue(null);
     setEditing(false);
     mutation.reset();
   }
