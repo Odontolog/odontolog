@@ -1,0 +1,22 @@
+meta {
+  name: Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/api/auth/login
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "supervisor.test.001@test.com",
+    "password": "password2"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
