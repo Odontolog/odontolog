@@ -2,7 +2,10 @@ package br.ufal.ic.odontolog.controllers;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedModel;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.models.Reviewable;
+import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.repositories.ReviewableRepository;
+import br.ufal.ic.odontolog.repositories.SupervisorRepository;
+import br.ufal.ic.odontolog.repositories.UserRepository;
+import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
 import br.ufal.ic.odontolog.services.ReviewableService;
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +28,7 @@ public class ReviewableController {
     private final ReviewableRepository reviewableRepository;
     private final ReviewableMapper reviewableMapper;
     private final ReviewableService reviewableService;
+    private final SupervisorRepository supervisorRepository;
 
     // TODO: This must be restricted to Supervisors role only
     // TODO: Add pagination
@@ -40,11 +48,15 @@ public class ReviewableController {
 
     @GetMapping("/me")
     public PagedModel<ReviewableDTO> getCurrentUserReviewables(
-            Pageable pageable) {
-        Page<Reviewable> pageOfEntidades = reviewableRepository.findAll(pageable);
+            Pageable pageable,
+            @AuthenticationPrincipal UserDetails currentUser) {
+
+        Specification<Reviewable> spec = ReviewableSpecification.isReviewedBy(
+                supervisorRepository.findByEmail(currentUser.getUsername()));
+        Page<Reviewable> pageOfEntity = reviewableRepository.findAll(spec, pageable);
 
         // FIXME: I don't know if this is the best way to do this
-        Page<ReviewableDTO> pageOfDTOs = pageOfEntidades.map(reviewableMapper::toDTO);
+        Page<ReviewableDTO> pageOfDTOs = pageOfEntity.map(reviewableMapper::toDTO);
 
         return new PagedModel<>(pageOfDTOs);
     }

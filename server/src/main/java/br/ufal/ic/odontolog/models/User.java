@@ -11,6 +11,8 @@ import lombok.Setter;
 
 import org.hibernate.annotations.UuidGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Getter
 @Setter
@@ -28,6 +30,8 @@ public class User {
 
   private String name;
   private String email;
+
+  @JsonIgnore
   private String password;
 
   public User(String name, String email, String password, Role role) {
