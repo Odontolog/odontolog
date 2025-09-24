@@ -5,16 +5,23 @@ import jakarta.persistence.*;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import org.hibernate.annotations.UuidGenerator;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "users")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class User {
   // TODO: Add UserDetails and other Spring Security related fields
-  @Id @GeneratedValue @UuidGenerator private UUID id;
+  @Id
+  @GeneratedValue
+  @UuidGenerator
+  private UUID id;
 
   @Enumerated(EnumType.STRING)
   private Role role;

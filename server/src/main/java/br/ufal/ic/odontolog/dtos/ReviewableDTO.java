@@ -2,6 +2,7 @@ package br.ufal.ic.odontolog.dtos;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -25,6 +26,7 @@ public class ReviewableDTO {
     private Instant createdAt;
     private Instant updatedAt;
     private List<ReviewDTO> reviews;
+    private Set<SupervisorDTO> reviewers;
     private String notes;
     private List<ActivityDTO> history;
 }

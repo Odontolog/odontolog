@@ -12,7 +12,7 @@ import br.ufal.ic.odontolog.models.Procedure;
 import br.ufal.ic.odontolog.models.Reviewable;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 
-@Mapper(componentModel = "spring", uses = { TreatmentPlanMapper.class, ProcedureMapper.class })
+@Mapper(componentModel = "spring", uses = { TreatmentPlanMapper.class, ProcedureMapper.class, SupervisorMapper.class })
 public interface ReviewableMapper {
     @SubclassMapping(source = TreatmentPlan.class, target = TreatmentPlanDTO.class)
     @SubclassMapping(source = Procedure.class, target = ProcedureDTO.class)
