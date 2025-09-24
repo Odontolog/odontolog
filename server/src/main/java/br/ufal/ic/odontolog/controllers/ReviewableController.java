@@ -30,10 +30,10 @@ public class ReviewableController {
     // https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.page
     @GetMapping
     public PagedModel<ReviewableDTO> getAllReviewables(Pageable pageable) {
-        Page<Reviewable> pageOfEntidades = reviewableRepository.findAll(pageable);
+        Page<Reviewable> pageOfEntity = reviewableRepository.findAll(pageable);
 
         // FIXME: I don't know if this is the best way to do this
-        Page<ReviewableDTO> pageOfDTOs = pageOfEntidades.map(reviewableMapper::toDTO);
+        Page<ReviewableDTO> pageOfDTOs = pageOfEntity.map(reviewableMapper::toDTO);
 
         return new PagedModel<>(pageOfDTOs);
     }
@@ -42,6 +42,8 @@ public class ReviewableController {
     public PagedModel<ReviewableDTO> getCurrentUserReviewables(
             Pageable pageable) {
         Page<Reviewable> pageOfEntidades = reviewableRepository.findAll(pageable);
+
+        // FIXME: I don't know if this is the best way to do this
         Page<ReviewableDTO> pageOfDTOs = pageOfEntidades.map(reviewableMapper::toDTO);
 
         return new PagedModel<>(pageOfDTOs);
