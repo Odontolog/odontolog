@@ -29,7 +29,7 @@ import {
   IconReportSearch,
   IconSettings2,
 } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { JSX } from 'react';
 
 import { Patient } from '@/shared/models';
@@ -65,6 +65,10 @@ const tabs = [
 
 export default function PatientHeader({ patient }: { patient: Patient }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const activeSubpage =
+    pathname.split('/').filter(Boolean).pop() ?? 'procedure';
+
   return (
     <>
       {/* Versão Desktop */}
@@ -79,7 +83,7 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
           classNames={{
             tab: classes.tab,
           }}
-          defaultValue="procedures"
+          value={activeSubpage}
           variant="outline"
           onChange={(value) => {
             void router.push(`/patients/${patient.id}/${value}`);
@@ -219,6 +223,9 @@ function DetailItem({ label, value }: { label: string; value: string }) {
 
 export function PatientHeaderMobile({ patient }: { patient: Patient }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const activeSubpage =
+    pathname.split('/').filter(Boolean).pop() ?? 'procedure';
   const [detailsOpened, { toggle: toggleDetails }] = useDisclosure(false);
 
   return (
@@ -296,7 +303,7 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
         classNames={{
           tab: classes.tab,
         }}
-        defaultValue="procedures"
+        value={activeSubpage}
         variant="outline"
         onChange={(value) => {
           void router.push(`/patients/${patient.id}/${value}`);
