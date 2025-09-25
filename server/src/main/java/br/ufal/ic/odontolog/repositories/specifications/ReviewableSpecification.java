@@ -1,5 +1,7 @@
 package br.ufal.ic.odontolog.repositories.specifications;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.domain.Specification;
 
 import br.ufal.ic.odontolog.models.Reviewable;

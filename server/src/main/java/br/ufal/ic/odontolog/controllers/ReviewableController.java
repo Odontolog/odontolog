@@ -4,6 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,40 +28,19 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/reviewables")
 @RequiredArgsConstructor
 public class ReviewableController {
-    private final ReviewableRepository reviewableRepository;
-    private final ReviewableMapper reviewableMapper;
     private final ReviewableService reviewableService;
-    private final SupervisorRepository supervisorRepository;
 
     // TODO: This must be restricted to Supervisors role only
-    // TODO: Add pagination
     // TODO: Add filtering (e.g., by type)
-    // TODO: Move this to service layer
-    // See also:
-    // https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.page
-    @GetMapping
-    public PagedModel<ReviewableDTO> getAllReviewables(Pageable pageable) {
-        Page<Reviewable> pageOfEntity = reviewableRepository.findAll(pageable);
-
-        // FIXME: I don't know if this is the best way to do this
-        Page<ReviewableDTO> pageOfDTOs = pageOfEntity.map(reviewableMapper::toDTO);
-
-        return new PagedModel<>(pageOfDTOs);
-    }
-
+    @PreAuthorize("hasRole('ROLE_SUPERVISOR')")
     @GetMapping("/me")
-    public PagedModel<ReviewableDTO> getCurrentUserReviewables(
+    public ResponseEntity<PagedModel<ReviewableDTO>> getCurrentSupervisorReviewables(
             Pageable pageable,
             @AuthenticationPrincipal UserDetails currentUser) {
 
-        Specification<Reviewable> spec = ReviewableSpecification.isReviewedBy(
-                supervisorRepository.findByEmail(currentUser.getUsername()));
-        Page<Reviewable> pageOfEntity = reviewableRepository.findAll(spec, pageable);
+        var response = reviewableService.findForCurrentSupervisor(pageable, currentUser);
+        var pagedModel = new PagedModel<>(response);
 
-        // FIXME: I don't know if this is the best way to do this
-        Page<ReviewableDTO> pageOfDTOs = pageOfEntity.map(reviewableMapper::toDTO);
-
-        return new PagedModel<>(pageOfDTOs);
+        return ResponseEntity.ok(pagedModel);
     }
-
 }
