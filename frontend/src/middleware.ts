@@ -1,10 +1,17 @@
-import { auth } from '@/shared/auth';
 import { NextResponse, type NextRequest } from 'next/server';
-import { AUTH_ROUTES, DEFAULT_REDIRECT } from './shared/routes';
+
+import { auth } from '@/shared/auth';
+import {
+  AUTH_ROUTES,
+  DEFAULT_REDIRECT,
+  SUPERVISOR_ROUTES,
+  NOT_FOUND,
+} from '@/shared/routes';
 
 export async function middleware(request: NextRequest) {
   const session = await auth();
 
+  const loggedUserRole = session?.user.role;
   const isAuthenticated = !!session;
   const isAuthRoute = AUTH_ROUTES.includes(request.nextUrl.pathname);
 
@@ -16,6 +23,15 @@ export async function middleware(request: NextRequest) {
 
   if (isAuthenticated && isAuthRoute) {
     return NextResponse.redirect(new URL(DEFAULT_REDIRECT, request.url));
+  }
+
+  const isSupervisorRoute = SUPERVISOR_ROUTES.includes(
+    request.nextUrl.pathname,
+  );
+  const isStudent = loggedUserRole?.toLowerCase() === 'student';
+
+  if (isAuthenticated && isSupervisorRoute && isStudent) {
+    return NextResponse.redirect(new URL(NOT_FOUND, request.url));
   }
 
   return NextResponse.next();
