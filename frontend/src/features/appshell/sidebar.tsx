@@ -12,6 +12,7 @@ import { Center, Divider, Stack, Tooltip, UnstyledButton } from '@mantine/core';
 import classes from './sidebar.module.css';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { signOut } from 'next-auth/react';
 
 interface NavbarLinkProps {
   icon: typeof IconDental;
@@ -88,7 +89,7 @@ export function Sidebar() {
           icon={IconLogout}
           label="Sair da conta"
           onClick={() => {
-            console.log('Fazer logout');
+            void signOut({ redirect: true, callbackUrl: '/login' });
           }}
         />
       </Stack>
