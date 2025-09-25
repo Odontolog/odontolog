@@ -277,7 +277,7 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
         </Button>
 
         <Collapse in={detailsOpened}>
-          <SimpleGrid cols={2} spacing="md" mt="md">
+          <SimpleGrid cols={2} spacing="md">
             <DetailItem label="CPF" value={patient.cpf} />
             <DetailItem label="RG" value={`${patient.rg} ${patient.ssp}`} />
             <DetailItem
