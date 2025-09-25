@@ -15,8 +15,8 @@ public class Supervisor extends User {
   String siape;
 
   public Supervisor(
-      String name, String email, String password, String specialization, String siape) {
-    super(name, email, password, Role.SUPERVISOR);
+      String name, String email, String password, String specialization, String siape, String photoUrl) {
+    super(name, email, password, Role.SUPERVISOR, photoUrl);
     this.specialization = specialization;
     this.siape = siape;
   }

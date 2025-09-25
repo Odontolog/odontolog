@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog;
 
+import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.utils.JwtUtil;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
@@ -41,9 +42,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       DecodedJWT jwt = jwtUtil.verify(token);
       String username = jwtUtil.getUsername(jwt);
 
-      UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-      var auth =
-          new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+      User user = (User) userDetailsService.loadUserByUsername(username);
+      var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
       SecurityContextHolder.getContext().setAuthentication(auth);
     } catch (Exception e) {
