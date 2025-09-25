@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation';
 export default async function PatientPage({
   params,
 }: {
-  params: { patient_id: string };
+  params: { patientId: string };
 }) {
-  const { patient_id } = await params;
+  const { patientId } = await params;
 
-  redirect(`/patients/${patient_id}/procedures`);
+  redirect(`/patients/${patientId}/procedures`);
 }
