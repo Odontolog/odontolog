@@ -31,7 +31,7 @@ public class ReviewableController {
     private final ReviewableService reviewableService;
 
     // TODO: This must be restricted to Supervisors role only
-    // TODO: Add filtering (e.g., by type)
+    // TODO: Add exception handling for cases like Supervisor not found
     @PreAuthorize("hasRole('ROLE_SUPERVISOR')")
     @GetMapping("/me")
     public ResponseEntity<PagedModel<ReviewableDTO>> getCurrentSupervisorReviewables(

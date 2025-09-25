@@ -54,6 +54,8 @@ public class DevDataLoader implements CommandLineRunner {
 
         @Override
         public void run(String... args) throws Exception {
+                // FIXME: Update emails and passwords to be more readable
+
                 logger.info("Loading dev data...");
 
                 Student studentTest001 = studentRepository.save(
