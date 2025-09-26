@@ -82,6 +82,7 @@ public class DevDataLoader implements CommandLineRunner {
     TreatmentPlan treatmentPlanTest001 =
         treatmentPlanRepository.save(
             TreatmentPlan.builder()
+                .name("Treatment_Plan_Test_001")
                 .patient(patientTest001)
                 .status(TreatmentPlanStatus.DRAFT)
                 .author(studentTest001)

@@ -17,6 +17,7 @@ import lombok.Data;
   @JsonSubTypes.Type(value = ProcedureDTO.class, name = "PROCEDURE")
 })
 public class ReviewableDTO {
+  private String name;
   private ReviewableType type;
   private UUID id;
   private User author;
