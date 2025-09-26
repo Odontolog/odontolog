@@ -9,6 +9,7 @@ import {
 import { TreatmentPlan } from '@/shared/models';
 import { ProcedureFormValues } from './models';
 import { loggedUser } from '@/mocks/students';
+import { notFound } from 'next/navigation';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
   return queryOptions({
@@ -22,6 +23,15 @@ async function getTreatmentPlan(
 ): Promise<TreatmentPlan> {
   console.log(`Fetching data for treatment plan ${treatmentPlanId}`);
   await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  if (Math.random() < 0.1) {
+    throw new Error('Something went wrong');
+  }
+
+  if (treatmentPlanId !== '1') {
+    notFound();
+  }
+
   return treatmentPlanMock;
 }
 
