@@ -1,4 +1,5 @@
-import { Container, Text, Title } from '@mantine/core';
+import { Button, Container, Text, Title } from '@mantine/core';
+import Link from 'next/link';
 
 import { Illustration } from './not-found-illustration';
 import classes from './not-found.module.css';
@@ -6,9 +7,12 @@ import classes from './not-found.module.css';
 interface NotFoundProps {
   title: string;
   description: string;
+  goBackUrl?: string;
 }
 
 export default function NotFound(props: NotFoundProps) {
+  const goBackUrl = props.goBackUrl ?? '/';
+
   return (
     <Container className={classes.root}>
       <div className={classes.inner}>
@@ -23,6 +27,11 @@ export default function NotFound(props: NotFoundProps) {
           >
             {props.description}
           </Text>
+          <div className={classes.action}>
+            <Button component={Link} size="md" href={goBackUrl}>
+              Me leve de volta
+            </Button>
+          </div>
         </div>
       </div>
     </Container>
