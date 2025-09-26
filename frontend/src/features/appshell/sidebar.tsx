@@ -1,18 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { Center, Divider, Stack, Tooltip, UnstyledButton } from '@mantine/core';
 import {
   IconBook,
-  //   IconBuildingHospital,
   IconDental,
   IconLogout,
   IconUsers,
 } from '@tabler/icons-react';
-import { Center, Divider, Stack, Tooltip, UnstyledButton } from '@mantine/core';
-import classes from './sidebar.module.css';
-import { usePathname, useRouter } from 'next/navigation';
+import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { signOut } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
+
+import classes from './sidebar.module.css';
 
 interface NavbarLinkProps {
   icon: typeof IconDental;
@@ -36,29 +35,33 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
   );
 }
 
-const sidebarLinks = [
-  //   { icon: IconBuildingHospital, label: 'Clínicas', route: '' },
-  { icon: IconDental, label: 'Pacientes', route: '/patients' },
-  { icon: IconUsers, label: 'Alunos', route: '/students' },
-  { icon: IconBook, label: 'Revisões', route: '/validation' },
-];
-
 export function Sidebar() {
   const pathname = usePathname();
-  const [active, setActive] = useState<number>(() =>
-    sidebarLinks.findIndex((d) => pathname.includes(d.route)),
-  );
   const router = useRouter();
+  const { data } = useSession();
+
+  const user = data?.user;
+
+  const sidebarLinks = [
+    { icon: IconDental, label: 'Pacientes', route: '/patients' },
+  ];
+  if (user && user.role !== 'student') {
+    sidebarLinks.push(
+      ...[
+        { icon: IconUsers, label: 'Alunos', route: '/students' },
+        { icon: IconBook, label: 'Revisões', route: '/validation' },
+      ],
+    );
+  }
+
+  const active = sidebarLinks.findIndex((d) => pathname.includes(d.route));
 
   const links = sidebarLinks.map((link, index) => (
     <NavbarLink
       {...link}
       key={link.label}
       active={index === active}
-      onClick={() => {
-        setActive(index);
-        router.push(link.route);
-      }}
+      onClick={() => router.push(link.route)}
     />
   ));
 

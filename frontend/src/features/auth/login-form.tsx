@@ -1,15 +1,6 @@
 'use client';
 
-import {
-  Anchor,
-  Button,
-  Checkbox,
-  Paper,
-  PasswordInput,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
+import { Button, Paper, PasswordInput, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
@@ -127,21 +118,9 @@ export default function LoginForm() {
             key={form.key('password')}
             {...form.getInputProps('password')}
           />
-          <Checkbox label="Keep me logged in" mt="xl" size="md" />
           <Button fullWidth mt="xl" size="md" radius="md" type="submit">
             Login
           </Button>
-
-          <Text ta="center" mt="md">
-            Don&apos;t have an account?{' '}
-            <Anchor
-              href="#"
-              fw={500}
-              onClick={(event) => event.preventDefault()}
-            >
-              Register
-            </Anchor>
-          </Text>
         </Paper>
       </form>
     </div>
