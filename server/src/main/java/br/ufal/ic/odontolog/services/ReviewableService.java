@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.models.Reviewable;
 import br.ufal.ic.odontolog.models.Supervisor;
@@ -24,7 +25,8 @@ public class ReviewableService {
 
     public Page<ReviewableDTO> findForCurrentSupervisor(Pageable pageable, UserDetails currentUserDetails) {
         Supervisor supervisor = supervisorRepository.findByEmail(currentUserDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("Supervisor not found"));
+                .orElseThrow(
+                        () -> new UnprocessableRequestException("Supervisor profile not found for the current user"));
 
         Specification<Reviewable> spec = ReviewableSpecification.isReviewedBy(supervisor);
 
