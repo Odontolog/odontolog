@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
@@ -27,6 +28,7 @@ import br.ufal.ic.odontolog.models.Reviewable;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
+import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewableServiceUnitTest {
@@ -68,9 +70,11 @@ public class ReviewableServiceUnitTest {
         reviewableDTO.setId(reviewableEntity.getId());
         when(reviewableMapper.toDTO(reviewableEntity)).thenReturn(reviewableDTO);
 
+        ReviewableCurrentSupervisorFilterDTO filter = new ReviewableCurrentSupervisorFilterDTO();
+
         // Act
 
-        Page<ReviewableDTO> result = reviewableService.findForCurrentSupervisor(pageable, mockUserDetails);
+        Page<ReviewableDTO> result = reviewableService.findForCurrentSupervisor(pageable, mockUserDetails, filter);
 
         // Assert
 
@@ -92,10 +96,11 @@ public class ReviewableServiceUnitTest {
         Pageable pageable = PageRequest.of(0, 10);
         when(supervisorRepository.findByEmail("nonexistent@test.com"))
                 .thenReturn(Optional.empty());
+        ReviewableCurrentSupervisorFilterDTO filter = new ReviewableCurrentSupervisorFilterDTO();
 
         // Act & Assert
         assertThrows(UnprocessableRequestException.class, () -> {
-            reviewableService.findForCurrentSupervisor(pageable, mockUserDetails);
+            reviewableService.findForCurrentSupervisor(pageable, mockUserDetails, filter);
         });
 
         verify(supervisorRepository, times(1)).findByEmail("nonexistent@test.com");

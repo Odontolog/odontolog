@@ -9,6 +9,7 @@ import br.ufal.ic.odontolog.enums.Sex;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("dev")
+@RequiredArgsConstructor
 public class DevDataLoader implements CommandLineRunner {
         Logger logger = LoggerFactory.getLogger(DevDataLoader.class);
 
@@ -31,26 +33,8 @@ public class DevDataLoader implements CommandLineRunner {
         private final PreProcedureRepository preProcedureRepository;
         private final ActivityRepository activityRepository;
         private final PatientRepository patientRepository;
+        private final TreatmentPlanProcedureRepository treatmentPlanProcedureRepository;
         private final PasswordEncoder passwordEncoder;
-
-        public DevDataLoader(
-                        StudentRepository studentRepository,
-                        SupervisorRepository supervisorRepository,
-                        TreatmentPlanRepository treatmentPlanRepository,
-                        AttachmentRepository attachmentRepository,
-                        PreProcedureRepository preProcedureRepository,
-                        ActivityRepository activityRepository,
-                        PatientRepository patientRepository,
-                        PasswordEncoder passwordEncoder) {
-                this.studentRepository = studentRepository;
-                this.supervisorRepository = supervisorRepository;
-                this.treatmentPlanRepository = treatmentPlanRepository;
-                this.attachmentRepository = attachmentRepository;
-                this.preProcedureRepository = preProcedureRepository;
-                this.activityRepository = activityRepository;
-                this.patientRepository = patientRepository;
-                this.passwordEncoder = passwordEncoder;
-        }
 
         @Override
         public void run(String... args) throws Exception {
@@ -194,6 +178,22 @@ public class DevDataLoader implements CommandLineRunner {
                 treatmentPlanTest001.addReview(reviewTest001);
                 treatmentPlanRepository.save(treatmentPlanTest001);
                 logger.info("Review added to Treatment Plan: {}", treatmentPlanTest001.getId());
+
+                Review reviewTest002 = Review.builder()
+                                .reviewStatus(ReviewStatus.PENDING)
+                                .supervisor(supervisorTest001)
+                                .build();
+                preProcedureTest001.addReview(reviewTest002);
+                preProcedureRepository.save(preProcedureTest001);
+                logger.info("Review added to Pre Procedure: {}", preProcedureTest001.getName());
+
+                Review reviewTest003 = Review.builder()
+                                .reviewStatus(ReviewStatus.PENDING)
+                                .supervisor(supervisorTest001)
+                                .build();
+                treatmentPlanProcedureTest001.addReview(reviewTest003);
+                treatmentPlanProcedureRepository.save(treatmentPlanProcedureTest001);
+                logger.info("Review added to Treatment Plan Procedure: {}", treatmentPlanProcedureTest001.getName());
 
                 logger.info("Dev data loaded successfully");
         }

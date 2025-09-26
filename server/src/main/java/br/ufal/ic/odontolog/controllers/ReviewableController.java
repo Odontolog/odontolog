@@ -13,14 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
-import br.ufal.ic.odontolog.mappers.ReviewableMapper;
-import br.ufal.ic.odontolog.models.Reviewable;
-import br.ufal.ic.odontolog.models.Supervisor;
-import br.ufal.ic.odontolog.repositories.ReviewableRepository;
-import br.ufal.ic.odontolog.repositories.SupervisorRepository;
-import br.ufal.ic.odontolog.repositories.UserRepository;
-import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
 import br.ufal.ic.odontolog.services.ReviewableService;
 import lombok.RequiredArgsConstructor;
 
@@ -30,14 +24,13 @@ import lombok.RequiredArgsConstructor;
 public class ReviewableController {
     private final ReviewableService reviewableService;
 
-    // TODO: This must be restricted to Supervisors role only
-    // TODO: Add exception handling for cases like Supervisor not found
     @PreAuthorize("hasRole('SUPERVISOR')")
     @GetMapping("/me")
     public ResponseEntity<PagedModel<ReviewableDTO>> getCurrentSupervisorReviewables(
             Pageable pageable,
+            ReviewableCurrentSupervisorFilterDTO filter,
             @AuthenticationPrincipal UserDetails currentUser) {
-        var response = reviewableService.findForCurrentSupervisor(pageable, currentUser);
+        var response = reviewableService.findForCurrentSupervisor(pageable, currentUser, filter);
         var pagedModel = new PagedModel<>(response);
 
         return ResponseEntity.ok(pagedModel);
