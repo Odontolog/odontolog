@@ -90,7 +90,7 @@ const history: Activity[] = [
 ];
 
 // Procedimentos curtos
-const procedures: ProcedureShort[] = [
+export const procedures: ProcedureShort[] = [
   {
     id: '1',
     status: 'in_review',
