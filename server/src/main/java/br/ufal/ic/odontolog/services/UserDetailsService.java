@@ -1,9 +1,7 @@
 package br.ufal.ic.odontolog.services;
 
-import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

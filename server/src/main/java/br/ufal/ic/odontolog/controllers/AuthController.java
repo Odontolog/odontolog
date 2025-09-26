@@ -7,7 +7,6 @@ import br.ufal.ic.odontolog.utils.JwtUtil;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,8 +45,8 @@ public class AuthController {
 
   @GetMapping("/me")
   public ResponseEntity<User> me(@AuthenticationPrincipal User user) {
-      if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-      user.setPassword(null); // extra defensivo
-      return ResponseEntity.ok(user);
+    if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    user.setPassword(null); // extra defensivo
+    return ResponseEntity.ok(user);
   }
 }

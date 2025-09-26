@@ -1,8 +1,8 @@
 package br.ufal.ic.odontolog.models;
 
 import br.ufal.ic.odontolog.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -13,8 +13,6 @@ import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Data
@@ -31,8 +29,7 @@ public class User implements UserDetails {
   private String email;
   private String password;
 
-  @Column
-  String photoUrl;
+  @Column String photoUrl;
 
   @Column(nullable = false, columnDefinition = "boolean default false")
   boolean deleted = false;
