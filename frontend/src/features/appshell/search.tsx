@@ -78,7 +78,7 @@ function SearchContent({ query }: { query: string }) {
 
   if (isLoading || data === undefined) {
     return (
-      <Stack p="xs" gap="sm" w={250} align="center">
+      <Stack p="xl" gap="sm" align="center" w="100%">
         <Loader size="sm" />
       </Stack>
     );
