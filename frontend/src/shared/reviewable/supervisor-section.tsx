@@ -1,33 +1,30 @@
 'use client';
 
 import {
-  Card,
-  Text,
-  Group,
   Avatar,
-  Loader,
-  Center,
-  Indicator,
   Box,
-  Flex,
-  ThemeIcon,
+  Card,
+  Center,
   Divider,
+  Flex,
+  Group,
+  Indicator,
+  Loader,
+  Text,
+  ThemeIcon,
 } from '@mantine/core';
-import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { IconExclamationCircle } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 
 import { Reviewable } from '@/shared/models';
+import { ReviewableSectionProps } from './models';
 import SupervisorMenu from './supervisor-menu';
-
-interface SupervisorSectionProps<T extends Reviewable> {
-  reviewableId: string;
-  queryOptions: UseQueryOptions<T, Error, T, string[]>;
-}
 
 export default function SupervisorSection<T extends Reviewable>({
   reviewableId,
   queryOptions,
-}: SupervisorSectionProps<T>) {
+  mode,
+}: ReviewableSectionProps<T>) {
   const {
     data: reviews,
     isLoading,
@@ -44,7 +41,7 @@ export default function SupervisorSection<T extends Reviewable>({
           <Text fw={600} size="lg">
             Supervisores
           </Text>
-          {reviews && (
+          {mode === 'edit' && reviews && (
             <SupervisorMenu
               reviewableId={reviewableId}
               queryOptions={queryOptions}

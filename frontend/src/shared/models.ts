@@ -148,3 +148,5 @@ export type Procedure = Reviewable & {
   procedureType: 'pre_procedure' | 'tratment_plan_procedure';
   treatmentPlanId?: string;
 };
+
+export type Mode = 'edit' | 'read';

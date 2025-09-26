@@ -1,3 +1,5 @@
+'use client';
+
 import {
   ActionIcon,
   Card,
@@ -14,17 +16,19 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import ProcedureCard from '@/shared/components/procedure-card';
-import { ProcedureShort, TreatmentPlan } from '@/shared/models';
+import { Mode, ProcedureShort, TreatmentPlan } from '@/shared/models';
 import ProcedureSectionModal from './procedure-modal';
 
 interface ProcedureSectionProps {
   treatmentPlanId: string;
   queryOptions: UseQueryOptions<TreatmentPlan, Error, TreatmentPlan, string[]>;
+  mode: Mode;
 }
 
 export default function ProcedureSection({
   queryOptions,
   treatmentPlanId,
+  mode,
 }: ProcedureSectionProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedProcedure, setSelectedProcedure] = useState<
@@ -57,9 +61,11 @@ export default function ProcedureSection({
           <Text fw={600} size="lg">
             Procedimentos do plano
           </Text>
-          <ActionIcon variant="subtle" color="gray" onClick={open}>
-            <IconPlus size={16} />
-          </ActionIcon>
+          {mode === 'edit' && (
+            <ActionIcon variant="subtle" color="gray" onClick={open}>
+              <IconPlus size={16} />
+            </ActionIcon>
+          )}
         </Group>
       </Card.Section>
 
@@ -81,6 +87,7 @@ export default function ProcedureSection({
                   procedure={p}
                   onEdit={handleProcedureEdit}
                   onDelete={handleProcedureDelete}
+                  mode={mode}
                 />
               ))}
           </Stack>
