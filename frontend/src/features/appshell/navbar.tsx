@@ -2,10 +2,10 @@
 
 import { ActionIcon, Avatar, Group } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
+import { useSession } from 'next-auth/react';
 
 import styles from './navbar.module.css';
 import Search from './search';
-import { useSession } from 'next-auth/react';
 
 export default function Navbar() {
   const { data } = useSession();

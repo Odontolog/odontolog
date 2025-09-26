@@ -1,5 +1,6 @@
 import { type DefaultSession } from 'next-auth';
 import { type JWT as DefaultJWT } from 'next-auth/jwt';
+import { UserRole } from '@/shared/models';
 
 declare module 'next-auth' {
   interface Session extends DefaultSession {
@@ -9,7 +10,7 @@ declare module 'next-auth' {
       name: string;
       email: string;
       photoUrl: string;
-      role: 'student' | 'supervisor' | 'admin';
+      role: UserRole;
     };
   }
 
@@ -19,7 +20,7 @@ declare module 'next-auth' {
     name: string;
     email: string;
     photoUrl?: string;
-    role: 'student' | 'supervisor' | 'admin';
+    role: UserRole;
   }
 }
 
@@ -31,6 +32,6 @@ declare module 'next-auth/jwt' {
     photoUrl?: string;
     email: string;
     name: string;
-    role: 'student' | 'supervisor' | 'admin';
+    role: UserRole;
   }
 }

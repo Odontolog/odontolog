@@ -11,7 +11,6 @@ import {
 export async function middleware(request: NextRequest) {
   const session = await auth();
 
-  const loggedUserRole = session?.user.role;
   const isAuthenticated = !!session;
   const isAuthRoute = AUTH_ROUTES.includes(request.nextUrl.pathname);
 
@@ -28,7 +27,9 @@ export async function middleware(request: NextRequest) {
   const isSupervisorRoute = SUPERVISOR_ROUTES.includes(
     request.nextUrl.pathname,
   );
-  const isStudent = loggedUserRole?.toLowerCase() === 'student';
+
+  const loggedUserRole = session?.user.role;
+  const isStudent = loggedUserRole === 'student';
 
   if (isAuthenticated && isSupervisorRoute && isStudent) {
     return NextResponse.redirect(new URL(NOT_FOUND, request.url));
