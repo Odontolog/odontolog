@@ -7,5 +7,5 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TreatmentPlanDTO extends ReviewableDTO {
-    private TreatmentPlanStatus status;
+  private TreatmentPlanStatus status;
 }

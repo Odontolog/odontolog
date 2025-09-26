@@ -1,10 +1,9 @@
 package br.ufal.ic.odontolog.models;
 
-import java.util.Set;
-
 import br.ufal.ic.odontolog.enums.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
+import java.util.Set;
 import lombok.*;
 
 @Entity
@@ -17,8 +16,7 @@ public class Supervisor extends User {
   // TODO: Add supervisor's SIAPE validation
   String siape;
 
-  @ManyToMany
-  Set<Reviewable> reviewables;
+  @ManyToMany Set<Reviewable> reviewables;
 
   public Supervisor(
       String name, String email, String password, String specialization, String siape) {

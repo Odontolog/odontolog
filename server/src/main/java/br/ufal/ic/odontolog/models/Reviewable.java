@@ -21,10 +21,7 @@ import org.hibernate.annotations.UuidGenerator;
 @Table(name = "reviewables")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Reviewable {
-  @Id
-  @GeneratedValue
-  @UuidGenerator
-  private UUID id;
+  @Id @GeneratedValue @UuidGenerator private UUID id;
 
   @ManyToOne
   @JoinColumn(name = "author_id")
@@ -34,24 +31,29 @@ public abstract class Reviewable {
   @JoinColumn(name = "assignee_id")
   private User assignee;
 
-  @ManyToMany
-  private Set<Supervisor> reviewers;
+  @ManyToMany private Set<Supervisor> reviewers;
 
-  @CreationTimestamp
-  private Instant createdAt;
+  @CreationTimestamp private Instant createdAt;
 
-  @UpdateTimestamp
-  private Instant updatedAt;
+  @UpdateTimestamp private Instant updatedAt;
 
   // FIXME: I don't know if this cascade type is correct. Check if this is
   // necessary.
   // Or if I should use CascadeType.PERSIST only.
-  @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @OneToMany(
+      mappedBy = "reviewable",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
   private final Set<Review> reviews = new java.util.HashSet<>();
 
   private String notes;
 
-  @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @OneToMany(
+      mappedBy = "reviewable",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
   private final Set<Activity> history = new java.util.HashSet<>();
 
   @Enumerated(EnumType.STRING)

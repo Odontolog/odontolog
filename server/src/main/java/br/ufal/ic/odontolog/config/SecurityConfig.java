@@ -30,14 +30,15 @@ public class SecurityConfig {
     http.csrf(csrf -> csrf.disable())
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
-            auth -> auth.requestMatchers("/api/auth/**")
-                .permitAll()
-                .requestMatchers("/api/public/**")
-                .permitAll()
-                .requestMatchers("/api/**")
-                .authenticated()
-                .anyRequest()
-                .permitAll());
+            auth ->
+                auth.requestMatchers("/api/auth/**")
+                    .permitAll()
+                    .requestMatchers("/api/public/**")
+                    .permitAll()
+                    .requestMatchers("/api/**")
+                    .authenticated()
+                    .anyRequest()
+                    .permitAll());
 
     http.headers(h -> h.frameOptions(frame -> frame.disable())); // H2 console
 

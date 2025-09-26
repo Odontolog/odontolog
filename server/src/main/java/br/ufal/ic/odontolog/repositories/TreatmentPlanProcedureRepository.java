@@ -1,9 +1,7 @@
 package br.ufal.ic.odontolog.repositories;
 
+import br.ufal.ic.odontolog.models.TreatmentPlanProcedure;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import br.ufal.ic.odontolog.models.TreatmentPlanProcedure;
-
-public interface TreatmentPlanProcedureRepository extends JpaRepository<TreatmentPlanProcedure, Long> {
-
-}
+public interface TreatmentPlanProcedureRepository
+    extends JpaRepository<TreatmentPlanProcedure, Long> {}
