@@ -15,7 +15,7 @@ public class OpenApiConfig {
     OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
-                .info(new Info().title("OdontoLog API").description("API para o sistema OdontoLog.").version("v1"))
+                .info(new Info().title("OdontoLog API").description("Backend API for Odontolog System").version("v1"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(
                         new Components()
