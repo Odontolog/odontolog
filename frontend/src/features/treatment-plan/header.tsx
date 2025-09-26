@@ -28,6 +28,7 @@ import { type User } from 'next-auth';
 import styles from './header.module.css';
 import RequestReviewModal from './request-review-modal';
 import ReviewMenu from './review-menu';
+import { getLatestActorAndDate } from './utils';
 
 interface TreatmentPlanHeaderProps {
   id: string;
@@ -64,6 +65,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       updatedAt: data.updatedAt,
       assignee: data.assignee,
       reviews: data.reviews,
+      latest: getLatestActorAndDate(data.history),
     }),
   });
 
@@ -76,6 +78,12 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       </Stack>
     );
   }
+
+  // For the case where a treatment plan has no activities (empty history)
+  const latest = {
+    actor: data.latest ? data.latest.actor : data.assignee.name,
+    updatedAt: data.latest ? data.latest.createdAt : data.updatedAt,
+  };
 
   const breadcrumbsData = [
     { title: 'Pacientes', href: '/patients' },
@@ -130,15 +138,15 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
           <Group gap="sm">
             <StatusBadge className={styles.badge} status={data.status} />
             <Text size="sm" c="gray.9">
-              Última atualização por <b>{data.assignee.name}</b>{' '}
+              Última atualização por <b>{latest.actor}</b>{' '}
               <Tooltip
-                label={format(data.updatedAt, 'dd/MM/yyyy HH:mm')}
+                label={format(latest.updatedAt, 'dd/MM/yyyy HH:mm')}
                 withArrow
                 position="right"
                 transitionProps={{ duration: 200 }}
               >
                 <Text span>
-                  {formatDistanceToNow(data.updatedAt, {
+                  {formatDistanceToNow(latest.updatedAt, {
                     addSuffix: true,
                     locale: ptBR,
                   })}
