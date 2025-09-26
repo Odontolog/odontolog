@@ -2,13 +2,11 @@
 
 import {
   Avatar,
-  Box,
   Card,
   Center,
   Divider,
   Flex,
   Group,
-  Indicator,
   Loader,
   Text,
   ThemeIcon,
@@ -16,6 +14,7 @@ import {
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 
+import { StatusIndicator } from '@/shared/components/status';
 import { Reviewable } from '@/shared/models';
 import { ReviewableSectionProps } from './models';
 import SupervisorMenu from './supervisor-menu';
@@ -89,21 +88,7 @@ export default function SupervisorSection<T extends Reviewable>({
                   />
                   <Text size="sm">{review.supervisor.name}</Text>
                 </Group>
-                <Indicator
-                  size={8}
-                  position="middle-center"
-                  color={
-                    review.status === 'approved'
-                      ? 'green'
-                      : review.status === 'rejected'
-                        ? 'red'
-                        : review.status === 'draft'
-                          ? 'gray'
-                          : 'yellow'
-                  }
-                >
-                  <Box w={8} h={8} />
-                </Indicator>
+                <StatusIndicator status={review.status} />
               </Group>
             ))}
         </Flex>
