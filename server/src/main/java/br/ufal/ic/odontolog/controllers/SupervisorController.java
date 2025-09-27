@@ -12,6 +12,7 @@ import java.util.List;
 
 @PreAuthorize("isAuthenticated()")
 @RestController
+@RequestMapping("/api/supervisors")
 public class SupervisorController {
 
     private final SupervisorService supervisorService;
@@ -20,36 +21,22 @@ public class SupervisorController {
         this.supervisorService = supervisorService;
     }
 
-//    @PostMapping
-//    public ResponseEntity<Void> register(@Valid @RequestBody AdministratorCreateDTO requestDTO) {
-//        this.administratorService.register(requestDTO.getName(), requestDTO.getEmail());
-//        return new ResponseEntity<>(HttpStatus.CREATED);
-//    }
-
     @GetMapping
-    public ResponseEntity<List<SupervisorResponseDTO>> getAllSupervisors(){
+    public ResponseEntity<List<SupervisorDTO>> getAllSupervisors(){
         return new ResponseEntity<>(supervisorService.getSupervisors(), HttpStatus.OK);
     }
 
     @GetMapping({"/{email}"})
-    public ResponseEntity<SupervisorResponseDTO> getSupervisor(@PathVariable String email){
+    public ResponseEntity<SupervisorDTO> getSupervisor(@PathVariable String email){
         return new ResponseEntity<>(supervisorService.getSupervisorByEmail(email), HttpStatus.OK);
     }
 
     @PutMapping({"/{email}"})
     @PreAuthorize("hasAnyRole('ADMIN') or authentication.name == #email")
-    public ResponseEntity<SupervisorResponseDTO> updateSupervisorByEmail(@PathVariable String email,
-                                                                               @RequestBody @Valid SupervisorUpdateDTO supervisorUpdateDTO) {
-        SupervisorResponseDTO supervisorResponseDTO = supervisorService.updateSupervisor(email, supervisorUpdateDTO);
+    public ResponseEntity<SupervisorDTO> updateSupervisorByEmail(@PathVariable String email,
+                                                                 @RequestBody @Valid SupervisorUpdateDTO supervisorUpdateDTO) {
+        SupervisorDTO supervisorDTO = supervisorService.updateSupervisor(email, supervisorUpdateDTO);
 
-        return new ResponseEntity<>(supervisorResponseDTO, HttpStatus.OK);
+        return new ResponseEntity<>(supervisorDTO, HttpStatus.OK);
     }
-
-    @DeleteMapping({"/{email}"})
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<Void> deleteSupervisor(@PathVariable String email){
-        supervisorService.deleteSupervisor(email);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
 }

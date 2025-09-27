@@ -1,19 +1,53 @@
 package br.ufal.ic.odontolog.services;
 
-import br.ufal.ic.odontolog.dtos.SupervisorResponseDTO;
+import br.ufal.ic.odontolog.dtos.SupervisorDTO;
 import br.ufal.ic.odontolog.dtos.SupervisorUpdateDTO;
+import br.ufal.ic.odontolog.mappers.SupervisorMapper;
+import br.ufal.ic.odontolog.models.Supervisor;
+import br.ufal.ic.odontolog.repositories.SupervisorRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-public interface SupervisorService {
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-    //void register(String name, String email);
+@Service
+public class SupervisorService {
 
-    List<SupervisorResponseDTO> getSupervisors();
+    private final SupervisorRepository supervisorRepository;
+    private final SupervisorMapper supervisorMapper;
 
-    SupervisorResponseDTO getSupervisorByEmail(String email);
+    public SupervisorService(
+            SupervisorRepository supervisorRepository,
+            SupervisorMapper supervisorMapper
+    ) {
+        this.supervisorRepository = supervisorRepository;
+        this.supervisorMapper = supervisorMapper;
+    }
 
-    SupervisorResponseDTO updateSupervisor(String email, SupervisorUpdateDTO supervisorUpdateDTO);
+    public List<SupervisorDTO> getSupervisors() {
+        List<Supervisor> supervisors = supervisorRepository.findAll();
+        return supervisorMapper.toDTOList(supervisors);
+    }
 
-    void deleteSupervisor(String email);
+    public SupervisorDTO getSupervisorByEmail(String email) {
+        Supervisor supervisor = supervisorRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Supervisor not found"));
+        return supervisorMapper.toDTO(supervisor);
+    }
+
+    @Transactional
+    public SupervisorDTO updateSupervisor(String email, SupervisorUpdateDTO supervisorUpdateDTO) {
+        Supervisor supervisor = supervisorRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Supervisor not found with email: " + email));
+
+        supervisorMapper.toEntity(supervisorUpdateDTO, supervisor);
+        supervisorRepository.save(supervisor);
+
+        return supervisorMapper.toDTO(supervisor);
+    }
 }
