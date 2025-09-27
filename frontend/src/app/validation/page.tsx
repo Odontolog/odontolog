@@ -1,3 +1,4 @@
+import TreatmentPlanDetailSection from '@/features/treatment-plans/treatment-plan-detail-section';
 import ValidationsSection from '@/features/validations/validations-section';
 import Header from '@/shared/components/header';
 import { Group, Box } from '@mantine/core';
@@ -14,8 +15,9 @@ export default function ProcedureValidationPage() {
           <ValidationsSection />
         </Box>
 
+        {/* TODO: Esperar a task do @Gabriel para adicionar ou ajusar esse componente */}
         <Box flex="1" h="100%">
-          a
+          <TreatmentPlanDetailSection />
         </Box>
       </Group>
     </>
