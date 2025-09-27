@@ -9,16 +9,17 @@ import {
   Center,
   Divider,
   Group,
+  ScrollArea,
   Skeleton,
   Stack,
   Text,
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getValidationsOptions } from './requests.';
 
 export default function ValidationsSection() {
-  const supervisorId = loggedSupervisor.id;
-  const options = getValidationsOptions(supervisorId);
+  const options = getValidationsOptions(loggedSupervisor.id);
 
   const { data, isLoading } = useQuery({ ...options });
 
@@ -31,7 +32,7 @@ export default function ValidationsSection() {
               Validação
             </Text>
             <Badge variant="light" color="yellow" size="sm">
-              {5} esperando
+              {data?.length} esperando
             </Badge>
           </Group>
         </Group>
@@ -49,7 +50,9 @@ export default function ValidationsSection() {
             <Skeleton height={120} radius="none" />
           </Stack>
         ) : (
-          <ValidationsContent data={data} />
+          <ScrollArea scrollbarSize={6} w="100%" h="600px">
+            <ValidationsContent data={data} />
+          </ScrollArea>
         )}
       </Card.Section>
     </Card>
@@ -73,6 +76,16 @@ function ValidationsContent({
 }: {
   data: (TreatmentPlanShort | ProcedureShort)[];
 }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const active = searchParams.get('active');
+
+  function onReviewableSelect(reviewableId: string) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('active', reviewableId);
+    router.push(`?${newParams.toString()}`, { scroll: false });
+  }
+
   if (data.length === 0) {
     return (
       <Center py="md" h="100%" px="lg">
@@ -90,10 +103,24 @@ function ValidationsContent({
     <Stack>
       {data.map((rev, index) => {
         if (isProcedure(rev)) {
-          return <ProcedureCard key={index} procedure={rev} />;
+          return (
+            <ProcedureCard
+              key={index}
+              procedure={rev}
+              selected={rev.id === active?.toString()}
+              onSelect={onReviewableSelect}
+            />
+          );
         }
         if (isTreatmentPlan(rev)) {
-          return <TreatmentPlanCard key={index} treatmentPlan={rev} />;
+          return (
+            <TreatmentPlanCard
+              key={index}
+              treatmentPlan={rev}
+              selected={rev.id === active?.toString()}
+              onSelect={onReviewableSelect}
+            />
+          );
         }
         return null;
       })}
