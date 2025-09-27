@@ -5,13 +5,9 @@ meta {
 }
 
 get {
-  url: http://localhost:8080/api/reviewables/me?awaitingMyReview=true
+  url: http://localhost:8080/api/reviewables/me
   body: none
   auth: inherit
-}
-
-params:query {
-  awaitingMyReview: true
 }
 
 settings {
