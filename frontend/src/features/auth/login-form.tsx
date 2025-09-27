@@ -129,6 +129,7 @@ export default function LoginForm() {
               <Card.Section inheritPadding py="md">
                 <Stack gap={2} justify="center" align="center">
                   <Image
+                    maw={300}
                     src="https://pouch.jumpshare.com/preview/7BSNguELVovcLgcxYSNvT4ro5EW18Cs8-b2EkxlBjFpnox3CeN4LXxTLew5p08sT6JzGatXg9CU95hgmEmmxhpXsbY9i-j22O5gaQ6ysCNQ"
                     alt="Odontolog logo brand"
                   />
@@ -154,7 +155,7 @@ export default function LoginForm() {
                   {...form.getInputProps('password')}
                 />
                 <Button fullWidth mt="xl" size="md" radius="md" type="submit">
-                  Login
+                  Entrar
                 </Button>
               </Card.Section>
             </Card>
