@@ -110,7 +110,7 @@ export default function LoginForm() {
 
   return (
     <Box>
-      <BackgroundImage src="https://i.imgur.com/LdzDQN8.png">
+      <BackgroundImage src="/assets/login-bg.svg">
         <Flex
           pl={{ base: 0, sm: 64, md: 128 }}
           justify={{ base: 'center', sm: 'start' }}
@@ -130,7 +130,7 @@ export default function LoginForm() {
                 <Stack gap={2} justify="center" align="center">
                   <Image
                     maw={300}
-                    src="https://pouch.jumpshare.com/preview/7BSNguELVovcLgcxYSNvT4ro5EW18Cs8-b2EkxlBjFpnox3CeN4LXxTLew5p08sT6JzGatXg9CU95hgmEmmxhpXsbY9i-j22O5gaQ6ysCNQ"
+                    src="/assets/odontolog-logo.svg"
                     alt="Odontolog logo brand"
                   />
                   <Text size="xs" c="dimmed">
