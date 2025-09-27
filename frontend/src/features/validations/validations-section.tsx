@@ -109,6 +109,7 @@ function ValidationsContent({
               procedure={rev}
               selected={rev.id === active?.toString()}
               onSelect={onReviewableSelect}
+              disableSession
             />
           );
         }
