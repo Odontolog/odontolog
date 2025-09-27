@@ -82,7 +82,7 @@ export default function NavbarMobile() {
             aria-label="Toggle navigation"
           />
           <Image
-            src="/odontolog.svg"
+            src="/assets/odontolog-icon.svg"
             alt="Odontolog Logo"
             width={40}
             height={40}

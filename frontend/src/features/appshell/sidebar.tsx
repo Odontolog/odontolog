@@ -69,7 +69,7 @@ export function Sidebar() {
     <nav className={classes.navbar}>
       <Center>
         <Image
-          src="/odontolog.svg"
+          src="/assets/odontolog-icon.svg"
           alt="Odontolog Logo"
           width={40}
           height={40}
