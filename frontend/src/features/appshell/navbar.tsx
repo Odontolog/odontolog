@@ -2,12 +2,16 @@
 
 import { ActionIcon, Avatar, Group } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
+import { useSession } from 'next-auth/react';
 
-import { loggedUser } from '@/mocks/students';
 import styles from './navbar.module.css';
 import Search from './search';
 
 export default function Navbar() {
+  const { data } = useSession();
+
+  const user = data?.user;
+
   return (
     <nav className={styles.navbar}>
       <Group justify="space-between" h="100%">
@@ -24,10 +28,10 @@ export default function Navbar() {
           </ActionIcon>
           <Avatar
             component="a"
-            href={`/students/${loggedUser.id}`}
+            href={`/students/${user?.id}`}
             color="initials"
-            name={loggedUser.name}
-            src={loggedUser.avatarUrl}
+            name={user?.name}
+            src={user?.photoUrl}
           />
         </Group>
       </Group>

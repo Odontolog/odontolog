@@ -21,8 +21,9 @@ public class Student extends User {
       int clinic_number,
       String enrollment_code,
       int enrollment_year,
-      int enrollment_semester) {
-    super(name, email, password, Role.STUDENT);
+      int enrollment_semester,
+      String photoUrl) {
+    super(name, email, password, Role.STUDENT, photoUrl);
     this.clinic_number = clinic_number;
     this.enrollment_code = enrollment_code;
     this.enrollment_year = enrollment_year;
