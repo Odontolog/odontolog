@@ -1,14 +1,29 @@
 'use client';
 
-import { Button, Paper, PasswordInput, TextInput, Title } from '@mantine/core';
+import {
+  BackgroundImage,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Image,
+  PasswordInput,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
+import {
+  IconAt,
+  IconCircleCheck,
+  IconCircleX,
+  IconLock,
+} from '@tabler/icons-react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { DEFAULT_REDIRECT } from '@/shared/routes';
-import classes from './login-form.module.css';
 
 interface LoginCredentials {
   email: string;
@@ -94,35 +109,58 @@ export default function LoginForm() {
   }
 
   return (
-    <div className={classes.wrapper}>
-      <form onSubmit={form.onSubmit((values) => handleLogin(values))}>
-        <Paper className={classes.form}>
-          <Title order={2} className={classes.title}>
-            Welcome back to Mantine!
-          </Title>
-
-          <TextInput
-            label="Email address"
-            placeholder="hello@gmail.com"
-            size="md"
-            radius="md"
-            key={form.key('email')}
-            {...form.getInputProps('email')}
-          />
-          <PasswordInput
-            label="Password"
-            placeholder="Your password"
-            mt="md"
-            size="md"
-            radius="md"
-            key={form.key('password')}
-            {...form.getInputProps('password')}
-          />
-          <Button fullWidth mt="xl" size="md" radius="md" type="submit">
-            Login
-          </Button>
-        </Paper>
-      </form>
-    </div>
+    <Box>
+      <BackgroundImage src="https://i.imgur.com/LdzDQN8.png">
+        <Flex
+          pl={{ base: 0, sm: 64, md: 128 }}
+          justify={{ base: 'center', sm: 'start' }}
+          align="center"
+          h="100vh"
+          w="100vw"
+          bg="color.2"
+        >
+          <form onSubmit={form.onSubmit((values) => handleLogin(values))}>
+            <Card
+              shadow="sm"
+              padding="xl"
+              radius="md"
+              w={{ base: 'full', md: 450 }}
+            >
+              <Card.Section inheritPadding py="md">
+                <Stack gap={2} justify="center" align="center">
+                  <Image
+                    src="https://pouch.jumpshare.com/preview/7BSNguELVovcLgcxYSNvT4ro5EW18Cs8-b2EkxlBjFpnox3CeN4LXxTLew5p08sT6JzGatXg9CU95hgmEmmxhpXsbY9i-j22O5gaQ6ysCNQ"
+                    alt="Odontolog logo brand"
+                  />
+                  <Text size="xs" c="dimmed">
+                    Conecte-se para acompanhar seus pacientes e procedimentos.
+                  </Text>
+                </Stack>
+              </Card.Section>
+              <Card.Section withBorder inheritPadding py="md" pb="xl">
+                <TextInput
+                  label="Email"
+                  leftSection={<IconAt size={16} />}
+                  placeholder="seu.nome@foufal.ufal.br"
+                  key={form.key('email')}
+                  {...form.getInputProps('email')}
+                />
+                <PasswordInput
+                  leftSection={<IconLock size={16} />}
+                  label="Senha"
+                  placeholder="$enh@Forte123"
+                  mt="md"
+                  key={form.key('password')}
+                  {...form.getInputProps('password')}
+                />
+                <Button fullWidth mt="xl" size="md" radius="md" type="submit">
+                  Login
+                </Button>
+              </Card.Section>
+            </Card>
+          </form>
+        </Flex>
+      </BackgroundImage>
+    </Box>
   );
 }
