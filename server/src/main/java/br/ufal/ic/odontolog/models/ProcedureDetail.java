@@ -12,9 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProcedureDetail {
-    private String diagnostic;
+  private String diagnostic;
 
-    // This entity is not mapped to a table
-    // It is used to store the details of a procedure
-    // Probably will have more fields in the future.
+  // This entity is not mapped to a table
+  // It is used to store the details of a procedure
+  // Probably will have more fields in the future.
 }

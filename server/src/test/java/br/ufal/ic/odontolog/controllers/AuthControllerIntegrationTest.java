@@ -1,0 +1,126 @@
+package br.ufal.ic.odontolog.controllers;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import br.ufal.ic.odontolog.models.Student;
+import br.ufal.ic.odontolog.repositories.StudentRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+class AuthControllerIntegrationTest {
+
+  @Autowired MockMvc mockMvc;
+  @Autowired ObjectMapper objectMapper;
+  @Autowired StudentRepository studentRepository;
+  @Autowired PasswordEncoder passwordEncoder;
+
+  private static final String USERNAME = "student.test.001@test.com";
+  private static final String PASSWORD = "password";
+
+  @BeforeEach
+  void seedUser() {
+    studentRepository
+        .findByEmail(USERNAME)
+        .orElseGet(
+            () ->
+                studentRepository.save(
+                    new Student(
+                        "Student_Test_001",
+                        USERNAME,
+                        passwordEncoder.encode(PASSWORD),
+                        1,
+                        "20250914",
+                        2025,
+                        1)));
+  }
+
+  @Test
+  @DisplayName("Login deve retornar 200 e accessToken")
+  void validLogin() throws Exception {
+    var body =
+        """
+          {"username":"%s","password":"%s"}
+        """.formatted(USERNAME, PASSWORD);
+
+    var mvcResult =
+        mockMvc
+            .perform(post("/api/auth/login").contentType(APPLICATION_JSON).content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.accessToken").exists())
+            .andReturn();
+
+    JsonNode node = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
+    String token = node.get("accessToken").asText();
+    assertThat(token).isNotBlank();
+  }
+
+  @Test
+  @DisplayName("Login inválido deve retornar 403")
+  void invalidLogin() throws Exception {
+    var body =
+        """
+          {"username":"%s","password":"%s"}
+        """
+            .formatted(USERNAME, "wrongpass");
+
+    mockMvc
+        .perform(post("/api/auth/login").contentType(APPLICATION_JSON).content(body))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("Acesso sem token deve retornar 403")
+  void protectedWithoutToken() throws Exception {
+    mockMvc.perform(get("/api/hello")).andExpect(status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("Acesso com token inválido deve retornar 403")
+  void protectedWithInvalidToken() throws Exception {
+    mockMvc
+        .perform(get("/api/hello").header("Authorization", "Bearer abc.def.ghi"))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @DisplayName("Acesso com token válido deve retornar 200")
+  void protectedWithValidToken() throws Exception {
+    var loginResp =
+        mockMvc
+            .perform(
+                post("/api/auth/login")
+                    .contentType(APPLICATION_JSON)
+                    .content(
+                        """
+                              {"username":"%s","password":"%s"}
+                        """
+                            .formatted(USERNAME, PASSWORD)))
+            .andReturn();
+    var token =
+        objectMapper
+            .readTree(loginResp.getResponse().getContentAsString())
+            .get("accessToken")
+            .asText();
+
+    mockMvc
+        .perform(get("/api/hello").header("Authorization", "Bearer " + token))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.message").value("Hello, authenticated user!"));
+  }
+}

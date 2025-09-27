@@ -1,4 +1,5 @@
 'use client';
+
 import {
   ActionIcon,
   Avatar,
@@ -11,9 +12,9 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import Image from 'next/image';
-import classes from './navbar-mobile.module.css';
 import { useDisclosure } from '@mantine/hooks';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   IconBook,
   IconChevronRight,
@@ -22,9 +23,10 @@ import {
   IconPlus,
   IconUsers,
 } from '@tabler/icons-react';
-import { usePathname, useRouter } from 'next/navigation';
-import { Student } from '@/shared/models';
+
+import { loggedUser } from '@/mocks/students';
 import Search from './search';
+import classes from './navbar-mobile.module.css';
 
 const navLinks = [
   { icon: <IconDental />, label: 'Pacientes', route: '/patients' },
@@ -37,16 +39,6 @@ export default function NavbarMobile() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const user: Student = {
-    role: 'student',
-    name: 'Pedro Sebastião',
-    email: 'pedro.sebastiao@foufal.ufal.br',
-    clinic: 5,
-    enrollment: 21109965,
-    semester: 2025.1,
-    avatarUrl: undefined,
-  };
-
   const links = navLinks.map((link) => (
     <NavLink
       key={link.label}
@@ -57,6 +49,7 @@ export default function NavbarMobile() {
       active={pathname.includes(link.route)}
     />
   ));
+
   return (
     <nav className={classes.navbar}>
       <Group justify="space-between" h="100%">
@@ -85,7 +78,7 @@ export default function NavbarMobile() {
                 className={classes.user}
                 onClick={() => {
                   close();
-                  router.push(`/students/${user?.enrollment}`);
+                  router.push(`/students/${loggedUser?.id}`);
                 }}
               >
                 <Group justify="space-between" w="100%">
@@ -94,12 +87,12 @@ export default function NavbarMobile() {
                       size="lg"
                       color="dark"
                       variant="light"
-                      name={user.name}
+                      name={loggedUser.name}
                     />
                     <Stack gap={0}>
-                      <Title order={4}>{user.name}</Title>
+                      <Title order={4}>{loggedUser.name}</Title>
                       <Text size="xs" c="dimmed">
-                        {user.email}
+                        {loggedUser.email}
                       </Text>
                     </Stack>
                   </Group>

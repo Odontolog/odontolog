@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from 'react';
 import {
   IconBook,
@@ -25,6 +26,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
       <UnstyledButton
         onClick={onClick}
         className={classes.link}
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         data-active={active || undefined}
       >
         <Icon size={24} />

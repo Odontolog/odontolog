@@ -17,8 +17,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Table(name = "treatment_plan_procedures")
 public class TreatmentPlanProcedure extends Procedure {
-    @ManyToOne
-    @JoinColumn(name = "treatment_plan_id")
-    @NotNull
-    private TreatmentPlan treatmentPlan;
+  @ManyToOne
+  @JoinColumn(name = "treatment_plan_id")
+  @NotNull
+  private TreatmentPlan treatmentPlan;
 }

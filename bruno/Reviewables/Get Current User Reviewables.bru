@@ -1,0 +1,15 @@
+meta {
+  name: Get Current User Reviewables
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/api/reviewables/me
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

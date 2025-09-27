@@ -1,35 +1,35 @@
 package br.ufal.ic.odontolog.models;
 
+import br.ufal.ic.odontolog.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import java.util.UUID;
-
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
-import br.ufal.ic.odontolog.enums.Role;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "users")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class User {
-    // TODO: Add UserDetails and other Spring Security related fields
-    @Id
-    @GeneratedValue
-    @UuidGenerator
-    private UUID id;
+  // TODO: Add UserDetails and other Spring Security related fields
+  @Id @GeneratedValue @UuidGenerator private UUID id;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+  @Enumerated(EnumType.STRING)
+  private Role role;
 
-    private String name;
-    private String email;
+  private String name;
+  private String email;
 
-    public User(String name, String email, Role role) {
-        this.name = name;
-        this.email = email;
-        this.role = role;
-    }
+  @JsonIgnore private String password;
+
+  public User(String name, String email, String password, Role role) {
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.role = role;
+  }
 }

@@ -2,18 +2,16 @@ package br.ufal.ic.odontolog.models;
 
 import br.ufal.ic.odontolog.enums.ReviewableType;
 import jakarta.persistence.*;
+import java.time.Instant;
+import java.util.Set;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
-
-import java.time.Instant;
-import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -23,41 +21,48 @@ import java.util.UUID;
 @Table(name = "reviewables")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Reviewable {
-    @Id
-    @GeneratedValue
-    @UuidGenerator
-    private UUID id;
+  @Id @GeneratedValue @UuidGenerator private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author;
+  @ManyToOne
+  @JoinColumn(name = "author_id")
+  private User author;
 
-    @ManyToOne
-    @JoinColumn(name = "assignee_id")
-    private User assignee;
+  private String name;
 
-    @CreationTimestamp
-    private Instant createdAt;
+  @ManyToOne
+  @JoinColumn(name = "assignee_id")
+  private User assignee;
 
-    @UpdateTimestamp
-    private Instant updatedAt;
+  @ManyToMany private Set<Supervisor> reviewers;
 
-    // FIXME: I don't know if this cascade type is correct. Check if this is
-    // necessary.
-    // Or if I should use CascadeType.PERSIST only.
-    @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private final Set<Review> reviews = new java.util.HashSet<>();
+  @CreationTimestamp private Instant createdAt;
 
-    private String notes;
+  @UpdateTimestamp private Instant updatedAt;
 
-    @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private final Set<Activity> history = new java.util.HashSet<>();
+  // FIXME: I don't know if this cascade type is correct. Check if this is
+  // necessary.
+  // Or if I should use CascadeType.PERSIST only.
+  @OneToMany(
+      mappedBy = "reviewable",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
+  private final Set<Review> reviews = new java.util.HashSet<>();
 
-    @Enumerated(EnumType.STRING)
-    private ReviewableType type;
+  private String notes;
 
-    public void addReview(Review review) {
-        this.reviews.add(review);
-        review.setReviewable(this);
-    }
+  @OneToMany(
+      mappedBy = "reviewable",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
+  private final Set<Activity> history = new java.util.HashSet<>();
+
+  @Enumerated(EnumType.STRING)
+  private ReviewableType type;
+
+  public void addReview(Review review) {
+    this.reviews.add(review);
+    review.setReviewable(this);
+  }
 }
