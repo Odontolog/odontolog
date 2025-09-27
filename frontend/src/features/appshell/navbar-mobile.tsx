@@ -13,8 +13,6 @@ import {
   Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
 import {
   IconBook,
   IconChevronRight,
@@ -23,21 +21,45 @@ import {
   IconPlus,
   IconUsers,
 } from '@tabler/icons-react';
+import { type User } from 'next-auth';
+import { signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { loggedUser } from '@/mocks/students';
-import Search from './search';
 import classes from './navbar-mobile.module.css';
-
-const navLinks = [
-  { icon: <IconDental />, label: 'Pacientes', route: '/patients' },
-  { icon: <IconUsers />, label: 'Alunos', route: '/students' },
-  { icon: <IconBook />, label: 'Revisões', route: '/validation' },
-];
+import Search from './search';
 
 export default function NavbarMobile() {
   const [opened, { open, close }] = useDisclosure(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { data } = useSession();
+
+  const user = data?.user;
+
+  function getUserPageLink(user: User) {
+    switch (user.role) {
+      case 'student':
+        return `/students/${user?.id}`;
+      default:
+        return '#';
+    }
+  }
+
+  const userPageLink = user ? getUserPageLink(user) : '#';
+
+  const navLinks = [
+    { icon: <IconDental />, label: 'Pacientes', route: '/patients' },
+  ];
+
+  if (user && user.role !== 'student') {
+    navLinks.push(
+      ...[
+        { icon: <IconUsers />, label: 'Alunos', route: '/students' },
+        { icon: <IconBook />, label: 'Revisões', route: '/validation' },
+      ],
+    );
+  }
 
   const links = navLinks.map((link) => (
     <NavLink
@@ -78,7 +100,7 @@ export default function NavbarMobile() {
                 className={classes.user}
                 onClick={() => {
                   close();
-                  router.push(`/students/${loggedUser?.id}`);
+                  router.push(userPageLink);
                 }}
               >
                 <Group justify="space-between" w="100%">
@@ -87,12 +109,12 @@ export default function NavbarMobile() {
                       size="lg"
                       color="dark"
                       variant="light"
-                      name={loggedUser.name}
+                      name={user?.name}
                     />
                     <Stack gap={0}>
-                      <Title order={4}>{loggedUser.name}</Title>
+                      <Title order={4}>{user?.name}</Title>
                       <Text size="xs" c="dimmed">
-                        {loggedUser.email}
+                        {user?.email}
                       </Text>
                     </Stack>
                   </Group>
@@ -108,7 +130,7 @@ export default function NavbarMobile() {
                   c="red"
                   color="red"
                   onClick={() => {
-                    console.log('Sair da conta');
+                    void signOut({ redirect: true, callbackUrl: '/login' });
                   }}
                 />
               </Drawer.Body>

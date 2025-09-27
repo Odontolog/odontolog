@@ -49,7 +49,8 @@ public class DevDataLoader implements CommandLineRunner {
                 1,
                 "20250914",
                 2025,
-                1));
+                1,
+                "some-url"));
     logger.info("Student created: {}", studentTest001.getName());
 
     Supervisor supervisorTest001 =
@@ -59,7 +60,8 @@ public class DevDataLoader implements CommandLineRunner {
                 "supervisor.test.001@test.com",
                 passwordEncoder.encode("password2"),
                 "Surgery",
-                "20250832"));
+                "20250832",
+                "some-url"));
     logger.info("Supervisor created: {}", supervisorTest001.getName());
 
     Patient patientTest001 =

@@ -31,6 +31,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.18",
     "next": "15.5.2",
+    "next-auth": "^5.0.0-beta.29",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "recharts": "^3.1.2"
