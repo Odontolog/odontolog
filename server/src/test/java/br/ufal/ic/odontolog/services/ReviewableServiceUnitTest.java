@@ -54,7 +54,7 @@ public class ReviewableServiceUnitTest {
         .thenReturn(Optional.of(mockSupervisor));
 
     Reviewable reviewableEntity = mock(Reviewable.class);
-    reviewableEntity.setId(UUID.randomUUID());
+    reviewableEntity.setId(1L);
     Page<Reviewable> mockPageOfReviewables = new PageImpl<>(List.of(reviewableEntity), pageable, 1);
     when(reviewableRepository.findAll(any(Specification.class), eq(pageable)))
         .thenReturn(mockPageOfReviewables);

@@ -1,0 +1,21 @@
+meta {
+  name: Assign User to a Treatment Plan
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/api/treatments/1/assignee
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "userId": "de66e248-f5ca-441d-9d6f-9494ac7e8144"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
