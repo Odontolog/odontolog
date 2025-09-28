@@ -5,10 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import java.util.Set;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
 @Setter
+@SuperBuilder
 @NoArgsConstructor
 public class Supervisor extends User {
   String specialization;
@@ -16,17 +18,6 @@ public class Supervisor extends User {
   // TODO: Add supervisor's SIAPE validation
   String siape;
 
-  @ManyToMany Set<Reviewable> reviewables;
-
-  public Supervisor(
-      String name,
-      String email,
-      String password,
-      String specialization,
-      String siape,
-      String photoUrl) {
-    super(name, email, password, Role.SUPERVISOR, photoUrl);
-    this.specialization = specialization;
-    this.siape = siape;
-  }
+  @ManyToMany
+  Set<Reviewable> reviewables;
 }

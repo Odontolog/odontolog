@@ -25,10 +25,14 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles("test")
 class AuthControllerIntegrationTest {
 
-  @Autowired MockMvc mockMvc;
-  @Autowired ObjectMapper objectMapper;
-  @Autowired StudentRepository studentRepository;
-  @Autowired PasswordEncoder passwordEncoder;
+  @Autowired
+  MockMvc mockMvc;
+  @Autowired
+  ObjectMapper objectMapper;
+  @Autowired
+  StudentRepository studentRepository;
+  @Autowired
+  PasswordEncoder passwordEncoder;
 
   private static final String USERNAME = "student.test.001@test.com";
   private static final String PASSWORD = "password";
@@ -38,33 +42,31 @@ class AuthControllerIntegrationTest {
     studentRepository
         .findByEmail(USERNAME)
         .orElseGet(
-            () ->
-                studentRepository.save(
-                    new Student(
-                        "Student_Test_001",
-                        USERNAME,
-                        passwordEncoder.encode(PASSWORD),
-                        1,
-                        "20250914",
-                        2025,
-                        1,
-                        "some-url")));
+            () -> studentRepository.save(
+                Student.builder()
+                    .name("Student_Test_001")
+                    .email(USERNAME)
+                    .password(passwordEncoder.encode(PASSWORD))
+                    .clinicNumber(1)
+                    .enrollmentCode("20250914")
+                    .enrollmentYear(2025)
+                    .enrollmentSemester(1)
+                    .photoUrl("some-url")
+                    .build()));
   }
 
   @Test
   @DisplayName("Login deve retornar 200 e accessToken")
   void validLogin() throws Exception {
-    var body =
-        """
+    var body = """
           {"username":"%s","password":"%s"}
         """.formatted(USERNAME, PASSWORD);
 
-    var mvcResult =
-        mockMvc
-            .perform(post("/api/auth/login").contentType(APPLICATION_JSON).content(body))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.accessToken").exists())
-            .andReturn();
+    var mvcResult = mockMvc
+        .perform(post("/api/auth/login").contentType(APPLICATION_JSON).content(body))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.accessToken").exists())
+        .andReturn();
 
     JsonNode node = objectMapper.readTree(mvcResult.getResponse().getContentAsString());
     String token = node.get("accessToken").asText();
@@ -74,11 +76,10 @@ class AuthControllerIntegrationTest {
   @Test
   @DisplayName("Login inválido deve retornar 403")
   void invalidLogin() throws Exception {
-    var body =
-        """
+    var body = """
           {"username":"%s","password":"%s"}
         """
-            .formatted(USERNAME, "wrongpass");
+        .formatted(USERNAME, "wrongpass");
 
     mockMvc
         .perform(post("/api/auth/login").contentType(APPLICATION_JSON).content(body))
@@ -102,22 +103,20 @@ class AuthControllerIntegrationTest {
   @Test
   @DisplayName("Acesso com token válido deve retornar 200")
   void protectedWithValidToken() throws Exception {
-    var loginResp =
-        mockMvc
-            .perform(
-                post("/api/auth/login")
-                    .contentType(APPLICATION_JSON)
-                    .content(
-                        """
+    var loginResp = mockMvc
+        .perform(
+            post("/api/auth/login")
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
                               {"username":"%s","password":"%s"}
                         """
-                            .formatted(USERNAME, PASSWORD)))
-            .andReturn();
-    var token =
-        objectMapper
-            .readTree(loginResp.getResponse().getContentAsString())
-            .get("accessToken")
-            .asText();
+                        .formatted(USERNAME, PASSWORD)))
+        .andReturn();
+    var token = objectMapper
+        .readTree(loginResp.getResponse().getContentAsString())
+        .get("accessToken")
+        .asText();
 
     mockMvc
         .perform(get("/api/hello").header("Authorization", "Bearer " + token))
