@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.services;
 
+import br.ufal.ic.odontolog.dtos.AddReviewersDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
@@ -16,6 +17,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -52,4 +55,26 @@ public class ReviewableService {
 
     return dtoPage;
   }
+
+  @Transactional
+  public ReviewableDTO addSupervisorsToReviewable(UUID reviewableId, AddReviewersDTO request) {
+    Reviewable reviewable =
+            reviewableRepository
+                    .findById(reviewableId)
+                    .orElseThrow(() -> new UnprocessableRequestException("Reviewable não encontrado"));
+
+    var supervisors = supervisorRepository.findAllById(request.getSupervisorIds());
+
+    if (supervisors.isEmpty()) {
+      throw new UnprocessableRequestException("Nenhum supervisor encontrado com os IDs fornecidos");
+    }
+
+    reviewable.getReviewers().addAll(supervisors);
+
+    reviewableRepository.save(reviewable);
+
+    return reviewableMapper.toDTO(reviewable);
+  }
+
+
 }
