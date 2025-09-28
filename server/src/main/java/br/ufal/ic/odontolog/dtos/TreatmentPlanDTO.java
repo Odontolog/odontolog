@@ -2,7 +2,6 @@ package br.ufal.ic.odontolog.dtos;
 
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

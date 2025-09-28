@@ -29,7 +29,6 @@ class TreatmentPlanControllerIntegrationTest {
 
   private Patient patient;
 
-
   @BeforeEach
   void setupPatient() {
     patient = patientRepository.save(Patient.builder().name("Patient_Test_001").build());
@@ -85,8 +84,9 @@ class TreatmentPlanControllerIntegrationTest {
 
     mockMvc
         .perform(post("/api/v1/treatment-plan").contentType(APPLICATION_JSON).content(body))
-        .andExpect(status().isOk()).andReturn();
-    }
+        .andExpect(status().isOk())
+        .andReturn();
+  }
 
   @Test
   @WithMockUser(
