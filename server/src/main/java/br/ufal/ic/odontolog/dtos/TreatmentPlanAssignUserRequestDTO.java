@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class TreatmentPlanAssignUserRequestDTO {
-    private UUID userId;
+  private UUID userId;
 }

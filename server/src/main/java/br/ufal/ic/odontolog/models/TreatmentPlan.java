@@ -22,8 +22,7 @@ public class TreatmentPlan extends Reviewable {
   @Enumerated(EnumType.STRING)
   private TreatmentPlanStatus status;
 
-  @Transient
-  private TreatmentPlanState state;
+  @Transient private TreatmentPlanState state;
 
   @ManyToOne
   @JoinColumn(name = "patient_id", nullable = false)

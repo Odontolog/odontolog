@@ -5,9 +5,9 @@ import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
 
 public interface TreatmentPlanState {
-    public TreatmentPlanStatus getStatus();
+  public TreatmentPlanStatus getStatus();
 
-    default public void assignUser(TreatmentPlan treatmentPlan, User user) {
-        throw new UnsupportedOperationException("Operation not allowed in the current state.");
-    }
+  public default void assignUser(TreatmentPlan treatmentPlan, User user) {
+    throw new UnsupportedOperationException("Operation not allowed in the current state.");
+  }
 }

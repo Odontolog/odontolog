@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ReviewableRepository
-        extends JpaRepository<Reviewable, Long>, JpaSpecificationExecutor<Reviewable> {
-}
+    extends JpaRepository<Reviewable, Long>, JpaSpecificationExecutor<Reviewable> {}

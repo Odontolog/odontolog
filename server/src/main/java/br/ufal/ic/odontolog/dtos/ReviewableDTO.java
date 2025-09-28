@@ -12,8 +12,8 @@ import lombok.Data;
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = TreatmentPlanDTO.class, name = "TREATMENT_PLAN"),
-    @JsonSubTypes.Type(value = ProcedureDTO.class, name = "PROCEDURE")
+  @JsonSubTypes.Type(value = TreatmentPlanDTO.class, name = "TREATMENT_PLAN"),
+  @JsonSubTypes.Type(value = ProcedureDTO.class, name = "PROCEDURE")
 })
 public class ReviewableDTO {
   private Long id;

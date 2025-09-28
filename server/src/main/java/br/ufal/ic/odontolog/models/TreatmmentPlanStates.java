@@ -1,5 +1,3 @@
 package br.ufal.ic.odontolog.models;
 
-public class TreatmmentPlanStates {
-
-}
+public class TreatmmentPlanStates {}

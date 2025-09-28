@@ -10,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,9 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @NoArgsConstructor
 public class User implements UserDetails {
   // TODO: Add UserDetails and other Spring Security related fields
-  @Id
-  @GeneratedValue
-  private UUID id;
+  @Id @GeneratedValue private UUID id;
 
   @Enumerated(EnumType.STRING)
   private Role role;
@@ -34,11 +30,9 @@ public class User implements UserDetails {
   private String name;
   private String email;
 
-  @JsonIgnore
-  private String password;
+  @JsonIgnore private String password;
 
-  @Column
-  String photoUrl;
+  @Column String photoUrl;
 
   @Column(nullable = false, columnDefinition = "boolean default false")
   boolean deleted = false;
@@ -46,8 +40,7 @@ public class User implements UserDetails {
   @Override
   @JsonIgnore
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    if (role == null)
-      return List.of();
+    if (role == null) return List.of();
     return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
   }
 
