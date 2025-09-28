@@ -17,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -101,4 +103,18 @@ class TreatmentPlanControllerIntegrationTest {
         .perform(post("/api/v1/treatment-plan").contentType(APPLICATION_JSON).content(body))
         .andExpect(status().isOk());
   }
+
+    @Test
+    @WithMockUser(
+            username = "supervisor@test.com",
+            roles = {"STUDENT"})
+    void createWithWrongPatient() throws Exception {
+        var body = """
+        {"patientId":"%s"}
+        """.formatted(UUID.randomUUID());
+
+        mockMvc
+                .perform(post("/api/v1/treatment-plan").contentType(APPLICATION_JSON).content(body))
+                .andExpect(status().is4xxClientError());
+    }
 }

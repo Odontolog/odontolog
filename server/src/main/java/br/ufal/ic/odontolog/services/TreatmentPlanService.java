@@ -12,9 +12,13 @@ import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +33,9 @@ public class TreatmentPlanService {
   public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-    Patient patient = patientRepository.getReferenceById(request.getPatientId());
+      Patient patient = patientRepository.findById(request.getPatientId())
+              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Patient not found"));
+
 
     TreatmentPlan plan =
         TreatmentPlan.builder().patient(patient).status(TreatmentPlanStatus.DRAFT).build();
