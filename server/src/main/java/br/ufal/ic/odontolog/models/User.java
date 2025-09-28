@@ -27,6 +27,8 @@ public class User implements UserDetails {
   private Role role;
 
   private String name;
+
+  @Column(unique = true)
   private String email;
 
   @JsonIgnore private String password;
