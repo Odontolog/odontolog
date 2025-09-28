@@ -9,5 +9,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateTreatmentPlanDTO {
-  @NotNull @NotEmpty private UUID patientId;
+  @NotNull private UUID patientId;
 }
