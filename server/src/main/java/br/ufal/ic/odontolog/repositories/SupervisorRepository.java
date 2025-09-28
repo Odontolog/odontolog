@@ -7,8 +7,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SupervisorRepository extends JpaRepository<Supervisor, UUID> {
     Optional<Supervisor> findByEmail(String email);
-
-    boolean existsByEmail(String email);
-
-    void deleteByEmail(String email);
 }
