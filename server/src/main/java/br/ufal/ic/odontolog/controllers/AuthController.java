@@ -2,6 +2,8 @@ package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.dtos.LoginRequest;
 import br.ufal.ic.odontolog.dtos.LoginResponse;
+import br.ufal.ic.odontolog.dtos.UserResponseDTO;
+import br.ufal.ic.odontolog.mappers.UserMapper;
 import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.utils.JwtUtil;
 import jakarta.validation.Valid;
@@ -28,6 +30,7 @@ public class AuthController {
 
   private final AuthenticationManager authManager;
   private final JwtUtil jwtUtil;
+  private final UserMapper userMapper;
 
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -44,9 +47,9 @@ public class AuthController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity<User> me(@AuthenticationPrincipal User user) {
+  public ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal User user) {
     if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     user.setPassword(null); // extra defensivo
-    return ResponseEntity.ok(user);
+    return ResponseEntity.ok(userMapper.toResponseDTO(user));
   }
 }

@@ -27,9 +27,13 @@ public abstract class Reviewable {
   @JoinColumn(name = "author_id")
   private User author;
 
+  private String name;
+
   @ManyToOne
   @JoinColumn(name = "assignee_id")
   private User assignee;
+
+  @ManyToMany private Set<Supervisor> reviewers;
 
   @CreationTimestamp private Instant createdAt;
 

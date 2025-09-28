@@ -1,11 +1,11 @@
 meta {
-  name: root
+  name: Get Current User Info
   type: http
   seq: 2
 }
 
 get {
-  url: http://localhost:8080/
+  url: http://localhost:8080/api/auth/me
   body: none
   auth: inherit
 }
