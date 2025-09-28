@@ -76,5 +76,23 @@ public class ReviewableService {
     return reviewableMapper.toDTO(reviewable);
   }
 
+  @Transactional
+  public ReviewableDTO removeSupervisorsFromReviewable(UUID reviewableId, AddReviewersDTO request) {
+    Reviewable reviewable =
+            reviewableRepository
+                    .findById(reviewableId)
+                    .orElseThrow(() -> new UnprocessableRequestException("Reviewable não encontrado"));
+
+    var supervisorsToRemove = supervisorRepository.findAllById(request.getSupervisorIds());
+
+    if (supervisorsToRemove.isEmpty()) {
+      throw new UnprocessableRequestException("Nenhum supervisor encontrado com os IDs fornecidos");
+    }
+
+    reviewable.getReviewers().removeAll(supervisorsToRemove);
+
+    reviewableRepository.save(reviewable);
+    return reviewableMapper.toDTO(reviewable);
+  }
 
 }

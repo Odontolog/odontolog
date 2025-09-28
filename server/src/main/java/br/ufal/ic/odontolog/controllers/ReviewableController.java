@@ -44,4 +44,14 @@ public class ReviewableController implements ReviewableApi {
     return ResponseEntity.ok(updated);
   }
 
+  @PreAuthorize("hasRole('SUPERVISOR')")
+  @DeleteMapping("/{reviewableId}/reviewers")
+  public ResponseEntity<ReviewableDTO> removeReviewers(
+          @PathVariable UUID reviewableId,
+          @Valid @RequestBody AddReviewersDTO request) {
+
+    var updated = reviewableService.removeSupervisorsFromReviewable(reviewableId, request);
+    return ResponseEntity.ok(updated);
+  }
+
 }
