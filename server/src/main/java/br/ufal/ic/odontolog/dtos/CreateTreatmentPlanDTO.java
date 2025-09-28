@@ -1,6 +1,5 @@
 package br.ufal.ic.odontolog.dtos;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.Getter;
