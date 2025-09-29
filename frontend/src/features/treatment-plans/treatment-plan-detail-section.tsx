@@ -71,6 +71,7 @@ export function TreatmentPlanDetailContent({
 
         <Card.Section inheritPadding px="md" py="sm">
           conteúdo do plano {treatmentPlanId}
+          <pre>{JSON.stringify(treatmentPlan, null, 2)}</pre>
         </Card.Section>
       </>
     );
