@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ProcedureShortDTO {
-  private UUID id;
+  private Long id;
   private ProcedureStatus status;
   private String name;
   private String studySector;

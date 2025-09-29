@@ -69,7 +69,7 @@ public class TreatmentPlanService {
   }
 
   @Transactional(readOnly = true)
-  public TreatmentPlanDTO getTreatmentPlanById(UUID id) {
+  public TreatmentPlanDTO getTreatmentPlanById(Long id) {
     TreatmentPlan plan =
         treatmentPlanRepository
             .findById(id)

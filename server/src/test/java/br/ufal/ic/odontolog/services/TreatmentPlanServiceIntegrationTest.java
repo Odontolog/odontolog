@@ -41,18 +41,13 @@ class TreatmentPlanServiceIntegrationTest {
 
     patient = patientRepository.save(Patient.builder().name("Patient_Test_001").build());
 
-    supervisorRepository
-        .findByEmail("supervisor@test.com")
-        .orElseGet(
-            () ->
-                supervisorRepository.save(
-                    new Supervisor(
-                        "Supervisor_Test_001",
-                        "supervisor@test.com",
-                        "password2",
-                        "Surgery",
-                        "20250832",
-                        "some-url")));
+      supervisorRepository
+              .findByEmail("supervisor@test.com")
+              .orElseGet(
+                      () ->
+                              supervisorRepository.save(
+                                      Supervisor.builder().email("supervisor@test.com").build()));
+
   }
 
   @Test
@@ -86,7 +81,7 @@ class TreatmentPlanServiceIntegrationTest {
   @Test
   void createTreatmentPlan_patientNotFound() {
     CreateTreatmentPlanDTO dto = new CreateTreatmentPlanDTO();
-    dto.setPatientId(UUID.randomUUID());
+    dto.setPatientId(1234L);
 
     assertThrows(
         EntityNotFoundException.class, () -> treatmentPlanService.createTreatmentPlan(dto));

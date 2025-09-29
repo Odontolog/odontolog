@@ -46,13 +46,7 @@ class TreatmentPlanControllerIntegrationTest {
         .orElseGet(
             () ->
                 supervisorRepository.save(
-                    new Supervisor(
-                        "Supervisor_Test_001",
-                        "supervisor@test.com",
-                        "password2",
-                        "Surgery",
-                        "20250832",
-                        "some-url")));
+                    Supervisor.builder().email("supervisor@test.com").build()));
   }
 
   @Test
@@ -170,7 +164,7 @@ class TreatmentPlanControllerIntegrationTest {
   void getTreatmentPlan_notFound() throws Exception {
     mockMvc
         .perform(
-            get("/api/v1/treatment-plan/{id}", UUID.randomUUID()).contentType(APPLICATION_JSON))
+            get("/api/v1/treatment-plan/{id}", 1234L).contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound());
   }
 }

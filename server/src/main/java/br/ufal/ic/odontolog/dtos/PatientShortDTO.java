@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PatientShortDTO {
-  private UUID id;
+  private Long id;
   private String avatarUrl;
   private String name;
 }

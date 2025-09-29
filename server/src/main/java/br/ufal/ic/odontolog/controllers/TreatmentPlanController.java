@@ -29,7 +29,7 @@ public class TreatmentPlanController {
 
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
-  public TreatmentPlanDTO getTreatmentPlan(@PathVariable UUID id) {
+  public TreatmentPlanDTO getTreatmentPlan(@PathVariable Long id) {
     return treatmentPlanService.getTreatmentPlanById(id);
   }
 
