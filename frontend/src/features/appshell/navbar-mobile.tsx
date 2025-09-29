@@ -56,7 +56,7 @@ export default function NavbarMobile() {
     navLinks.push(
       ...[
         { icon: <IconUsers />, label: 'Alunos', route: '/students' },
-        { icon: <IconBook />, label: 'Revisões', route: '/validation' },
+        { icon: <IconBook />, label: 'Revisões', route: '/validations' },
       ],
     );
   }

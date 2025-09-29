@@ -1,8 +1,4 @@
 'use client';
-import { loggedSupervisor } from '@/mocks/students';
-import ProcedureCard from '@/shared/components/procedure-card';
-import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
-import { ProcedureShort, TreatmentPlanShort } from '@/shared/models';
 import {
   Badge,
   Card,
@@ -16,10 +12,18 @@ import {
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getValidationsOptions } from './requests.';
+
+import ProcedureCard from '@/shared/components/procedure-card';
+import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
+import {
+  ProcedureShort,
+  ReviewableShort,
+  TreatmentPlanShort,
+} from '@/shared/models';
+import { getValidationsOptions } from './requests';
 
 export default function ValidationsSection() {
-  const options = getValidationsOptions(loggedSupervisor.id);
+  const options = getValidationsOptions();
 
   const { data, isLoading } = useQuery({ ...options });
 
@@ -31,9 +35,11 @@ export default function ValidationsSection() {
             <Text fw={600} size="lg">
               Validação
             </Text>
-            <Badge variant="light" color="yellow" size="sm">
-              {data?.length} esperando
-            </Badge>
+            {data && (
+              <Badge variant="light" color="yellow" size="md">
+                {data?.length} esperando
+              </Badge>
+            )}
           </Group>
         </Group>
       </Card.Section>
@@ -59,23 +65,15 @@ export default function ValidationsSection() {
   );
 }
 
-function isProcedure(
-  r: TreatmentPlanShort | ProcedureShort,
-): r is ProcedureShort {
+function isProcedure(r: ReviewableShort): r is ProcedureShort {
   return r.type === 'procedure';
 }
 
-function isTreatmentPlan(
-  r: TreatmentPlanShort | ProcedureShort,
-): r is TreatmentPlanShort {
+function isTreatmentPlan(r: ReviewableShort): r is TreatmentPlanShort {
   return r.type === 'treatment_plan';
 }
 
-function ValidationsContent({
-  data,
-}: {
-  data: (TreatmentPlanShort | ProcedureShort)[];
-}) {
+function ValidationsContent({ data }: { data: ReviewableShort[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get('active');

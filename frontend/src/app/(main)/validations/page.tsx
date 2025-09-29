@@ -1,13 +1,14 @@
+import { Box, Group } from '@mantine/core';
+
 import TreatmentPlanDetailSection from '@/features/treatment-plans/treatment-plan-detail-section';
 import ValidationsSection from '@/features/validations/validations-section';
 import Header from '@/shared/components/header';
-import { Group, Box } from '@mantine/core';
 
 export default function ProcedureValidationPage() {
   return (
     <>
       <Header
-        title="Validações"
+        title="Pedidos de validações"
         subtitle="Veja abaixo a listagem de procedimentos e planos de tratamento que você precisa revisar."
       />
       <Group align="flex-start" py="md" px="lg" h="100%">

@@ -1,7 +1,7 @@
-import { ProcedureShort, TreatmentPlanShort } from '@/shared/models';
+import { ReviewableShort } from '@/shared/models';
 import { mockTreatmentPlans, procedures } from './treatment-plan';
 
-export const mockReviewables: Array<TreatmentPlanShort | ProcedureShort> = [
+export const mockReviewables: ReviewableShort[] = [
   ...mockTreatmentPlans,
   ...procedures,
 ];

@@ -52,12 +52,3 @@ export const loggedUser: User = {
   email: 'pedro.sebastiao@foufal.ufal.br',
   avatarUrl: '',
 };
-
-export const loggedSupervisor: User = {
-  id: '1',
-  role: 'supervisor',
-  name: 'Dr. Theo Fortes',
-  email: 'theo.fortes@foufal.ufal.br',
-  avatarUrl: '',
-};
-
