@@ -1,4 +1,4 @@
-import { getSession } from "next-auth/react";
+import { getSession } from 'next-auth/react';
 import { queryOptions } from '@tanstack/react-query';
 
 import {
@@ -18,15 +18,14 @@ export function getTratmentPlanOptions(treatmentPlanId: string) {
   });
 }
 
-
 export async function getTreatmentPlan(
-  treatmentPlanId: string
+  treatmentPlanId: string,
 ): Promise<TreatmentPlan> {
   console.log(`Fetching data for treatment plan ${treatmentPlanId}`);
 
   const session = await getSession();
-  if (!session?.user?.accessToken) {
-    throw new Error("Usuário não autenticado");
+  if (session?.user?.accessToken == null || session.user.accessToken === '') {
+    throw new Error('Usuário não autenticado');
   }
 
   const res = await fetch(
@@ -35,7 +34,7 @@ export async function getTreatmentPlan(
       headers: {
         Authorization: `Bearer ${session.user.accessToken}`,
       },
-    }
+    },
   );
 
   if (!res.ok) {

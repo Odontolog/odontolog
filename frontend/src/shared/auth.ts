@@ -93,7 +93,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           username: token.username,
           email: token.email,
           role: token.role,
-          accessToken: token.accessToken
+          accessToken: token.accessToken,
         },
       };
     },
