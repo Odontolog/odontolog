@@ -11,25 +11,60 @@ import {
   Text,
   Timeline,
 } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { IconPlus } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+} from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
 import { TreatmentPlanShort } from '@/shared/models';
-import { getPatientTratmentPlansOptions } from './requests';
+import {
+  createPatientTreatmentPlan,
+  getPatientTratmentPlansOptions,
+} from './requests';
 
 interface TreatmentPlansSectionProps {
   patientId: string;
 }
 
+function openTPCreationModal(
+  patientName: string,
+  mutation: UseMutationResult<string, Error, void, unknown>,
+) {
+  return modals.openConfirmModal({
+    title: 'Deseja criar um novo Plano de Tratamento?',
+    children: (
+      <Text size="sm">
+        Clicando em confirmar você cria um novo Plano de Tratamento em branco
+        para o paciente {patientName}. Deseja continuar?
+      </Text>
+    ),
+    labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
+    onCancel: () => console.log('Cancel'),
+    onConfirm: () => mutation.mutate(),
+  });
+}
+
 export default function TreatmentPlansSection({
   patientId,
 }: TreatmentPlansSectionProps) {
+  const router = useRouter();
   const options = getPatientTratmentPlansOptions(patientId);
 
   const { data, isLoading } = useQuery({
     ...options,
+  });
+
+  const mutation = useMutation({
+    mutationFn: () =>
+      createPatientTreatmentPlan('4dcfc261-9dc0-4844-bebc-9bcb96293cba'),
+    onSuccess: (data) => {
+      router.push(`/patients/${patientId}/treatments/${data}`);
+    },
   });
 
   return (
@@ -43,7 +78,7 @@ export default function TreatmentPlansSection({
             variant="subtle"
             color="gray"
             disabled={isLoading}
-            onClick={() => console.log('creating new treatment plan')}
+            onClick={() => openTPCreationModal('fulano', mutation)}
           >
             <IconPlus size={16} />
           </ActionIcon>
