@@ -1,7 +1,7 @@
 package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.api.ReviewableApi;
-import br.ufal.ic.odontolog.dtos.AddReviewersDTO;
+import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.services.ReviewableService;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class ReviewableController implements ReviewableApi {
   private final ReviewableService reviewableService;
 
-  @PreAuthorize("hasRole('SUPERVISOR')")
+  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @GetMapping("/me")
   public ResponseEntity<PagedModel<ReviewableDTO>> getCurrentSupervisorReviewables(
       Pageable pageable,
@@ -34,23 +34,33 @@ public class ReviewableController implements ReviewableApi {
     return ResponseEntity.ok(pagedModel);
   }
 
-  @PreAuthorize("hasRole('SUPERVISOR')")
+  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @PostMapping("/{reviewableId}/reviewers")
   public ResponseEntity<ReviewableDTO> addReviewers(
           @PathVariable UUID reviewableId,
-          @Valid @RequestBody AddReviewersDTO request) {
+          @Valid @RequestBody ReviewersDTO request) {
 
     var updated = reviewableService.addSupervisorsToReviewable(reviewableId, request);
     return ResponseEntity.ok(updated);
   }
 
-  @PreAuthorize("hasRole('SUPERVISOR')")
+  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @DeleteMapping("/{reviewableId}/reviewers")
   public ResponseEntity<ReviewableDTO> removeReviewers(
           @PathVariable UUID reviewableId,
-          @Valid @RequestBody AddReviewersDTO request) {
+          @Valid @RequestBody ReviewersDTO request) {
 
     var updated = reviewableService.removeSupervisorsFromReviewable(reviewableId, request);
+    return ResponseEntity.ok(updated);
+  }
+
+  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
+  @PutMapping("/{reviewableId}/reviewers")
+  public ResponseEntity<ReviewableDTO> updateReviewers(
+          @PathVariable UUID reviewableId,
+          @Valid @RequestBody ReviewersDTO request) {
+
+    var updated = reviewableService.updateReviewers(reviewableId, request);
     return ResponseEntity.ok(updated);
   }
 

@@ -1,6 +1,6 @@
 package br.ufal.ic.odontolog.services;
 
-import br.ufal.ic.odontolog.dtos.AddReviewersDTO;
+import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
@@ -17,7 +17,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -57,41 +58,58 @@ public class ReviewableService {
   }
 
   @Transactional
-  public ReviewableDTO addSupervisorsToReviewable(UUID reviewableId, AddReviewersDTO request) {
-    Reviewable reviewable =
-            reviewableRepository
-                    .findById(reviewableId)
-                    .orElseThrow(() -> new UnprocessableRequestException("Reviewable não encontrado"));
+  public ReviewableDTO addSupervisorsToReviewable(UUID reviewableId, ReviewersDTO request) {
+    Reviewable reviewable = reviewableRepository
+            .findById(reviewableId)
+            .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
-    var supervisors = supervisorRepository.findAllById(request.getSupervisorIds());
+    Set<Supervisor> supervisors = new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
 
     if (supervisors.isEmpty()) {
-      throw new UnprocessableRequestException("Nenhum supervisor encontrado com os IDs fornecidos");
+      throw new UnprocessableRequestException("No supervisor found with the provided IDs");
     }
 
     reviewable.getReviewers().addAll(supervisors);
-
     reviewableRepository.save(reviewable);
 
     return reviewableMapper.toDTO(reviewable);
   }
 
-  @Transactional
-  public ReviewableDTO removeSupervisorsFromReviewable(UUID reviewableId, AddReviewersDTO request) {
-    Reviewable reviewable =
-            reviewableRepository
-                    .findById(reviewableId)
-                    .orElseThrow(() -> new UnprocessableRequestException("Reviewable não encontrado"));
 
-    var supervisorsToRemove = supervisorRepository.findAllById(request.getSupervisorIds());
+  @Transactional
+  public ReviewableDTO removeSupervisorsFromReviewable(UUID reviewableId, ReviewersDTO request) {
+    Reviewable reviewable = reviewableRepository
+            .findById(reviewableId)
+            .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
+
+    Set<Supervisor> supervisorsToRemove = new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
 
     if (supervisorsToRemove.isEmpty()) {
-      throw new UnprocessableRequestException("Nenhum supervisor encontrado com os IDs fornecidos");
+      throw new UnprocessableRequestException("No supervisor found with the provided IDs");
     }
 
     reviewable.getReviewers().removeAll(supervisorsToRemove);
+    reviewableRepository.save(reviewable);
+
+    return reviewableMapper.toDTO(reviewable);
+  }
+
+
+  @Transactional
+  public ReviewableDTO updateReviewers(UUID reviewableId, ReviewersDTO request) {
+    Reviewable reviewable = reviewableRepository.findById(reviewableId)
+            .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
+
+    Set<Supervisor> supervisors = new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
+
+    if (supervisors.isEmpty() && !request.getSupervisorIds().isEmpty()) {
+      throw new UnprocessableRequestException("No supervisor found with the provided IDs");
+    }
+
+    reviewable.setReviewers(supervisors);
 
     reviewableRepository.save(reviewable);
+
     return reviewableMapper.toDTO(reviewable);
   }
 
