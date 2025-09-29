@@ -16,7 +16,6 @@ import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

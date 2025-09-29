@@ -163,8 +163,7 @@ class TreatmentPlanControllerIntegrationTest {
   @DisplayName("GET retorna 404 quando plano não existe")
   void getTreatmentPlan_notFound() throws Exception {
     mockMvc
-        .perform(
-            get("/api/v1/treatment-plan/{id}", 1234L).contentType(APPLICATION_JSON))
+        .perform(get("/api/v1/treatment-plan/{id}", 1234L).contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound());
   }
 }

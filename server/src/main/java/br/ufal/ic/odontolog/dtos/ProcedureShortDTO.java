@@ -3,7 +3,6 @@ package br.ufal.ic.odontolog.dtos;
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
