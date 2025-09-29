@@ -49,7 +49,11 @@ export function Sidebar() {
     sidebarLinks.push(
       ...[
         { icon: IconUsers, label: 'Alunos', route: '/students' },
-        { icon: IconBook, label: 'Pedidos de validações', route: '/validations' },
+        {
+          icon: IconBook,
+          label: 'Pedidos de validações',
+          route: '/validations',
+        },
       ],
     );
   }
