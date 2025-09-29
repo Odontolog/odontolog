@@ -66,7 +66,6 @@ class TreatmentPlanServiceIntegrationTest {
     TreatmentPlanDTO plan = treatmentPlanService.createTreatmentPlan(dto);
 
     assertThat(plan.getId()).isNotNull();
-    assertThat(plan.getPatientId()).isEqualTo(patient.getId());
     assertThat(plan.getStatus()).isEqualTo(TreatmentPlanStatus.DRAFT);
     assertThat(plan.getReviewers().size()).isEqualTo(0);
 

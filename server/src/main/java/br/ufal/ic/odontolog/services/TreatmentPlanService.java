@@ -12,12 +12,11 @@ import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
-import jakarta.persistence.EntityNotFoundException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -33,12 +32,18 @@ public class TreatmentPlanService {
   public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-      Patient patient = patientRepository.findById(request.getPatientId())
-              .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Patient not found"));
-
+    Patient patient =
+        patientRepository
+            .findById(request.getPatientId())
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Patient not found"));
 
     TreatmentPlan plan =
-        TreatmentPlan.builder().patient(patient).status(TreatmentPlanStatus.DRAFT).build();
+        TreatmentPlan.builder()
+            .author(currentUser)
+            .patient(patient)
+            .status(TreatmentPlanStatus.DRAFT)
+            .build();
 
     Activity activity =
         Activity.builder()
@@ -55,6 +60,18 @@ public class TreatmentPlanService {
             .build();
     plan.getHistory().add(activity);
     plan = treatmentPlanRepository.save(plan);
+    return treatmentPlanMapper.toDTO(plan);
+  }
+
+  @Transactional(readOnly = true)
+  public TreatmentPlanDTO getTreatmentPlanById(UUID id) {
+    TreatmentPlan plan =
+        treatmentPlanRepository
+            .findById(id)
+            .orElseThrow(
+                () ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND, "Treatment plan not found"));
+
     return treatmentPlanMapper.toDTO(plan);
   }
 }
