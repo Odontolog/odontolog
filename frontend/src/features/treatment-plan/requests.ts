@@ -1,3 +1,4 @@
+import { getSession } from 'next-auth/react';
 import { queryOptions } from '@tanstack/react-query';
 
 import {
@@ -18,21 +19,30 @@ export function getTratmentPlanOptions(treatmentPlanId: string) {
   });
 }
 
-async function getTreatmentPlan(
+export async function getTreatmentPlan(
   treatmentPlanId: string,
 ): Promise<TreatmentPlan> {
   console.log(`Fetching data for treatment plan ${treatmentPlanId}`);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  if (Math.random() < 0.1) {
-    throw new Error('Something went wrong');
+  const session = await getSession();
+  if (session?.user?.accessToken == null || session.user.accessToken === '') {
+    throw new Error('Usuário não autenticado');
   }
 
-  if (treatmentPlanId !== '1') {
-    notFound();
+  const res = await fetch(
+    `http://localhost:8080/api/v1/treatment-plan/${treatmentPlanId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.user.accessToken}`,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`Erro ao buscar plano: ${res.status}`);
   }
 
-  return treatmentPlanMock;
+  return (await res.json()) as TreatmentPlan;
 }
 
 export async function editTreatmentPlanProcedure(

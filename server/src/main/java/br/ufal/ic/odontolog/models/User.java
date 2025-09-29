@@ -6,18 +6,19 @@ import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "users")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class User implements UserDetails {
   // TODO: Add UserDetails and other Spring Security related fields
   @Id @GeneratedValue @UuidGenerator private UUID id;
@@ -26,8 +27,11 @@ public class User implements UserDetails {
   private Role role;
 
   private String name;
+
+  @Column(unique = true)
   private String email;
-  private String password;
+
+  @JsonIgnore private String password;
 
   @Column String photoUrl;
 

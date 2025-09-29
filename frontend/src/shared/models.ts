@@ -106,6 +106,8 @@ export type TreatmentPlanShort = {
   type: 'treatment_plan' | 'procedure';
 };
 
+export type ReviewableShort = TreatmentPlanShort | ProcedureShort;
+
 export type Reviewable = {
   id: string;
   author: User;

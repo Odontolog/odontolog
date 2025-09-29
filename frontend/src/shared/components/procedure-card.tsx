@@ -41,6 +41,7 @@ type ProcedureCardField =
 interface ProcedureCardProps {
   procedure: ProcedureShort;
   fields?: ProcedureCardField[];
+  disableSession?: boolean;
   onEdit?: (procedure: ProcedureShort) => void;
   onDelete?: (procedure: ProcedureShort) => void;
   selected?: boolean;
@@ -105,6 +106,7 @@ function getProcedureCardInfoProps(
 
 export default function ProcedureCard(props: ProcedureCardProps) {
   const {
+    disableSession,
     procedure,
     onEdit,
     onDelete,
@@ -132,12 +134,14 @@ export default function ProcedureCard(props: ProcedureCardProps) {
       onClick={() => onSelect?.(procedure.id)}
     >
       <Group gap={0}>
-        <Group p="lg" gap={4} miw={82} justify="center">
-          <IconCalendarClock size={20} color="gray" />
-          <Text size="md" c="dimmed">
-            {procedure.plannedSession}
-          </Text>
-        </Group>
+        {disableSession === false && (
+          <Group p="lg" gap={4} miw={82} justify="center">
+            <IconCalendarClock size={20} color="gray" />
+            <Text size="md" c="dimmed">
+              {procedure.plannedSession}
+            </Text>
+          </Group>
+        )}
 
         <Stack p="md" gap="sm" className={styles.root}>
           <Group justify="space-between" align="center" wrap="nowrap">
