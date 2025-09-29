@@ -5,6 +5,7 @@ import br.ufal.ic.odontolog.states.treatmentPlan.TreatmentPlanState;
 import br.ufal.ic.odontolog.states.treatmentPlan.TreatmentPlanStates;
 import jakarta.persistence.*;
 import java.util.Set;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,7 +30,8 @@ public class TreatmentPlan extends Reviewable {
   private Patient patient;
 
   @OneToMany(mappedBy = "treatmentPlan", cascade = CascadeType.ALL, orphanRemoval = true)
-  private final Set<TreatmentPlanProcedure> procedures = new java.util.HashSet<>();
+  @Builder.Default
+  private Set<TreatmentPlanProcedure> procedures = new java.util.HashSet<>();
 
   public void addProcedure(TreatmentPlanProcedure treatmentPlanProcedure) {
     this.procedures.add(treatmentPlanProcedure);

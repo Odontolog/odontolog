@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
@@ -15,6 +16,7 @@ import lombok.Data;
   @JsonSubTypes.Type(value = TreatmentPlanDTO.class, name = "TREATMENT_PLAN"),
   @JsonSubTypes.Type(value = ProcedureDTO.class, name = "PROCEDURE")
 })
+@NoArgsConstructor
 public class ReviewableDTO {
   private Long id;
   private String name;

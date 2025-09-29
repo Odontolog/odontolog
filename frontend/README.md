@@ -10,4 +10,4 @@
 
 - `npm run lint`: Verifica problemas de código com Eslint
 - `npm run fix`: Corrige os problemas (possíveis) com Eslint
-- `npm format`: Formata o código com Prettier
+- `npm run format`: Formata o código com Prettier

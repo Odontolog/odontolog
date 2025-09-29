@@ -3,7 +3,9 @@ package br.ufal.ic.odontolog.models;
 import br.ufal.ic.odontolog.enums.ReviewableType;
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,7 +35,7 @@ public abstract class Reviewable {
   @JoinColumn(name = "assignee_id")
   private User assignee;
 
-  @ManyToMany private Set<Supervisor> reviewers;
+  @ManyToMany @Builder.Default private Set<Supervisor> reviewers = new HashSet<>();
 
   @CreationTimestamp private Instant createdAt;
 
@@ -47,7 +49,8 @@ public abstract class Reviewable {
       cascade = CascadeType.ALL,
       orphanRemoval = true,
       fetch = FetchType.LAZY)
-  private final Set<Review> reviews = new java.util.HashSet<>();
+  @Builder.Default
+  private Set<Review> reviews = new java.util.HashSet<>();
 
   private String notes;
 
@@ -56,7 +59,8 @@ public abstract class Reviewable {
       cascade = CascadeType.ALL,
       orphanRemoval = true,
       fetch = FetchType.LAZY)
-  private final Set<Activity> history = new java.util.HashSet<>();
+  @Builder.Default
+  private Set<Activity> history = new java.util.HashSet<>();
 
   @Enumerated(EnumType.STRING)
   private ReviewableType type;
