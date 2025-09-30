@@ -90,7 +90,7 @@ const history: Activity[] = [
 ];
 
 // Procedimentos curtos
-const procedures: ProcedureShort[] = [
+export const procedures: ProcedureShort[] = [
   {
     id: '1',
     status: 'in_review',
@@ -118,6 +118,21 @@ const procedures: ProcedureShort[] = [
     updatedAt: new Date('2025-09-07T16:30:00Z'),
     reviews: [],
     notes: 'Aguardando autorização do paciente.',
+    procedureType: 'treatment_plan_procedure',
+    type: 'procedure',
+  },
+  {
+    id: '3',
+    status: 'done',
+    name: 'Limpeza',
+    studySector: 'Periodontia',
+    plannedSession: 3,
+    assignee: student,
+    patient,
+    teeth: ['11', '12', '13'],
+    updatedAt: new Date('2025-09-08T11:00:00Z'),
+    reviews: [],
+    notes: 'Limpeza realizada sem intercorrências.',
     procedureType: 'treatment_plan_procedure',
     type: 'procedure',
   },
