@@ -71,6 +71,20 @@ public class DevDataLoader implements CommandLineRunner {
                 .build());
     logger.info("Supervisor created: {}", supervisorTest001.getName());
 
+    Supervisor supervisorTest002 =
+        supervisorRepository.save(
+            Supervisor.builder()
+                // .id(UUID.fromString("a4f5c2e1-5d3b-4c6e-8f7a-123456789abc"))
+                .name("Supervisor_Test_002")
+                .email("supervisor.test.002@test.com")
+                .role(Role.SUPERVISOR)
+                .password(passwordEncoder.encode("password2"))
+                .specialization("Periodontics")
+                .siape("20250832")
+                .photoUrl("some-url")
+                .build());
+    logger.info("Supervisor created: {}", supervisorTest002.getName());
+
     Patient patientTest001 =
         patientRepository.save(
             Patient.builder()
