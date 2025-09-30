@@ -23,7 +23,7 @@ export async function createPatientTreatmentPlan(patientId: string) {
   const token = await getAuthToken();
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/treatment-plan`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan`,
     {
       method: 'POST',
       headers: {
