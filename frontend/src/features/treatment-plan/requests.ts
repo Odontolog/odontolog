@@ -1,6 +1,7 @@
-import { getSession } from 'next-auth/react';
 import { queryOptions } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
 
+import { loggedUser } from '@/mocks/students';
 import {
   addProcedure,
   patient,
@@ -8,9 +9,8 @@ import {
   treatmentPlanMock,
 } from '@/mocks/treatment-plan';
 import { TreatmentPlan } from '@/shared/models';
+import { getAuthToken } from '@/shared/utils';
 import { ProcedureFormValues } from './models';
-import { loggedUser } from '@/mocks/students';
-import { notFound } from 'next/navigation';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
   return queryOptions({
@@ -22,24 +22,21 @@ export function getTratmentPlanOptions(treatmentPlanId: string) {
 export async function getTreatmentPlan(
   treatmentPlanId: string,
 ): Promise<TreatmentPlan> {
-  console.log(`Fetching data for treatment plan ${treatmentPlanId}`);
-
-  const session = await getSession();
-  if (session?.user?.accessToken == null || session.user.accessToken === '') {
-    throw new Error('Usuário não autenticado');
-  }
+  const token = await getAuthToken();
 
   const res = await fetch(
-    `http://localhost:8080/api/v1/treatment-plan/${treatmentPlanId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/treatment-plan/${treatmentPlanId}`,
     {
       headers: {
-        Authorization: `Bearer ${session.user.accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
 
-  if (!res.ok) {
+  if (res.status >= 500) {
     throw new Error(`Erro ao buscar plano: ${res.status}`);
+  } else if (res.status >= 400) {
+    notFound();
   }
 
   return (await res.json()) as TreatmentPlan;

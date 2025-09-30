@@ -122,7 +122,6 @@ export type Reviewable = {
 };
 
 export type TreatmentPlan = Reviewable & {
-  id: string;
   status: TreatmentPlanStatus;
   procedures: ProcedureShort[];
 };
