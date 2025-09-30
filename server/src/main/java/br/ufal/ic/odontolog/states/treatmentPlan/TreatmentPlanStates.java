@@ -2,6 +2,7 @@ package br.ufal.ic.odontolog.states.treatmentPlan;
 
 import br.ufal.ic.odontolog.enums.ReviewStatus;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
+import br.ufal.ic.odontolog.exceptions.ReviewSubmissionException;
 import br.ufal.ic.odontolog.models.Review;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
@@ -21,11 +22,11 @@ public class TreatmentPlanStates {
     @Override
     public void submitForReview(TreatmentPlan treatmentPlan) {
       if (treatmentPlan.getAssignee() == null) {
-        throw new IllegalStateException("Cannot submit for review without an assigned user.");
+        throw new ReviewSubmissionException("Cannot submit for review without an assigned user.");
       }
 
       if (treatmentPlan.getReviewers() == null || treatmentPlan.getReviewers().isEmpty()) {
-        throw new IllegalStateException("Cannot submit for review without assigned reviewers.");
+        throw new ReviewSubmissionException("Cannot submit for review without assigned reviewers.");
       }
 
       treatmentPlan.setStatus(TreatmentPlanStatus.IN_REVIEW);

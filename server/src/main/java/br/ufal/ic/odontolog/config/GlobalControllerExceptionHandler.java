@@ -2,6 +2,7 @@ package br.ufal.ic.odontolog.config;
 
 import br.ufal.ic.odontolog.dtos.ErrorResponseDTO;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
+import br.ufal.ic.odontolog.exceptions.ReviewSubmissionException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import java.util.HashMap;
 import org.springframework.http.HttpStatus;
@@ -47,9 +48,9 @@ public class GlobalControllerExceptionHandler {
   }
 
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  @ExceptionHandler(IllegalStateException.class)
+  @ExceptionHandler(ReviewSubmissionException.class)
   @ResponseBody
-  public ErrorResponseDTO handleIllegalStateException(IllegalStateException ex) {
+  public ErrorResponseDTO handleReviewSubmissionException(ReviewSubmissionException ex) {
     ErrorResponseDTO errorResponse = new ErrorResponseDTO();
     errorResponse.setMessage(ex.getMessage());
     errorResponse.setError("Bad Request");
