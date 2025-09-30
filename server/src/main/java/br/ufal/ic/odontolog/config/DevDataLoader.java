@@ -71,7 +71,8 @@ public class DevDataLoader implements CommandLineRunner {
                             "supervisor.test.002@test.com",
                             passwordEncoder.encode("password2"),
                             "Periodontics",
-                            "20250844"));
+                            "20250844",
+                            "some-url"));
     logger.info("Supervisor created: {}", supervisorTest002.getName());
 
     Patient patientTest001 =
