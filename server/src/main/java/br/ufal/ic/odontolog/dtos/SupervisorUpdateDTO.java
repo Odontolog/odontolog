@@ -8,9 +8,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class SupervisorUpdateDTO {
 
-    @NotBlank(message = "Nome é obrigatório")
+    @NotBlank(message = "Must have a name")
     private String name;
 
-    @NotBlank(message = "Especialização é obrigatória")
+    @NotBlank(message = "Must have a specialization")
     private String specialization;
 }

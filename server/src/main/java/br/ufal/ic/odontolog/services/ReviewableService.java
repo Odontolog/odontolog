@@ -97,7 +97,8 @@ public class ReviewableService {
 
   @Transactional
   public ReviewableDTO updateReviewers(UUID reviewableId, ReviewersDTO request) {
-    Reviewable reviewable = reviewableRepository.findById(reviewableId)
+    Reviewable reviewable = reviewableRepository
+            .findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
     Set<Supervisor> supervisors = new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));

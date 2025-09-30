@@ -10,6 +10,6 @@ import lombok.Setter;
 @Setter
 public class ReviewersDTO {
 
-    @NotEmpty(message = "O conjunto de supervisores não pode estar vazio.")
+    @NotEmpty(message = "The supervisor set cannot be empty.")
     private Set<UUID> supervisorIds;
 }
