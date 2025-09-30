@@ -57,7 +57,7 @@ class TreatmentPlanControllerIntegrationTest {
         """.formatted(patient.getId());
 
     mockMvc
-        .perform(post("/api/v1/treatment-plan").contentType(APPLICATION_JSON).content(body))
+        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
         .andExpect(status().isForbidden());
   }
 
@@ -71,7 +71,7 @@ class TreatmentPlanControllerIntegrationTest {
         """.formatted(patient.getId());
 
     mockMvc
-        .perform(post("/api/v1/treatment-plan").contentType(APPLICATION_JSON).content(body))
+        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
         .andExpect(status().isForbidden());
   }
 
@@ -85,7 +85,7 @@ class TreatmentPlanControllerIntegrationTest {
         """.formatted(patient.getId());
 
     mockMvc
-        .perform(post("/api/v1/treatment-plan").contentType(APPLICATION_JSON).content(body))
+        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
         .andExpect(status().isOk())
         .andReturn();
   }
@@ -100,7 +100,7 @@ class TreatmentPlanControllerIntegrationTest {
         """.formatted(patient.getId());
 
     mockMvc
-        .perform(post("/api/v1/treatment-plan").contentType(APPLICATION_JSON).content(body))
+        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
         .andExpect(status().isOk());
   }
 
@@ -114,7 +114,7 @@ class TreatmentPlanControllerIntegrationTest {
         """.formatted(UUID.randomUUID());
 
     mockMvc
-        .perform(post("/api/v1/treatment-plan").contentType(APPLICATION_JSON).content(body))
+        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
         .andExpect(status().is4xxClientError());
   }
 
@@ -131,7 +131,7 @@ class TreatmentPlanControllerIntegrationTest {
     var postResult =
         mockMvc
             .perform(
-                post("/api/v1/treatment-plan").contentType(APPLICATION_JSON).content(createBody))
+                post("/api/treatment-plan").contentType(APPLICATION_JSON).content(createBody))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -144,7 +144,7 @@ class TreatmentPlanControllerIntegrationTest {
     var getResult =
         mockMvc
             .perform(
-                get("/api/v1/treatment-plan/{id}", created.getId()).contentType(APPLICATION_JSON))
+                get("/api/treatment-plan/{id}", created.getId()).contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -163,7 +163,7 @@ class TreatmentPlanControllerIntegrationTest {
   @DisplayName("GET retorna 404 quando plano não existe")
   void getTreatmentPlan_notFound() throws Exception {
     mockMvc
-        .perform(get("/api/v1/treatment-plan/{id}", 1234L).contentType(APPLICATION_JSON))
+        .perform(get("/api/treatment-plan/{id}", 1234L).contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound());
   }
 }
