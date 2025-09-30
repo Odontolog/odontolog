@@ -2,20 +2,23 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import { 
-  Card, 
-  Center, 
-  Divider, 
-  Group, 
-  Loader, 
-  Text, 
+import {
+  Card,
+  Center,
+  Divider,
+  Group,
+  Loader,
+  Text,
   Stack,
-  Badge 
+  Badge,
+  Box,
+  Button,
 } from '@mantine/core';
-import { IconCalendar, IconUser } from '@tabler/icons-react';
+import { IconCalendar, IconUser, IconArrowRight } from '@tabler/icons-react';
+import Link from 'next/link';
 
 import { getTratmentPlanOptions } from '@/features/treatment-plan/requests';
-import ProcedureCard from '@/shared/components/procedure-card'; // Seu componente de card interno
+import ProcedureCard from '@/shared/components/procedure-card';
 
 export default function TreatmentPlanDetailSection() {
   const searchParams = useSearchParams();
@@ -47,14 +50,10 @@ export function TreatmentPlanDetailContent({
     data: treatmentPlan,
     isLoading,
     isError,
-    error,
   } = useQuery({
     ...getTratmentPlanOptions(treatmentPlanId),
+    enabled: !!treatmentPlanId,
   });
-
-  console.log('📊 Dados do plano:', treatmentPlan);
-  console.log('❌ Erro:', error);
-  console.log('🔄 Loading:', isLoading);
 
   if (isLoading) {
     return (
@@ -84,81 +83,126 @@ export function TreatmentPlanDetailContent({
     );
   }
 
-  // Agora renderizamos os dados do plano com os procedimentos
   return (
-    <>
-      {/* Cabeçalho com informações do plano */}
-      <Card.Section inheritPadding py="sm">
-        <Stack gap="xs">
-          <Group justify="space-between" align="flex-start">
-            <Text fw={600} size="lg">
-              {treatmentPlan.id || `Plano de Tratamento #${treatmentPlan.id}`}
-            </Text>
-            <Badge color={getStatusColor(treatmentPlan.status)}>
-              {formatStatus(treatmentPlan.status)}
-            </Badge>
-          </Group>
-          
-          <Group gap="md">
-            <Group gap="xs">
-              <IconUser size={16} />
-              <Text size="sm" c="dimmed">
-                Criado por {treatmentPlan.author.name}
+    <Box style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box style={{ flexShrink: 0 }}>
+        <Card.Section inheritPadding py="sm">
+          <Stack gap="xs">
+            <Group justify="space-between" align="flex-start">
+              <Text fw={600} size="lg">
+                Plano de Tratamento #{treatmentPlan.id}
               </Text>
+              <Badge color={getStatusColor(treatmentPlan.status)}>
+                {formatStatus(treatmentPlan.status)}
+              </Badge>
             </Group>
-            <Group gap="xs">
-              <IconCalendar size={16} />
-              <Text size="sm" c="dimmed">
-                {new Date(treatmentPlan.createdAt).toLocaleDateString('pt-BR')}
-              </Text>
+
+            <Group gap="md">
+              <Group gap="xs">
+                <IconUser size={16} />
+                <Text size="sm" c="dimmed">
+                  Criado por {treatmentPlan.author.name}
+                </Text>
+              </Group>
+              <Group gap="xs">
+                <IconCalendar size={16} />
+                <Text size="sm" c="dimmed">
+                  {new Date(treatmentPlan.createdAt).toLocaleDateString(
+                    'pt-BR',
+                  )}
+                </Text>
+              </Group>
             </Group>
-          </Group>
-        </Stack>
-      </Card.Section>
+          </Stack>
+        </Card.Section>
 
-      <Divider my="sm" />
+        <Divider my="sm" />
+      </Box>
 
-      {/* Lista de procedimentos */}
-      <Card.Section inheritPadding py="sm">
-        <Stack gap="md">
-          <Text fw={600} size="md">Procedimentos</Text>
-          
-          {treatmentPlan.procedures.length === 0 ? (
-            <Text size="sm" c="dimmed" ta="center" py="md">
-              Nenhum procedimento encontrado neste plano.
+      <Box style={{ flex: 1, minHeight: 0, marginBottom: 'auto' }}>
+        <Card.Section inheritPadding py="sm" h="100%">
+          <Stack gap="md" h="100%">
+            <Text fw={600} size="md" style={{ flexShrink: 0 }}>
+              Procedimentos
             </Text>
-          ) : (
-            <Stack gap="sm">
-              {treatmentPlan.procedures.map((procedure) => (
-                <ProcedureCard 
-                  key={procedure.id} 
-                  procedure={procedure}
-                  // Passe outras props necessárias para o seu ProcedureCard
-                />
-              ))}
-            </Stack>
-          )}
-        </Stack>
-      </Card.Section>
-    </>
+
+            {treatmentPlan.procedures.length === 0 ? (
+              <Center py="md" h="100%">
+                <Text size="sm" c="dimmed" ta="center">
+                  Nenhum procedimento encontrado neste plano.
+                </Text>
+              </Center>
+            ) : (
+              <Box style={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
+                <Stack gap="md">
+                  {treatmentPlan.procedures.map((procedure) => (
+                    <ProcedureCard
+                      key={procedure.id}
+                      procedure={procedure}
+                      fields={['teeth', 'study_sector', 'updated']}
+                      onEdit={undefined}
+                      onDelete={undefined}
+                    />
+                  ))}
+                </Stack>
+              </Box>
+            )}
+          </Stack>
+        </Card.Section>
+      </Box>
+
+      <Box
+        style={{
+          flexShrink: 0,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          padding: 'md',
+          marginTop: '1.5rem',
+          background: 'white',
+        }}
+      >
+        <Button
+          variant="outline"
+          component={Link}
+          href={`/treatment-plans/${treatmentPlan.id}`}
+          color="blue"
+          rightSection={<IconArrowRight size={16} />}
+          size="sm"
+          style={{ minWidth: '140px' }}
+        >
+          Ver completo
+        </Button>
+      </Box>
+    </Box>
   );
 }
 
-// Funções auxiliares (adicionar ao final do arquivo)
 function getStatusColor(status: string): string {
   const statusColors: Record<string, string> = {
-    'in_creation': 'blue',
-    'in_progress': 'yellow',
-    'done': 'green',
+    in_creation: 'blue',
+    in_progress: 'yellow',
+    done: 'green',
+    in_review: 'orange',
+    'EN ELABORAÇÃO': 'blue',
+    'EN ANDAMENTO': 'yellow',
+    'EN REVISÃO': 'orange',
+    concluído: 'green',
+    'NÃO INICIADO': 'gray',
   };
   return statusColors[status] || 'gray';
 }
 
 function formatStatus(status: string): string {
   const statusLabels: Record<string, string> = {
-    'in_creation': 'Em Criação',
-    'in_progress': 'Em Andamento',
-    'done': 'Concluído',
+    in_creation: 'Em Criação',
+    in_progress: 'Em Andamento',
+    done: 'Concluído',
+    in_review: 'Em Revisão',
+    'EN ELABORAÇÃO': 'Em Elaboração',
+    'EN ANDAMENTO': 'Em Andamento',
+    'EN REVISÃO': 'Em Revisão',
+    concluído: 'Concluído',
+    'NÃO INICIADO': 'Não Iniciado',
   };
   return statusLabels[status] || status;
 }

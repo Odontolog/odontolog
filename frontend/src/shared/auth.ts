@@ -40,11 +40,14 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         let token_res;
         try {
-          token_res = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
+          token_res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            },
+          );
         } catch (error) {
           throw new ServerDownError('Not able to connect to server.');
         }
@@ -55,11 +58,14 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         if (token_res.status === 200) {
           const data = (await token_res.json()) as { accessToken: string };
-          const user_res = await fetch(`${process.env.BACKEND_URL}/auth/me`, {
-            headers: {
-              Authorization: `Bearer ${data.accessToken}`,
+          const user_res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`,
+            {
+              headers: {
+                Authorization: `Bearer ${data.accessToken}`,
+              },
             },
-          });
+          );
 
           const response_user = await user_res.json(); // eslint-disable-line
           response_user.role = response_user.role.toLowerCase(); // eslint-disable-line

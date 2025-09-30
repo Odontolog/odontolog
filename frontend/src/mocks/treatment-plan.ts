@@ -175,7 +175,7 @@ export const mockTreatmentPlans: TreatmentPlanShort[] = [
     type: 'treatment_plan',
   },
   {
-    id: '6',
+    id: 'cfac8dac-afd0-4cf7-9fd8-9662b1e8f978',
     status: 'in_progress',
     assignee: {
       id: '102',
