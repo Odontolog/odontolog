@@ -92,9 +92,7 @@ export function TreatmentPlanDetailContent({
               <Text fw={600} size="lg">
                 Plano de Tratamento #{treatmentPlan.id}
               </Text>
-              <Badge color={getStatusColor(treatmentPlan.status)}>
-                {formatStatus(treatmentPlan.status)}
-              </Badge>
+              {renderStatusBadge(treatmentPlan.status)}
             </Group>
 
             <Group gap="md">
@@ -177,32 +175,31 @@ export function TreatmentPlanDetailContent({
   );
 }
 
-function getStatusColor(status: string): string {
-  const statusColors: Record<string, string> = {
-    in_creation: 'blue',
-    in_progress: 'yellow',
-    done: 'green',
-    in_review: 'orange',
-    'EN ELABORAÇÃO': 'blue',
-    'EN ANDAMENTO': 'yellow',
-    'EN REVISÃO': 'orange',
-    concluído: 'green',
-    'NÃO INICIADO': 'gray',
+function renderStatusBadge(status?: string) {
+  const statusMap: Record<string, { label: string; color: string }> = {
+    draft: { label: 'Draft', color: 'gray' },
+    in_review: { label: 'Em Revisão', color: 'orange' },
+    in_progress: { label: 'Em Andamento', color: 'blue' },
+    done: { label: 'Concluído', color: 'green' },
   };
-  return statusColors[status] || 'gray';
-}
 
-function formatStatus(status: string): string {
-  const statusLabels: Record<string, string> = {
-    in_creation: 'Em Criação',
-    in_progress: 'Em Andamento',
-    done: 'Concluído',
-    in_review: 'Em Revisão',
-    'EN ELABORAÇÃO': 'Em Elaboração',
-    'EN ANDAMENTO': 'Em Andamento',
-    'EN REVISÃO': 'Em Revisão',
-    concluído: 'Concluído',
-    'NÃO INICIADO': 'Não Iniciado',
-  };
-  return statusLabels[status] || status;
+  const normalizedStatus = status?.toLowerCase() ?? '';
+  const { label, color } = statusMap[normalizedStatus];
+
+  return (
+    <Badge
+      color={color}
+      variant="light"
+      radius="xl"
+      size="lg"
+      px="md"
+      fw={600}
+      tt="capitalize"
+      style={{
+        letterSpacing: '0.02em',
+      }}
+    >
+      {label}
+    </Badge>
+  );
 }
