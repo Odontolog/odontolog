@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.models;
 
+import br.ufal.ic.odontolog.enums.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import java.util.Set;
@@ -12,6 +13,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class Supervisor extends User {
+  final Role role = Role.SUPERVISOR;
+
   String specialization;
 
   // TODO: Add supervisor's SIAPE validation

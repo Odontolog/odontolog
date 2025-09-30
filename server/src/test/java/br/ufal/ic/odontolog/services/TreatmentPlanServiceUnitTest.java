@@ -17,6 +17,7 @@ import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
+import br.ufal.ic.odontolog.utils.CurrentUserProvider;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ public class TreatmentPlanServiceUnitTest {
   @Mock private TreatmentPlanRepository treatmentPlanRepository;
   @Mock private UserRepository userRepository;
   @Mock private TreatmentPlanMapper treatmentPlanMapper;
+  @Mock private CurrentUserProvider currentUserProvider;
 
   @InjectMocks private TreatmentPlanService treatmentPlanService;
 
@@ -60,6 +62,10 @@ public class TreatmentPlanServiceUnitTest {
 
     when(treatmentPlanMapper.toDTO(treatmentPlan)).thenReturn(expectedDto);
 
+    User currentUser = new User();
+    currentUser.setId(UUID.randomUUID());
+    when(currentUserProvider.getCurrentUser()).thenReturn(currentUser);
+
     // Act
 
     TreatmentPlanDTO result =
@@ -73,6 +79,7 @@ public class TreatmentPlanServiceUnitTest {
 
     TreatmentPlan savedPlan = treatmentPlanCaptor.getValue();
     assertThat(savedPlan.getAssignee()).isEqualTo(user);
+    assertThat(savedPlan.getHistory()).isNotEmpty();
 
     assertThat(result).isEqualTo(expectedDto);
 

@@ -26,75 +26,87 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class TreatmentPlanService {
 
-  private final TreatmentPlanRepository treatmentPlanRepository;
-  private final UserRepository userRepository;
-  private final TreatmentPlanMapper treatmentPlanMapper;
-  private final PatientRepository patientRepository;
-  private final CurrentUserProvider currentUserProvider;
+        private final TreatmentPlanRepository treatmentPlanRepository;
+        private final UserRepository userRepository;
+        private final TreatmentPlanMapper treatmentPlanMapper;
+        private final PatientRepository patientRepository;
+        private final CurrentUserProvider currentUserProvider;
 
-  @Transactional
-  public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
-    User currentUser = currentUserProvider.getCurrentUser();
+        @Transactional
+        public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
+                User currentUser = currentUserProvider.getCurrentUser();
 
-    Patient patient =
-        patientRepository
-            .findById(request.getPatientId())
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Patient not found"));
+                Patient patient = patientRepository
+                                .findById(request.getPatientId())
+                                .orElseThrow(
+                                                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                                                "Patient not found"));
 
-    TreatmentPlan plan =
-        TreatmentPlan.builder()
-            .author(currentUser)
-            .patient(patient)
-            .status(TreatmentPlanStatus.DRAFT)
-            .build();
+                TreatmentPlan plan = TreatmentPlan.builder()
+                                .author(currentUser)
+                                .patient(patient)
+                                .status(TreatmentPlanStatus.DRAFT)
+                                .build();
 
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.CREATED)
-            .description(
-                String.format(
-                    "TreatmentPlan created for patient %s (%s) by user %s (%s)",
-                    patient.getName(),
-                    patient.getId(),
-                    currentUser.getName(),
-                    currentUser.getEmail()))
-            .reviewable(plan)
-            .build();
-    plan.getHistory().add(activity);
-    plan = treatmentPlanRepository.save(plan);
-    return treatmentPlanMapper.toDTO(plan);
-  }
+                Activity activity = Activity.builder()
+                                .actor(currentUser)
+                                .type(ActivityType.CREATED)
+                                .description(
+                                                String.format(
+                                                                "TreatmentPlan created for patient %s (%s) by user %s (%s)",
+                                                                patient.getName(),
+                                                                patient.getId(),
+                                                                currentUser.getName(),
+                                                                currentUser.getEmail()))
+                                .reviewable(plan)
+                                .build();
+                plan.getHistory().add(activity);
+                plan = treatmentPlanRepository.save(plan);
+                return treatmentPlanMapper.toDTO(plan);
+        }
 
-  @Transactional(readOnly = true)
-  public TreatmentPlanDTO getTreatmentPlanById(Long id) {
-    TreatmentPlan plan =
-        treatmentPlanRepository
-            .findById(id)
-            .orElseThrow(
-                () ->
-                    new ResponseStatusException(HttpStatus.NOT_FOUND, "Treatment plan not found"));
+        @Transactional(readOnly = true)
+        public TreatmentPlanDTO getTreatmentPlanById(Long id) {
+                TreatmentPlan plan = treatmentPlanRepository
+                                .findById(id)
+                                .orElseThrow(
+                                                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                                                "Treatment plan not found"));
 
-    return treatmentPlanMapper.toDTO(plan);
-  }
+                return treatmentPlanMapper.toDTO(plan);
+        }
 
-  @Transactional
-  public TreatmentPlanDTO assignUserToTreatmentPlan(
-      TreatmentPlanAssignUserRequestDTO requestDTO, Long treatmentId) {
-    TreatmentPlan treatmentPlan =
-        treatmentPlanRepository
-            .findById(treatmentId)
-            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+        @Transactional
+        public TreatmentPlanDTO assignUserToTreatmentPlan(
+                        TreatmentPlanAssignUserRequestDTO requestDTO, Long treatmentId) {
+                User currentUser = currentUserProvider.getCurrentUser();
 
-    User user =
-        userRepository
-            .findById(requestDTO.getUserId())
-            .orElseThrow(() -> new UnprocessableRequestException("Provided User not found"));
+                TreatmentPlan treatmentPlan = treatmentPlanRepository
+                                .findById(treatmentId)
+                                .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
-    treatmentPlan.getState().assignUser(treatmentPlan, user);
-    treatmentPlanRepository.save(treatmentPlan);
+                User user = userRepository
+                                .findById(requestDTO.getUserId())
+                                .orElseThrow(() -> new UnprocessableRequestException("Provided User not found"));
 
-    return treatmentPlanMapper.toDTO(treatmentPlan);
-  }
+                treatmentPlan.getState().assignUser(treatmentPlan, user);
+
+                Activity activity = Activity.builder()
+                                .actor(currentUser)
+                                .type(ActivityType.CREATED)
+                                .description(
+                                                String.format(
+                                                                "User %s (%s) assigned to Treatment Plan (%s) by user %s (%s)",
+                                                                user.getName(),
+                                                                user.getId(),
+                                                                treatmentPlan.getId(),
+                                                                currentUser.getName(),
+                                                                currentUser.getEmail()))
+                                .reviewable(treatmentPlan)
+                                .build();
+                treatmentPlan.getHistory().add(activity);
+                treatmentPlanRepository.save(treatmentPlan);
+
+                return treatmentPlanMapper.toDTO(treatmentPlan);
+        }
 }

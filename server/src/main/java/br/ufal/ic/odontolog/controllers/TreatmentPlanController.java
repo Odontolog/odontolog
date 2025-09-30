@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/treatment-plan")
+@RequestMapping("/api/treatment-plan")
 @RequiredArgsConstructor
 public class TreatmentPlanController {
   private final TreatmentPlanService treatmentPlanService;
@@ -33,10 +33,10 @@ public class TreatmentPlanController {
   }
 
   @PostMapping("/{treatment_id}/assignee")
+  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
   public ResponseEntity<TreatmentPlanDTO> assignUserToTreatmentPlan(
       @RequestBody TreatmentPlanAssignUserRequestDTO requestDTO, @PathVariable Long treatment_id) {
-    TreatmentPlanDTO updatedTreatmentPlan =
-        treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatment_id);
+    TreatmentPlanDTO updatedTreatmentPlan = treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatment_id);
 
     return ResponseEntity.ok(updatedTreatmentPlan);
   }
