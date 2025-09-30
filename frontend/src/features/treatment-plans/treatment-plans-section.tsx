@@ -37,19 +37,23 @@ export default function TreatmentPlansSection({
     ...options,
   });
 
-  function openTPCreationModal(patientName: string) {
+  async function handleConfirm(patientId: string) {
+    const newTP: string = await createPatientTreatmentPlan(patientId);
+    router.push(`/patients/${patientId}/treatments/${newTP}`);
+  }
+
+  function openTPCreationModal() {
     return modals.openConfirmModal({
       title: 'Deseja criar um novo Plano de Tratamento?',
       children: (
         <Text size="sm">
           Clicando em confirmar você cria um novo Plano de Tratamento em branco
-          para o paciente {patientName}. Deseja continuar?
+          para o paciente. Deseja continuar?
         </Text>
       ),
       labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
-      onConfirm: async () => {
-        const newTP: string = await createPatientTreatmentPlan(patientId);
-        router.push(`/patients/${patientId}/treatments/${newTP}`);
+      onConfirm: () => {
+        void handleConfirm(patientId);
       },
     });
   }
@@ -65,7 +69,7 @@ export default function TreatmentPlansSection({
             variant="subtle"
             color="gray"
             disabled={isLoading}
-            onClick={() => openTPCreationModal('fulano')}
+            onClick={() => openTPCreationModal()}
           >
             <IconPlus size={16} />
           </ActionIcon>

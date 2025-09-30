@@ -19,9 +19,7 @@ async function getPatientTratmentPlans(
   return mockTreatmentPlans;
 }
 
-export async function createPatientTreatmentPlan(
-  patientId: string,
-) {
+export async function createPatientTreatmentPlan(patientId: string) {
   const token = await getAuthToken();
 
   const res = await fetch(
