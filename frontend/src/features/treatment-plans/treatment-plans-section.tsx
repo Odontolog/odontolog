@@ -13,11 +13,7 @@ import {
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconPlus } from '@tabler/icons-react';
-import {
-  useMutation,
-  UseMutationResult,
-  useQuery,
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
@@ -26,46 +22,42 @@ import {
   createPatientTreatmentPlan,
   getPatientTratmentPlansOptions,
 } from './requests';
+import { useSession } from 'next-auth/react';
 
 interface TreatmentPlansSectionProps {
   patientId: string;
-}
-
-function openTPCreationModal(
-  patientName: string,
-  mutation: UseMutationResult<string, Error, void, unknown>,
-) {
-  return modals.openConfirmModal({
-    title: 'Deseja criar um novo Plano de Tratamento?',
-    children: (
-      <Text size="sm">
-        Clicando em confirmar você cria um novo Plano de Tratamento em branco
-        para o paciente {patientName}. Deseja continuar?
-      </Text>
-    ),
-    labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
-    onCancel: () => console.log('Cancel'),
-    onConfirm: () => mutation.mutate(),
-  });
 }
 
 export default function TreatmentPlansSection({
   patientId,
 }: TreatmentPlansSectionProps) {
   const router = useRouter();
+  const session = useSession();
   const options = getPatientTratmentPlansOptions(patientId);
 
   const { data, isLoading } = useQuery({
     ...options,
   });
 
-  const mutation = useMutation({
-    mutationFn: () =>
-      createPatientTreatmentPlan('4dcfc261-9dc0-4844-bebc-9bcb96293cba'),
-    onSuccess: (data) => {
-      router.push(`/patients/${patientId}/treatments/${data}`);
-    },
-  });
+  function openTPCreationModal(patientName: string) {
+    return modals.openConfirmModal({
+      title: 'Deseja criar um novo Plano de Tratamento?',
+      children: (
+        <Text size="sm">
+          Clicando em confirmar você cria um novo Plano de Tratamento em branco
+          para o paciente {patientName}. Deseja continuar?
+        </Text>
+      ),
+      labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
+      onConfirm: async () => {
+        const newTP: string = await createPatientTreatmentPlan(
+          '0e790a1d-d0d8-48b2-983e-3a53ef16371f',
+          session.data?.user,
+        );
+        router.push(`/patients/${patientId}/treatments/${newTP}`);
+      },
+    });
+  }
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
@@ -78,7 +70,7 @@ export default function TreatmentPlansSection({
             variant="subtle"
             color="gray"
             disabled={isLoading}
-            onClick={() => openTPCreationModal('fulano', mutation)}
+            onClick={() => openTPCreationModal('fulano')}
           >
             <IconPlus size={16} />
           </ActionIcon>

@@ -2,7 +2,8 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { mockTreatmentPlans } from '@/mocks/treatment-plan';
 import { TreatmentPlan, TreatmentPlanShort } from '@/shared/models';
-import { requireAuth } from '@/shared/utils';
+import { type User } from 'next-auth';
+import { getAuthToken } from '@/shared/utils';
 
 export function getPatientTratmentPlansOptions(patientId: string) {
   return queryOptions({
@@ -19,14 +20,19 @@ async function getPatientTratmentPlans(
   return mockTreatmentPlans;
 }
 
-export async function createPatientTreatmentPlan(patientId: string) {
-  const user = await requireAuth();
+export async function createPatientTreatmentPlan(
+  patientId: string,
+  user: User,
+) {
+  const token = await getAuthToken();
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/treatment-plan`,
     {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${user.accessToken}`,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ patientId }),
     },

@@ -58,7 +58,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         if (token_res.status === 200) {
           const data = (await token_res.json()) as { accessToken: string };
-          const user_res = await fetch(`${process.env.BACKEND_URL}/auth/me`, {
+          const user_res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/me`, {
             headers: {
               Authorization: `Bearer ${data.accessToken}`,
             },
