@@ -36,7 +36,8 @@ public class TreatmentPlanController {
   @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
   public ResponseEntity<TreatmentPlanDTO> assignUserToTreatmentPlan(
       @RequestBody TreatmentPlanAssignUserRequestDTO requestDTO, @PathVariable Long treatment_id) {
-    TreatmentPlanDTO updatedTreatmentPlan = treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatment_id);
+    TreatmentPlanDTO updatedTreatmentPlan =
+        treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatment_id);
 
     return ResponseEntity.ok(updatedTreatmentPlan);
   }
