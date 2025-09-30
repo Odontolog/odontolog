@@ -130,8 +130,7 @@ class TreatmentPlanControllerIntegrationTest {
 
     var postResult =
         mockMvc
-            .perform(
-                post("/api/treatment-plan").contentType(APPLICATION_JSON).content(createBody))
+            .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(createBody))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -143,8 +142,7 @@ class TreatmentPlanControllerIntegrationTest {
 
     var getResult =
         mockMvc
-            .perform(
-                get("/api/treatment-plan/{id}", created.getId()).contentType(APPLICATION_JSON))
+            .perform(get("/api/treatment-plan/{id}", created.getId()).contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
 
