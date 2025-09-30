@@ -130,15 +130,7 @@ public class TreatmentPlanService {
     treatmentPlan.getState().submitForReview(treatmentPlan);
 
     String comments = requestDTO.getComments();
-    String description =
-        String.format(
-            "User %s (%s) submitted Treatment Plan (%s) for review%s",
-            currentUser.getName(),
-            currentUser.getId(),
-            treatmentPlan.getId(),
-            (comments != null && !comments.trim().isEmpty())
-                ? ", with additional comments: " + comments
-                : " without additional comments");
+    String description = buildSubmissionDescription(currentUser, treatmentPlan, comments);
 
     Activity activity =
         Activity.builder()
@@ -152,5 +144,24 @@ public class TreatmentPlanService {
     treatmentPlanRepository.save(treatmentPlan);
 
     return treatmentPlanMapper.toDTO(treatmentPlan);
+  }
+
+  private String buildSubmissionDescription(
+      User currentUser, TreatmentPlan treatmentPlan, String comments) {
+
+    // 1. Crie a parte base da descrição
+    StringBuilder descriptionBuilder = new StringBuilder();
+    descriptionBuilder.append(
+        String.format(
+            "User %s (%s) submitted Treatment Plan (%s) for review",
+            currentUser.getName(), currentUser.getId(), treatmentPlan.getId()));
+
+    if (comments != null && !comments.trim().isEmpty()) {
+      descriptionBuilder.append(", with additional comments: ").append(comments);
+    } else {
+      descriptionBuilder.append(" without additional comments");
+    }
+
+    return descriptionBuilder.toString();
   }
 }
