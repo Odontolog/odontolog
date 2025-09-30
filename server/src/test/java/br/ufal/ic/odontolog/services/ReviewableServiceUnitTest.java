@@ -51,13 +51,13 @@ public class ReviewableServiceUnitTest {
     supervisor.setEmail("testsupervisor@test.com");
     supervisor.setId(UUID.randomUUID());
     when(supervisorRepository.findByEmail("testsupervisor@test.com"))
-            .thenReturn(Optional.of(supervisor));
+        .thenReturn(Optional.of(supervisor));
 
     Reviewable reviewableEntity = mock(Reviewable.class);
     reviewableEntity.setId(1L);
     Page<Reviewable> mockPageOfReviewables = new PageImpl<>(List.of(reviewableEntity), pageable, 1);
     when(reviewableRepository.findAll(any(Specification.class), eq(pageable)))
-            .thenReturn(mockPageOfReviewables);
+        .thenReturn(mockPageOfReviewables);
 
     ReviewableDTO reviewableDTO = new ReviewableDTO();
     reviewableDTO.setId(reviewableEntity.getId());

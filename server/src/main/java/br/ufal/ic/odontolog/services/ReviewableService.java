@@ -1,8 +1,8 @@
 package br.ufal.ic.odontolog.services;
 
-import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.models.Reviewable;
@@ -10,6 +10,8 @@ import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +19,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -58,11 +58,13 @@ public class ReviewableService {
 
   @Transactional
   public ReviewableDTO addSupervisorsToReviewable(Long reviewableId, ReviewersDTO request) {
-    Reviewable reviewable = reviewableRepository
+    Reviewable reviewable =
+        reviewableRepository
             .findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
-    Set<Supervisor> supervisors = new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
+    Set<Supervisor> supervisors =
+        new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
 
     if (supervisors.isEmpty()) {
       throw new UnprocessableRequestException("No supervisor found with the provided IDs");
@@ -74,14 +76,15 @@ public class ReviewableService {
     return reviewableMapper.toDTO(reviewable);
   }
 
-
   @Transactional
   public ReviewableDTO removeSupervisorsFromReviewable(Long reviewableId, ReviewersDTO request) {
-    Reviewable reviewable = reviewableRepository
+    Reviewable reviewable =
+        reviewableRepository
             .findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
-    Set<Supervisor> supervisorsToRemove = new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
+    Set<Supervisor> supervisorsToRemove =
+        new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
 
     if (supervisorsToRemove.isEmpty()) {
       throw new UnprocessableRequestException("No supervisor found with the provided IDs");
@@ -93,13 +96,15 @@ public class ReviewableService {
     return reviewableMapper.toDTO(reviewable);
   }
 
-
   @Transactional
   public ReviewableDTO updateReviewers(Long reviewableId, ReviewersDTO request) {
-    Reviewable reviewable = reviewableRepository.findById(reviewableId)
+    Reviewable reviewable =
+        reviewableRepository
+            .findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
-    Set<Supervisor> supervisors = new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
+    Set<Supervisor> supervisors =
+        new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
 
     if (supervisors.isEmpty() && !request.getSupervisorIds().isEmpty()) {
       throw new UnprocessableRequestException("No supervisor found with the provided IDs");
@@ -111,5 +116,4 @@ public class ReviewableService {
 
     return reviewableMapper.toDTO(reviewable);
   }
-
 }
