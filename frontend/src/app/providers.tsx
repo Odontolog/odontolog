@@ -7,6 +7,7 @@ import { MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { SessionProvider } from 'next-auth/react';
 import { type Session } from 'next-auth';
+import { ModalsProvider } from '@mantine/modals';
 
 const theme = createTheme({
   fontFamily: 'Roboto, sans-serif',
@@ -25,7 +26,9 @@ export default function Providers({
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme}>
         <Notifications />
-        <SessionProvider session={session}>{children}</SessionProvider>
+        <SessionProvider session={session}>
+          <ModalsProvider>{children}</ModalsProvider>
+        </SessionProvider>
       </MantineProvider>
     </QueryClientProvider>
   );

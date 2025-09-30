@@ -184,6 +184,5 @@ export async function getPatientById(
   console.log('fething detail for procedureID: ', patientId);
   await new Promise((resolve) => setTimeout(resolve, 1000));
   const res = patientData.find((p) => p.id === patientId);
-  console.log(res);
   return res;
 }
