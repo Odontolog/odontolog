@@ -13,12 +13,11 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class Supervisor extends User {
-  final Role role = Role.SUPERVISOR;
-
   String specialization;
 
   // TODO: Add supervisor's SIAPE validation
   String siape;
 
-  @ManyToMany Set<Reviewable> reviewables;
+  @ManyToMany
+  Set<Reviewable> reviewables;
 }

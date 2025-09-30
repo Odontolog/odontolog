@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Student extends User {
-  final Role role = Role.STUDENT;
   int clinicNumber;
   String enrollmentCode;
   int enrollmentYear;
