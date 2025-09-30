@@ -20,11 +20,11 @@ public class PatientController {
 
   @GetMapping
   public ResponseEntity<List<PatientDTO>> getAllPatients() {
-    return new ResponseEntity<>(patientService.getPatients(), HttpStatus.OK);
+    return ResponseEntity.ok(patientService.getPatients());
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<PatientDTO> getPatientById(@PathVariable Long id) {
-    return new ResponseEntity<>(patientService.getPatientById(id), HttpStatus.OK);
+    return ResponseEntity.ok(patientService.getPatientById(id));
   }
 }
