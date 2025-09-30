@@ -5,6 +5,7 @@ import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.ReviewStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
+import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.enums.Sex;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
@@ -42,26 +43,32 @@ public class DevDataLoader implements CommandLineRunner {
 
     Student studentTest001 =
         studentRepository.save(
-            new Student(
-                "Student_Test_001",
-                "student.test.001@test.com",
-                passwordEncoder.encode("password1"),
-                1,
-                "20250914",
-                2025,
-                1,
-                "some-url"));
+            Student.builder()
+                // .id(UUID.fromString("de66e248-f5ca-441d-9d6f-9494ac7e8144"))
+                .name("Student_Test_001")
+                .email("student.test.001@test.com")
+                .role(Role.STUDENT)
+                .password(passwordEncoder.encode("password1"))
+                .enrollmentSemester(1)
+                .enrollmentCode("20250914")
+                .enrollmentYear(2025)
+                .clinicNumber(1)
+                .photoUrl("some-url")
+                .build());
     logger.info("Student created: {}", studentTest001.getName());
 
     Supervisor supervisorTest001 =
         supervisorRepository.save(
-            new Supervisor(
-                "Supervisor_Test_001",
-                "supervisor.test.001@test.com",
-                passwordEncoder.encode("password2"),
-                "Surgery",
-                "20250832",
-                "some-url"));
+            Supervisor.builder()
+                // .id(UUID.fromString("a4f5c2e1-5d3b-4c6e-8f7a-123456789abc"))
+                .name("Supervisor_Test_001")
+                .email("supervisor.test.001@test.com")
+                .role(Role.SUPERVISOR)
+                .password(passwordEncoder.encode("password2"))
+                .specialization("Surgery")
+                .siape("20250832")
+                .photoUrl("some-url")
+                .build());
     logger.info("Supervisor created: {}", supervisorTest001.getName());
 
     Supervisor supervisorTest002 =
