@@ -1,6 +1,6 @@
 package br.ufal.ic.odontolog.controllers;
 
-import br.ufal.ic.odontolog.dtos.*;
+import br.ufal.ic.odontolog.dtos.PatientDTO;
 import br.ufal.ic.odontolog.services.PatientService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
