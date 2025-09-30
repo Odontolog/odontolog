@@ -2,7 +2,6 @@ package br.ufal.ic.odontolog.dtos;
 
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
-import java.util.List;
 import lombok.Data;
 
 @Data
