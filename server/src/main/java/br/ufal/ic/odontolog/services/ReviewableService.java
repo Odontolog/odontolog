@@ -97,14 +97,10 @@ public class ReviewableService {
   }
 
   @Transactional
-<<<<<<< HEAD
-  public ReviewableDTO updateReviewers(UUID reviewableId, ReviewersDTO request) {
-    Reviewable reviewable = reviewableRepository
-=======
+
   public ReviewableDTO updateReviewers(Long reviewableId, ReviewersDTO request) {
     Reviewable reviewable =
         reviewableRepository
->>>>>>> c5fa9efc8db75c6416a3bd8457b6600d7a225ad4
             .findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
