@@ -1,6 +1,8 @@
 package br.ufal.ic.odontolog.models;
 
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
+import br.ufal.ic.odontolog.states.treatmentPlan.TreatmentPlanState;
+import br.ufal.ic.odontolog.states.treatmentPlan.TreatmentPlanStates;
 import jakarta.persistence.*;
 import java.util.Set;
 import lombok.Builder;
@@ -21,6 +23,8 @@ public class TreatmentPlan extends Reviewable {
   @Enumerated(EnumType.STRING)
   private TreatmentPlanStatus status;
 
+  @Transient private TreatmentPlanState state;
+
   @ManyToOne
   @JoinColumn(name = "patient_id", nullable = false)
   private Patient patient;
@@ -32,5 +36,25 @@ public class TreatmentPlan extends Reviewable {
   public void addProcedure(TreatmentPlanProcedure treatmentPlanProcedure) {
     this.procedures.add(treatmentPlanProcedure);
     treatmentPlanProcedure.setTreatmentPlan(this);
+  }
+
+  public TreatmentPlanState getState() {
+    switch (this.status) {
+      case DRAFT:
+        return new TreatmentPlanStates.DraftState();
+      case IN_PROGRESS:
+        return new TreatmentPlanStates.InProgressState();
+      case IN_REVIEW:
+        return new TreatmentPlanStates.InReviewState();
+      case DONE:
+        return new TreatmentPlanStates.DoneState();
+      default:
+        throw new IllegalStateException("Unexpected value: " + this.status);
+    }
+  }
+
+  public void setState(TreatmentPlanState state) {
+    this.state = state;
+    this.status = state.getStatus();
   }
 }

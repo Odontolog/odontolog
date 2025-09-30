@@ -40,15 +40,16 @@ class AuthControllerIntegrationTest {
         .orElseGet(
             () ->
                 studentRepository.save(
-                    new Student(
-                        "Student_Test_001",
-                        USERNAME,
-                        passwordEncoder.encode(PASSWORD),
-                        1,
-                        "20250914",
-                        2025,
-                        1,
-                        "some-url")));
+                    Student.builder()
+                        .name("Student_Test_001")
+                        .email(USERNAME)
+                        .password(passwordEncoder.encode(PASSWORD))
+                        .clinicNumber(1)
+                        .enrollmentCode("20250914")
+                        .enrollmentYear(2025)
+                        .enrollmentSemester(1)
+                        .photoUrl("some-url")
+                        .build()));
   }
 
   @Test

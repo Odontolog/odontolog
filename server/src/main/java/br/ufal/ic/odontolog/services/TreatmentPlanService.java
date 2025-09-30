@@ -1,9 +1,12 @@
 package br.ufal.ic.odontolog.services;
 
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
+import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
+import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
 import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Patient;
@@ -11,8 +14,8 @@ import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
+import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,8 +26,9 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class TreatmentPlanService {
 
-  private final TreatmentPlanMapper treatmentPlanMapper;
   private final TreatmentPlanRepository treatmentPlanRepository;
+  private final UserRepository userRepository;
+  private final TreatmentPlanMapper treatmentPlanMapper;
   private final PatientRepository patientRepository;
   private final CurrentUserProvider currentUserProvider;
 
@@ -64,7 +68,7 @@ public class TreatmentPlanService {
   }
 
   @Transactional(readOnly = true)
-  public TreatmentPlanDTO getTreatmentPlanById(UUID id) {
+  public TreatmentPlanDTO getTreatmentPlanById(Long id) {
     TreatmentPlan plan =
         treatmentPlanRepository
             .findById(id)
@@ -73,5 +77,42 @@ public class TreatmentPlanService {
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Treatment plan not found"));
 
     return treatmentPlanMapper.toDTO(plan);
+  }
+
+  @Transactional
+  public TreatmentPlanDTO assignUserToTreatmentPlan(
+      TreatmentPlanAssignUserRequestDTO requestDTO, Long treatmentId) {
+    User currentUser = currentUserProvider.getCurrentUser();
+
+    TreatmentPlan treatmentPlan =
+        treatmentPlanRepository
+            .findById(treatmentId)
+            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+
+    User user =
+        userRepository
+            .findById(requestDTO.getUserId())
+            .orElseThrow(() -> new UnprocessableRequestException("Provided User not found"));
+
+    treatmentPlan.getState().assignUser(treatmentPlan, user);
+
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.CREATED)
+            .description(
+                String.format(
+                    "User %s (%s) assigned to Treatment Plan (%s) by user %s (%s)",
+                    user.getName(),
+                    user.getId(),
+                    treatmentPlan.getId(),
+                    currentUser.getName(),
+                    currentUser.getEmail()))
+            .reviewable(treatmentPlan)
+            .build();
+    treatmentPlan.getHistory().add(activity);
+    treatmentPlanRepository.save(treatmentPlan);
+
+    return treatmentPlanMapper.toDTO(treatmentPlan);
   }
 }
