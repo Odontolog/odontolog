@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import java.util.UUID;
 
 @RestController()
 @RequestMapping("/api/reviewables")
@@ -37,7 +36,7 @@ public class ReviewableController implements ReviewableApi {
   @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @PostMapping("/{reviewableId}/reviewers")
   public ResponseEntity<ReviewableDTO> addReviewers(
-          @PathVariable UUID reviewableId,
+          @PathVariable Long reviewableId,
           @Valid @RequestBody ReviewersDTO request) {
 
     var updated = reviewableService.addSupervisorsToReviewable(reviewableId, request);
@@ -47,7 +46,7 @@ public class ReviewableController implements ReviewableApi {
   @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @DeleteMapping("/{reviewableId}/reviewers")
   public ResponseEntity<ReviewableDTO> removeReviewers(
-          @PathVariable UUID reviewableId,
+          @PathVariable Long reviewableId,
           @Valid @RequestBody ReviewersDTO request) {
 
     var updated = reviewableService.removeSupervisorsFromReviewable(reviewableId, request);
@@ -57,7 +56,7 @@ public class ReviewableController implements ReviewableApi {
   @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @PutMapping("/{reviewableId}/reviewers")
   public ResponseEntity<ReviewableDTO> updateReviewers(
-          @PathVariable UUID reviewableId,
+          @PathVariable Long reviewableId,
           @Valid @RequestBody ReviewersDTO request) {
 
     var updated = reviewableService.updateReviewers(reviewableId, request);

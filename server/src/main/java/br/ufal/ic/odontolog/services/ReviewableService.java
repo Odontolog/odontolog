@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +57,7 @@ public class ReviewableService {
   }
 
   @Transactional
-  public ReviewableDTO addSupervisorsToReviewable(UUID reviewableId, ReviewersDTO request) {
+  public ReviewableDTO addSupervisorsToReviewable(Long reviewableId, ReviewersDTO request) {
     Reviewable reviewable = reviewableRepository
             .findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
@@ -77,7 +76,7 @@ public class ReviewableService {
 
 
   @Transactional
-  public ReviewableDTO removeSupervisorsFromReviewable(UUID reviewableId, ReviewersDTO request) {
+  public ReviewableDTO removeSupervisorsFromReviewable(Long reviewableId, ReviewersDTO request) {
     Reviewable reviewable = reviewableRepository
             .findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
@@ -96,7 +95,7 @@ public class ReviewableService {
 
 
   @Transactional
-  public ReviewableDTO updateReviewers(UUID reviewableId, ReviewersDTO request) {
+  public ReviewableDTO updateReviewers(Long reviewableId, ReviewersDTO request) {
     Reviewable reviewable = reviewableRepository.findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
