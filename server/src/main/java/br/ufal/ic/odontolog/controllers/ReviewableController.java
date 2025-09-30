@@ -56,7 +56,7 @@ public class ReviewableController implements ReviewableApi {
   public ResponseEntity<ReviewableDTO> updateReviewers(
       @PathVariable Long reviewableId, @Valid @RequestBody ReviewersDTO request) {
 
-    var updated = reviewableService.updateReviewers(reviewableId, request);
+    var updated = reviewableService.updateSupervisorsFromReviewables(reviewableId, request);
     return ResponseEntity.ok(updated);
   }
 }

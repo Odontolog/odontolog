@@ -8,9 +8,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class SupervisorUpdateDTO {
 
-    @NotBlank(message = "Must have a name")
-    private String name;
+  @NotBlank(message = "Must have a name")
+  private String name;
 
-    @NotBlank(message = "Must have a specialization")
-    private String specialization;
+  @NotBlank(message = "Must have a specialization")
+  private String specialization;
 }

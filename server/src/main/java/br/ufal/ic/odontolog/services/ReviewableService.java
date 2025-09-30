@@ -12,6 +12,8 @@ import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,19 +60,45 @@ public class ReviewableService {
 
   @Transactional
   public ReviewableDTO addSupervisorsToReviewable(Long reviewableId, ReviewersDTO request) {
+    if (request == null
+        || request.getSupervisorIds() == null
+        || request.getSupervisorIds().isEmpty()) {
+      throw new UnprocessableRequestException("At least one supervisor ID must be provided");
+    }
+
     Reviewable reviewable =
         reviewableRepository
             .findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
-    Set<Supervisor> supervisors =
-        new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
+    Set<UUID> requestedIds = new HashSet<>(request.getSupervisorIds());
 
-    if (supervisors.isEmpty()) {
-      throw new UnprocessableRequestException("No supervisor found with the provided IDs");
+    Set<Supervisor> supervisorsToAdd =
+        new HashSet<>(supervisorRepository.findAllById(requestedIds));
+
+    Set<UUID> foundIds =
+        supervisorsToAdd.stream().map(Supervisor::getId).collect(Collectors.toSet());
+
+    Set<UUID> invalidIds =
+        requestedIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toSet());
+
+    if (!invalidIds.isEmpty()) {
+      throw new UnprocessableRequestException(
+          "The following supervisor IDs do not exist: " + invalidIds);
     }
 
-    reviewable.getReviewers().addAll(supervisors);
+    Set<UUID> currentlyLinkedIds =
+        reviewable.getReviewers().stream().map(Supervisor::getId).collect(Collectors.toSet());
+
+    Set<UUID> alreadyLinked =
+        foundIds.stream().filter(currentlyLinkedIds::contains).collect(Collectors.toSet());
+
+    if (!alreadyLinked.isEmpty()) {
+      throw new UnprocessableRequestException(
+          "The following supervisor IDs are already linked to this reviewable: " + alreadyLinked);
+    }
+
+    reviewable.getReviewers().addAll(supervisorsToAdd);
     reviewableRepository.save(reviewable);
 
     return reviewableMapper.toDTO(reviewable);
@@ -78,16 +106,31 @@ public class ReviewableService {
 
   @Transactional
   public ReviewableDTO removeSupervisorsFromReviewable(Long reviewableId, ReviewersDTO request) {
+    if (request == null
+        || request.getSupervisorIds() == null
+        || request.getSupervisorIds().isEmpty()) {
+      throw new UnprocessableRequestException("At least one supervisor ID must be provided");
+    }
+
     Reviewable reviewable =
         reviewableRepository
             .findById(reviewableId)
             .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
     Set<Supervisor> supervisorsToRemove =
-        new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
+        reviewable.getReviewers().stream()
+            .filter(s -> request.getSupervisorIds().contains(s.getId()))
+            .collect(Collectors.toSet());
 
-    if (supervisorsToRemove.isEmpty()) {
-      throw new UnprocessableRequestException("No supervisor found with the provided IDs");
+    Set<UUID> invalidIds =
+        request.getSupervisorIds().stream()
+            .filter(id -> reviewable.getReviewers().stream().noneMatch(s -> s.getId().equals(id)))
+            .collect(Collectors.toSet());
+
+    if (!invalidIds.isEmpty()) {
+      throw new UnprocessableRequestException(
+          "The following supervisor IDs are invalid or not linked to this reviewable: "
+              + invalidIds);
     }
 
     reviewable.getReviewers().removeAll(supervisorsToRemove);
@@ -97,8 +140,7 @@ public class ReviewableService {
   }
 
   @Transactional
-
-  public ReviewableDTO updateReviewers(Long reviewableId, ReviewersDTO request) {
+  public ReviewableDTO updateSupervisorsFromReviewables(Long reviewableId, ReviewersDTO request) {
     Reviewable reviewable =
         reviewableRepository
             .findById(reviewableId)
@@ -107,12 +149,17 @@ public class ReviewableService {
     Set<Supervisor> supervisors =
         new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
 
-    if (supervisors.isEmpty() && !request.getSupervisorIds().isEmpty()) {
-      throw new UnprocessableRequestException("No supervisor found with the provided IDs");
+    Set<UUID> invalidIds =
+        request.getSupervisorIds().stream()
+            .filter(id -> supervisors.stream().noneMatch(s -> s.getId().equals(id)))
+            .collect(Collectors.toSet());
+
+    if (!invalidIds.isEmpty()) {
+      throw new UnprocessableRequestException(
+          "The following supervisor IDs do not exist: " + invalidIds);
     }
 
     reviewable.setReviewers(supervisors);
-
     reviewableRepository.save(reviewable);
 
     return reviewableMapper.toDTO(reviewable);
