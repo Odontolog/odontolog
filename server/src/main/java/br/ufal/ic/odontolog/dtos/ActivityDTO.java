@@ -1,0 +1,18 @@
+package br.ufal.ic.odontolog.dtos;
+
+import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.models.User;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+import lombok.Data;
+
+@Data
+public class ActivityDTO {
+  private UUID id;
+  private ActivityType type;
+  private User actor;
+  private String description;
+  private HashMap<String, Object> metadata;
+  private LocalDateTime createdAt;
+}

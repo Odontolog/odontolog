@@ -17,7 +17,6 @@ import lombok.experimental.SuperBuilder;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "procedures")
 public abstract class Procedure extends Reviewable {
-  private String name;
   private Integer planned_session;
 
   @ManyToOne

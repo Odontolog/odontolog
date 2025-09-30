@@ -47,9 +47,14 @@ export function TreatmentPlanDetailContent({
     data: treatmentPlan,
     isLoading,
     isError,
+    error,
   } = useQuery({
     ...getTratmentPlanOptions(treatmentPlanId),
   });
+
+  console.log('📊 Dados do plano:', treatmentPlan);
+  console.log('❌ Erro:', error);
+  console.log('🔄 Loading:', isLoading);
 
   if (isLoading) {
     return (

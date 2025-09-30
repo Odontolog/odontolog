@@ -47,7 +47,8 @@ class AuthControllerIntegrationTest {
                         1,
                         "20250914",
                         2025,
-                        1)));
+                        1,
+                        "some-url")));
   }
 
   @Test

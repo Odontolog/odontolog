@@ -9,6 +9,8 @@ import br.ufal.ic.odontolog.enums.Sex;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
+import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("dev")
+@RequiredArgsConstructor
 public class DevDataLoader implements CommandLineRunner {
   Logger logger = LoggerFactory.getLogger(DevDataLoader.class);
 
@@ -28,29 +31,13 @@ public class DevDataLoader implements CommandLineRunner {
   private final PreProcedureRepository preProcedureRepository;
   private final ActivityRepository activityRepository;
   private final PatientRepository patientRepository;
+  private final TreatmentPlanProcedureRepository treatmentPlanProcedureRepository;
   private final PasswordEncoder passwordEncoder;
-
-  public DevDataLoader(
-      StudentRepository studentRepository,
-      SupervisorRepository supervisorRepository,
-      TreatmentPlanRepository treatmentPlanRepository,
-      AttachmentRepository attachmentRepository,
-      PreProcedureRepository preProcedureRepository,
-      ActivityRepository activityRepository,
-      PatientRepository patientRepository,
-      PasswordEncoder passwordEncoder) {
-    this.studentRepository = studentRepository;
-    this.supervisorRepository = supervisorRepository;
-    this.treatmentPlanRepository = treatmentPlanRepository;
-    this.attachmentRepository = attachmentRepository;
-    this.preProcedureRepository = preProcedureRepository;
-    this.activityRepository = activityRepository;
-    this.patientRepository = patientRepository;
-    this.passwordEncoder = passwordEncoder;
-  }
 
   @Override
   public void run(String... args) throws Exception {
+    // FIXME: Update emails and passwords to be more readable
+
     logger.info("Loading dev data...");
 
     Student studentTest001 =
@@ -62,7 +49,8 @@ public class DevDataLoader implements CommandLineRunner {
                 1,
                 "20250914",
                 2025,
-                1));
+                1,
+                "some-url"));
     logger.info("Student created: {}", studentTest001.getName());
 
     Supervisor supervisorTest001 =
@@ -72,7 +60,8 @@ public class DevDataLoader implements CommandLineRunner {
                 "supervisor.test.001@test.com",
                 passwordEncoder.encode("password2"),
                 "Surgery",
-                "20250832"));
+                "20250832",
+                "some-url"));
     logger.info("Supervisor created: {}", supervisorTest001.getName());
 
     Patient patientTest001 =
@@ -95,10 +84,12 @@ public class DevDataLoader implements CommandLineRunner {
     TreatmentPlan treatmentPlanTest001 =
         treatmentPlanRepository.save(
             TreatmentPlan.builder()
+                .name("Treatment_Plan_Test_001")
                 .patient(patientTest001)
                 .status(TreatmentPlanStatus.DRAFT)
                 .author(studentTest001)
                 .assignee(supervisorTest001)
+                .reviewers(Set.of(supervisorTest001))
                 .notes("Test Notes")
                 .type(ReviewableType.TREATMENT_PLAN)
                 .build());
@@ -113,6 +104,7 @@ public class DevDataLoader implements CommandLineRunner {
             .assignee(supervisorTest001)
             .notes("Test Notes")
             .type(ReviewableType.PROCEDURE)
+            .reviewers(Set.of(supervisorTest001))
             .status(ProcedureStatus.DRAFT)
             .studySector("Surgery")
             .procedureDetail(new ProcedureDetail("Test Procedure Detail"))
@@ -155,6 +147,7 @@ public class DevDataLoader implements CommandLineRunner {
                 .patient(patientTest001)
                 .author(studentTest001)
                 .assignee(supervisorTest001)
+                .reviewers(Set.of(supervisorTest001))
                 .notes("Test Notes")
                 .type(ReviewableType.PROCEDURE)
                 .status(ProcedureStatus.DRAFT)
@@ -196,6 +189,19 @@ public class DevDataLoader implements CommandLineRunner {
     treatmentPlanTest001.addReview(reviewTest001);
     treatmentPlanRepository.save(treatmentPlanTest001);
     logger.info("Review added to Treatment Plan: {}", treatmentPlanTest001.getId());
+
+    Review reviewTest002 =
+        Review.builder().reviewStatus(ReviewStatus.PENDING).supervisor(supervisorTest001).build();
+    preProcedureTest001.addReview(reviewTest002);
+    preProcedureRepository.save(preProcedureTest001);
+    logger.info("Review added to Pre Procedure: {}", preProcedureTest001.getName());
+
+    Review reviewTest003 =
+        Review.builder().reviewStatus(ReviewStatus.PENDING).supervisor(supervisorTest001).build();
+    treatmentPlanProcedureTest001.addReview(reviewTest003);
+    treatmentPlanProcedureRepository.save(treatmentPlanProcedureTest001);
+    logger.info(
+        "Review added to Treatment Plan Procedure: {}", treatmentPlanProcedureTest001.getName());
 
     logger.info("Dev data loaded successfully");
   }
