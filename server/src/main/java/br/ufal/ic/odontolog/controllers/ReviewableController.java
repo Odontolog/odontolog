@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewableController implements ReviewableApi {
   private final ReviewableService reviewableService;
 
-  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
+  @PreAuthorize("hasRole('SUPERVISOR')")
   @GetMapping("/me")
   public ResponseEntity<PagedModel<ReviewableDTO>> getCurrentSupervisorReviewables(
       Pageable pageable,
