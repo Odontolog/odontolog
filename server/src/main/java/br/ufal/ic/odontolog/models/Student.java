@@ -1,6 +1,5 @@
 package br.ufal.ic.odontolog.models;
 
-import br.ufal.ic.odontolog.enums.Role;
 import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
