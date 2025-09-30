@@ -2,7 +2,6 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { mockTreatmentPlans } from '@/mocks/treatment-plan';
 import { TreatmentPlan, TreatmentPlanShort } from '@/shared/models';
-import { type User } from 'next-auth';
 import { getAuthToken } from '@/shared/utils';
 
 export function getPatientTratmentPlansOptions(patientId: string) {
@@ -22,7 +21,6 @@ async function getPatientTratmentPlans(
 
 export async function createPatientTreatmentPlan(
   patientId: string,
-  user: User,
 ) {
   const token = await getAuthToken();
 

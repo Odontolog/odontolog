@@ -22,7 +22,6 @@ import {
   createPatientTreatmentPlan,
   getPatientTratmentPlansOptions,
 } from './requests';
-import { useSession } from 'next-auth/react';
 
 interface TreatmentPlansSectionProps {
   patientId: string;
@@ -32,7 +31,6 @@ export default function TreatmentPlansSection({
   patientId,
 }: TreatmentPlansSectionProps) {
   const router = useRouter();
-  const session = useSession();
   const options = getPatientTratmentPlansOptions(patientId);
 
   const { data, isLoading } = useQuery({
@@ -50,10 +48,7 @@ export default function TreatmentPlansSection({
       ),
       labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
       onConfirm: async () => {
-        const newTP: string = await createPatientTreatmentPlan(
-          '0e790a1d-d0d8-48b2-983e-3a53ef16371f',
-          session.data?.user,
-        );
+        const newTP: string = await createPatientTreatmentPlan(patientId);
         router.push(`/patients/${patientId}/treatments/${newTP}`);
       },
     });
