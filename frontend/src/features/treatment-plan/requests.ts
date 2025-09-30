@@ -91,10 +91,10 @@ export async function createTreatmentPlanProcedure(
     studySector: procedure.studySector,
     plannedSession: procedure.plannedSession,
     teeth: procedure.tooth,
-    status: 'draft',
+    status: 'DRAFT',
     reviews: [],
-    procedureType: 'treatment_plan_procedure',
-    type: 'procedure',
+    procedureType: 'TREATMENT_PLAN_PROCEDURE',
+    type: 'PROCEDURE',
     patient,
     assignee: supervisor,
     updatedAt: new Date('2025-09-01T10:00:00Z'),
@@ -111,10 +111,10 @@ export async function submitTreatmentPlanForReview(
   await new Promise((resolve) => setTimeout(resolve, 1000));
   console.log(`Submitting treatment plan ${treatmentPlanId} for review`);
 
-  treatmentPlanMock.status = 'in_review';
+  treatmentPlanMock.status = 'IN_REVIEW';
   treatmentPlanMock.history.push({
     id: (treatmentPlanMock.history.length + 1).toString(),
-    type: 'review_requested',
+    type: 'REVIEW_REQUESTED',
     actor: loggedUser,
     description: 'Solicitação de validação enviada para o(s) supervisor(es).',
     createdAt: new Date(),

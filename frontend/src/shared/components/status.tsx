@@ -10,23 +10,23 @@ interface StatusProps {
 
 function getBadgeProps(status: string) {
   switch (status) {
-    case 'draft':
+    case 'DRAFT':
       return { color: 'gray', text: 'EM ELABORAÇÃO' };
-    case 'not_started':
+    case 'NOT_STARTED':
       return { color: 'gray', text: 'NÃO INICIADO' };
-    case 'in_progress':
+    case 'IN_PROGRESS':
       return { color: 'blue', text: 'EM ANDAMENTO' };
-    case 'in_review':
+    case 'IN_REVIEW':
       return { color: 'yellow', text: 'EM REVISÃO' };
-    case 'pending':
+    case 'PENDING':
       return { color: 'yellow', text: 'PENDENTE' };
-    case 'finished':
+    case 'FINISHED':
       return { color: 'teal', text: 'CONCLUÍDO' };
-    case 'approved':
+    case 'APPROVED':
       return { color: 'teal', text: 'APROVADO' };
-    case 'done':
+    case 'DONE':
       return { color: 'teal', text: 'CONCLUÍDO' };
-    case 'rejected':
+    case 'REJECTED':
       return { color: 'red', text: 'REJEITADO' };
     default:
       return { color: 'white', text: null };

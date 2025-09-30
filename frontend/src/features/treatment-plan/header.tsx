@@ -155,7 +155,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
             </Text>
           </Group>
         </Stack>
-        {props.user.role === 'student' ? (
+        {props.user.role === 'STUDENT' ? (
           <Flex align="center" gap={8}>
             {data.reviews.length === 0 && (
               <Tooltip

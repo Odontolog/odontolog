@@ -88,7 +88,7 @@ export default function SupervisorSection<T extends Reviewable>({
                   />
                   <Text size="sm">{review.supervisor.name}</Text>
                 </Group>
-                <StatusIndicator status={review.status} />
+                <StatusIndicator status={review.reviewStatus} />
               </Group>
             ))}
         </Flex>

@@ -92,7 +92,7 @@ function getProcedureCardInfoProps(
     case 'reviews':
       return {
         icon: IconMessage,
-        text: `${procedure.reviews.filter((rev) => rev.status === 'approved').length}/${procedure.reviews.length}`,
+        text: `${procedure.reviews.filter((rev) => rev.reviewStatus === 'APPROVED').length}/${procedure.reviews.length}`,
       };
     case 'study_sector':
       return {

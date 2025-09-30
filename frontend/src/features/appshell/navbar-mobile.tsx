@@ -39,7 +39,7 @@ export default function NavbarMobile() {
 
   function getUserPageLink(user: User) {
     switch (user.role) {
-      case 'student':
+      case 'STUDENT':
         return `/students/${user?.id}`;
       default:
         return '#';
@@ -52,7 +52,7 @@ export default function NavbarMobile() {
     { icon: <IconDental />, label: 'Pacientes', route: '/patients' },
   ];
 
-  if (user && user.role !== 'student') {
+  if (user && user.role !== 'STUDENT') {
     navLinks.push(
       ...[
         { icon: <IconUsers />, label: 'Alunos', route: '/students' },

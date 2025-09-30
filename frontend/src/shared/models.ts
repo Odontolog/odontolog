@@ -10,16 +10,16 @@ export type Patient = PatientShort & {
   cpf: string;
   rg: string;
   ssp: string;
-  maritalStatus: 'single' | 'married' | 'divorced' | 'widowed' | 'civil_union';
-  gender: 'female' | 'male' | 'other';
-  ethnicity: 'white' | 'black' | 'brown' | 'yellow' | 'indigenous' | 'other';
+  maritalStatus: 'SINGLE' | 'MARRIED' | 'DIVORCED' | 'WIDOWED' | 'CIVIL_UNION';
+  gender: 'FEMALE' | 'MALE' | 'OTHER';
+  ethnicity: 'WHITE' | 'BLACK' | 'BROWN' | 'YELLOW' | 'INDIGENOUS' | 'OTHER';
   address: string;
   city: string;
   state: string;
   occupation: string;
 };
 
-export type UserRole = 'student' | 'supervisor' | 'admin';
+export type UserRole = 'STUDENT' | 'SUPERVISOR' | 'ADMIN';
 
 export type User = {
   id: string;
@@ -41,12 +41,12 @@ export type Supervisor = User & {
 };
 
 export type ActivityType =
-  | 'created'
-  | 'edited'
-  | 'review_requested'
-  | 'review_approved'
-  | 'review_rejected'
-  | 'completed';
+  | 'CREATED'
+  | 'EDITED'
+  | 'REVIEW_REQUESTED'
+  | 'REVIEW_APPROVED'
+  | 'REVIEW_REJECTED'
+  | 'COMPLETED';
 
 export type Activity = {
   id: string;
@@ -57,22 +57,22 @@ export type Activity = {
   createdAt: Date;
 };
 
-export type ReviewStatus = 'draft' | 'pending' | 'approved' | 'rejected';
+export type ReviewStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export type Review = {
   id: string;
   note: string;
   grade: number;
-  status: ReviewStatus;
+  reviewStatus: ReviewStatus;
   supervisor: User;
 };
 
 export type ProcedureStatus =
-  | 'draft'
-  | 'not_started'
-  | 'in_progress'
-  | 'in_review'
-  | 'done';
+  | 'DRAFT'
+  | 'NOT_STARTED'
+  | 'IN_PROGRESS'
+  | 'IN_REVIEW'
+  | 'DONE';
 
 export type ProcedureShort = {
   id: string;
@@ -86,15 +86,15 @@ export type ProcedureShort = {
   updatedAt: Date;
   reviews: Review[];
   notes: string;
-  type: 'treatment_plan' | 'procedure';
-  procedureType: 'treatment_plan_procedure' | 'pre_procedure';
+  type: 'TREATMENT_PLAN' | 'PROCEDURE';
+  procedureType: 'TREATMENT_PLAN_PROCEDURE' | 'PRE_PROCEDURE';
 };
 
 export type TreatmentPlanStatus =
-  | 'draft'
-  | 'in_review'
-  | 'in_progress'
-  | 'done';
+  | 'DRAFT'
+  | 'IN_REVIEW'
+  | 'IN_PROGRESS'
+  | 'DONE';
 
 export type TreatmentPlanShort = {
   id: string;
@@ -103,7 +103,7 @@ export type TreatmentPlanShort = {
   patient: PatientShort;
   updatedAt: Date;
   notes: string;
-  type: 'treatment_plan' | 'procedure';
+  type: 'TREATMENT_PLAN' | 'PROCEDURE';
 };
 
 export type ReviewableShort = TreatmentPlanShort | ProcedureShort;
@@ -118,7 +118,7 @@ export type Reviewable = {
   notes: string;
   reviews: Review[];
   history: Activity[];
-  type: 'treatment_plan' | 'procedure';
+  type: 'TREATMENT_PLAN' | 'PROCEDURE';
 };
 
 export type TreatmentPlan = Reviewable & {
@@ -146,7 +146,7 @@ export type Procedure = Reviewable & {
   studySector: string;
   teeth: string[];
   details: ProcedureDetail;
-  procedureType: 'pre_procedure' | 'tratment_plan_procedure';
+  procedureType: 'PRE_PROCEDURE' | 'TRATMENT_PLAN_PROCEDURE';
   treatmentPlanId?: string;
 };
 
