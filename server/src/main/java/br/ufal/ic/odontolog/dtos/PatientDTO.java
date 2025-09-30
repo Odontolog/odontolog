@@ -21,6 +21,4 @@ public class PatientDTO {
   private String birthDate;
   private MaritalStatus maritalStatus;
   private String profession;
-  private List<TreatmentPlanDTO> treatmentPlans;
-  private List<ProcedureDTO> procedures;
 }
