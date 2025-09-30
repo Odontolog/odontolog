@@ -5,16 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @SuperBuilder
@@ -23,7 +22,9 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor
 @Table(name = "reviews")
 public class Review {
-  @Id @GeneratedValue @UuidGenerator private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   private String comments;
   private Integer grade;

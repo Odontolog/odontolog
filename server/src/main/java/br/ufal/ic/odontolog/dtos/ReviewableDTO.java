@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,9 +18,9 @@ import lombok.NoArgsConstructor;
 })
 @NoArgsConstructor
 public class ReviewableDTO {
+  private Long id;
   private String name;
   private ReviewableType type;
-  private UUID id;
   private User author;
   private User assignee;
   private Instant createdAt;
