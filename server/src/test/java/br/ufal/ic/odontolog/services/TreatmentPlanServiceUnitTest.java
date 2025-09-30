@@ -13,6 +13,8 @@ import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
+import br.ufal.ic.odontolog.models.Review;
+import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
@@ -212,6 +214,173 @@ public class TreatmentPlanServiceUnitTest {
 
     verify(treatmentPlanRepository).findById(treatmentId);
     verify(userRepository).findById(requestDTO.getUserId());
+    verify(treatmentPlanMapper, never()).toDTO(any());
+    verify(treatmentPlanRepository, never()).save(any());
+  }
+
+  @Test
+  public void givenDraftPlan_whenSubmitForReview_thenPlanIsSubmitted() {
+    // Arrange
+    Supervisor supervisor = new Supervisor();
+    supervisor.setId(UUID.randomUUID());
+
+    Long treatmentId = 1L;
+    TreatmentPlan treatmentPlan = new TreatmentPlan();
+    treatmentPlan.setId(treatmentId);
+    treatmentPlan.setStatus(TreatmentPlanStatus.DRAFT);
+    treatmentPlan.getReviewers().add(supervisor);
+    treatmentPlan.setAssignee(new User());
+
+    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+
+    TreatmentPlanDTO expectedDto = new TreatmentPlanDTO();
+    expectedDto.setId(treatmentId);
+    expectedDto.setStatus(TreatmentPlanStatus.IN_REVIEW);
+
+    when(treatmentPlanMapper.toDTO(treatmentPlan)).thenReturn(expectedDto);
+
+    User currentUser = new User();
+    currentUser.setId(UUID.randomUUID());
+    when(currentUserProvider.getCurrentUser()).thenReturn(currentUser);
+
+    // Act
+    TreatmentPlanDTO result = treatmentPlanService.submitTreatmentPlanForReview(treatmentId);
+
+    // Assert
+    assertThat(result).isEqualTo(expectedDto);
+
+    ArgumentCaptor<TreatmentPlan> treatmentPlanCaptor =
+        ArgumentCaptor.forClass(TreatmentPlan.class);
+    verify(treatmentPlanRepository).save(treatmentPlanCaptor.capture());
+
+    TreatmentPlan savedPlan = treatmentPlanCaptor.getValue();
+    assertThat(savedPlan.getStatus()).isEqualTo(TreatmentPlanStatus.IN_REVIEW);
+    assertThat(savedPlan.getHistory()).isNotEmpty();
+    assertThat(savedPlan.getReviews()).isNotEmpty();
+
+    Review firstReview = savedPlan.getReviews().iterator().next();
+    assertThat(firstReview.getSupervisor()).isEqualTo(supervisor);
+
+    verify(treatmentPlanRepository).findById(treatmentId);
+    verify(treatmentPlanMapper).toDTO(treatmentPlan);
+    verify(treatmentPlanRepository).save(treatmentPlan);
+  }
+
+  @Test
+  public void givenNonExistentTreatmentPlan_whenSubmitForReview_thenThrowException() {
+    // Arrange
+    Long treatmentId = 1L;
+
+    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.empty());
+
+    // Act and Assert
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId));
+
+    verify(treatmentPlanRepository).findById(treatmentId);
+    verify(treatmentPlanMapper, never()).toDTO(any());
+    verify(treatmentPlanRepository, never()).save(any());
+  }
+
+  @Test
+  public void givenInProgressPlan_whenSubmitForReview_thenThrowException() {
+    // Arrange
+    Long treatmentId = 1L;
+    TreatmentPlan treatmentPlan = new TreatmentPlan();
+    treatmentPlan.setId(treatmentId);
+    treatmentPlan.setStatus(TreatmentPlanStatus.IN_PROGRESS);
+
+    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+
+    // Act and Assert
+    assertThrows(
+        UnsupportedOperationException.class,
+        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId));
+
+    verify(treatmentPlanRepository).findById(treatmentId);
+    verify(treatmentPlanMapper, never()).toDTO(any());
+    verify(treatmentPlanRepository, never()).save(any());
+  }
+
+  @Test
+  public void givenDonePlan_whenSubmitForReview_thenThrowException() {
+    // Arrange
+    Long treatmentId = 1L;
+    TreatmentPlan treatmentPlan = new TreatmentPlan();
+    treatmentPlan.setId(treatmentId);
+    treatmentPlan.setStatus(TreatmentPlanStatus.DONE);
+
+    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+
+    // Act and Assert
+    assertThrows(
+        UnsupportedOperationException.class,
+        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId));
+
+    verify(treatmentPlanRepository).findById(treatmentId);
+    verify(treatmentPlanMapper, never()).toDTO(any());
+    verify(treatmentPlanRepository, never()).save(any());
+  }
+
+  @Test
+  public void givenInReviewPlan_whenSubmitForReview_thenThrowException() {
+    // Arrange
+    Long treatmentId = 1L;
+    TreatmentPlan treatmentPlan = new TreatmentPlan();
+    treatmentPlan.setId(treatmentId);
+    treatmentPlan.setStatus(TreatmentPlanStatus.IN_REVIEW);
+
+    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+
+    // Act and Assert
+    assertThrows(
+        UnsupportedOperationException.class,
+        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId));
+
+    verify(treatmentPlanRepository).findById(treatmentId);
+    verify(treatmentPlanMapper, never()).toDTO(any());
+    verify(treatmentPlanRepository, never()).save(any());
+  }
+
+  @Test
+  public void givenDraftPlanWithoutReviewers_whenSubmitForReview_thenThrowException() {
+    // Arrange
+    Long treatmentId = 1L;
+    TreatmentPlan treatmentPlan = new TreatmentPlan();
+    treatmentPlan.setId(treatmentId);
+    treatmentPlan.setStatus(TreatmentPlanStatus.DRAFT);
+    treatmentPlan.setAssignee(new User());
+
+    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+    // Act and Assert
+    assertThrows(
+        IllegalStateException.class,
+        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId));
+
+    verify(treatmentPlanRepository).findById(treatmentId);
+    verify(treatmentPlanMapper, never()).toDTO(any());
+    verify(treatmentPlanRepository, never()).save(any());
+  }
+
+  @Test
+  public void givenDraftPlanWithoutAssignee_whenSubmitForReview_thenThrowException() {
+    // Arrange
+    Long treatmentId = 1L;
+    TreatmentPlan treatmentPlan = new TreatmentPlan();
+    treatmentPlan.setId(treatmentId);
+    treatmentPlan.setStatus(TreatmentPlanStatus.DRAFT);
+    Supervisor supervisor = new Supervisor();
+    supervisor.setId(UUID.randomUUID());
+    treatmentPlan.getReviewers().add(supervisor);
+
+    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+    // Act and Assert
+    assertThrows(
+        IllegalStateException.class,
+        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId));
+
+    verify(treatmentPlanRepository).findById(treatmentId);
     verify(treatmentPlanMapper, never()).toDTO(any());
     verify(treatmentPlanRepository, never()).save(any());
   }

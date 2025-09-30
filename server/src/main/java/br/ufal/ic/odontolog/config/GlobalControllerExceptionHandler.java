@@ -45,4 +45,15 @@ public class GlobalControllerExceptionHandler {
     errorResponse.setErrors(new HashMap<>());
     return errorResponse;
   }
+
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(IllegalStateException.class)
+  @ResponseBody
+  public ErrorResponseDTO handleIllegalStateException(IllegalStateException ex) {
+    ErrorResponseDTO errorResponse = new ErrorResponseDTO();
+    errorResponse.setMessage(ex.getMessage());
+    errorResponse.setError("Bad Request");
+    errorResponse.setErrors(new HashMap<>());
+    return errorResponse;
+  }
 }

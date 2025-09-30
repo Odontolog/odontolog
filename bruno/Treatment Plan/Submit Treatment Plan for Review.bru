@@ -1,0 +1,15 @@
+meta {
+  name: Submit Treatment Plan for Review
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/api/treatment-plan/1/submit-for-review
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

@@ -10,4 +10,8 @@ public interface TreatmentPlanState {
   public default void assignUser(TreatmentPlan treatmentPlan, User user) {
     throw new UnsupportedOperationException("Operation not allowed in the current state.");
   }
+
+  public default void submitForReview(TreatmentPlan treatmentPlan) {
+    throw new UnsupportedOperationException("Operation not allowed in the current state.");
+  }
 }

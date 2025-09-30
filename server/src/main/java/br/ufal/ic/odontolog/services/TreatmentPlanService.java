@@ -115,4 +115,32 @@ public class TreatmentPlanService {
 
     return treatmentPlanMapper.toDTO(treatmentPlan);
   }
+
+  @Transactional
+  public TreatmentPlanDTO submitTreatmentPlanForReview(Long treatment_id) {
+    User currentUser = currentUserProvider.getCurrentUser();
+
+    TreatmentPlan treatmentPlan =
+        treatmentPlanRepository
+            .findById(treatment_id)
+            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+
+    treatmentPlan.getState().submitForReview(treatmentPlan);
+
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.CREATED)
+            .description(
+                String.format(
+                    "User %s (%s) submitted Treatment Plan (%s) for review",
+                    currentUser.getName(), currentUser.getId(), treatmentPlan.getId()))
+            .reviewable(treatmentPlan)
+            .build();
+    treatmentPlan.getHistory().add(activity);
+
+    treatmentPlanRepository.save(treatmentPlan);
+
+    return treatmentPlanMapper.toDTO(treatmentPlan);
+  }
 }

@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.controllers;
 
+import br.ufal.ic.odontolog.api.TreatmentPlanApi;
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/treatment-plan")
 @RequiredArgsConstructor
-public class TreatmentPlanController {
+public class TreatmentPlanController implements TreatmentPlanApi {
   private final TreatmentPlanService treatmentPlanService;
 
   @PostMapping
@@ -38,6 +39,15 @@ public class TreatmentPlanController {
       @RequestBody TreatmentPlanAssignUserRequestDTO requestDTO, @PathVariable Long treatment_id) {
     TreatmentPlanDTO updatedTreatmentPlan =
         treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatment_id);
+
+    return ResponseEntity.ok(updatedTreatmentPlan);
+  }
+
+  @PostMapping("/{treatment_id}/submit-for-review")
+  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
+  public ResponseEntity<TreatmentPlanDTO> submitForReview(@PathVariable Long treatment_id) {
+    TreatmentPlanDTO updatedTreatmentPlan =
+        treatmentPlanService.submitTreatmentPlanForReview(treatment_id);
 
     return ResponseEntity.ok(updatedTreatmentPlan);
   }
