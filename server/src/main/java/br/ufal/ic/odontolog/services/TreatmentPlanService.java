@@ -3,6 +3,7 @@ package br.ufal.ic.odontolog.services;
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
@@ -117,7 +118,8 @@ public class TreatmentPlanService {
   }
 
   @Transactional
-  public TreatmentPlanDTO submitTreatmentPlanForReview(Long treatment_id) {
+  public TreatmentPlanDTO submitTreatmentPlanForReview(
+      Long treatment_id, TreatmentPlanSubmitForReviewDTO requestDTO) {
     User currentUser = currentUserProvider.getCurrentUser();
 
     TreatmentPlan treatmentPlan =
@@ -127,14 +129,22 @@ public class TreatmentPlanService {
 
     treatmentPlan.getState().submitForReview(treatmentPlan);
 
+    String comments = requestDTO.getComments();
+    String description =
+        String.format(
+            "User %s (%s) submitted Treatment Plan (%s) for review%s",
+            currentUser.getName(),
+            currentUser.getId(),
+            treatmentPlan.getId(),
+            (comments != null && !comments.trim().isEmpty())
+                ? ", with additional comments: " + comments
+                : " without additional comments");
+
     Activity activity =
         Activity.builder()
             .actor(currentUser)
             .type(ActivityType.CREATED)
-            .description(
-                String.format(
-                    "User %s (%s) submitted Treatment Plan (%s) for review",
-                    currentUser.getName(), currentUser.getId(), treatmentPlan.getId()))
+            .description(description)
             .reviewable(treatmentPlan)
             .build();
     treatmentPlan.getHistory().add(activity);

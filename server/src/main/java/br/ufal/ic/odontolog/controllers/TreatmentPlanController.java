@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.api.TreatmentPlanApi;
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.services.TreatmentPlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -45,9 +46,10 @@ public class TreatmentPlanController implements TreatmentPlanApi {
 
   @PostMapping("/{treatment_id}/submit-for-review")
   @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
-  public ResponseEntity<TreatmentPlanDTO> submitForReview(@PathVariable Long treatment_id) {
+  public ResponseEntity<TreatmentPlanDTO> submitForReview(
+      @PathVariable Long treatment_id, @RequestBody TreatmentPlanSubmitForReviewDTO requestDTO) {
     TreatmentPlanDTO updatedTreatmentPlan =
-        treatmentPlanService.submitTreatmentPlanForReview(treatment_id);
+        treatmentPlanService.submitTreatmentPlanForReview(treatment_id, requestDTO);
 
     return ResponseEntity.ok(updatedTreatmentPlan);
   }

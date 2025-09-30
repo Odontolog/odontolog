@@ -2,6 +2,7 @@ package br.ufal.ic.odontolog.api;
 
 import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -68,5 +69,6 @@ public interface TreatmentPlanApi {
             responseCode = "400",
             description = "Treatment Plan is not in a state that allows submission for review.")
       })
-  public ResponseEntity<TreatmentPlanDTO> submitForReview(@Parameter Long treatment_id);
+  public ResponseEntity<TreatmentPlanDTO> submitForReview(
+      @Parameter Long treatment_id, @RequestBody TreatmentPlanSubmitForReviewDTO requestDTO);
 }
