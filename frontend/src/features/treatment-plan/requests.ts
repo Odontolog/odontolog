@@ -25,7 +25,7 @@ export async function getTreatmentPlan(
   const token = await getAuthToken();
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/treatment-plan/${treatmentPlanId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
