@@ -95,18 +95,26 @@ export function TreatmentPlanDetailContent({
   }
 
   return (
-      <ScrollArea scrollbarSize={6} offsetScrollbars scrollbars='y' w="100%" h="100%">
-        <Card.Section inheritPadding py="sm">
-          <Group justify="space-between" align="flex-start">
-            <Text fw={600} size="lg">
-              Plano de Tratamento #{treatmentPlan.id}
-            </Text>
-            <StatusBadge status={treatmentPlan.status} />
-          </Group>
-        </Card.Section>
+    <Box>
+      <Card.Section inheritPadding py="sm">
+        <Group justify="space-between" align="flex-start">
+          <Text fw={600} size="lg">
+            Plano de Tratamento #{treatmentPlan.id}
+          </Text>
+          <StatusBadge status={treatmentPlan.status} />
+        </Group>
+      </Card.Section>
 
-        <Divider />
-        <Card.Section inheritPadding py="sm" h="100%">
+      <Divider />
+
+      <Card.Section inheritPadding py="sm" h="100%">
+        <ScrollArea
+          scrollbarSize={6}
+          offsetScrollbars
+          scrollbars="y"
+          w="100%"
+          h="500px"
+        >
           <Stack gap="md">
             <Group gap="md">
               <CardInfo icon={IconUser} text={treatmentPlan.author.name} />
@@ -155,23 +163,21 @@ export function TreatmentPlanDetailContent({
                   </Text>
                 </Center>
               ) : (
-                <Box style={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
-                  <Stack gap="md">
-                    {treatmentPlan.procedures.map((procedure) => (
-                      <ProcedureCard
-                        key={procedure.id}
-                        procedure={procedure}
-                        fields={['teeth', 'study_sector', 'updated']}
-                        onEdit={undefined}
-                        onDelete={undefined}
-                      />
-                    ))}
-                  </Stack>
-                </Box>
+                <Stack gap="md">
+                  {treatmentPlan.procedures.map((procedure) => (
+                    <ProcedureCard
+                      key={procedure.id}
+                      procedure={procedure}
+                      fields={['teeth', 'study_sector', 'updated']}
+                      onEdit={undefined}
+                      onDelete={undefined}
+                    />
+                  ))}
+                </Stack>
               )}
             </Stack>
           </Stack>
-          <Flex justify="end" py="md">
+          <Flex justify="end" py="lg">
             <Button
               variant="outline"
               component={Link}
@@ -183,7 +189,8 @@ export function TreatmentPlanDetailContent({
               Ver completo
             </Button>
           </Flex>
-        </Card.Section>
-      </ScrollArea>
+        </ScrollArea>
+      </Card.Section>
+    </Box>
   );
 }

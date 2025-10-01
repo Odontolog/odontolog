@@ -73,7 +73,7 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
     <>
       {/* Versão Desktop */}
       <Stack bg="white" gap={0} visibleFrom="md">
-        <Stack pt="sm" m="md">
+        <Stack pt="xs" m="md">
           <Group justify="space-between">
             <LeftContent patient={patient} />
             <RightContent patient={patient} />
@@ -119,21 +119,21 @@ const genderMap: Record<string, { icon: JSX.Element; label: string }> = {
 };
 
 const ethnicityMap: Record<string, string> = {
-  white: 'Branca',
-  black: 'Preta',
-  brown: 'Parda',
-  yellow: 'Amarela',
-  indigenous: 'Indígena',
-  other: 'Outra',
+  WHITE: 'Branca',
+  BLACK: 'Preta',
+  BROWN: 'Parda',
+  YELLOW: 'Amarela',
+  INDIGENOUS: 'Indígena',
+  OTHER: 'Outra',
 };
 
 const maritalStatusMap: Record<string, string> = {
-  single: 'Solteiro',
-  married: 'Casado',
-  divorced: 'Divorciado',
-  widowed: 'Viúvo',
-  civil_union: 'União Estável',
-  other: 'Outra',
+  SINGLE: 'Solteiro',
+  MARRIED: 'Casado',
+  DIVORCED: 'Divorciado',
+  WIDOWED: 'Viúvo',
+  CIVIL_UNION: 'União Estável',
+  OTHER: 'Outra',
 };
 
 function LeftContent({ patient }: { patient: Patient }) {
