@@ -15,7 +15,6 @@ import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +45,7 @@ class TreatmentPlanServiceIntegrationTest {
         .orElseGet(
             () ->
                 supervisorRepository.save(
-                    new Supervisor(
-                        "Supervisor_Test_001",
-                        "supervisor@test.com",
-                        "password2",
-                        "Surgery",
-                        "20250832",
-                        "some-url")));
+                    Supervisor.builder().email("supervisor@test.com").build()));
   }
 
   @Test
@@ -86,7 +79,7 @@ class TreatmentPlanServiceIntegrationTest {
   @Test
   void createTreatmentPlan_patientNotFound() {
     CreateTreatmentPlanDTO dto = new CreateTreatmentPlanDTO();
-    dto.setPatientId(UUID.randomUUID());
+    dto.setPatientId(1234L);
 
     assertThrows(
         EntityNotFoundException.class, () -> treatmentPlanService.createTreatmentPlan(dto));

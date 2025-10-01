@@ -1,12 +1,10 @@
 package br.ufal.ic.odontolog.models;
 
 import jakarta.persistence.*;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Getter
@@ -15,7 +13,9 @@ import org.hibernate.annotations.UuidGenerator;
 @SuperBuilder
 @Table(name = "attachments")
 public class Attachment {
-  @Id @GeneratedValue @UuidGenerator private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   private String filename;
 

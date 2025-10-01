@@ -14,12 +14,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(),
     assignee: {
       id: '10',
-      role: 'student',
+      role: 'STUDENT',
       name: 'Jéssica Andrade',
       email: 'jessica.andrade@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'draft',
+    status: 'DRAFT',
   },
   {
     id: '2',
@@ -28,12 +28,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(Date.now() - 86400000),
     assignee: {
       id: '11',
-      role: 'student',
+      role: 'STUDENT',
       name: 'Carlos Silva',
       email: 'carlos.silva@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'in_progress',
+    status: 'IN_PROGRESS',
   },
   {
     id: '3',
@@ -42,12 +42,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(Date.now() - 2 * 86400000),
     assignee: {
       id: '12',
-      role: 'student',
+      role: 'STUDENT',
       name: 'Ana Souza',
       email: 'ana.souza@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'in_progress',
+    status: 'IN_PROGRESS',
   },
   {
     id: '4',
@@ -56,12 +56,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(Date.now() - 3 * 86400000),
     assignee: {
       id: '13',
-      role: 'student',
+      role: 'STUDENT',
       name: 'Pedro Lima',
       email: 'pedro.lima@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'draft',
+    status: 'DRAFT',
   },
   {
     id: '5',
@@ -70,12 +70,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(Date.now() - 4 * 86400000),
     assignee: {
       id: '14',
-      role: 'student',
+      role: 'STUDENT',
       name: 'Mariana Costa',
       email: 'mariana.costa@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'in_progress',
+    status: 'IN_PROGRESS',
   },
   {
     id: '6',
@@ -84,12 +84,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(Date.now() - 5 * 86400000),
     assignee: {
       id: '15',
-      role: 'student',
+      role: 'STUDENT',
       name: 'João Oliveira',
       email: 'joao.oliveira@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'done',
+    status: 'DONE',
   },
   {
     id: '7',
@@ -98,12 +98,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(Date.now() - 6 * 86400000),
     assignee: {
       id: '16',
-      role: 'student',
+      role: 'STUDENT',
       name: 'Fernanda Dias',
       email: 'fernanda.dias@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'in_progress',
+    status: 'IN_PROGRESS',
   },
   {
     id: '8',
@@ -112,12 +112,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(Date.now() - 7 * 86400000),
     assignee: {
       id: '17',
-      role: 'student',
+      role: 'STUDENT',
       name: 'Lucas Almeida',
       email: 'lucas.almeida@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'draft',
+    status: 'DRAFT',
   },
   {
     id: '9',
@@ -126,12 +126,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(Date.now() - 8 * 86400000),
     assignee: {
       id: '18',
-      role: 'student',
+      role: 'STUDENT',
       name: 'Patrícia Gomes',
       email: 'patricia.gomes@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'in_progress',
+    status: 'IN_PROGRESS',
   },
   {
     id: '10',
@@ -140,12 +140,12 @@ const patientData: PatientAndTreatmentPlan[] = [
     updatedAt: new Date(Date.now() - 9 * 86400000),
     assignee: {
       id: '19',
-      role: 'student',
+      role: 'STUDENT',
       name: 'Rafael Souza',
       email: 'rafael.souza@foufal.ufal.br',
       avatarUrl: '',
     },
-    status: 'done',
+    status: 'DONE',
   },
 ];
 
@@ -160,6 +160,5 @@ export async function getPatientById(
   console.log('fething detail for procedureID: ', patientId);
   await new Promise((resolve) => setTimeout(resolve, 1000));
   const res = patientData.find((p) => p.id === patientId);
-  console.log(res);
   return res;
 }

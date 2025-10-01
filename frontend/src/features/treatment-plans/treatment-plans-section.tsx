@@ -11,13 +11,17 @@ import {
   Text,
   Timeline,
 } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
 import { TreatmentPlanShort } from '@/shared/models';
-import { getPatientTratmentPlansOptions } from './requests';
+import {
+  createPatientTreatmentPlan,
+  getPatientTratmentPlansOptions,
+} from './requests';
 
 interface TreatmentPlansSectionProps {
   patientId: string;
@@ -26,11 +30,33 @@ interface TreatmentPlansSectionProps {
 export default function TreatmentPlansSection({
   patientId,
 }: TreatmentPlansSectionProps) {
+  const router = useRouter();
   const options = getPatientTratmentPlansOptions(patientId);
 
   const { data, isLoading } = useQuery({
     ...options,
   });
+
+  async function handleConfirm(patientId: string) {
+    const newTP: string = await createPatientTreatmentPlan(patientId);
+    router.push(`/patients/${patientId}/treatments/${newTP}`);
+  }
+
+  function openTPCreationModal() {
+    return modals.openConfirmModal({
+      title: 'Deseja criar um novo Plano de Tratamento?',
+      children: (
+        <Text size="sm">
+          Clicando em confirmar você cria um novo Plano de Tratamento em branco
+          para o paciente. Deseja continuar?
+        </Text>
+      ),
+      labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
+      onConfirm: () => {
+        void handleConfirm(patientId);
+      },
+    });
+  }
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
@@ -43,7 +69,7 @@ export default function TreatmentPlansSection({
             variant="subtle"
             color="gray"
             disabled={isLoading}
-            onClick={() => console.log('creating new treatment plan')}
+            onClick={() => openTPCreationModal()}
           >
             <IconPlus size={16} />
           </ActionIcon>

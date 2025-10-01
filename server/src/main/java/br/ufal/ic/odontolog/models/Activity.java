@@ -4,13 +4,11 @@ import br.ufal.ic.odontolog.enums.ActivityType;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
 
 @Entity
@@ -20,7 +18,9 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @Table(name = "activities")
 public class Activity {
-  @Id @GeneratedValue @UuidGenerator private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
   @Enumerated(EnumType.STRING)
   private ActivityType type;

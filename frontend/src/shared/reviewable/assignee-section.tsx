@@ -1,31 +1,28 @@
 'use client';
 
 import {
-  Card,
-  Text,
-  Group,
   Avatar,
-  Loader,
+  Card,
   Center,
-  Flex,
-  ThemeIcon,
   Divider,
+  Flex,
+  Group,
+  Loader,
+  Text,
+  ThemeIcon,
 } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { Reviewable } from '@/shared/models';
 import AssigneeMenu from './assignee-menu';
-
-interface AssigneeSectionProps<T extends Reviewable> {
-  reviewableId: string;
-  queryOptions: UseQueryOptions<T, Error, T, string[]>;
-}
+import { ReviewableSectionProps } from './models';
 
 export default function AssigneeSection<T extends Reviewable>({
   reviewableId,
   queryOptions,
-}: AssigneeSectionProps<T>) {
+  mode,
+}: ReviewableSectionProps<T>) {
   const {
     data: assignee,
     isLoading,
@@ -42,7 +39,7 @@ export default function AssigneeSection<T extends Reviewable>({
           <Text fw={600} size="lg">
             Encarregado
           </Text>
-          {assignee && (
+          {mode === 'edit' && assignee && (
             <AssigneeMenu
               reviewableId={reviewableId}
               queryOptions={queryOptions}

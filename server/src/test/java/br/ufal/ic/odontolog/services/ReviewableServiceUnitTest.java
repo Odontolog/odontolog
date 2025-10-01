@@ -47,19 +47,19 @@ public class ReviewableServiceUnitTest {
 
     Pageable pageable = PageRequest.of(0, 10);
 
-    Supervisor mockSupervisor = mock(Supervisor.class);
-    mockSupervisor.setEmail("testsupervisor@test.com");
-    mockSupervisor.setId(UUID.randomUUID());
+    Supervisor supervisor = new Supervisor();
+    supervisor.setEmail("testsupervisor@test.com");
+    supervisor.setId(UUID.randomUUID());
     when(supervisorRepository.findByEmail("testsupervisor@test.com"))
-        .thenReturn(Optional.of(mockSupervisor));
+        .thenReturn(Optional.of(supervisor));
 
     Reviewable reviewableEntity = mock(Reviewable.class);
-    reviewableEntity.setId(UUID.randomUUID());
+    reviewableEntity.setId(1L);
     Page<Reviewable> mockPageOfReviewables = new PageImpl<>(List.of(reviewableEntity), pageable, 1);
     when(reviewableRepository.findAll(any(Specification.class), eq(pageable)))
         .thenReturn(mockPageOfReviewables);
 
-    ReviewableDTO reviewableDTO = mock(ReviewableDTO.class);
+    ReviewableDTO reviewableDTO = new ReviewableDTO();
     reviewableDTO.setId(reviewableEntity.getId());
     when(reviewableMapper.toDTO(reviewableEntity)).thenReturn(reviewableDTO);
 

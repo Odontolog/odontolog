@@ -67,10 +67,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             },
           );
 
-          const response_user = await user_res.json(); // eslint-disable-line
-          response_user.role = response_user.role.toLowerCase(); // eslint-disable-line
-
-          const user = response_user as User;
+          const user = (await user_res.json()) as User;
           user.accessToken = data.accessToken;
           return user;
         }

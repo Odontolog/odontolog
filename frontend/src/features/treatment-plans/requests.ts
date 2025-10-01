@@ -1,7 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { mockTreatmentPlans } from '@/mocks/treatment-plan';
-import { TreatmentPlanShort } from '@/shared/models';
+import { TreatmentPlan, TreatmentPlanShort } from '@/shared/models';
+import { getAuthToken } from '@/shared/utils';
 
 export function getPatientTratmentPlansOptions(patientId: string) {
   return queryOptions({
@@ -16,4 +17,28 @@ async function getPatientTratmentPlans(
   console.log(`Fetching data for patient treatment plans ${patientId}`);
   await new Promise((resolve) => setTimeout(resolve, 1000));
   return mockTreatmentPlans;
+}
+
+export async function createPatientTreatmentPlan(patientId: string) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ patientId }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao criar plano de tratamento.`);
+  }
+
+  const data = (await res.json()) as TreatmentPlan;
+
+  return data.id;
 }

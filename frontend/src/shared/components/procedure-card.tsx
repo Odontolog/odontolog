@@ -25,7 +25,7 @@ import {
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-import { ProcedureShort } from '@/shared/models';
+import { Mode, ProcedureShort } from '@/shared/models';
 import CardInfo, { CardInfoProps } from './card-info';
 import styles from './card.module.css';
 import { StatusBadge, StatusIndicator } from './status';
@@ -46,6 +46,7 @@ interface ProcedureCardProps {
   onDelete?: (procedure: ProcedureShort) => void;
   selected?: boolean;
   onSelect?: (procedureId: string) => void;
+  mode?: Mode;
 }
 
 function getProcedureCardInfoProps(
@@ -91,7 +92,7 @@ function getProcedureCardInfoProps(
     case 'reviews':
       return {
         icon: IconMessage,
-        text: `${procedure.reviews.filter((rev) => rev.status === 'approved').length}/${procedure.reviews.length}`,
+        text: `${procedure.reviews.filter((rev) => rev.reviewStatus === 'APPROVED').length}/${procedure.reviews.length}`,
       };
     case 'study_sector':
       return {
@@ -112,8 +113,10 @@ export default function ProcedureCard(props: ProcedureCardProps) {
     fields = ['teeth', 'study_sector'],
     onSelect,
     selected,
+    mode = 'edit',
   } = props;
   const hasActions: boolean = !!(onEdit || onDelete);
+  const showOptionsMenu: boolean = mode === 'edit' && hasActions;
 
   const borderColor =
     selected !== undefined && selected
@@ -157,7 +160,7 @@ export default function ProcedureCard(props: ProcedureCardProps) {
 
             <Group gap="sm" wrap="nowrap" style={{ alignSelf: 'flex-start' }}>
               <StatusBadge status={procedure.status} className={styles.badge} />
-              {hasActions && <ProcedureCardMenu {...props} />}
+              {showOptionsMenu && <ProcedureCardMenu {...props} />}
             </Group>
           </Group>
 
