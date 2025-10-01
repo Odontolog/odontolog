@@ -181,7 +181,7 @@ export function TreatmentPlanDetailContent({
             <Button
               variant="outline"
               component={Link}
-              href={`/treatment-plans/${treatmentPlan.id}`}
+              href={`/patients/${treatmentPlan.patient.id}/treatments/${treatmentPlan.id}`}
               color="blue"
               rightSection={<IconArrowRight size={16} />}
               size="xs"
