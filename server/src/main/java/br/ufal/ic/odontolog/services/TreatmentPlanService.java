@@ -12,10 +12,12 @@ import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
+import br.ufal.ic.odontolog.repositories.ActivityRepository;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.util.HashMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class TreatmentPlanService {
   private final TreatmentPlanMapper treatmentPlanMapper;
   private final PatientRepository patientRepository;
   private final CurrentUserProvider currentUserProvider;
+  private final ActivityRepository activityRepository;
 
   @Transactional
   public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
@@ -110,6 +113,32 @@ public class TreatmentPlanService {
     treatmentPlanRepository.save(treatmentPlan);
 
     return treatmentPlanMapper.toDTO(treatmentPlan);
+  }
+
+  @Transactional
+  public TreatmentPlanDTO updateNotes(Long id, String newNotes) {
+    TreatmentPlan plan =
+        treatmentPlanRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("TreatmentPlan not found"));
+    String oldNotes = plan.getNotes();
+    plan.setNotes(newNotes);
+
+    Activity activity = new Activity();
+    User currentUser = currentUserProvider.getCurrentUser();
+    activity.setType(ActivityType.EDITED);
+    activity.setActor(currentUser);
+    activity.setReviewable(plan);
+    activity.setDescription(String.format("Notes updated by user %s", currentUser.getName()));
+    HashMap<String, Object> metadata = new HashMap<>();
+    metadata.put("data", newNotes);
+    metadata.put("oldData", oldNotes);
+    activity.setMetadata(metadata);
+    plan.getHistory().add(activity);
+
+    treatmentPlanRepository.save(plan);
+
+    return treatmentPlanMapper.toDTO(plan);
   }
 
   public List<TreatmentPlanShortDTO> getTreatmentPlansByPatientId(Long patientId) {

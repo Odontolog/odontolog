@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
+import br.ufal.ic.odontolog.dtos.UpdateNotesRequestDTO;
 import br.ufal.ic.odontolog.services.TreatmentPlanService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +49,12 @@ public class TreatmentPlanController {
   @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
   public List<TreatmentPlanShortDTO> getTreatmentPlansByPatient(@PathVariable Long od) {
     return treatmentPlanService.getTreatmentPlansByPatientId(od);
+  }
+
+  @PatchMapping("/treatment-plan/{id}/notes")
+  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  public TreatmentPlanDTO updateNotes(
+      @PathVariable Long id, @RequestBody UpdateNotesRequestDTO request) {
+    return treatmentPlanService.updateNotes(id, request.getNotes());
   }
 }
