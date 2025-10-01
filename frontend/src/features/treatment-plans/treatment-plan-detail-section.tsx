@@ -113,7 +113,7 @@ export function TreatmentPlanDetailContent({
           offsetScrollbars
           scrollbars="y"
           w="100%"
-          h="500px"
+          h="510px"
         >
           <Stack gap="md">
             <Group gap="md">
