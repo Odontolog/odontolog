@@ -37,7 +37,6 @@ interface TreatmentPlanHeaderProps {
   user: User;
 }
 
-// NOTE: falta considerar se é supervisor ou student; falta ver como puxar o id do treatmentPlan se for Procedure (linha 114); conferir as requisições
 export default function TreatmentPlanHeader(props: TreatmentPlanHeaderProps) {
   return (
     <header className={styles.header}>
