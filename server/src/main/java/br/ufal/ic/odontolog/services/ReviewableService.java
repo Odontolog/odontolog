@@ -1,9 +1,12 @@
 package br.ufal.ic.odontolog.services;
 
+import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
+import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
+import br.ufal.ic.odontolog.mappers.ActivityMapper;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.models.Reviewable;
 import br.ufal.ic.odontolog.models.Supervisor;
@@ -11,6 +14,7 @@ import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,19 +32,18 @@ public class ReviewableService {
   private final ReviewableRepository reviewableRepository;
   private final SupervisorRepository supervisorRepository;
   private final ReviewableMapper reviewableMapper;
+  private final ActivityMapper activityMapper;
 
   @Transactional(readOnly = true)
   public Page<ReviewableDTO> findForCurrentSupervisor(
       Pageable pageable,
       UserDetails currentUserDetails,
       ReviewableCurrentSupervisorFilterDTO filter) {
-    Supervisor supervisor =
-        supervisorRepository
-            .findByEmail(currentUserDetails.getUsername())
-            .orElseThrow(
-                () ->
-                    new UnprocessableRequestException(
-                        "Supervisor profile not found for the current user"));
+    Supervisor supervisor = supervisorRepository
+        .findByEmail(currentUserDetails.getUsername())
+        .orElseThrow(
+            () -> new UnprocessableRequestException(
+                "Supervisor profile not found for the current user"));
 
     Specification<Reviewable> spec = ReviewableSpecification.isReviewedBy(supervisor);
 
@@ -66,32 +69,27 @@ public class ReviewableService {
       throw new UnprocessableRequestException("At least one supervisor ID must be provided");
     }
 
-    Reviewable reviewable =
-        reviewableRepository
-            .findById(reviewableId)
-            .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
+    Reviewable reviewable = reviewableRepository
+        .findById(reviewableId)
+        .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
     Set<UUID> requestedIds = new HashSet<>(request.getSupervisorIds());
 
-    Set<Supervisor> supervisorsToAdd =
-        new HashSet<>(supervisorRepository.findAllById(requestedIds));
+    Set<Supervisor> supervisorsToAdd = new HashSet<>(supervisorRepository.findAllById(requestedIds));
 
-    Set<UUID> foundIds =
-        supervisorsToAdd.stream().map(Supervisor::getId).collect(Collectors.toSet());
+    Set<UUID> foundIds = supervisorsToAdd.stream().map(Supervisor::getId).collect(Collectors.toSet());
 
-    Set<UUID> invalidIds =
-        requestedIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toSet());
+    Set<UUID> invalidIds = requestedIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toSet());
 
     if (!invalidIds.isEmpty()) {
       throw new UnprocessableRequestException(
           "The following supervisor IDs do not exist: " + invalidIds);
     }
 
-    Set<UUID> currentlyLinkedIds =
-        reviewable.getReviewers().stream().map(Supervisor::getId).collect(Collectors.toSet());
+    Set<UUID> currentlyLinkedIds = reviewable.getReviewers().stream().map(Supervisor::getId)
+        .collect(Collectors.toSet());
 
-    Set<UUID> alreadyLinked =
-        foundIds.stream().filter(currentlyLinkedIds::contains).collect(Collectors.toSet());
+    Set<UUID> alreadyLinked = foundIds.stream().filter(currentlyLinkedIds::contains).collect(Collectors.toSet());
 
     if (!alreadyLinked.isEmpty()) {
       throw new UnprocessableRequestException(
@@ -112,20 +110,17 @@ public class ReviewableService {
       throw new UnprocessableRequestException("At least one supervisor ID must be provided");
     }
 
-    Reviewable reviewable =
-        reviewableRepository
-            .findById(reviewableId)
-            .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
+    Reviewable reviewable = reviewableRepository
+        .findById(reviewableId)
+        .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
-    Set<Supervisor> supervisorsToRemove =
-        reviewable.getReviewers().stream()
-            .filter(s -> request.getSupervisorIds().contains(s.getId()))
-            .collect(Collectors.toSet());
+    Set<Supervisor> supervisorsToRemove = reviewable.getReviewers().stream()
+        .filter(s -> request.getSupervisorIds().contains(s.getId()))
+        .collect(Collectors.toSet());
 
-    Set<UUID> invalidIds =
-        request.getSupervisorIds().stream()
-            .filter(id -> reviewable.getReviewers().stream().noneMatch(s -> s.getId().equals(id)))
-            .collect(Collectors.toSet());
+    Set<UUID> invalidIds = request.getSupervisorIds().stream()
+        .filter(id -> reviewable.getReviewers().stream().noneMatch(s -> s.getId().equals(id)))
+        .collect(Collectors.toSet());
 
     if (!invalidIds.isEmpty()) {
       throw new UnprocessableRequestException(
@@ -141,18 +136,15 @@ public class ReviewableService {
 
   @Transactional
   public ReviewableDTO updateSupervisorsFromReviewables(Long reviewableId, ReviewersDTO request) {
-    Reviewable reviewable =
-        reviewableRepository
-            .findById(reviewableId)
-            .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
+    Reviewable reviewable = reviewableRepository
+        .findById(reviewableId)
+        .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
 
-    Set<Supervisor> supervisors =
-        new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
+    Set<Supervisor> supervisors = new HashSet<>(supervisorRepository.findAllById(request.getSupervisorIds()));
 
-    Set<UUID> invalidIds =
-        request.getSupervisorIds().stream()
-            .filter(id -> supervisors.stream().noneMatch(s -> s.getId().equals(id)))
-            .collect(Collectors.toSet());
+    Set<UUID> invalidIds = request.getSupervisorIds().stream()
+        .filter(id -> supervisors.stream().noneMatch(s -> s.getId().equals(id)))
+        .collect(Collectors.toSet());
 
     if (!invalidIds.isEmpty()) {
       throw new UnprocessableRequestException(
@@ -163,5 +155,14 @@ public class ReviewableService {
     reviewableRepository.save(reviewable);
 
     return reviewableMapper.toDTO(reviewable);
+  }
+
+  @Transactional(readOnly = true)
+  public List<ActivityDTO> getReviewableHistory(Long reviewableId) {
+    Reviewable reviewable = reviewableRepository
+        .findById(reviewableId)
+        .orElseThrow(() -> new ResourceNotFoundException("Reviewable not found"));
+
+    return activityMapper.toDTOs(reviewable.getHistory());
   }
 }

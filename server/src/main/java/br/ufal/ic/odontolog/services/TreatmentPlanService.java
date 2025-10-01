@@ -37,32 +37,29 @@ public class TreatmentPlanService {
   public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-    Patient patient =
-        patientRepository
-            .findById(request.getPatientId())
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Patient not found"));
+    Patient patient = patientRepository
+        .findById(request.getPatientId())
+        .orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Patient not found"));
 
-    TreatmentPlan plan =
-        TreatmentPlan.builder()
-            .author(currentUser)
-            .patient(patient)
-            .status(TreatmentPlanStatus.DRAFT)
-            .build();
+    TreatmentPlan plan = TreatmentPlan.builder()
+        .author(currentUser)
+        .patient(patient)
+        .status(TreatmentPlanStatus.DRAFT)
+        .build();
 
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.CREATED)
-            .description(
-                String.format(
-                    "TreatmentPlan created for patient %s (%s) by user %s (%s)",
-                    patient.getName(),
-                    patient.getId(),
-                    currentUser.getName(),
-                    currentUser.getEmail()))
-            .reviewable(plan)
-            .build();
+    Activity activity = Activity.builder()
+        .actor(currentUser)
+        .type(ActivityType.CREATED)
+        .description(
+            String.format(
+                "TreatmentPlan created for patient %s (%s) by user %s (%s)",
+                patient.getName(),
+                patient.getId(),
+                currentUser.getName(),
+                currentUser.getEmail()))
+        .reviewable(plan)
+        .build();
     plan.getHistory().add(activity);
     plan = treatmentPlanRepository.save(plan);
     return treatmentPlanMapper.toDTO(plan);
@@ -70,12 +67,10 @@ public class TreatmentPlanService {
 
   @Transactional(readOnly = true)
   public TreatmentPlanDTO getTreatmentPlanById(Long id) {
-    TreatmentPlan plan =
-        treatmentPlanRepository
-            .findById(id)
-            .orElseThrow(
-                () ->
-                    new ResponseStatusException(HttpStatus.NOT_FOUND, "Treatment plan not found"));
+    TreatmentPlan plan = treatmentPlanRepository
+        .findById(id)
+        .orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Treatment plan not found"));
 
     return treatmentPlanMapper.toDTO(plan);
   }
@@ -85,32 +80,29 @@ public class TreatmentPlanService {
       TreatmentPlanAssignUserRequestDTO requestDTO, Long treatmentId) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-    TreatmentPlan treatmentPlan =
-        treatmentPlanRepository
-            .findById(treatmentId)
-            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+    TreatmentPlan treatmentPlan = treatmentPlanRepository
+        .findById(treatmentId)
+        .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
-    User user =
-        userRepository
-            .findById(requestDTO.getUserId())
-            .orElseThrow(() -> new UnprocessableRequestException("Provided User not found"));
+    User user = userRepository
+        .findById(requestDTO.getUserId())
+        .orElseThrow(() -> new UnprocessableRequestException("Provided User not found"));
 
     treatmentPlan.getState().assignUser(treatmentPlan, user);
 
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.CREATED)
-            .description(
-                String.format(
-                    "User %s (%s) assigned to Treatment Plan (%s) by user %s (%s)",
-                    user.getName(),
-                    user.getId(),
-                    treatmentPlan.getId(),
-                    currentUser.getName(),
-                    currentUser.getEmail()))
-            .reviewable(treatmentPlan)
-            .build();
+    Activity activity = Activity.builder()
+        .actor(currentUser)
+        .type(ActivityType.CREATED)
+        .description(
+            String.format(
+                "User %s (%s) assigned to Treatment Plan (%s) by user %s (%s)",
+                user.getName(),
+                user.getId(),
+                treatmentPlan.getId(),
+                currentUser.getName(),
+                currentUser.getEmail()))
+        .reviewable(treatmentPlan)
+        .build();
     treatmentPlan.getHistory().add(activity);
     treatmentPlanRepository.save(treatmentPlan);
 
@@ -122,23 +114,21 @@ public class TreatmentPlanService {
       Long treatment_id, TreatmentPlanSubmitForReviewDTO requestDTO) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-    TreatmentPlan treatmentPlan =
-        treatmentPlanRepository
-            .findById(treatment_id)
-            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+    TreatmentPlan treatmentPlan = treatmentPlanRepository
+        .findById(treatment_id)
+        .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
     treatmentPlan.getState().submitForReview(treatmentPlan);
 
     String comments = requestDTO.getComments();
     String description = buildSubmissionDescription(currentUser, treatmentPlan, comments);
 
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.CREATED)
-            .description(description)
-            .reviewable(treatmentPlan)
-            .build();
+    Activity activity = Activity.builder()
+        .actor(currentUser)
+        .type(ActivityType.REVIEW_REQUESTED)
+        .description(description)
+        .reviewable(treatmentPlan)
+        .build();
     treatmentPlan.getHistory().add(activity);
 
     treatmentPlanRepository.save(treatmentPlan);

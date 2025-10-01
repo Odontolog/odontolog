@@ -33,12 +33,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class TreatmentPlanServiceUnitTest {
-  @Mock private TreatmentPlanRepository treatmentPlanRepository;
-  @Mock private UserRepository userRepository;
-  @Mock private TreatmentPlanMapper treatmentPlanMapper;
-  @Mock private CurrentUserProvider currentUserProvider;
+  @Mock
+  private TreatmentPlanRepository treatmentPlanRepository;
+  @Mock
+  private UserRepository userRepository;
+  @Mock
+  private TreatmentPlanMapper treatmentPlanMapper;
+  @Mock
+  private CurrentUserProvider currentUserProvider;
 
-  @InjectMocks private TreatmentPlanService treatmentPlanService;
+  @InjectMocks
+  private TreatmentPlanService treatmentPlanService;
 
   @Test
   public void givenDraftPlan_whenAssignUser_thenUserIsAssignedAndPlanIsSaved() {
@@ -72,13 +77,11 @@ public class TreatmentPlanServiceUnitTest {
 
     // Act
 
-    TreatmentPlanDTO result =
-        treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatmentId);
+    TreatmentPlanDTO result = treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatmentId);
 
     // Assert
 
-    ArgumentCaptor<TreatmentPlan> treatmentPlanCaptor =
-        ArgumentCaptor.forClass(TreatmentPlan.class);
+    ArgumentCaptor<TreatmentPlan> treatmentPlanCaptor = ArgumentCaptor.forClass(TreatmentPlan.class);
     verify(treatmentPlanRepository).save(treatmentPlanCaptor.capture());
 
     TreatmentPlan savedPlan = treatmentPlanCaptor.getValue();
@@ -245,19 +248,16 @@ public class TreatmentPlanServiceUnitTest {
     currentUser.setId(UUID.randomUUID());
     when(currentUserProvider.getCurrentUser()).thenReturn(currentUser);
 
-    TreatmentPlanSubmitForReviewDTO treatmentPlanSubmitForReviewDTO =
-        new TreatmentPlanSubmitForReviewDTO();
+    TreatmentPlanSubmitForReviewDTO treatmentPlanSubmitForReviewDTO = new TreatmentPlanSubmitForReviewDTO();
 
     // Act
-    TreatmentPlanDTO result =
-        treatmentPlanService.submitTreatmentPlanForReview(
-            treatmentId, treatmentPlanSubmitForReviewDTO);
+    TreatmentPlanDTO result = treatmentPlanService.submitTreatmentPlanForReview(
+        treatmentId, treatmentPlanSubmitForReviewDTO);
 
     // Assert
     assertThat(result).isEqualTo(expectedDto);
 
-    ArgumentCaptor<TreatmentPlan> treatmentPlanCaptor =
-        ArgumentCaptor.forClass(TreatmentPlan.class);
+    ArgumentCaptor<TreatmentPlan> treatmentPlanCaptor = ArgumentCaptor.forClass(TreatmentPlan.class);
     verify(treatmentPlanRepository).save(treatmentPlanCaptor.capture());
 
     TreatmentPlan savedPlan = treatmentPlanCaptor.getValue();
@@ -271,6 +271,8 @@ public class TreatmentPlanServiceUnitTest {
                     currentUser.getId(),
                     treatmentId,
                     " without additional comments"));
+    assertThat(savedPlan.getHistory().iterator().next().getType())
+        .isEqualTo(br.ufal.ic.odontolog.enums.ActivityType.REVIEW_REQUESTED);
 
     assertThat(savedPlan.getReviews()).isNotEmpty();
 
@@ -308,20 +310,17 @@ public class TreatmentPlanServiceUnitTest {
     when(currentUserProvider.getCurrentUser()).thenReturn(currentUser);
 
     String additionalComments = "Please review this plan carefully.";
-    TreatmentPlanSubmitForReviewDTO treatmentPlanSubmitForReviewDTO =
-        new TreatmentPlanSubmitForReviewDTO();
+    TreatmentPlanSubmitForReviewDTO treatmentPlanSubmitForReviewDTO = new TreatmentPlanSubmitForReviewDTO();
     treatmentPlanSubmitForReviewDTO.setComments(additionalComments);
 
     // Act
-    TreatmentPlanDTO result =
-        treatmentPlanService.submitTreatmentPlanForReview(
-            treatmentId, treatmentPlanSubmitForReviewDTO);
+    TreatmentPlanDTO result = treatmentPlanService.submitTreatmentPlanForReview(
+        treatmentId, treatmentPlanSubmitForReviewDTO);
 
     // Assert
     assertThat(result).isEqualTo(expectedDto);
 
-    ArgumentCaptor<TreatmentPlan> treatmentPlanCaptor =
-        ArgumentCaptor.forClass(TreatmentPlan.class);
+    ArgumentCaptor<TreatmentPlan> treatmentPlanCaptor = ArgumentCaptor.forClass(TreatmentPlan.class);
     verify(treatmentPlanRepository).save(treatmentPlanCaptor.capture());
 
     TreatmentPlan savedPlan = treatmentPlanCaptor.getValue();
@@ -335,7 +334,8 @@ public class TreatmentPlanServiceUnitTest {
                     currentUser.getId(),
                     treatmentId,
                     ", with additional comments: " + additionalComments));
-
+    assertThat(savedPlan.getHistory().iterator().next().getType())
+        .isEqualTo(br.ufal.ic.odontolog.enums.ActivityType.REVIEW_REQUESTED);
     assertThat(savedPlan.getReviews()).isNotEmpty();
 
     Review firstReview = savedPlan.getReviews().iterator().next();
