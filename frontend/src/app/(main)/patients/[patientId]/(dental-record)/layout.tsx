@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 
 import PatientHeader from '@/features/patient/header/header';
 import { getPatientById } from '@/features/patient/requests';
-import { ScrollArea } from '@mantine/core';
 
 export default async function PatientPageLayout({
   children,
@@ -21,9 +20,7 @@ export default async function PatientPageLayout({
   return (
     <>
       <PatientHeader patient={patient} />
-      <ScrollArea w="100%" style={{ flex: 1 }}>
-        {children}
-      </ScrollArea>
+      {children}
     </>
   );
 }

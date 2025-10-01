@@ -106,7 +106,7 @@ function getProcedureCardInfoProps(
 
 export default function ProcedureCard(props: ProcedureCardProps) {
   const {
-    disableSession,
+    disableSession = false,
     procedure,
     onEdit,
     onDelete,
