@@ -156,7 +156,7 @@ export const treatmentPlanMock: TreatmentPlan = {
 
 export const mockTreatmentPlans: TreatmentPlanShort[] = [
   {
-    id: '3',
+    id: '1',
     status: 'DRAFT',
     assignee: {
       id: '101',

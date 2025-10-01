@@ -56,7 +56,7 @@ export default function ValidationsSection() {
             <Skeleton height={120} radius="none" />
           </Stack>
         ) : (
-          <ScrollArea scrollbarSize={6} w="100%" h="600px">
+          <ScrollArea scrollbarSize={6} offsetScrollbars w="100%" h="600px">
             <ValidationsContent data={data} />
           </ScrollArea>
         )}
