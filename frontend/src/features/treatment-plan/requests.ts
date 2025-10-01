@@ -38,7 +38,7 @@ export async function getTreatmentPlan(
   } else if (res.status >= 400) {
     notFound();
   }
-  return treatmentPlanMock;
+
   return (await res.json()) as TreatmentPlan;
 }
 
