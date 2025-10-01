@@ -9,9 +9,10 @@ import {
   Flex,
   Group,
   Loader,
+  ScrollArea,
   Stack,
   Text,
-  Tooltip
+  Tooltip,
 } from '@mantine/core';
 import {
   IconArrowRight,
@@ -35,7 +36,7 @@ export default function TreatmentPlanDetailSection() {
   const active = searchParams.get('active');
 
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm" miw="400px">
+    <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
       {active !== null ? (
         <TreatmentPlanDetailContent treatmentPlanId={active} />
       ) : (
@@ -94,17 +95,17 @@ export function TreatmentPlanDetailContent({
   }
 
   return (
-    <Box>
-      <Card.Section inheritPadding py="sm">
-        <Group justify="space-between" align="flex-start">
-          <Text fw={600} size="lg">
-            Plano de Tratamento #{treatmentPlan.id}
-          </Text>
-          <StatusBadge status={treatmentPlan.status} />
-        </Group>
-      </Card.Section>
+      <ScrollArea scrollbarSize={6} offsetScrollbars scrollbars='y' w="100%" h="100%">
+        <Card.Section inheritPadding py="sm">
+          <Group justify="space-between" align="flex-start">
+            <Text fw={600} size="lg">
+              Plano de Tratamento #{treatmentPlan.id}
+            </Text>
+            <StatusBadge status={treatmentPlan.status} />
+          </Group>
+        </Card.Section>
 
-      <Divider />
+        <Divider />
         <Card.Section inheritPadding py="sm" h="100%">
           <Stack gap="md">
             <Group gap="md">
@@ -183,6 +184,6 @@ export function TreatmentPlanDetailContent({
             </Button>
           </Flex>
         </Card.Section>
-    </Box>
+      </ScrollArea>
   );
 }

@@ -72,7 +72,7 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
   return (
     <>
       {/* Versão Desktop */}
-      <Stack bg="white" visibleFrom="md">
+      <Stack bg="white" gap={0} visibleFrom="md">
         <Stack pt="sm" m="md">
           <Group justify="space-between">
             <LeftContent patient={patient} />
