@@ -236,7 +236,3 @@ export function editProcedure(procedure: ProcedureShort) {
     }
   }
 }
-
-export function updateAssignee(assignee: User) {
-  treatmentPlanMock.assignee = assignee;
-}
