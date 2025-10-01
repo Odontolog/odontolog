@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import PatientHeader from '@/features/patient/header/header';
 import { getPatientById } from '@/features/patient/requests';
 
-
 export default async function PatientPageLayout({
   children,
   params,
@@ -21,7 +20,7 @@ export default async function PatientPageLayout({
   return (
     <>
       <PatientHeader patient={patient} />
-        {children}
+      {children}
     </>
   );
 }
