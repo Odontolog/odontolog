@@ -7,10 +7,8 @@ import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import br.ufal.ic.odontolog.services.ReviewableService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;

@@ -34,20 +34,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewableServiceUnitTest {
-  @Mock
-  private ReviewableRepository reviewableRepository;
+  @Mock private ReviewableRepository reviewableRepository;
 
-  @Mock
-  private SupervisorRepository supervisorRepository;
+  @Mock private SupervisorRepository supervisorRepository;
 
-  @Mock
-  private ReviewableMapper reviewableMapper;
+  @Mock private ReviewableMapper reviewableMapper;
 
-  @Mock
-  private ActivityMapper activityMapper;
+  @Mock private ActivityMapper activityMapper;
 
-  @InjectMocks
-  private ReviewableService reviewableService;
+  @InjectMocks private ReviewableService reviewableService;
 
   @SuppressWarnings("unchecked")
   @Test
@@ -79,7 +74,8 @@ public class ReviewableServiceUnitTest {
 
     // Act
 
-    Page<ReviewableDTO> result = reviewableService.findForCurrentSupervisor(pageable, mockUserDetails, filter);
+    Page<ReviewableDTO> result =
+        reviewableService.findForCurrentSupervisor(pageable, mockUserDetails, filter);
 
     // Assert
 
