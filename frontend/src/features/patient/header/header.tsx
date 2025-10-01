@@ -113,9 +113,9 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
 }
 
 const genderMap: Record<string, { icon: JSX.Element; label: string }> = {
-  male: { icon: <IconGenderMale size={16} />, label: 'Masculino' },
-  female: { icon: <IconGenderFemale size={16} />, label: 'Feminino' },
-  other: { icon: <IconGenderAgender size={16} />, label: 'Outro' },
+  MALE: { icon: <IconGenderMale size={16} />, label: 'Masculino' },
+  FEMALE: { icon: <IconGenderFemale size={16} />, label: 'Feminino' },
+  OTHER: { icon: <IconGenderAgender size={16} />, label: 'Outro' },
 };
 
 const ethnicityMap: Record<string, string> = {

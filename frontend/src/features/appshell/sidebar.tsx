@@ -45,7 +45,7 @@ export function Sidebar() {
   const sidebarLinks = [
     { icon: IconDental, label: 'Pacientes', route: '/patients' },
   ];
-  if (user && user.role !== 'student') {
+  if (user && user.role !== 'STUDENT') {
     sidebarLinks.push(
       ...[
         { icon: IconUsers, label: 'Alunos', route: '/students' },

@@ -66,11 +66,11 @@ export default function ValidationsSection() {
 }
 
 function isProcedure(r: ReviewableShort): r is ProcedureShort {
-  return r.type === 'procedure';
+  return r.type === 'PROCEDURE';
 }
 
 function isTreatmentPlan(r: ReviewableShort): r is TreatmentPlanShort {
-  return r.type === 'treatment_plan';
+  return r.type === 'TREATMENT_PLAN';
 }
 
 function ValidationsContent({ data }: { data: ReviewableShort[] }) {

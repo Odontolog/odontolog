@@ -3,7 +3,7 @@ import { Supervisor } from '@/shared/models';
 export const supervisors: Supervisor[] = [
   {
     id: '1',
-    role: 'supervisor',
+    role: 'SUPERVISOR',
     name: 'Dr. Théo',
     email: 'theo@foufal.ufal.br',
     specialty: 'Emergência',
@@ -12,7 +12,7 @@ export const supervisors: Supervisor[] = [
   },
   {
     id: '2',
-    role: 'supervisor',
+    role: 'SUPERVISOR',
     name: 'Dr. Alexandre',
     email: 'alexandre@foufal.ufal.br',
     specialty: 'Periodontia',
@@ -21,7 +21,7 @@ export const supervisors: Supervisor[] = [
   },
   {
     id: '3',
-    role: 'supervisor',
+    role: 'SUPERVISOR',
     name: 'Dr. Marcos',
     email: 'marcos@foufal.ufal.br',
     specialty: 'Dentística',
@@ -30,7 +30,7 @@ export const supervisors: Supervisor[] = [
   },
   {
     id: '4',
-    role: 'supervisor',
+    role: 'SUPERVISOR',
     email: 'joao@ufal.br',
     name: 'Dr. João Silva',
     specialty: 'Endodontia',
@@ -39,7 +39,7 @@ export const supervisors: Supervisor[] = [
   },
   {
     id: '5',
-    role: 'supervisor',
+    role: 'SUPERVISOR',
     email: 'maria@ufal.br',
     name: 'Dra. Maria Souza',
     specialty: 'Prótese',
@@ -50,14 +50,14 @@ export const supervisors: Supervisor[] = [
     id: '6',
     name: 'Dr. Ana Souza',
     email: 'ana.souza@clinica.edu',
-    role: 'supervisor',
+    role: 'SUPERVISOR',
     avatarUrl: '',
     specialty: 'Ortodontia',
     siape: '123456',
   },
   {
     id: '7',
-    role: 'supervisor',
+    role: 'SUPERVISOR',
     name: 'Dr. João Silva',
     email: 'joao.silva@clinic.com',
     avatarUrl: '',
@@ -66,7 +66,7 @@ export const supervisors: Supervisor[] = [
   },
   {
     id: '8',
-    role: 'supervisor',
+    role: 'SUPERVISOR',
     name: 'Dr. João Martino',
     email: 'joao.martino@clinic.com',
     avatarUrl: '',

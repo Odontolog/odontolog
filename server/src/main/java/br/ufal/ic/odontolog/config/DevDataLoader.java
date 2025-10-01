@@ -131,6 +131,9 @@ public class DevDataLoader implements CommandLineRunner {
             .procedureDetail(new ProcedureDetail("Test Procedure Detail"))
             .build();
 
+    treatmentPlanProcedureTest001.addTooth("11");
+    treatmentPlanProcedureTest001.addTooth("14");
+
     treatmentPlanTest001.addProcedure(treatmentPlanProcedureTest001);
     treatmentPlanTest001 = treatmentPlanRepository.save(treatmentPlanTest001);
     logger.info("Treatment Plan Procedure created: {}", treatmentPlanProcedureTest001.getName());
