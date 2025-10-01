@@ -12,7 +12,6 @@ import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
-import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
@@ -213,7 +212,7 @@ public class TreatmentPlanServiceUnitTest {
 
     // Act and Assert
     assertThrows(
-        UnprocessableRequestException.class,
+        ResourceNotFoundException.class,
         () -> treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatmentId));
 
     verify(treatmentPlanRepository).findById(treatmentId);
