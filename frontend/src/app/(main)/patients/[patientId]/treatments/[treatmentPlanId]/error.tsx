@@ -11,7 +11,7 @@ export default function Error({
   return (
     <div>
       <ServerError
-        title="Algo de errado aconteceu..."
+        title="Algo de errado aconteceu"
         description="Nosso servidor não conseguiu suportar essa requisição. Tente recarregar a página."
         reset={reset}
       />

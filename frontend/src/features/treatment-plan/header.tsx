@@ -186,8 +186,10 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
           </Flex>
         ) : (
           <ReviewMenu
-            disabled={props.mode === 'read'}
-            buttonProps={{ className: styles.button }}
+            buttonProps={{
+              className: styles.button,
+              disabled: props.mode === 'read' || data.status === 'IN_PROGRESS',
+            }}
           >
             Revisar
           </ReviewMenu>

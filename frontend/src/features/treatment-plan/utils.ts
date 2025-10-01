@@ -10,7 +10,7 @@ const MODE_MATRIX: Record<
   },
   IN_REVIEW: {
     SUPERVISOR: 'read',
-    STUDENT: 'read',
+    STUDENT: 'edit',
   },
   IN_PROGRESS: {
     SUPERVISOR: 'edit',
