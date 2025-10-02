@@ -3,13 +3,16 @@ package br.ufal.ic.odontolog.services;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
+import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
-import br.ufal.ic.odontolog.models.Reviewable;
-import br.ufal.ic.odontolog.models.Supervisor;
+import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
+import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -28,6 +31,7 @@ public class ReviewableService {
   private final ReviewableRepository reviewableRepository;
   private final SupervisorRepository supervisorRepository;
   private final ReviewableMapper reviewableMapper;
+  private final CurrentUserProvider currentUserProvider;
 
   @Transactional(readOnly = true)
   public Page<ReviewableDTO> findForCurrentSupervisor(
@@ -160,6 +164,33 @@ public class ReviewableService {
     }
 
     reviewable.setReviewers(supervisors);
+    reviewableRepository.save(reviewable);
+
+    return reviewableMapper.toDTO(reviewable);
+  }
+
+  @Transactional
+  public ReviewableDTO updateNotes(Long id, String newNotes) {
+    Reviewable reviewable =
+        reviewableRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Reviewable not found"));
+
+    String oldNotes = reviewable.getNotes();
+    reviewable.setNotes(newNotes);
+
+    Activity activity = new Activity();
+    User currentUser = currentUserProvider.getCurrentUser();
+    activity.setType(ActivityType.EDITED);
+    activity.setActor(currentUser);
+    activity.setReviewable(reviewable);
+    activity.setDescription(String.format("Notes updated by user %s", currentUser.getName()));
+    HashMap<String, Object> metadata = new HashMap<>();
+    metadata.put("data", newNotes);
+    metadata.put("oldData", oldNotes);
+    activity.setMetadata(metadata);
+    reviewable.getHistory().add(activity);
+
     reviewableRepository.save(reviewable);
 
     return reviewableMapper.toDTO(reviewable);
