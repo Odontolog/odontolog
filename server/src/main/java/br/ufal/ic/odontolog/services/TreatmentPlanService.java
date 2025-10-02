@@ -3,8 +3,10 @@ package br.ufal.ic.odontolog.services;
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.enums.ReviewableType;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
@@ -17,11 +19,10 @@ import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -40,13 +41,14 @@ public class TreatmentPlanService {
     Patient patient =
         patientRepository
             .findById(request.getPatientId())
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Patient not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
     TreatmentPlan plan =
         TreatmentPlan.builder()
             .author(currentUser)
             .patient(patient)
+            .assignee(currentUser)
+            .type(ReviewableType.TREATMENT_PLAN)
             .status(TreatmentPlanStatus.DRAFT)
             .build();
 
@@ -73,9 +75,7 @@ public class TreatmentPlanService {
     TreatmentPlan plan =
         treatmentPlanRepository
             .findById(id)
-            .orElseThrow(
-                () ->
-                    new ResponseStatusException(HttpStatus.NOT_FOUND, "Treatment plan not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Treatment plan not found"));
 
     return treatmentPlanMapper.toDTO(plan);
   }
@@ -117,6 +117,15 @@ public class TreatmentPlanService {
     return treatmentPlanMapper.toDTO(treatmentPlan);
   }
 
+  public List<TreatmentPlanShortDTO> getTreatmentPlansByPatientId(Long patientId) {
+    Patient patient =
+        patientRepository
+            .findById(patientId)
+            .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+    List<TreatmentPlan> treatmentPlans = treatmentPlanRepository.findByPatient(patient);
+    return treatmentPlanMapper.toShortDTOs(treatmentPlans);
+  }
+
   @Transactional
   public TreatmentPlanDTO submitTreatmentPlanForReview(
       Long treatment_id, TreatmentPlanSubmitForReviewDTO requestDTO) {
@@ -149,7 +158,6 @@ public class TreatmentPlanService {
   private String buildSubmissionDescription(
       User currentUser, TreatmentPlan treatmentPlan, String comments) {
 
-    // 1. Crie a parte base da descrição
     StringBuilder descriptionBuilder = new StringBuilder();
     descriptionBuilder.append(
         String.format(

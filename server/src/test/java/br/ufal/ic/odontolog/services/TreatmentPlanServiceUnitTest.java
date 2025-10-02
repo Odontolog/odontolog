@@ -9,19 +9,24 @@ import static org.mockito.Mockito.when;
 
 import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.ReviewSubmissionException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
+import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.Review;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
+import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -37,6 +42,7 @@ public class TreatmentPlanServiceUnitTest {
   @Mock private UserRepository userRepository;
   @Mock private TreatmentPlanMapper treatmentPlanMapper;
   @Mock private CurrentUserProvider currentUserProvider;
+  @Mock private PatientRepository patientRepository;
 
   @InjectMocks private TreatmentPlanService treatmentPlanService;
 
@@ -218,6 +224,51 @@ public class TreatmentPlanServiceUnitTest {
     verify(userRepository).findById(requestDTO.getUserId());
     verify(treatmentPlanMapper, never()).toDTO(any());
     verify(treatmentPlanRepository, never()).save(any());
+  }
+
+  @Test
+  public void givenValidPatientId_whenGetTreatmentPlansByPatientId_thenReturnsShortDTOList() {
+    // Arrange
+    Long patientId = 1L;
+    Patient patient = new Patient();
+    patient.setId(patientId);
+    TreatmentPlan plan = new TreatmentPlan();
+    plan.setId(10L);
+    List<TreatmentPlan> plans = Collections.singletonList(plan);
+    TreatmentPlanShortDTO shortDTO = new TreatmentPlanShortDTO();
+    shortDTO.setId(plan.getId());
+    List<TreatmentPlanShortDTO> shortDTOs = Collections.singletonList(shortDTO);
+
+    when(patientRepository.findById(patientId)).thenReturn(Optional.of(patient));
+    when(treatmentPlanRepository.findByPatient(patient)).thenReturn(plans);
+    when(treatmentPlanMapper.toShortDTOs(plans)).thenReturn(shortDTOs);
+
+    // Act
+    List<TreatmentPlanShortDTO> result =
+        treatmentPlanService.getTreatmentPlansByPatientId(patientId);
+
+    // Assert
+    assertThat(result).isEqualTo(shortDTOs);
+    verify(patientRepository).findById(patientId);
+    verify(treatmentPlanRepository).findByPatient(patient);
+    verify(treatmentPlanMapper).toShortDTOs(plans);
+  }
+
+  @Test
+  public void
+      givenInvalidPatientId_whenGetTreatmentPlansByPatientId_thenThrowsResourceNotFoundException() {
+    // Arrange
+    Long patientId = 99L;
+    when(patientRepository.findById(patientId)).thenReturn(Optional.empty());
+
+    // Act & Assert
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> {
+          treatmentPlanService.getTreatmentPlansByPatientId(patientId);
+        });
+    verify(treatmentPlanRepository, never()).findByPatient(any());
+    verify(treatmentPlanMapper, never()).toShortDTOs(any());
   }
 
   @Test
