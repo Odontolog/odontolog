@@ -3,6 +3,7 @@ package br.ufal.ic.odontolog.api;
 import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,7 +31,7 @@ public interface ReviewableApi {
         @ApiResponse(responseCode = "200", description = "Search completed successfully."),
         @ApiResponse(responseCode = "422", description = "Authenticated supervisor not found."),
       })
-  public ResponseEntity<PagedModel<ReviewableDTO>> getCurrentSupervisorReviewables(
+  public ResponseEntity<PagedModel<ReviewableShortDTO>> getCurrentSupervisorReviewables(
       @ParameterObject Pageable pageable,
       @ParameterObject ReviewableCurrentSupervisorFilterDTO filter,
       @Parameter(hidden = true) UserDetails currentUser);
@@ -39,18 +40,18 @@ public interface ReviewableApi {
       summary = "Add reviewers to a reviewable item",
       description =
           """
-      Adds one or more reviewers to the specified reviewable item.
+            Adds one or more reviewers to the specified reviewable item.
 
-      Preconditions:
+            Preconditions:
 
-      - The reviewable item must exist in the system.
-      - The reviewers to be added must exist in the system.
-      - The reviewers must not already be assigned to the reviewable item.
+            - The reviewable item must exist in the system.
+            - The reviewers to be added must exist in the system.
+            - The reviewers must not already be assigned to the reviewable item.
 
-      Postconditions:
+            Postconditions:
 
-      - The specified reviewers will be associated with the reviewable item.
-      """)
+            - The specified reviewers will be associated with the reviewable item.
+            """)
   @ApiResponses(
       value = {
         @ApiResponse(responseCode = "200", description = "Reviewers added successfully."),
@@ -63,18 +64,18 @@ public interface ReviewableApi {
       summary = "Remove reviewers from a reviewable item",
       description =
           """
-      Removes one or more reviewers from the specified reviewable item.
+            Removes one or more reviewers from the specified reviewable item.
 
-      Preconditions:
+            Preconditions:
 
-      - The reviewable item must exist in the system.
-      - The reviewers to be removed must exist in the system.
-      - The reviewers must be currently assigned to the reviewable item.
+            - The reviewable item must exist in the system.
+            - The reviewers to be removed must exist in the system.
+            - The reviewers must be currently assigned to the reviewable item.
 
-      Postconditions:
+            Postconditions:
 
-      - The specified reviewers will be disassociated from the reviewable item.
-      """)
+            - The specified reviewers will be disassociated from the reviewable item.
+            """)
   @ApiResponses(
       value = {
         @ApiResponse(responseCode = "200", description = "Reviewers removed successfully."),
@@ -87,17 +88,17 @@ public interface ReviewableApi {
       summary = "Update reviewers for a reviewable item",
       description =
           """
-      Updates the list of reviewers for the specified reviewable item.
+            Updates the list of reviewers for the specified reviewable item.
 
-      Preconditions:
+            Preconditions:
 
-      - The reviewable item must exist in the system.
-      - The new reviewers must exist in the system.
+            - The reviewable item must exist in the system.
+            - The new reviewers must exist in the system.
 
-      Postconditions:
+            Postconditions:
 
-      - The reviewable item's reviewers will be updated to match the provided list.
-      """)
+            - The reviewable item's reviewers will be updated to match the provided list.
+            """)
   @ApiResponses(
       value = {
         @ApiResponse(responseCode = "200", description = "Reviewers updated successfully."),
@@ -110,16 +111,16 @@ public interface ReviewableApi {
       summary = "Get the review history of a reviewable item",
       description =
           """
-      Retrieves the complete history of reviews and actions taken on the specified reviewable item.
+            Retrieves the complete history of reviews and actions taken on the specified reviewable item.
 
-      Preconditions:
+            Preconditions:
 
-      - The reviewable item must exist in the system.
+            - The reviewable item must exist in the system.
 
-      Postconditions:
+            Postconditions:
 
-      - A list of all activities related to the reviewable item will be returned.
-      """)
+            - A list of all activities related to the reviewable item will be returned.
+            """)
   @ApiResponses(
       value = {
         @ApiResponse(responseCode = "200", description = "History retrieved successfully."),

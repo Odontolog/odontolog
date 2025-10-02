@@ -23,7 +23,7 @@ public class ReviewableController implements ReviewableApi {
 
   @PreAuthorize("hasRole('SUPERVISOR')")
   @GetMapping("/me")
-  public ResponseEntity<PagedModel<ReviewableDTO>> getCurrentSupervisorReviewables(
+  public ResponseEntity<PagedModel<ReviewableShortDTO>> getCurrentSupervisorReviewables(
       Pageable pageable,
       ReviewableCurrentSupervisorFilterDTO filter,
       @AuthenticationPrincipal UserDetails currentUser) {

@@ -48,4 +48,6 @@ public abstract class Procedure extends Reviewable {
   public void addTooth(String tooth) {
     this.teeth.add(tooth);
   }
+
+  public abstract String getProcedureType();
 }

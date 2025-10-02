@@ -14,5 +14,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Table(name = "pre_procedures")
 public class PreProcedure extends Procedure {
-  //
+  @Override
+  public String getProcedureType() {
+    return "PRE_PROCEDURE";
+  }
 }
