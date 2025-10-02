@@ -22,6 +22,7 @@ export function getTratmentPlanOptions(treatmentPlanId: string) {
 export async function getTreatmentPlan(
   treatmentPlanId: string,
 ): Promise<TreatmentPlan> {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const token = await getAuthToken();
 
   const res = await fetch(
@@ -120,6 +121,28 @@ export async function submitTreatmentPlanForReview(
     createdAt: new Date(),
     metadata: {
       data: note,
+    },
+  });
+
+  return { success: true };
+}
+
+export async function submitReviewForTreatmentPlan(
+  treatmentPlanId: string,
+  values: { note: string; decision: string | null },
+) {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  console.log(`Submitting review for plan ${treatmentPlanId}`);
+
+  treatmentPlanMock.status = 'DONE';
+  treatmentPlanMock.history.push({
+    id: (treatmentPlanMock.history.length + 1).toString(),
+    type: values.decision === 'Aprovar' ? 'REVIEW_APPROVED' : 'REVIEW_REJECTED', // <- Depende do que foi selecionado no radio button
+    actor: loggedUser,
+    description: `Validação concedida pelo(a) supervisor(a) ${loggedUser.name}`,
+    createdAt: new Date(),
+    metadata: {
+      data: values.note,
     },
   });
 

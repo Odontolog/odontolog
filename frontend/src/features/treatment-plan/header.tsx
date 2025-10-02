@@ -27,7 +27,7 @@ import { Mode, TreatmentPlan } from '@/shared/models';
 import { type User } from 'next-auth';
 import styles from './header.module.css';
 import RequestReviewModal from './request-review-modal';
-import ReviewMenu from './review-menu';
+import ReviewModal from './review-modal';
 import { getLatestActorAndDate } from './utils';
 
 interface TreatmentPlanHeaderProps {
@@ -185,14 +185,23 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
             />
           </Flex>
         ) : (
-          <ReviewMenu
-            buttonProps={{
-              className: styles.button,
-              disabled: props.mode === 'read' || data.status === 'IN_PROGRESS',
-            }}
-          >
-            Revisar
-          </ReviewMenu>
+          <Flex align="center" gap={8}>
+            <Button
+              fw={500}
+              rightSection={<IconChevronDown />}
+              className={styles.button}
+              onClick={open}
+              // disabled={props.mode === 'read' || data.reviews.length === 0}
+            >
+              Validar
+            </Button>
+            <ReviewModal
+              treatmentPlanId={id}
+              close={close}
+              open={open}
+              opened={opened}
+            />
+          </Flex>
         )}
       </Group>
     </Stack>
