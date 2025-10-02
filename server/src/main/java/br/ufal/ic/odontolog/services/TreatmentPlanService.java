@@ -3,8 +3,8 @@ package br.ufal.ic.odontolog.services;
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
-import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.enums.ReviewableType;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
@@ -158,7 +158,7 @@ public class TreatmentPlanService {
   private String buildSubmissionDescription(
       User currentUser, TreatmentPlan treatmentPlan, String comments) {
 
-      StringBuilder descriptionBuilder = new StringBuilder();
+    StringBuilder descriptionBuilder = new StringBuilder();
     descriptionBuilder.append(
         String.format(
             "User %s (%s) submitted Treatment Plan (%s) for review",

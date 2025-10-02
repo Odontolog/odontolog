@@ -217,7 +217,7 @@ public class TreatmentPlanServiceUnitTest {
 
     // Act and Assert
     assertThrows(
-        ResourceNotFoundException.class,
+        UnprocessableRequestException.class,
         () -> treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatmentId));
 
     verify(treatmentPlanRepository).findById(treatmentId);

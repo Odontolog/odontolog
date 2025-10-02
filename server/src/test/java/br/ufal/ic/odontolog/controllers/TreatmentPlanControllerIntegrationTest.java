@@ -199,7 +199,7 @@ class TreatmentPlanControllerIntegrationTest {
     String response =
         mockMvc
             .perform(
-                get("/api/patients/" + patient.getId() + "/treatment-plans")
+                get("/api/patients/" + patient.getId() + "/treatment-plan")
                     .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn()
