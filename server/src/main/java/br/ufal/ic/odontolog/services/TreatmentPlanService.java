@@ -5,8 +5,10 @@ import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.enums.ReviewableType;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
+import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
 import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Patient;
@@ -44,6 +46,8 @@ public class TreatmentPlanService {
         TreatmentPlan.builder()
             .author(currentUser)
             .patient(patient)
+            .assignee(currentUser)
+            .type(ReviewableType.TREATMENT_PLAN)
             .status(TreatmentPlanStatus.DRAFT)
             .build();
 
@@ -88,7 +92,7 @@ public class TreatmentPlanService {
     User user =
         userRepository
             .findById(requestDTO.getUserId())
-            .orElseThrow(() -> new ResourceNotFoundException("Provided User not found"));
+            .orElseThrow(() -> new UnprocessableRequestException("Provided User not found"));
 
     treatmentPlan.getState().assignUser(treatmentPlan, user);
 
