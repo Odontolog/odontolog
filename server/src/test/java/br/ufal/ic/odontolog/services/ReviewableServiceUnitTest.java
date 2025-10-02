@@ -84,7 +84,7 @@ public class ReviewableServiceUnitTest {
 
     verify(supervisorRepository, times(1)).findByEmail("testsupervisor@test.com");
     verify(reviewableRepository, times(1)).findAll(any(Specification.class), eq(pageable));
-    verify(reviewableMapper, times(1)).toDTO(reviewableEntity);
+    verify(reviewableMapper, times(1)).toShortDTO(reviewableEntity);
   }
 
   @Test
