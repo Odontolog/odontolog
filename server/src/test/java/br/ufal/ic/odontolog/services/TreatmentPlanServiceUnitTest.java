@@ -271,6 +271,8 @@ public class TreatmentPlanServiceUnitTest {
                     currentUser.getId(),
                     treatmentId,
                     " without additional comments"));
+    assertThat(savedPlan.getHistory().iterator().next().getType())
+        .isEqualTo(br.ufal.ic.odontolog.enums.ActivityType.REVIEW_REQUESTED);
 
     assertThat(savedPlan.getReviews()).isNotEmpty();
 
@@ -335,7 +337,8 @@ public class TreatmentPlanServiceUnitTest {
                     currentUser.getId(),
                     treatmentId,
                     ", with additional comments: " + additionalComments));
-
+    assertThat(savedPlan.getHistory().iterator().next().getType())
+        .isEqualTo(br.ufal.ic.odontolog.enums.ActivityType.REVIEW_REQUESTED);
     assertThat(savedPlan.getReviews()).isNotEmpty();
 
     Review firstReview = savedPlan.getReviews().iterator().next();

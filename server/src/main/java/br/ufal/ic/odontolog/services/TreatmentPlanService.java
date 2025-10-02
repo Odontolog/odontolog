@@ -135,7 +135,7 @@ public class TreatmentPlanService {
     Activity activity =
         Activity.builder()
             .actor(currentUser)
-            .type(ActivityType.CREATED)
+            .type(ActivityType.REVIEW_REQUESTED)
             .description(description)
             .reviewable(treatmentPlan)
             .build();

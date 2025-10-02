@@ -1,9 +1,12 @@
 package br.ufal.ic.odontolog.services;
 
+import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
+import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
+import br.ufal.ic.odontolog.mappers.ActivityMapper;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.models.Reviewable;
 import br.ufal.ic.odontolog.models.Supervisor;
@@ -11,6 +14,7 @@ import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +32,7 @@ public class ReviewableService {
   private final ReviewableRepository reviewableRepository;
   private final SupervisorRepository supervisorRepository;
   private final ReviewableMapper reviewableMapper;
+  private final ActivityMapper activityMapper;
 
   @Transactional(readOnly = true)
   public Page<ReviewableDTO> findForCurrentSupervisor(
@@ -163,5 +168,15 @@ public class ReviewableService {
     reviewableRepository.save(reviewable);
 
     return reviewableMapper.toDTO(reviewable);
+  }
+
+  @Transactional(readOnly = true)
+  public List<ActivityDTO> getReviewableHistory(Long reviewableId) {
+    Reviewable reviewable =
+        reviewableRepository
+            .findById(reviewableId)
+            .orElseThrow(() -> new ResourceNotFoundException("Reviewable not found"));
+
+    return activityMapper.toDTOs(reviewable.getHistory());
   }
 }
