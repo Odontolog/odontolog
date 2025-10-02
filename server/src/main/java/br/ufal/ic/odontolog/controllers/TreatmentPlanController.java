@@ -28,25 +28,25 @@ public class TreatmentPlanController {
     return treatmentPlanService.createTreatmentPlan(request);
   }
 
-  @GetMapping("/treatment-plan/{id}")
+  @GetMapping("/treatment-plan/{treatmentId}")
   @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
-  public TreatmentPlanDTO getTreatmentPlan(@PathVariable Long id) {
-    return treatmentPlanService.getTreatmentPlanById(id);
+  public TreatmentPlanDTO getTreatmentPlan(@PathVariable Long treatmentId) {
+    return treatmentPlanService.getTreatmentPlanById(treatmentId);
   }
 
-  @PostMapping("/treatment-plan/{treatment_id}/assignee")
+  @PostMapping("/treatment-plan/{treatmentId}/assignee")
   @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
   public ResponseEntity<TreatmentPlanDTO> assignUserToTreatmentPlan(
-      @RequestBody TreatmentPlanAssignUserRequestDTO requestDTO, @PathVariable Long treatment_id) {
+      @RequestBody TreatmentPlanAssignUserRequestDTO requestDTO, @PathVariable Long treatmentId) {
     TreatmentPlanDTO updatedTreatmentPlan =
-        treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatment_id);
+        treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatmentId);
 
     return ResponseEntity.ok(updatedTreatmentPlan);
   }
 
-  @GetMapping("/patients/{od}/treatment-plans")
+  @GetMapping("/patients/{patientId}/treatment-plan")
   @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
-  public List<TreatmentPlanShortDTO> getTreatmentPlansByPatient(@PathVariable Long od) {
-    return treatmentPlanService.getTreatmentPlansByPatientId(od);
+  public List<TreatmentPlanShortDTO> getTreatmentPlansByPatient(@PathVariable Long patientId) {
+    return treatmentPlanService.getTreatmentPlansByPatientId(patientId);
   }
 }
