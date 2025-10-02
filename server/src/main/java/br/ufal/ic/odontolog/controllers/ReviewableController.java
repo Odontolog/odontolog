@@ -2,8 +2,10 @@ package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.api.ReviewableApi;
 import br.ufal.ic.odontolog.dtos.*;
+import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.services.ReviewableService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
@@ -63,5 +65,13 @@ public class ReviewableController implements ReviewableApi {
   public ReviewableDTO updateNotes(
       @PathVariable Long reviewableId, @RequestBody UpdateNotesRequestDTO request) {
     return reviewableService.updateNotes(reviewableId, request.getNotes());
+  }
+
+  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
+  @GetMapping("/{reviewableId}/history")
+  public ResponseEntity<List<ActivityDTO>> getReviewableHistory(@PathVariable Long reviewableId) {
+    var history = reviewableService.getReviewableHistory(reviewableId);
+
+    return ResponseEntity.ok(history);
   }
 }
