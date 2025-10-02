@@ -4,6 +4,6 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class TreatmentPlanAssignUserRequestDTO {
+public class ReviewableAssignUserRequestDTO {
   private UUID userId;
 }

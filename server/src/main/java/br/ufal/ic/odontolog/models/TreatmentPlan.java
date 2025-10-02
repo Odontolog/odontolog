@@ -57,4 +57,9 @@ public class TreatmentPlan extends Reviewable {
     this.state = state;
     this.status = state.getStatus();
   }
+
+  @Override
+  public void assignUser(User user) {
+    this.getState().assignUser(this, user);
+  }
 }

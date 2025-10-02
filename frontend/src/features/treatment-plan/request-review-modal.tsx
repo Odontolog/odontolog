@@ -72,7 +72,6 @@ function RequestReviewModalBody({
   });
 
   function handleSubmit(values: typeof form.values) {
-    console.log('Saved to backend (mock):', values);
     mutation.mutate(values.note);
   }
 
