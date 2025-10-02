@@ -7,11 +7,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
+import br.ufal.ic.odontolog.enums.ReviewableType;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.Supervisor;
+import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
+import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.UUID;
@@ -34,19 +38,25 @@ class TreatmentPlanControllerIntegrationTest {
   @Autowired PatientRepository patientRepository;
   @Autowired private SupervisorRepository supervisorRepository;
   @Autowired ObjectMapper objectMapper;
+  @Autowired TreatmentPlanRepository treatmentPlanRepository;
 
   private Patient patient;
+  private Supervisor supervisor;
 
   @BeforeEach
   void setupPatient() {
     patient = patientRepository.save(Patient.builder().name("Patient_Test_001").build());
 
-    supervisorRepository
-        .findByEmail("supervisor@test.com")
-        .orElseGet(
-            () ->
-                supervisorRepository.save(
-                    Supervisor.builder().email("supervisor@test.com").build()));
+    supervisor =
+        supervisorRepository
+            .findByEmail("supervisor@test.com")
+            .orElseGet(
+                () ->
+                    supervisorRepository.save(
+                        Supervisor.builder()
+                            .name("supervisor 1")
+                            .email("supervisor@test.com")
+                            .build()));
   }
 
   @Test
@@ -163,5 +173,50 @@ class TreatmentPlanControllerIntegrationTest {
     mockMvc
         .perform(get("/api/treatment-plan/{id}", 1234L).contentType(APPLICATION_JSON))
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
+  void getTreatmentPlansByPatient_returnsPlans() throws Exception {
+    TreatmentPlan plan =
+        TreatmentPlan.builder()
+            .patient(patient)
+            .status(TreatmentPlanStatus.DRAFT)
+            .assignee(supervisor)
+            .type(ReviewableType.TREATMENT_PLAN)
+            .notes("Xalala!")
+            .build();
+
+    TreatmentPlan plan2 =
+        TreatmentPlan.builder()
+            .patient(patient)
+            .status(TreatmentPlanStatus.DRAFT)
+            .assignee(supervisor)
+            .type(ReviewableType.TREATMENT_PLAN)
+            .notes("Xalala2!")
+            .build();
+    treatmentPlanRepository.saveAll(List.of(plan, plan2));
+
+    String response =
+        mockMvc
+            .perform(
+                get("/api/patients/" + patient.getId() + "/treatment-plan")
+                    .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    List<TreatmentPlanShortDTO> dtos =
+        objectMapper.readerForListOf(TreatmentPlanShortDTO.class).readValue(response);
+    assertThat(dtos.size()).isEqualTo(2);
+    assertThat(dtos.stream().anyMatch(dto -> "Xalala!".equals(dto.getNotes()))).isTrue();
+    assertThat(dtos.stream().anyMatch(dto -> "Xalala2!".equals(dto.getNotes()))).isTrue();
+    assertThat(dtos.stream().allMatch(dto -> dto.getStatus() == TreatmentPlanStatus.DRAFT))
+        .isTrue();
+    assertThat(dtos.stream().allMatch(dto -> dto.getPatient().getId().equals(patient.getId())))
+        .isTrue();
   }
 }

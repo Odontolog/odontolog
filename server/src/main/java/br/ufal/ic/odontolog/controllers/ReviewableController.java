@@ -1,11 +1,10 @@
 package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.api.ReviewableApi;
-import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableDTO;
-import br.ufal.ic.odontolog.dtos.ReviewersDTO;
+import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.services.ReviewableService;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
@@ -58,5 +57,30 @@ public class ReviewableController implements ReviewableApi {
 
     var updated = reviewableService.updateSupervisorsFromReviewables(reviewableId, request);
     return ResponseEntity.ok(updated);
+  }
+
+  @PatchMapping("/{reviewableId}/notes")
+  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  public ReviewableDTO updateNotes(
+      @PathVariable Long reviewableId, @RequestBody UpdateNotesRequestDTO request) {
+    return reviewableService.updateNotes(reviewableId, request.getNotes());
+  }
+
+  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
+  @GetMapping("/{reviewableId}/history")
+  public ResponseEntity<List<ActivityDTO>> getReviewableHistory(@PathVariable Long reviewableId) {
+    var history = reviewableService.getReviewableHistory(reviewableId);
+
+    return ResponseEntity.ok(history);
+  }
+
+  @PostMapping("/{reviewableId}/assignee")
+  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
+  public ResponseEntity<ReviewableDTO> assignUserToReviewable(
+      @RequestBody ReviewableAssignUserRequestDTO requestDTO, @PathVariable Long reviewableId) {
+    ReviewableDTO updatedReviewable =
+        reviewableService.assignUserToReviewable(requestDTO, reviewableId);
+
+    return ResponseEntity.ok(updatedReviewable);
   }
 }
