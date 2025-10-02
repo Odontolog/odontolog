@@ -122,7 +122,8 @@ export async function submitTreatmentPlanForReview(
   );
 
   if (!res.ok) {
-    throw new Error(`[${res.status}] Erro ao submeter plano de tratamento para validação.`);
+    throw new Error(
+      `[${res.status}] Erro ao submeter plano de tratamento para validação.`,
+    );
   }
-  
 }
