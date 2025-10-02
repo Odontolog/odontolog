@@ -2,7 +2,6 @@ package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.api.ReviewableApi;
 import br.ufal.ic.odontolog.dtos.*;
-import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.services.ReviewableService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -73,5 +72,15 @@ public class ReviewableController implements ReviewableApi {
     var history = reviewableService.getReviewableHistory(reviewableId);
 
     return ResponseEntity.ok(history);
+  }
+
+  @PostMapping("/{reviewableId}/assignee")
+  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
+  public ResponseEntity<ReviewableDTO> assignUserToReviewable(
+      @RequestBody ReviewableAssignUserRequestDTO requestDTO, @PathVariable Long reviewableId) {
+    ReviewableDTO updatedReviewable =
+        reviewableService.assignUserToReviewable(requestDTO, reviewableId);
+
+    return ResponseEntity.ok(updatedReviewable);
   }
 }

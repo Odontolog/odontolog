@@ -69,4 +69,6 @@ public abstract class Reviewable {
     this.reviews.add(review);
     review.setReviewable(this);
   }
+
+  public abstract void assignUser(User user);
 }
