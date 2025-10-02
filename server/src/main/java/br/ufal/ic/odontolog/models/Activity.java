@@ -2,13 +2,12 @@ package br.ufal.ic.odontolog.models;
 
 import br.ufal.ic.odontolog.enums.ActivityType;
 import jakarta.persistence.*;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -44,5 +43,5 @@ public class Activity {
   @Column(columnDefinition = "jsonb") // PostgreSQL specific setting
   private HashMap<String, Object> metadata;
 
-  @CreationTimestamp private Instant createdAt;
+  private LocalDateTime createdAt;
 }
