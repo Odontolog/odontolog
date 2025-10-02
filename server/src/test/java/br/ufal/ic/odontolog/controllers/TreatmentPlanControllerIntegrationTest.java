@@ -53,7 +53,10 @@ class TreatmentPlanControllerIntegrationTest {
             .orElseGet(
                 () ->
                     supervisorRepository.save(
-                        Supervisor.builder().email("supervisor@test.com").build()));
+                        Supervisor.builder()
+                            .name("supervisor 1")
+                            .email("supervisor@test.com")
+                            .build()));
   }
 
   @Test
