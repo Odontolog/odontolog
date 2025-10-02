@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
   );
 
   const loggedUserRole = session?.user.role;
-  const isStudent = loggedUserRole === 'student';
+  const isStudent = loggedUserRole === 'STUDENT';
 
   if (isAuthenticated && isSupervisorRoute && isStudent) {
     return NextResponse.redirect(new URL(NOT_FOUND, request.url));

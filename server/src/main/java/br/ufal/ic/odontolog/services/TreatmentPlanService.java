@@ -4,9 +4,12 @@ import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.enums.ReviewableType;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
+import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
 import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Patient;
@@ -47,6 +50,8 @@ public class TreatmentPlanService {
         TreatmentPlan.builder()
             .author(currentUser)
             .patient(patient)
+            .assignee(currentUser)
+            .type(ReviewableType.TREATMENT_PLAN)
             .status(TreatmentPlanStatus.DRAFT)
             .build();
 
@@ -91,7 +96,7 @@ public class TreatmentPlanService {
     User user =
         userRepository
             .findById(requestDTO.getUserId())
-            .orElseThrow(() -> new ResourceNotFoundException("Provided User not found"));
+            .orElseThrow(() -> new UnprocessableRequestException("Provided User not found"));
 
     treatmentPlan.getState().assignUser(treatmentPlan, user);
 
@@ -148,5 +153,52 @@ public class TreatmentPlanService {
             .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     List<TreatmentPlan> treatmentPlans = treatmentPlanRepository.findByPatient(patient);
     return treatmentPlanMapper.toShortDTOs(treatmentPlans);
+  }
+
+  @Transactional
+  public TreatmentPlanDTO submitTreatmentPlanForReview(
+      Long treatment_id, TreatmentPlanSubmitForReviewDTO requestDTO) {
+    User currentUser = currentUserProvider.getCurrentUser();
+
+    TreatmentPlan treatmentPlan =
+        treatmentPlanRepository
+            .findById(treatment_id)
+            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+
+    treatmentPlan.getState().submitForReview(treatmentPlan);
+
+    String comments = requestDTO.getComments();
+    String description = buildSubmissionDescription(currentUser, treatmentPlan, comments);
+
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.CREATED)
+            .description(description)
+            .reviewable(treatmentPlan)
+            .build();
+    treatmentPlan.getHistory().add(activity);
+
+    treatmentPlanRepository.save(treatmentPlan);
+
+    return treatmentPlanMapper.toDTO(treatmentPlan);
+  }
+
+  private String buildSubmissionDescription(
+      User currentUser, TreatmentPlan treatmentPlan, String comments) {
+
+    StringBuilder descriptionBuilder = new StringBuilder();
+    descriptionBuilder.append(
+        String.format(
+            "User %s (%s) submitted Treatment Plan (%s) for review",
+            currentUser.getName(), currentUser.getId(), treatmentPlan.getId()));
+
+    if (comments != null && !comments.trim().isEmpty()) {
+      descriptionBuilder.append(", with additional comments: ").append(comments);
+    } else {
+      descriptionBuilder.append(" without additional comments");
+    }
+
+    return descriptionBuilder.toString();
   }
 }

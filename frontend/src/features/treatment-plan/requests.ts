@@ -1,6 +1,7 @@
-import { getSession } from 'next-auth/react';
 import { queryOptions } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
 
+import { loggedUser } from '@/mocks/students';
 import {
   addProcedure,
   patient,
@@ -8,8 +9,8 @@ import {
   treatmentPlanMock,
 } from '@/mocks/treatment-plan';
 import { TreatmentPlan } from '@/shared/models';
+import { getAuthToken } from '@/shared/utils';
 import { ProcedureFormValues } from './models';
-import { loggedUser } from '@/mocks/students';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
   return queryOptions({
@@ -21,24 +22,21 @@ export function getTratmentPlanOptions(treatmentPlanId: string) {
 export async function getTreatmentPlan(
   treatmentPlanId: string,
 ): Promise<TreatmentPlan> {
-  console.log(`Fetching data for treatment plan ${treatmentPlanId}`);
-
-  const session = await getSession();
-  if (session?.user?.accessToken == null || session.user.accessToken === '') {
-    throw new Error('Usuário não autenticado');
-  }
+  const token = await getAuthToken();
 
   const res = await fetch(
-    `http://localhost:8080/api/v1/treatment-plan/${treatmentPlanId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}`,
     {
       headers: {
-        Authorization: `Bearer ${session.user.accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     },
   );
 
-  if (!res.ok) {
+  if (res.status >= 500) {
     throw new Error(`Erro ao buscar plano: ${res.status}`);
+  } else if (res.status >= 400) {
+    notFound();
   }
 
   return (await res.json()) as TreatmentPlan;
@@ -93,10 +91,10 @@ export async function createTreatmentPlanProcedure(
     studySector: procedure.studySector,
     plannedSession: procedure.plannedSession,
     teeth: procedure.tooth,
-    status: 'draft',
+    status: 'DRAFT',
     reviews: [],
-    procedureType: 'treatment_plan_procedure',
-    type: 'procedure',
+    procedureType: 'TREATMENT_PLAN_PROCEDURE',
+    type: 'PROCEDURE',
     patient,
     assignee: supervisor,
     updatedAt: new Date('2025-09-01T10:00:00Z'),
@@ -113,10 +111,10 @@ export async function submitTreatmentPlanForReview(
   await new Promise((resolve) => setTimeout(resolve, 1000));
   console.log(`Submitting treatment plan ${treatmentPlanId} for review`);
 
-  treatmentPlanMock.status = 'in_review';
+  treatmentPlanMock.status = 'IN_REVIEW';
   treatmentPlanMock.history.push({
     id: (treatmentPlanMock.history.length + 1).toString(),
-    type: 'review_requested',
+    type: 'REVIEW_REQUESTED',
     actor: loggedUser,
     description: 'Solicitação de validação enviada para o(s) supervisor(es).',
     createdAt: new Date(),

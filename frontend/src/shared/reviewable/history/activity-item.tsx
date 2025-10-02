@@ -10,22 +10,22 @@ interface ActivityItemProps {
 
 function getTitle(activity: Activity) {
   switch (activity.type) {
-    case 'created':
+    case 'CREATED':
       return 'Plano criado';
-    case 'edited':
+    case 'EDITED':
       return 'Plano modificado';
-    case 'review_requested':
+    case 'REVIEW_REQUESTED':
       return 'Pedido de validação realizado';
-    case 'review_approved':
+    case 'REVIEW_APPROVED':
       return 'Plano aprovado';
-    case 'review_rejected':
+    case 'REVIEW_REJECTED':
       return 'Plano rejeitado';
   }
 }
 
 function getMetadataText(activity: Activity) {
   const metadata = activity.metadata;
-  if (!metadata || activity.type === 'created') {
+  if (!metadata || activity.type === 'CREATED') {
     return '';
   }
 

@@ -1,39 +1,31 @@
 'use client';
 
-import { useState } from 'react';
 import {
+  ActionIcon,
+  Button,
+  Card,
+  Center,
+  Divider,
+  Flex,
+  Group,
+  Loader,
   Text,
   Textarea,
-  Button,
-  Group,
-  Card,
-  Divider,
-  Center,
-  Loader,
-  Flex,
-  ActionIcon,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
+import { Reviewable } from '@/shared/models';
+import { ReviewableSectionProps } from './models';
 import { saveDetails } from './requests';
-import { Reviewable } from '../models';
-
-interface NotesSectionProps<T extends Reviewable> {
-  reviewableId: string;
-  queryOptions: UseQueryOptions<T, Error, T, string[]>;
-}
 
 export default function NotesSection<T extends Reviewable>({
   reviewableId,
   queryOptions,
-}: NotesSectionProps<T>) {
+  mode,
+}: ReviewableSectionProps<T>) {
   const [editing, setEditing] = useState(false);
 
   const { data: notes, isLoading } = useQuery({
@@ -49,7 +41,7 @@ export default function NotesSection<T extends Reviewable>({
           <Text fw={600} size="lg">
             Observações
           </Text>
-          {!editing && (
+          {mode === 'edit' && !editing && (
             <ActionIcon
               variant="subtle"
               color="gray"
@@ -76,6 +68,7 @@ export default function NotesSection<T extends Reviewable>({
             editing={editing}
             setEditing={setEditing}
             queryOptions={queryOptions}
+            mode={mode}
           />
         )}
       </Card.Section>
@@ -84,7 +77,7 @@ export default function NotesSection<T extends Reviewable>({
 }
 
 interface DetailSectionContentProps<T extends Reviewable>
-  extends NotesSectionProps<T> {
+  extends ReviewableSectionProps<T> {
   reviewableId: string;
   notes: string;
   editing: boolean;

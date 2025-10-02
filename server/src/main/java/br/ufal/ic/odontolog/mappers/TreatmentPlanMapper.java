@@ -5,15 +5,12 @@ import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import java.util.List;
 import org.mapstruct.Mapper;
-import org.mapstruct.MapperConfig;
 import org.mapstruct.MappingInheritanceStrategy;
 
 @Mapper(
     componentModel = "spring",
+    mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG,
     uses = {ProcedureMapper.class, PatientMapper.class, ReviewableMapper.class})
-@MapperConfig(
-    componentModel = "spring",
-    mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_FROM_CONFIG)
 public interface TreatmentPlanMapper {
   TreatmentPlanDTO toDTO(TreatmentPlan treatmentPlan);
 
