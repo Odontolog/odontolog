@@ -2,29 +2,25 @@
 
 import {
   Card,
-  Text,
+  Center,
+  Divider,
+  Flex,
   Group,
   Loader,
-  Center,
-  Flex,
+  Text,
   ThemeIcon,
-  Divider,
   Timeline,
 } from '@mantine/core';
-import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { IconExclamationCircle } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 
 import { Reviewable } from '@/shared/models';
+import { ReviewableSectionProps } from '@/shared/reviewable/models';
 import ActivityItem from './activity-item';
-
-interface HistorySectionProps<T extends Reviewable> {
-  reviewableId: string;
-  queryOptions: UseQueryOptions<T, Error, T, string[]>;
-}
 
 export default function HistorySection<T extends Reviewable>({
   queryOptions,
-}: HistorySectionProps<T>) {
+}: ReviewableSectionProps<T>) {
   const {
     data: history,
     isLoading,

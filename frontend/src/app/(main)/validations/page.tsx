@@ -16,7 +16,7 @@ export default function ProcedureValidationPage() {
           <ValidationsSection />
         </Box>
 
-        {/* TODO: Esperar a task do @Gabriel para adicionar ou ajusar esse componente */}
+        {/* TODO: Colocar o DetailSection do Procedure */}
         <Box flex="1" h="100%">
           <TreatmentPlanDetailSection />
         </Box>

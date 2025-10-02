@@ -44,4 +44,8 @@ public abstract class Procedure extends Reviewable {
   private final Set<String> teeth = new HashSet<>();
 
   @Embedded private ProcedureDetail procedureDetail;
+
+  public void addTooth(String tooth) {
+    this.teeth.add(tooth);
+  }
 }

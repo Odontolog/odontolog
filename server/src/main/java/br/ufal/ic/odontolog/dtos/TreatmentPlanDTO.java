@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TreatmentPlanDTO extends ReviewableDTO {
+  private PatientShortDTO patient;
   private TreatmentPlanStatus status;
   private List<ProcedureShortDTO> procedures;
 }

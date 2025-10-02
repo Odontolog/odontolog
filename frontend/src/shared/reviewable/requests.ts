@@ -56,7 +56,7 @@ export async function saveSupervisors(
       id: Math.floor(Math.random() * 10000).toString(),
       note: '',
       grade: 0.0,
-      status: 'draft',
+      reviewStatus: 'DRAFT',
       supervisor: sup,
     } as Review;
   });

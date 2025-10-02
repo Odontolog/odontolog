@@ -2,38 +2,39 @@
 
 import {
   Anchor,
-  Badge,
-  Box,
   Breadcrumbs,
   Button,
   Flex,
   Group,
-  Indicator,
   Skeleton,
   Stack,
   Text,
   Title,
   Tooltip,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import {
   IconAlertTriangle,
   IconChevronDown,
   IconSlash,
 } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-
-import { TreatmentPlan } from '@/shared/models';
-import ReviewMenu from './review-menu';
-import styles from './header.module.css';
-import { useDisclosure } from '@mantine/hooks';
-import RequestReviewModal from './request-review-modal';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+
+import { StatusBadge, StatusIndicator } from '@/shared/components/status';
+import { Mode, TreatmentPlan } from '@/shared/models';
+import { type User } from 'next-auth';
+import styles from './header.module.css';
+import RequestReviewModal from './request-review-modal';
+import ReviewMenu from './review-menu';
+import { getLatestActorAndDate } from './utils';
 
 interface TreatmentPlanHeaderProps {
   id: string;
   queryOptions: UseQueryOptions<TreatmentPlan, Error, TreatmentPlan, string[]>;
-  mode: 'edit' | 'read';
+  mode: Mode;
+  user: User;
 }
 
 // NOTE: falta considerar se é supervisor ou student; falta ver como puxar o id do treatmentPlan se for Procedure (linha 114); conferir as requisições
@@ -48,12 +49,14 @@ export default function TreatmentPlanHeader(props: TreatmentPlanHeaderProps) {
 interface TreatmentPlanHeaderContentProps {
   id: string;
   queryOptions: UseQueryOptions<TreatmentPlan, Error, TreatmentPlan, string[]>;
-  mode: 'edit' | 'read';
+  mode: Mode;
+  user: User;
 }
 
 function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
   const { id, queryOptions } = props;
   const [opened, { open, close }] = useDisclosure(false);
+
   const { data, isLoading } = useQuery({
     ...queryOptions,
     select: (data) => ({
@@ -62,6 +65,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       updatedAt: data.updatedAt,
       assignee: data.assignee,
       reviews: data.reviews,
+      latest: getLatestActorAndDate(data.history),
     }),
   });
 
@@ -74,6 +78,12 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       </Stack>
     );
   }
+
+  // For the case where a treatment plan has no activities (empty history)
+  const latest = {
+    actor: data.latest ? data.latest.actor : data.assignee.name,
+    updatedAt: data.latest ? data.latest.createdAt : data.updatedAt,
+  };
 
   const breadcrumbsData = [
     { title: 'Pacientes', href: '/patients' },
@@ -108,22 +118,6 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
     );
   });
 
-  // TODO: Fazer componente genérico
-  function getBadgeProps(status: string) {
-    switch (status) {
-      case 'draft':
-        return { color: 'gray', children: 'EM ELABORAÇÃO' };
-      case 'in_progress':
-        return { color: 'blue', children: 'EM ANDAMENTO' };
-      case 'in_review':
-        return { color: 'yellow', children: 'EM REVISÃO' };
-      case 'finished':
-        return { color: 'teal', children: 'CONCLUÍDO' };
-      default:
-        return { color: 'white', children: null };
-    }
-  }
-
   return (
     <Stack gap="sm">
       <Breadcrumbs separatorMargin="2" separator={<IconSlash size={16} />}>
@@ -136,38 +130,23 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
             <Title c="gray.9" className={styles.title}>
               Plano de Tratamento <span className={styles.span}>#{id}</span>
             </Title>
-            <Tooltip
-              label={getBadgeProps(data.status ?? '').children}
-              withArrow
-              transitionProps={{ duration: 200 }}
+            <StatusIndicator
               className={styles.indicator}
-            >
-              <Indicator
-                size={8}
-                position="middle-center"
-                processing
-                color={getBadgeProps(data.status ?? '').color}
-              >
-                <Box w={8} h={8} />
-              </Indicator>
-            </Tooltip>
+              status={data.status}
+            />
           </Group>
           <Group gap="sm">
-            <Badge
-              className={styles.badge}
-              variant="light"
-              {...getBadgeProps(data.status ?? '')}
-            />
+            <StatusBadge className={styles.badge} status={data.status} />
             <Text size="sm" c="gray.9">
-              Última atualização por <b>{data.assignee.name}</b>{' '}
+              Última atualização por <b>{latest.actor}</b>{' '}
               <Tooltip
-                label={format(data.updatedAt, 'dd/MM/yyyy HH:mm')}
+                label={format(latest.updatedAt, 'dd/MM/yyyy HH:mm')}
                 withArrow
                 position="right"
                 transitionProps={{ duration: 200 }}
               >
                 <Text span>
-                  {formatDistanceToNow(data.updatedAt, {
+                  {formatDistanceToNow(latest.updatedAt, {
                     addSuffix: true,
                     locale: ptBR,
                   })}
@@ -176,7 +155,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
             </Text>
           </Group>
         </Stack>
-        {props.mode === 'edit' ? (
+        {props.user.role === 'STUDENT' ? (
           <Flex align="center" gap={8}>
             {data.reviews.length === 0 && (
               <Tooltip
@@ -194,7 +173,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
               rightSection={<IconChevronDown />}
               className={styles.button}
               onClick={open}
-              disabled={data.reviews.length === 0}
+              disabled={props.mode === 'read' || data.reviews.length === 0}
             >
               Enviar para validação
             </Button>
@@ -206,7 +185,12 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
             />
           </Flex>
         ) : (
-          <ReviewMenu buttonProps={{ className: styles.button }}>
+          <ReviewMenu
+            buttonProps={{
+              className: styles.button,
+              disabled: props.mode === 'read' || data.status === 'IN_PROGRESS',
+            }}
+          >
             Revisar
           </ReviewMenu>
         )}

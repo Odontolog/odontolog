@@ -6,6 +6,7 @@ import {
   Center,
   Divider,
   Group,
+  ScrollArea,
   Skeleton,
   Stack,
   Text,
@@ -85,10 +86,17 @@ export default function TreatmentPlansSection({
             <Skeleton height={120} radius="none" />
             <Skeleton height={120} radius="none" />
             <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
           </Stack>
         ) : (
-          <TreatmentPlansContent data={data} />
+          <ScrollArea
+            scrollbarSize={6}
+            offsetScrollbars
+            scrollbars="y"
+            w="100%"
+            h="510px"
+          >
+            <TreatmentPlansContent data={data} />
+          </ScrollArea>
         )}
       </Card.Section>
     </Card>

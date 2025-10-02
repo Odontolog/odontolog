@@ -72,8 +72,8 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
   return (
     <>
       {/* Versão Desktop */}
-      <Stack bg="white" visibleFrom="md">
-        <Stack pt="sm" m="md">
+      <Stack bg="white" gap={0} visibleFrom="md">
+        <Stack pt="xs" m="md">
           <Group justify="space-between">
             <LeftContent patient={patient} />
             <RightContent patient={patient} />
@@ -113,27 +113,27 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
 }
 
 const genderMap: Record<string, { icon: JSX.Element; label: string }> = {
-  male: { icon: <IconGenderMale size={16} />, label: 'Masculino' },
-  female: { icon: <IconGenderFemale size={16} />, label: 'Feminino' },
-  other: { icon: <IconGenderAgender size={16} />, label: 'Outro' },
+  MALE: { icon: <IconGenderMale size={16} />, label: 'Masculino' },
+  FEMALE: { icon: <IconGenderFemale size={16} />, label: 'Feminino' },
+  OTHER: { icon: <IconGenderAgender size={16} />, label: 'Outro' },
 };
 
 const ethnicityMap: Record<string, string> = {
-  white: 'Branca',
-  black: 'Preta',
-  brown: 'Parda',
-  yellow: 'Amarela',
-  indigenous: 'Indígena',
-  other: 'Outra',
+  WHITE: 'Branca',
+  BLACK: 'Preta',
+  BROWN: 'Parda',
+  YELLOW: 'Amarela',
+  INDIGENOUS: 'Indígena',
+  OTHER: 'Outra',
 };
 
 const maritalStatusMap: Record<string, string> = {
-  single: 'Solteiro',
-  married: 'Casado',
-  divorced: 'Divorciado',
-  widowed: 'Viúvo',
-  civil_union: 'União Estável',
-  other: 'Outra',
+  SINGLE: 'Solteiro',
+  MARRIED: 'Casado',
+  DIVORCED: 'Divorciado',
+  WIDOWED: 'Viúvo',
+  CIVIL_UNION: 'União Estável',
+  OTHER: 'Outra',
 };
 
 function LeftContent({ patient }: { patient: Patient }) {

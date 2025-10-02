@@ -1,33 +1,29 @@
 'use client';
 
 import {
-  Card,
-  Text,
-  Group,
   Avatar,
-  Loader,
+  Card,
   Center,
-  Indicator,
-  Box,
-  Flex,
-  ThemeIcon,
   Divider,
+  Flex,
+  Group,
+  Loader,
+  Text,
+  ThemeIcon,
 } from '@mantine/core';
-import { UseQueryOptions, useQuery } from '@tanstack/react-query';
 import { IconExclamationCircle } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 
+import { StatusIndicator } from '@/shared/components/status';
 import { Reviewable } from '@/shared/models';
+import { ReviewableSectionProps } from './models';
 import SupervisorMenu from './supervisor-menu';
-
-interface SupervisorSectionProps<T extends Reviewable> {
-  reviewableId: string;
-  queryOptions: UseQueryOptions<T, Error, T, string[]>;
-}
 
 export default function SupervisorSection<T extends Reviewable>({
   reviewableId,
   queryOptions,
-}: SupervisorSectionProps<T>) {
+  mode,
+}: ReviewableSectionProps<T>) {
   const {
     data: reviews,
     isLoading,
@@ -44,7 +40,7 @@ export default function SupervisorSection<T extends Reviewable>({
           <Text fw={600} size="lg">
             Supervisores
           </Text>
-          {reviews && (
+          {mode === 'edit' && reviews && (
             <SupervisorMenu
               reviewableId={reviewableId}
               queryOptions={queryOptions}
@@ -92,21 +88,7 @@ export default function SupervisorSection<T extends Reviewable>({
                   />
                   <Text size="sm">{review.supervisor.name}</Text>
                 </Group>
-                <Indicator
-                  size={8}
-                  position="middle-center"
-                  color={
-                    review.status === 'approved'
-                      ? 'green'
-                      : review.status === 'rejected'
-                        ? 'red'
-                        : review.status === 'draft'
-                          ? 'gray'
-                          : 'yellow'
-                  }
-                >
-                  <Box w={8} h={8} />
-                </Indicator>
+                <StatusIndicator status={review.reviewStatus} />
               </Group>
             ))}
         </Flex>
