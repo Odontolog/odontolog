@@ -4,7 +4,6 @@ import {
   Text,
   Stack,
   Button,
-  Tooltip,
   Flex,
   Textarea,
   TextInput,
@@ -51,12 +50,30 @@ export default function ReviewModal(props: ReviewModalProps) {
 
 function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
   const queryClient = useQueryClient();
-  const [decision, setDecision] = useState<string | null>(null);
+  const [decision] = useState<string | null>(null);
 
-  const form = useForm({
+  type ReviewFormValues = {
+    note: string;
+    decision: string;
+    grade?: number;
+  };
+
+  const form = useForm<ReviewFormValues>({
     mode: 'uncontrolled',
     initialValues: {
       note: '',
+      decision: '',
+    },
+    validate: {
+      note: (value) =>
+        value.length < 1 ? 'Insira uma explicação para o aluno.' : null,
+      grade: (value, values) => {
+        return values.decision === 'Aprovar' &&
+          (value === undefined || isNaN(Number(value)))
+          ? 'Insira uma nota válida.'
+          : null;
+      },
+      decision: (value) => (value.length === 0 ? 'Selecione uma opção.' : null),
     },
   });
 
@@ -72,24 +89,12 @@ function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
     },
   });
 
-  function handleSubmit(values: typeof form.values) {
-    console.log('Saved to backend (mock):', values);
-    mutation.mutate({ note: values.note, decision });
-  }
-  const isSubmitDisabled =
-    mutation.isPending ||
-    decision === null ||
-    (decision === 'Aprovar' && !form.values.note);
-
-  let tooltipLabel = '';
-  if (decision === null) {
-    tooltipLabel = 'Você precisa Aprovar ou Reprovar';
-  } else if (decision === 'Aprovar' && !form.values.note) {
-    tooltipLabel = 'Campo nota é obrigatório';
-  }
-
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
+    <form
+      onSubmit={form.onSubmit((values) =>
+        mutation.mutate({ note: values.note, decision }),
+      )}
+    >
       <Stack>
         <Textarea
           label="Observações adicionais"
@@ -105,35 +110,30 @@ function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
           label="Nota"
           placeholder="Dê sua nota"
           data-autofocus
-          withAsterisk={decision === 'Aprovar'}
-          disabled={decision !== 'Aprovar'}
+          withAsterisk={form.values.decision === 'Aprovar'}
+          disabled={form.values.decision !== 'Aprovar'}
+          key={form.key('grade')}
+          {...form.getInputProps('grade')}
         />
         <Radio.Group
-          name="Aprovar ou reprovar"
-          value={decision}
-          onChange={setDecision}
+          key={form.key('decision')}
+          value={form.values.decision}
+          {...form.getInputProps('decision')}
+          onChange={(value) => {
+            form.clearErrors();
+            form.setFieldValue('decision', value);
+          }}
         >
-          <Group mt="xs">
+          <Group mt="xs" mb="xs">
             <Radio value="Aprovar" label="Aprovar" />
             <Radio value="Reprovar" label="Reprovar" />
           </Group>
         </Radio.Group>
       </Stack>
       <Flex direction="row-reverse" gap="xs" ml="auto" mt="md">
-        <Tooltip
-          label={tooltipLabel}
-          disabled={!isSubmitDisabled}
-          position="top"
-        >
-          <Button
-            type="submit"
-            disabled={isSubmitDisabled}
-            loading={mutation.isPending}
-          >
-            Enviar
-          </Button>
-        </Tooltip>
-
+        <Button type="submit" loading={mutation.isPending}>
+          Enviar
+        </Button>
         <Button variant="default" fw="normal" onClick={close}>
           Cancelar
         </Button>
