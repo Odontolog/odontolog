@@ -22,7 +22,6 @@ export function getTratmentPlanOptions(treatmentPlanId: string) {
 export async function getTreatmentPlan(
   treatmentPlanId: string,
 ): Promise<TreatmentPlan> {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const token = await getAuthToken();
 
   const res = await fetch(

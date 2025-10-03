@@ -191,7 +191,6 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
               rightSection={<IconChevronDown />}
               className={styles.button}
               onClick={open}
-              // disabled={props.mode === 'read' || data.reviews.length === 0}
             >
               Validar
             </Button>
