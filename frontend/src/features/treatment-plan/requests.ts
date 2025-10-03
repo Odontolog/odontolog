@@ -126,7 +126,7 @@ export async function submitTreatmentPlanForReview(
   return { success: true };
 }
 
-export async function submitReviewForTreatmentPlan(
+export async function submitReviewForTreatmentPlanProcedure(
   treatmentPlanId: string,
   values: { note: string; decision: string | null },
 ) {
