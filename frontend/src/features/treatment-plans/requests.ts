@@ -1,8 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import { mockTreatmentPlans } from '@/mocks/treatment-plan';
 import { TreatmentPlan, TreatmentPlanShort } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
+import { mapToTreatmentPlanShort, TreatmentPlanShortDto } from './mappers';
 
 export function getPatientTratmentPlansOptions(patientId: string) {
   return queryOptions({
@@ -14,9 +14,24 @@ export function getPatientTratmentPlansOptions(patientId: string) {
 async function getPatientTratmentPlans(
   patientId: string,
 ): Promise<TreatmentPlanShort[]> {
-  console.log(`Fetching data for patient treatment plans ${patientId}`);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return mockTreatmentPlans;
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/treatment-plan`,
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao carregar planos de tratamento.`);
+  }
+
+  const data = (await res.json()) as TreatmentPlanShortDto[];
+  return data.map((dto) => mapToTreatmentPlanShort(dto));
 }
 
 export async function createPatientTreatmentPlan(patientId: string) {

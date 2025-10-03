@@ -12,11 +12,11 @@ import {
   Text,
   Timeline,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useMediaQuery } from '@mantine/hooks';
 
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
 import { TreatmentPlanShort } from '@/shared/models';
@@ -35,7 +35,7 @@ export default function TreatmentPlansSection({
   const router = useRouter();
   const options = getPatientTratmentPlansOptions(patientId);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     ...options,
   });
 
@@ -81,14 +81,25 @@ export default function TreatmentPlansSection({
       <Divider my="none" />
 
       <Card.Section inheritPadding px="md" py="sm" h="100%">
-        {isLoading || data === undefined ? (
+        {isError && (
+          <Center py="md" h="100%">
+            <Text fw={600} size="lg" c="dimmed">
+              Algo deu errado. Não foi possível carregar os planos de
+              tratamento.
+            </Text>
+          </Center>
+        )}
+
+        {(isLoading || !data) && (
           <Stack h="100%" gap="xs">
             <Skeleton height={120} radius="none" />
             <Skeleton height={120} radius="none" />
             <Skeleton height={120} radius="none" />
             <Skeleton height={120} radius="none" />
           </Stack>
-        ) : (
+        )}
+
+        {data && (
           <ScrollArea
             scrollbarSize={6}
             offsetScrollbars
