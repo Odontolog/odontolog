@@ -127,3 +127,10 @@ export async function submitTreatmentPlanForReview(
     );
   }
 }
+
+export async function submitReviewForTreatmentPlan(treatmentPlanId: string) {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  console.log(`Submitting review for plan ${treatmentPlanId}`);
+
+  return { success: true };
+}
