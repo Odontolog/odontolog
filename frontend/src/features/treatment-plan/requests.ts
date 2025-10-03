@@ -126,24 +126,9 @@ export async function submitTreatmentPlanForReview(
   return { success: true };
 }
 
-export async function submitReviewForTreatmentPlanProcedure(
-  treatmentPlanId: string,
-  values: { note: string; decision: string | null },
-) {
+export async function submitReviewForTreatmentPlan(treatmentPlanId: string) {
   await new Promise((resolve) => setTimeout(resolve, 500));
   console.log(`Submitting review for plan ${treatmentPlanId}`);
-
-  treatmentPlanMock.status = 'DONE';
-  treatmentPlanMock.history.push({
-    id: (treatmentPlanMock.history.length + 1).toString(),
-    type: values.decision === 'Aprovar' ? 'REVIEW_APPROVED' : 'REVIEW_REJECTED', // <- Depende do que foi selecionado no radio button
-    actor: loggedUser,
-    description: `Validação concedida pelo(a) supervisor(a) ${loggedUser.name}`,
-    createdAt: new Date(),
-    metadata: {
-      data: values.note,
-    },
-  });
 
   return { success: true };
 }

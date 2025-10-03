@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { submitReviewForTreatmentPlanProcedure } from './requests';
+import { submitReviewForTreatmentPlan } from './requests';
 import { useState } from 'react';
 
 interface ReviewModalProps {
@@ -30,12 +30,14 @@ export default function ReviewModal(props: ReviewModalProps) {
           <Modal.Header>
             <Stack gap="0" style={{ flex: 1 }}>
               <Group>
-                <Modal.Title fw="600">Validação de um procedimento</Modal.Title>
+                <Modal.Title fw="600">
+                  Validação do plano de tratamento
+                </Modal.Title>
                 <Modal.CloseButton />
               </Group>
               <Text size="sm" c="dimmed">
-                Escreva uma avaliação para o aluno que realizou o procedimento e
-                atribua uma nota.
+                Escreva uma avaliação para o aluno que criou o plano e atribua
+                uma nota.
               </Text>
             </Stack>
           </Modal.Header>
@@ -79,7 +81,7 @@ function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
 
   const mutation = useMutation({
     mutationFn: (values: { note: string; decision: string | null }) =>
-      submitReviewForTreatmentPlanProcedure(treatmentPlanId, values),
+      submitReviewForTreatmentPlan(treatmentPlanId, values),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ['treatmentPlan', treatmentPlanId],
