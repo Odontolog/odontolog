@@ -118,7 +118,7 @@ function getLastEmptyYear(
 }
 
 function TreatmentPlansContent({ data }: { data: TreatmentPlanShort[] }) {
-  const matches = useMediaQuery('(min-width: 56.25em)');
+  const matches = useMediaQuery('(max-width: 62em)');
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
