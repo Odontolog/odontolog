@@ -91,7 +91,12 @@ public class ReviewableControllerIntegrationTest {
     assertThat(activities.size()).isGreaterThan(0);
     var lastActivity = activities.get(activities.size() - 1);
     assertThat(lastActivity.getDescription())
-        .isEqualTo("Notes updated by user " + supervisor.getName());
+        .isEqualTo(
+            "Observações atualizadas por "
+                + supervisor.getName()
+                + " ("
+                + supervisor.getEmail()
+                + ")");
 
     var metadata = lastActivity.getMetadata();
 
@@ -121,6 +126,92 @@ public class ReviewableControllerIntegrationTest {
     assertThat(activities.size()).isGreaterThan(1);
     lastActivity = activities.get(activities.size() - 1);
     assertThat(lastActivity.getDescription())
-        .isEqualTo("Notes updated by user " + supervisor.getName());
+        .isEqualTo(
+            "Observações atualizadas por "
+                + supervisor.getName()
+                + " ("
+                + supervisor.getEmail()
+                + ")");
+  }
+
+  @Test
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
+  void updateReviewers_createsActivityForAddAndRemove() throws Exception {
+    var createBody = """
+      {"patientId":"%s"}
+      """.formatted(patient.getId());
+
+    String postJson =
+        mockMvc
+            .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(createBody))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    TreatmentPlanDTO created = objectMapper.readValue(postJson, TreatmentPlanDTO.class);
+
+    Supervisor supervisor2 =
+        supervisorRepository.save(
+            Supervisor.builder().name("supervisor 2").email("supervisor2@test.com").build());
+
+    // Adicionar 2 supervisores
+    var putBody1 = """
+      {"supervisorIds": ["%s"]}
+      """.formatted(supervisor.getId());
+
+    String putJson1 =
+        mockMvc
+            .perform(
+                org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(
+                        "/api/reviewables/" + created.getId() + "/reviewers")
+                    .contentType(APPLICATION_JSON)
+                    .content(putBody1))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    ReviewableDTO updated1 = objectMapper.readValue(putJson1, ReviewableDTO.class);
+    assertThat(updated1.getReviewers().size()).isEqualTo(1);
+
+    var activities1 = updated1.getHistory();
+    activities1.sort((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()));
+    var lastActivity1 = activities1.get(activities1.size() - 1);
+    assertThat(lastActivity1.getDescription()).contains("selecionado").contains("supervisor 1");
+
+    // Remover supervisores
+    var putBody2 = """
+      {"supervisorIds": ["%s"]}
+      """.formatted(supervisor2.getId());
+
+    String putJson2 =
+        mockMvc
+            .perform(
+                org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put(
+                        "/api/reviewables/" + created.getId() + "/reviewers")
+                    .contentType(APPLICATION_JSON)
+                    .content(putBody2))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    ReviewableDTO updated2 = objectMapper.readValue(putJson2, ReviewableDTO.class);
+    assertThat(updated2.getReviewers().size()).isEqualTo(1);
+
+    // Agora devem existir activities de adição e remoção
+    var activities2 = updated2.getHistory();
+    activities2.sort((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()));
+    var lastActivities = activities2.subList(activities2.size() - 2, activities2.size());
+
+    assertThat(lastActivities.get(0).getDescription())
+        .contains("removido")
+        .contains("supervisor 1");
+
+    assertThat(lastActivities.get(1).getDescription())
+        .contains("selecionado")
+        .contains("supervisor 2");
   }
 }

@@ -14,6 +14,7 @@ import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.ReviewSubmissionException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
+import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.Review;
 import br.ufal.ic.odontolog.models.Supervisor;
@@ -132,16 +133,16 @@ public class TreatmentPlanServiceUnitTest {
     TreatmentPlan savedPlan = treatmentPlanCaptor.getValue();
     assertThat(savedPlan.getStatus()).isEqualTo(TreatmentPlanStatus.IN_REVIEW);
     assertThat(savedPlan.getHistory()).isNotEmpty();
-    assertThat(savedPlan.getHistory().iterator().next().getDescription())
-        .contains(
-            "User %s (%s) submitted Treatment Plan (%s) for review%s"
-                .formatted(
-                    currentUser.getName(),
-                    currentUser.getId(),
-                    treatmentId,
-                    " without additional comments"));
-    assertThat(savedPlan.getHistory().iterator().next().getType())
+
+    Activity lastActivity = savedPlan.getHistory().iterator().next();
+    assertThat(lastActivity.getType())
         .isEqualTo(br.ufal.ic.odontolog.enums.ActivityType.REVIEW_REQUESTED);
+    assertThat(lastActivity.getDescription())
+        .contains(
+            "%s (%s) enviou Plano de Tratamento #%s para validação"
+                .formatted(
+                    currentUser.getName(), currentUser.getEmail(), savedPlan.getId(), treatmentId));
+    assertThat(lastActivity.getMetadata()).isNull();
 
     assertThat(savedPlan.getReviews()).isNotEmpty();
 
@@ -198,16 +199,17 @@ public class TreatmentPlanServiceUnitTest {
     TreatmentPlan savedPlan = treatmentPlanCaptor.getValue();
     assertThat(savedPlan.getStatus()).isEqualTo(TreatmentPlanStatus.IN_REVIEW);
     assertThat(savedPlan.getHistory()).isNotEmpty();
-    assertThat(savedPlan.getHistory().iterator().next().getDescription())
-        .contains(
-            "User %s (%s) submitted Treatment Plan (%s) for review%s"
-                .formatted(
-                    currentUser.getName(),
-                    currentUser.getId(),
-                    treatmentId,
-                    ", with additional comments: " + additionalComments));
-    assertThat(savedPlan.getHistory().iterator().next().getType())
+    Activity lastActivity = savedPlan.getHistory().iterator().next();
+    assertThat(lastActivity.getType())
         .isEqualTo(br.ufal.ic.odontolog.enums.ActivityType.REVIEW_REQUESTED);
+    assertThat(lastActivity.getDescription())
+        .contains(
+            "%s (%s) enviou Plano de Tratamento #%s para validação"
+                .formatted(
+                    currentUser.getName(), currentUser.getEmail(), savedPlan.getId(), treatmentId));
+    assertThat(lastActivity.getMetadata()).isNotNull();
+    assertThat(lastActivity.getMetadata()).containsKeys("data");
+
     assertThat(savedPlan.getReviews()).isNotEmpty();
 
     Review firstReview = savedPlan.getReviews().iterator().next();
