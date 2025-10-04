@@ -43,6 +43,7 @@ public class TreatmentPlanService {
     TreatmentPlan plan =
         TreatmentPlan.builder()
             .author(currentUser)
+            .name("Plano de Tratamento")
             .patient(patient)
             .assignee(currentUser)
             .type(ReviewableType.TREATMENT_PLAN)
