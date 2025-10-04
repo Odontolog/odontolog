@@ -1,31 +1,38 @@
 'use client';
 
-import { useState } from 'react';
 import {
-  Text,
-  Checkbox,
-  Button,
-  Stack,
-  Loader,
-  ScrollArea,
-  Menu,
   ActionIcon,
+  Box,
+  Button,
+  Center,
+  Checkbox,
+  Group,
+  Loader,
+  Menu,
+  ScrollArea,
+  Stack,
+  Text,
+  ThemeIcon,
 } from '@mantine/core';
+import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 import {
-  useQuery,
   useMutation,
+  useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { IconEdit } from '@tabler/icons-react';
+import { useState } from 'react';
 
+import { Reviewable } from '@/shared/models';
+import { SupervisorReviewStatus } from './models';
 import { getAvailableSupervisors, saveSupervisors } from './requests';
-import { Reviewable, Review } from '@/shared/models';
+
+const MENU_WIDTH = 260;
 
 interface SupervisorMenuProps<T extends Reviewable> {
   reviewableId: string;
   queryOptions: UseQueryOptions<T, Error, T, string[]>;
-  currentReviews: Review[];
+  supervisors: SupervisorReviewStatus[];
 }
 
 export default function SupervisorMenu<T extends Reviewable>(
@@ -61,18 +68,22 @@ interface SupervisorMenuContentProps<T extends Reviewable>
 function SupervisorMenuContent<T extends Reviewable>({
   reviewableId,
   queryOptions,
-  currentReviews,
+  supervisors,
   setMenuOpened,
 }: SupervisorMenuContentProps<T>) {
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const {
+    data: availableSupervisors,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['availableSupervisors'],
     queryFn: getAvailableSupervisors,
   });
 
   const [selectedIds, setSelectedIds] = useState<string[]>(
-    currentReviews.map((s) => s.supervisor.id),
+    supervisors.map((s) => s.id),
   );
 
   const mutation = useMutation({
@@ -86,36 +97,75 @@ function SupervisorMenuContent<T extends Reviewable>({
 
   if (isLoading) {
     return (
-      <Stack p="xs" gap="sm" w={180} align="center">
-        <Loader size="sm" />
-      </Stack>
+      <Center w={MENU_WIDTH} h={100}>
+        <Stack p="xs" gap="sm" w={180} align="center">
+          <Loader size="sm" />
+        </Stack>
+      </Center>
     );
   }
+
+  if (isError) {
+    return (
+      <Center w={MENU_WIDTH} h={100}>
+        <Stack align="center" gap="0">
+          <ThemeIcon variant="white" color="red">
+            <IconExclamationCircle size={24} />
+          </ThemeIcon>
+          <Text size="sm" c="red" py="none" ta="center">
+            Erro ao carregar supervisores
+          </Text>
+        </Stack>
+      </Center>
+    );
+  }
+
+  if (!availableSupervisors) {
+    return null;
+  }
+
+  if (availableSupervisors.length === 0) {
+    return (
+      <Center w={MENU_WIDTH} h={100}>
+        <Text size="sm" c="dimmed" ta="center">
+          Não há supervisores disponíveis
+        </Text>
+      </Center>
+    );
+  }
+
+  const options = availableSupervisors.map((sup) => (
+    <Checkbox.Card key={sup.id} value={sup.id} withBorder={false}>
+      <Group wrap="nowrap" align="center" gap="xs">
+        <Checkbox.Indicator size="sm" />
+        <Box>
+          <Text size="sm">{sup.name}</Text>
+          <Text size="xs" c="dimmed">
+            {sup.specialization}
+          </Text>
+        </Box>
+      </Group>
+    </Checkbox.Card>
+  ));
 
   return (
     <>
       <Menu.Label>
         <Text fw={600} size="sm">
-          Selecione supervisores
+          Selecione supervisores para revisão
         </Text>
       </Menu.Label>
-      <Stack p="xs" gap="sm" w={180}>
+      <Stack p="xs" gap="sm" w={MENU_WIDTH}>
         <ScrollArea.Autosize mah={150} scrollbars="y">
-          <Stack p="none" gap="xs">
-            {data?.map((sup) => (
-              <Checkbox
-                key={sup.id}
-                label={sup.name}
-                checked={selectedIds.includes(sup.id)}
-                onChange={(e) => {
-                  const newSelectedIds = e.currentTarget.checked
-                    ? [...selectedIds, sup.id]
-                    : selectedIds.filter((id) => id !== sup.id);
-                  setSelectedIds(newSelectedIds);
-                }}
-              />
-            ))}
-          </Stack>
+          <Checkbox.Group
+            p="none"
+            value={selectedIds}
+            onChange={setSelectedIds}
+          >
+            <Stack p="none" gap="xs">
+              {options}
+            </Stack>
+          </Checkbox.Group>
         </ScrollArea.Autosize>
         <Button
           size="xs"
