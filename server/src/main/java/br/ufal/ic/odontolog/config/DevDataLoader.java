@@ -56,6 +56,36 @@ public class DevDataLoader implements CommandLineRunner {
                 .photoUrl("some-url")
                 .build());
     logger.info("Student created: {}", studentTest001.getName());
+    
+    Student studentTest002 = 
+        studentRepository.save(
+            Student.builder()
+                .name("Student_Test_002")
+                .email("student.test.002@test.com")
+                .role(Role.STUDENT)
+                .password(passwordEncoder.encode("password1"))
+                .enrollmentSemester(1)
+                .enrollmentCode("20250916")
+                .enrollmentYear(2025)
+                .clinicNumber(1)
+                .photoUrl("some-url")
+                .build());
+    logger.info("Student created: {}", studentTest002.getName());
+    
+    Student studentTest003 = 
+        studentRepository.save(
+            Student.builder()
+                .name("Student_Test_003")
+                .email("student.test.003@test.com")
+                .role(Role.STUDENT)
+                .password(passwordEncoder.encode("password1"))
+                .enrollmentSemester(1)
+                .enrollmentCode("20250915")
+                .enrollmentYear(2025)
+                .clinicNumber(1)
+                .photoUrl("some-url")
+                .build());
+    logger.info("Student created: {}", studentTest003.getName());
 
     Supervisor supervisorTest001 =
         supervisorRepository.save(
@@ -105,7 +135,7 @@ public class DevDataLoader implements CommandLineRunner {
     TreatmentPlan treatmentPlanTest001 =
         treatmentPlanRepository.save(
             TreatmentPlan.builder()
-                .name("Treatment_Plan_Test_001")
+                .name("Plano de Tratamento")
                 .patient(patientTest001)
                 .status(TreatmentPlanStatus.DRAFT)
                 .author(studentTest001)

@@ -1,24 +1,39 @@
-import { students } from '@/mocks/students';
-import { updateAssignee } from '@/mocks/treatment-plan';
 import { Supervisor, User } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 
 export async function getAvailableUsers(): Promise<User[]> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return students;
-}
+  const token = await getAuthToken();
 
-export async function saveAssignee(id: string, selectedAssigneeId: string) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log('Saved to backend (mock):', { id, selectedAssigneeId });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/students`, {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
-  const assignee = students.find((s) => s.id === selectedAssigneeId);
-
-  if (!assignee) {
-    throw new Error('User not found.');
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao carregar alunos.`);
   }
 
-  updateAssignee(assignee);
+  return (await res.json()) as User[];
+}
+
+export async function saveAssignee(reviewableId: string, assigneeId: string) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/${reviewableId}/assignee`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ userId: assigneeId }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao salvar encarregado.`);
+  }
 
   return { success: true };
 }

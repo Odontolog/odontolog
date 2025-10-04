@@ -249,9 +249,8 @@ public class ReviewableService {
     StringBuilder descriptionBuilder = new StringBuilder();
     descriptionBuilder.append(
         String.format(
-            "User %s (%s) assigned to %s (%s) by user %s (%s)",
+            "%s atribuído a %s #%s por %s",
             assignee.getName(),
-            assignee.getId(),
             reviewable.getName(),
             reviewable.getId(),
             currentUser.getName(),
