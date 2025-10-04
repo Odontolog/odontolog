@@ -56,8 +56,8 @@ public class DevDataLoader implements CommandLineRunner {
                 .photoUrl("some-url")
                 .build());
     logger.info("Student created: {}", studentTest001.getName());
-    
-    Student studentTest002 = 
+
+    Student studentTest002 =
         studentRepository.save(
             Student.builder()
                 .name("Student_Test_002")
@@ -71,8 +71,8 @@ public class DevDataLoader implements CommandLineRunner {
                 .photoUrl("some-url")
                 .build());
     logger.info("Student created: {}", studentTest002.getName());
-    
-    Student studentTest003 = 
+
+    Student studentTest003 =
         studentRepository.save(
             Student.builder()
                 .name("Student_Test_003")
@@ -114,6 +114,19 @@ public class DevDataLoader implements CommandLineRunner {
                 .photoUrl("some-url")
                 .build());
     logger.info("Supervisor created: {}", supervisorTest002.getName());
+
+    Supervisor supervisorTest003 =
+        supervisorRepository.save(
+            Supervisor.builder()
+                .name("Supervisor_Test_003")
+                .email("supervisor.test.003@test.com")
+                .role(Role.SUPERVISOR)
+                .password(passwordEncoder.encode("password2"))
+                .specialization("Dentistics")
+                .siape("20250832")
+                .photoUrl("some-url")
+                .build());
+    logger.info("Supervisor created: {}", supervisorTest003.getName());
 
     Patient patientTest001 =
         patientRepository.save(
@@ -215,7 +228,7 @@ public class DevDataLoader implements CommandLineRunner {
 
     Activity activityTest001 =
         Activity.builder()
-            .description("Created Treatment Plan")
+            .description("Plano de tratamento criado")
             .reviewable(treatmentPlanTest001)
             .actor(studentTest001)
             .type(ActivityType.CREATED)

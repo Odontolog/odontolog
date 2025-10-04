@@ -171,6 +171,7 @@ public class ReviewableService {
           "The following supervisor IDs do not exist: " + invalidIds);
     }
 
+    addActivitiesForSupervisorUpdate(reviewable, supervisors);
     reviewable.setReviewers(supervisors);
     reviewableRepository.save(reviewable);
 
@@ -187,16 +188,23 @@ public class ReviewableService {
     String oldNotes = reviewable.getNotes();
     reviewable.setNotes(newNotes);
 
-    Activity activity = new Activity();
     User currentUser = currentUserProvider.getCurrentUser();
-    activity.setType(ActivityType.EDITED);
-    activity.setActor(currentUser);
-    activity.setReviewable(reviewable);
-    activity.setDescription(String.format("Notes updated by user %s", currentUser.getName()));
+
     HashMap<String, Object> metadata = new HashMap<>();
     metadata.put("data", newNotes);
     metadata.put("oldData", oldNotes);
-    activity.setMetadata(metadata);
+
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .description(
+                String.format(
+                    "Observações atualizadas por %s (%s)",
+                    currentUser.getName(), currentUser.getEmail()))
+            .reviewable(reviewable)
+            .metadata(metadata)
+            .build();
     reviewable.getHistory().add(activity);
 
     reviewableRepository.save(reviewable);
@@ -249,7 +257,7 @@ public class ReviewableService {
     StringBuilder descriptionBuilder = new StringBuilder();
     descriptionBuilder.append(
         String.format(
-            "%s atribuído a %s #%s por %s",
+            "%s atribuído a %s #%s por %s (%s)",
             assignee.getName(),
             reviewable.getName(),
             reviewable.getId(),
@@ -257,5 +265,65 @@ public class ReviewableService {
             currentUser.getEmail()));
 
     return descriptionBuilder.toString();
+  }
+
+  private void addActivitiesForSupervisorUpdate(
+      Reviewable reviewable, Set<Supervisor> newSupervisors) {
+    User currentUser = currentUserProvider.getCurrentUser();
+    Set<Supervisor> currentSupervisors = new HashSet<>(reviewable.getReviewers());
+
+    Set<Supervisor> added = new HashSet<>(newSupervisors);
+    added.removeAll(currentSupervisors);
+
+    Set<Supervisor> removed = new HashSet<>(currentSupervisors);
+    removed.removeAll(newSupervisors);
+
+    if (!added.isEmpty()) {
+      Activity addedActivity =
+          Activity.builder()
+              .actor(currentUser)
+              .type(ActivityType.EDITED)
+              .description(buildSupervisorsAddedDescription(currentUser, reviewable, added))
+              .reviewable(reviewable)
+              .build();
+      reviewable.getHistory().add(addedActivity);
+    }
+
+    if (!removed.isEmpty()) {
+      Activity removedActivity =
+          Activity.builder()
+              .actor(currentUser)
+              .type(ActivityType.EDITED)
+              .description(buildSupervisorsRemovedDescription(currentUser, reviewable, removed))
+              .reviewable(reviewable)
+              .build();
+      reviewable.getHistory().add(removedActivity);
+    }
+  }
+
+  private String buildSupervisorsAddedDescription(
+      User currentUser, Reviewable reviewable, Set<Supervisor> added) {
+    String names = added.stream().map(Supervisor::getName).collect(Collectors.joining(", "));
+    return String.format(
+        "%s selecionado%s para validação de %s #%s por %s (%s)",
+        names,
+        added.size() > 1 ? "s" : "",
+        reviewable.getName(),
+        reviewable.getId(),
+        currentUser.getName(),
+        currentUser.getEmail());
+  }
+
+  private String buildSupervisorsRemovedDescription(
+      User currentUser, Reviewable reviewable, Set<Supervisor> removed) {
+    String names = removed.stream().map(Supervisor::getName).collect(Collectors.joining(", "));
+    return String.format(
+        "%s removido%s da validação de %s #%s por %s (%s)",
+        names,
+        removed.size() > 1 ? "s" : "",
+        reviewable.getName(),
+        reviewable.getId(),
+        currentUser.getName(),
+        currentUser.getEmail());
   }
 }
