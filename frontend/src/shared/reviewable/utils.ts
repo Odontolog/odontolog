@@ -8,7 +8,7 @@ export function getSupervisorReviewStatus(
   return reviewers.map((reviewer) => {
     const lastReview = reviews
       .filter((review) => review.supervisor.id === reviewer.id)
-      .sort((a, b) => b.id.localeCompare(a.id)) // TODO: Melhorar forma de pegar a review mais recente
+      .sort((a, b) => +b.id - +a.id) // TODO: Melhorar forma de pegar a review mais recente
       .at(0);
 
     return {
