@@ -28,11 +28,14 @@ public abstract class Procedure extends Reviewable {
   @Enumerated(EnumType.STRING)
   private ProcedureStatus status;
 
-  @Transient
-  private ProcedureState state;
+  @Transient private ProcedureState state;
 
-  @ManyToMany(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
-  @JoinTable(name = "procedures_attachments", joinColumns = @JoinColumn(name = "procedure_id"), inverseJoinColumns = @JoinColumn(name = "attachment_id"))
+  @ManyToMany(
+      cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinTable(
+      name = "procedures_attachments",
+      joinColumns = @JoinColumn(name = "procedure_id"),
+      inverseJoinColumns = @JoinColumn(name = "attachment_id"))
   private final Set<Attachment> attachments = new java.util.HashSet<>();
 
   // TODO: Improve this, mapping the study sector to a enum.
@@ -42,8 +45,7 @@ public abstract class Procedure extends Reviewable {
   // TODO: Use ElementCollection instead of this.
   private final Set<String> teeth = new HashSet<>();
 
-  @Embedded
-  private ProcedureDetail procedureDetail;
+  @Embedded private ProcedureDetail procedureDetail;
 
   public void addTooth(String tooth) {
     this.teeth.add(tooth);

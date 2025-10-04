@@ -9,8 +9,8 @@ import static org.mockito.Mockito.*;
 import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
@@ -44,26 +44,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewableServiceUnitTest {
-  @Mock
-  private ReviewableRepository reviewableRepository;
+  @Mock private ReviewableRepository reviewableRepository;
 
-  @Mock
-  private SupervisorRepository supervisorRepository;
+  @Mock private SupervisorRepository supervisorRepository;
 
-  @Mock
-  private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-  @Mock
-  private ReviewableMapper reviewableMapper;
+  @Mock private ReviewableMapper reviewableMapper;
 
-  @Mock
-  private ActivityMapper activityMapper;
+  @Mock private ActivityMapper activityMapper;
 
-  @Mock
-  private CurrentUserProvider currentUserProvider;
+  @Mock private CurrentUserProvider currentUserProvider;
 
-  @InjectMocks
-  private ReviewableService reviewableService;
+  @InjectMocks private ReviewableService reviewableService;
 
   @SuppressWarnings("unchecked")
   @Test
@@ -94,7 +87,8 @@ public class ReviewableServiceUnitTest {
 
     // Act
 
-    Page<ReviewableShortDTO> result = reviewableService.findForCurrentSupervisor(pageable, mockUserDetails, filter);
+    Page<ReviewableShortDTO> result =
+        reviewableService.findForCurrentSupervisor(pageable, mockUserDetails, filter);
 
     // Assert
 
@@ -212,14 +206,15 @@ public class ReviewableServiceUnitTest {
     assertThat(activity.getActor()).isEqualTo(currentUser);
     assertThat(activity.getType()).isEqualTo(ActivityType.EDITED);
 
-    String expectedDescription = String.format(
-        "User %s (%s) assigned to %s (%s) by user %s (%s)",
-        assignee.getName(),
-        assignee.getId(),
-        reviewable.getName(),
-        reviewable.getId(),
-        currentUser.getName(),
-        currentUser.getEmail());
+    String expectedDescription =
+        String.format(
+            "User %s (%s) assigned to %s (%s) by user %s (%s)",
+            assignee.getName(),
+            assignee.getId(),
+            reviewable.getName(),
+            reviewable.getId(),
+            currentUser.getName(),
+            currentUser.getEmail());
     assertThat(activity.getDescription()).isEqualTo(expectedDescription);
 
     verify(reviewableRepository, times(1)).findById(reviewableId);
