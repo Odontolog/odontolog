@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
@@ -42,7 +43,7 @@ public class ReviewableService {
   private final TreatmentPlanService treatmentPlanService;
 
   @Transactional(readOnly = true)
-  public Page<ReviewableDTO> findForCurrentSupervisor(
+  public Page<ReviewableShortDTO> findForCurrentSupervisor(
       Pageable pageable,
       UserDetails currentUserDetails,
       ReviewableCurrentSupervisorFilterDTO filter) {
@@ -65,7 +66,7 @@ public class ReviewableService {
     }
 
     Page<Reviewable> page = reviewableRepository.findAll(spec, pageable);
-    Page<ReviewableDTO> dtoPage = page.map(reviewableMapper::toDTO);
+    Page<ReviewableShortDTO> dtoPage = page.map(reviewableMapper::toShortDTO);
 
     return dtoPage;
   }

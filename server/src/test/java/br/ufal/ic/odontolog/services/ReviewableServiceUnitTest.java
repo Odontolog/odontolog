@@ -10,6 +10,7 @@ import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
@@ -79,15 +80,14 @@ public class ReviewableServiceUnitTest {
     when(reviewableRepository.findAll(any(Specification.class), eq(pageable)))
         .thenReturn(mockPageOfReviewables);
 
-    ReviewableDTO reviewableDTO = new ReviewableDTO();
-    reviewableDTO.setId(reviewableEntity.getId());
-    when(reviewableMapper.toDTO(reviewableEntity)).thenReturn(reviewableDTO);
+    ReviewableShortDTO reviewableShortDTO = new ReviewableShortDTO();
+    when(reviewableMapper.toShortDTO(reviewableEntity)).thenReturn(reviewableShortDTO);
 
     ReviewableCurrentSupervisorFilterDTO filter = new ReviewableCurrentSupervisorFilterDTO();
 
     // Act
 
-    Page<ReviewableDTO> result =
+    Page<ReviewableShortDTO> result =
         reviewableService.findForCurrentSupervisor(pageable, mockUserDetails, filter);
 
     // Assert
@@ -95,11 +95,10 @@ public class ReviewableServiceUnitTest {
     assertThat(result).isNotNull();
     assertThat(result.getTotalElements()).isEqualTo(1);
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0).getId()).isEqualTo(reviewableEntity.getId());
 
     verify(supervisorRepository, times(1)).findByEmail("testsupervisor@test.com");
     verify(reviewableRepository, times(1)).findAll(any(Specification.class), eq(pageable));
-    verify(reviewableMapper, times(1)).toDTO(reviewableEntity);
+    verify(reviewableMapper, times(1)).toShortDTO(reviewableEntity);
   }
 
   @Test

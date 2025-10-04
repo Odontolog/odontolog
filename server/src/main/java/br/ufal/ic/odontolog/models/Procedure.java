@@ -51,6 +51,8 @@ public abstract class Procedure extends Reviewable {
     this.teeth.add(tooth);
   }
 
+  public abstract String getProcedureType();
+
   public ProcedureState getState() {
     switch (this.status) {
       case DRAFT:
