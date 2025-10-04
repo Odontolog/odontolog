@@ -26,4 +26,5 @@ public class ProcedureShortDTO {
   private String notes;
   private String type;
   private String procedureType;
+  private Boolean deleted;
 }

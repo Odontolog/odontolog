@@ -2,10 +2,12 @@ package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.api.TreatmentPlanApi;
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.ProcedureUpsertDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.services.TreatmentPlanService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -49,5 +51,27 @@ public class TreatmentPlanController implements TreatmentPlanApi {
   @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
   public List<TreatmentPlanShortDTO> getTreatmentPlansByPatient(@PathVariable Long patientId) {
     return treatmentPlanService.getTreatmentPlansByPatientId(patientId);
+  }
+
+  @PostMapping("/treatment-plan/{treatmentId}/procedures")
+  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  public TreatmentPlanDTO addProcedure(
+      @PathVariable Long treatmentId, @Valid @RequestBody ProcedureUpsertDTO dto) {
+    return treatmentPlanService.addProcedureToTreatmentPlan(treatmentId, dto);
+  }
+
+  @PutMapping("/treatment-plan/{treatmentId}/procedures/{procedureId}")
+  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  public TreatmentPlanDTO updateProcedure(
+      @PathVariable Long treatmentId,
+      @PathVariable Long procedureId,
+      @Valid @RequestBody ProcedureUpsertDTO dto) {
+    return treatmentPlanService.updateProcedureInTreatmentPlan(treatmentId, procedureId, dto);
+  }
+
+  @DeleteMapping("/treatment-plan/{treatmentId}/procedures/{procedureId}")
+  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  public void removeProcedure(@PathVariable Long treatmentId, @PathVariable Long procedureId) {
+    treatmentPlanService.removeProcedureFromTreatmentPlan(treatmentId, procedureId);
   }
 }

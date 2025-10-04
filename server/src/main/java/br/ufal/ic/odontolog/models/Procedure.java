@@ -19,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "procedures")
 public abstract class Procedure extends Reviewable {
-  private Integer planned_session;
+  private Integer plannedSession;
 
   @ManyToOne
   @JoinColumn(name = "patient_id", nullable = false)
