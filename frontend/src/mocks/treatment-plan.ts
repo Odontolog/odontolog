@@ -6,6 +6,7 @@ import {
   Activity,
   ProcedureShort,
   TreatmentPlanShort,
+  Procedure,
 } from '@/shared/models';
 
 // Usuários
@@ -90,9 +91,9 @@ const history: Activity[] = [
 ];
 
 // Procedimentos curtos
-export const procedures: ProcedureShort[] = [
+export const proceduresShort: ProcedureShort[] = [
   {
-    id: '1',
+    id: '2',
     status: 'IN_REVIEW',
     name: 'Obturação',
     studySector: 'Endodontia',
@@ -107,7 +108,7 @@ export const procedures: ProcedureShort[] = [
     type: 'PROCEDURE',
   },
   {
-    id: '2',
+    id: '3',
     status: 'NOT_STARTED',
     name: 'Extração',
     studySector: 'Cirurgia',
@@ -122,7 +123,7 @@ export const procedures: ProcedureShort[] = [
     type: 'PROCEDURE',
   },
   {
-    id: '3',
+    id: '4',
     status: 'DONE',
     name: 'Limpeza',
     studySector: 'Periodontia',
@@ -135,6 +136,100 @@ export const procedures: ProcedureShort[] = [
     notes: 'Limpeza realizada sem intercorrências.',
     procedureType: 'TREATMENT_PLAN_PROCEDURE',
     type: 'PROCEDURE',
+  },
+];
+
+export const procedures: Procedure[] = [
+  {
+    id: '2',
+    status: 'IN_REVIEW',
+    name: 'Obturação',
+    studySector: 'Endodontia',
+    assignee: student,
+    patient,
+    teeth: ['12'],
+    updatedAt: new Date('2025-09-05T13:00:00Z'),
+    reviews,
+    notes: 'Revisar técnica de isolamento.',
+    procedureType: 'PRE_PROCEDURE',
+    type: 'PROCEDURE',
+    author: student,
+    createdAt: new Date('2025-09-05T11:00:00Z'),
+    details: {
+      diagnostic:
+        'Cárie profunda em dente 16 (primeiro molar superior direito) com necessidade de tratamento endodôntico. Presença de sensibilidade ao frio e dor espontânea. Radiografia periapical revela radiolucidez próxima à polpa.',
+    },
+    history: [],
+    treatmentPlanId: '1',
+    attachments: [
+      {
+        id: '1',
+        location: 'radiografia-q2.png',
+        filename: 'radiografia-q2.png',
+        uploader: student,
+        size: '1,1 Mb',
+      },
+      {
+        id: '2',
+        location: 'radiografia-q2.png',
+        filename: 'radiografia-q2.png',
+        uploader: student,
+        size: '1,1 Mb',
+      },
+      {
+        id: '3',
+        location: 'radiografia-q2.png',
+        filename: 'radiografia-q2.png',
+        uploader: student,
+        size: '1,1 Mb',
+      },
+    ],
+  },
+  {
+    id: '3',
+    status: 'NOT_STARTED',
+    name: 'Extração',
+    studySector: 'Cirurgia',
+    assignee: student,
+    patient,
+    teeth: ['14'],
+    updatedAt: new Date('2025-09-07T16:30:00Z'),
+    reviews: [],
+    notes: 'Aguardando autorização do paciente.',
+    procedureType: 'TRATMENT_PLAN_PROCEDURE',
+    type: 'PROCEDURE',
+    author: student,
+    details: {
+      diagnostic:
+        'Dente 14 com cárie extensa e comprometimento estrutural severo. Indicação de extração por impossibilidade de restauração conservadora.',
+    },
+    history: [],
+    treatmentPlanId: '1',
+    attachments: [],
+    createdAt: new Date('2025-09-07T16:02:00Z'),
+  },
+  {
+    id: '4',
+    status: 'DONE',
+    name: 'Limpeza',
+    studySector: 'Periodontia',
+    assignee: student,
+    patient,
+    teeth: ['11', '12', '13'],
+    updatedAt: new Date('2025-09-08T11:00:00Z'),
+    reviews: [],
+    notes: 'Limpeza realizada sem intercorrências.',
+    procedureType: 'TRATMENT_PLAN_PROCEDURE',
+    type: 'PROCEDURE',
+    author: student,
+    createdAt: new Date('2025-09-08T10:00:00Z'),
+    details: {
+      diagnostic:
+        'Profilaxia e raspagem supragengival nos dentes anteriores superiores. Remoção de placa bacteriana e cálculo dental.',
+    },
+    history: [],
+    treatmentPlanId: '1',
+    attachments: [],
   },
 ];
 
@@ -151,7 +246,7 @@ export const treatmentPlanMock: TreatmentPlan = {
   history,
   type: 'TREATMENT_PLAN',
   status: 'DRAFT',
-  procedures,
+  procedures: proceduresShort,
 };
 
 export const mockTreatmentPlans: TreatmentPlanShort[] = [

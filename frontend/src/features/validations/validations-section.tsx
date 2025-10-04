@@ -81,16 +81,20 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
-  function onReviewableSelect(reviewableId: string, patientId: string) {
+  function onReviewableSelect(
+    reviewableId: string,
+    patientId: string,
+    type: string,
+  ) {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('active', reviewableId);
+    newParams.set('type', type);
 
-    // Check if we're on mobile (below 'md' breakpoint)
-    // TODO: Depois checar se é treatment-plan ou procedure e mandar para rota correta
     if (matches) {
-      router.push(`/patients/${patientId}/treatments/${reviewableId}`);
-    } else {
       router.push(`?${newParams.toString()}`, { scroll: false });
+    } else {
+      const basePath = type === 'TREATMENT_PLAN' ? 'treatments' : 'procedures';
+      router.push(`/patients/${patientId}/${basePath}/${reviewableId}`);
     }
   }
 
@@ -116,7 +120,9 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
               key={index}
               procedure={rev}
               selected={rev.id === active?.toString()}
-              onSelect={() => onReviewableSelect(rev.id, rev.patient.id)}
+              onSelect={() =>
+                onReviewableSelect(rev.id, rev.patient.id, rev.type)
+              }
               disableSession
             />
           );
@@ -127,7 +133,9 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
               key={index}
               treatmentPlan={rev}
               selected={rev.id === active?.toString()}
-              onSelect={() => onReviewableSelect(rev.id, rev.patient.id)}
+              onSelect={() =>
+                onReviewableSelect(rev.id, rev.patient.id, rev.type)
+              }
             />
           );
         }
