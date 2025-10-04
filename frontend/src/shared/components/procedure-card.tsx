@@ -133,9 +133,9 @@ export default function ProcedureCard(props: ProcedureCardProps) {
       bd={borderColor}
       onClick={() => onSelect?.(procedure.id)}
     >
-      <Group gap={0}>
+      <Flex gap={0}>
         {disableSession === false && (
-          <Group p="lg" gap={4} miw={82} justify="center">
+          <Group p="lg" gap={4} miw={82} className={styles.sessionSection}>
             <IconCalendarClock size={20} color="gray" />
             <Text size="md" c="dimmed">
               {procedure.plannedSession}
@@ -171,6 +171,12 @@ export default function ProcedureCard(props: ProcedureCardProps) {
           )}
 
           <Flex gap="md" rowGap={0} direction="row" wrap="wrap">
+            <CardInfo
+              key="plannedSession-card-info"
+              text={procedure.plannedSession}
+              icon={IconCalendarClock}
+              className={styles.sessionCardInfo}
+            />
             {fields.map((field, index) => (
               <CardInfo
                 key={index}
@@ -179,7 +185,7 @@ export default function ProcedureCard(props: ProcedureCardProps) {
             ))}
           </Flex>
         </Stack>
-      </Group>
+      </Flex>
     </Card>
   );
 }

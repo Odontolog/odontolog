@@ -61,7 +61,7 @@ export default function TreatmentPlansSection({
   }
 
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
+    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
           <Text fw={600} size="lg">
