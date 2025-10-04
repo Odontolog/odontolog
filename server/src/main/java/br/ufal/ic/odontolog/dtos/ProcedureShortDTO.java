@@ -6,13 +6,15 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProcedureShortDTO {
+public class ProcedureShortDTO extends ReviewableShortDTO {
   private Long id;
   private ProcedureStatus status;
   private String name;
