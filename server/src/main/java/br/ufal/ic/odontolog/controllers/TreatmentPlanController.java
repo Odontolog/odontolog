@@ -2,7 +2,6 @@ package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.api.TreatmentPlanApi;
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
-import br.ufal.ic.odontolog.dtos.TreatmentPlanAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
@@ -34,16 +33,6 @@ public class TreatmentPlanController implements TreatmentPlanApi {
   @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
   public TreatmentPlanDTO getTreatmentPlan(@PathVariable Long treatmentId) {
     return treatmentPlanService.getTreatmentPlanById(treatmentId);
-  }
-
-  @PostMapping("/treatment-plan/{treatmentId}/assignee")
-  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
-  public ResponseEntity<TreatmentPlanDTO> assignUserToTreatmentPlan(
-      @RequestBody TreatmentPlanAssignUserRequestDTO requestDTO, @PathVariable Long treatmentId) {
-    TreatmentPlanDTO updatedTreatmentPlan =
-        treatmentPlanService.assignUserToTreatmentPlan(requestDTO, treatmentId);
-
-    return ResponseEntity.ok(updatedTreatmentPlan);
   }
 
   @PostMapping("/{treatment_id}/submit-for-review")

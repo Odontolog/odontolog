@@ -1,6 +1,7 @@
 package br.ufal.ic.odontolog.services;
 
 import br.ufal.ic.odontolog.dtos.ActivityDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
@@ -13,6 +14,7 @@ import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
+import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
 import java.util.HashMap;
@@ -34,9 +36,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewableService {
   private final ReviewableRepository reviewableRepository;
   private final SupervisorRepository supervisorRepository;
+  private final UserRepository userRepository;
   private final ReviewableMapper reviewableMapper;
   private final CurrentUserProvider currentUserProvider;
   private final ActivityMapper activityMapper;
+  private final TreatmentPlanService treatmentPlanService;
 
   @Transactional(readOnly = true)
   public Page<ReviewableShortDTO> findForCurrentSupervisor(
@@ -209,5 +213,51 @@ public class ReviewableService {
             .orElseThrow(() -> new ResourceNotFoundException("Reviewable not found"));
 
     return activityMapper.toDTOs(reviewable.getHistory());
+  }
+
+  @Transactional
+  public ReviewableDTO assignUserToReviewable(
+      ReviewableAssignUserRequestDTO requestDTO, Long reviewableId) {
+    User currentUser = currentUserProvider.getCurrentUser();
+
+    User user =
+        userRepository
+            .findById(requestDTO.getUserId())
+            .orElseThrow(() -> new UnprocessableRequestException("Provided User not found"));
+
+    Reviewable reviewable =
+        reviewableRepository
+            .findById(reviewableId)
+            .orElseThrow(() -> new ResourceNotFoundException("Reviewable not found"));
+
+    reviewable.assignUser(user);
+
+    String description = buildAssignDescription(currentUser, reviewable, user);
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .description(description)
+            .reviewable(reviewable)
+            .build();
+    reviewable.getHistory().add(activity);
+    reviewableRepository.save(reviewable);
+
+    return reviewableMapper.toDTO(reviewable);
+  }
+
+  private String buildAssignDescription(User currentUser, Reviewable reviewable, User assignee) {
+    StringBuilder descriptionBuilder = new StringBuilder();
+    descriptionBuilder.append(
+        String.format(
+            "User %s (%s) assigned to %s (%s) by user %s (%s)",
+            assignee.getName(),
+            assignee.getId(),
+            reviewable.getName(),
+            reviewable.getId(),
+            currentUser.getName(),
+            currentUser.getEmail()));
+
+    return descriptionBuilder.toString();
   }
 }

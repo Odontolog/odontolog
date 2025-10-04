@@ -1,7 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 
-import { loggedUser } from '@/mocks/students';
 import {
   addProcedure,
   patient,
@@ -108,20 +107,30 @@ export async function submitTreatmentPlanForReview(
   treatmentPlanId: string,
   note: string,
 ) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log(`Submitting treatment plan ${treatmentPlanId} for review`);
+  const token = await getAuthToken();
 
-  treatmentPlanMock.status = 'IN_REVIEW';
-  treatmentPlanMock.history.push({
-    id: (treatmentPlanMock.history.length + 1).toString(),
-    type: 'REVIEW_REQUESTED',
-    actor: loggedUser,
-    description: 'Solicitação de validação enviada para o(s) supervisor(es).',
-    createdAt: new Date(),
-    metadata: {
-      data: note,
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}/submit-for-review`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ note }),
     },
-  });
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro ao submeter plano de tratamento para validação.`,
+    );
+  }
+}
+
+export async function submitReviewForTreatmentPlan(treatmentPlanId: string) {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  console.log(`Submitting review for plan ${treatmentPlanId}`);
 
   return { success: true };
 }

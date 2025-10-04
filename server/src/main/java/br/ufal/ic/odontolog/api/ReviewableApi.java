@@ -1,6 +1,7 @@
 package br.ufal.ic.odontolog.api;
 
 import br.ufal.ic.odontolog.dtos.ActivityDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Reviewables", description = "Endpoints for managing reviewable items")
 @SecurityRequirement(name = "bearerAuth")
@@ -127,4 +129,30 @@ public interface ReviewableApi {
         @ApiResponse(responseCode = "404", description = "Reviewable item not found."),
       })
   public ResponseEntity<List<ActivityDTO>> getReviewableHistory(Long reviewableId);
+
+  @Operation(
+      summary = "Assign user to reviewable",
+      description =
+          """
+            Assigns a user to a specific reviewable.
+
+            Preconditions:
+            - (Treatment Plan) The treatment plan must be in the 'DRAFT' state.
+            - (Procedure) The procedure must be in the 'NOT STARTED' state.
+            - The reviewable must exist in the system.
+            - The user must exist in the system.
+
+            Postconditions:
+            - The reviewable will be assigned to the specified user.""")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "User assigned successfully."),
+        @ApiResponse(responseCode = "422", description = "Invalid request."),
+        @ApiResponse(responseCode = "404", description = "Reviewable not found."),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Reviewable is not in a state that allows user assignment.")
+      })
+  public ResponseEntity<ReviewableDTO> assignUserToReviewable(
+      @RequestBody ReviewableAssignUserRequestDTO requestDTO, @Parameter Long reviewableId);
 }
