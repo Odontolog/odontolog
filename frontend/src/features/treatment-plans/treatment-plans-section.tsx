@@ -177,14 +177,16 @@ function TreatmentPlansContent({ data }: { data: TreatmentPlanShort[] }) {
         .map(([year, plans]) => (
           <Timeline.Item key={year} title={year}>
             <Stack gap="sm" my="xs">
-              {plans.map((tp) => (
-                <TreatmentPlanCard
-                  key={tp.id}
-                  treatmentPlan={tp}
-                  selected={tp.id === active?.toString()}
-                  onSelect={() => onTreatmentPlanSelect(tp.id, tp.patient.id)}
-                />
-              ))}
+              {plans
+                .sort((a, b) => +b.updatedAt - +a.updatedAt)
+                .map((tp) => (
+                  <TreatmentPlanCard
+                    key={tp.id}
+                    treatmentPlan={tp}
+                    selected={tp.id === active?.toString()}
+                    onSelect={() => onTreatmentPlanSelect(tp.id, tp.patient.id)}
+                  />
+                ))}
             </Stack>
           </Timeline.Item>
         ))}
