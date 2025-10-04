@@ -49,7 +49,7 @@ export type ActivityType =
   | 'COMPLETED';
 
 export type Activity = {
-  id: string;
+  id: number;
   type: ActivityType;
   actor: User;
   description: string;

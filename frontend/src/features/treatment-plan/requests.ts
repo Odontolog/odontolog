@@ -9,6 +9,7 @@ import {
 } from '@/mocks/treatment-plan';
 import { TreatmentPlan } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
+import { mapToTreatmentPlan, TreatmentPlanDto } from './mappers';
 import { ProcedureFormValues } from './models';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
@@ -37,8 +38,8 @@ export async function getTreatmentPlan(
   } else if (res.status >= 400) {
     notFound();
   }
-
-  return (await res.json()) as TreatmentPlan;
+  const data = (await res.json()) as TreatmentPlanDto;
+  return mapToTreatmentPlan(data);
 }
 
 export async function editTreatmentPlanProcedure(
