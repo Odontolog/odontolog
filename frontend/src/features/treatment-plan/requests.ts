@@ -106,7 +106,7 @@ export async function createTreatmentPlanProcedure(
 
 export async function submitTreatmentPlanForReview(
   treatmentPlanId: string,
-  note: string,
+  comments: string,
 ) {
   const token = await getAuthToken();
 
@@ -118,7 +118,7 @@ export async function submitTreatmentPlanForReview(
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ note }),
+      body: JSON.stringify({ comments }),
     },
   );
 
