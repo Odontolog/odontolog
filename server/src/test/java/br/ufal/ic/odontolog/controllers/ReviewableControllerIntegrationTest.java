@@ -1,10 +1,13 @@
 package br.ufal.ic.odontolog.controllers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.models.Patient;
@@ -12,6 +15,8 @@ import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,17 +206,21 @@ public class ReviewableControllerIntegrationTest {
     ReviewableDTO updated2 = objectMapper.readValue(putJson2, ReviewableDTO.class);
     assertThat(updated2.getReviewers().size()).isEqualTo(1);
 
-    // Agora devem existir activities de adição e remoção
     var activities2 = updated2.getHistory();
     activities2.sort((a, b) -> a.getCreatedAt().compareTo(b.getCreatedAt()));
     var lastActivities = activities2.subList(activities2.size() - 2, activities2.size());
 
-    assertThat(lastActivities.get(0).getDescription())
-        .contains("removido")
-        .contains("supervisor 1");
+    List<String> descriptions =
+        lastActivities.stream().map(ActivityDTO::getDescription).collect(Collectors.toList());
 
-    assertThat(lastActivities.get(1).getDescription())
-        .contains("selecionado")
-        .contains("supervisor 2");
+    assertEquals(2, descriptions.size(), "esperava 2 activities criadas nesta operação");
+
+    assertTrue(
+        descriptions.stream().anyMatch(d -> d.contains("removido") && d.contains("supervisor 1")),
+        "esperava encontrar uma activity de remoção contendo 'removido' e 'supervisor 1'");
+    assertTrue(
+        descriptions.stream()
+            .anyMatch(d -> d.contains("selecionado") && d.contains("supervisor 2")),
+        "esperava encontrar uma activity de adição contendo 'selecionado' e 'supervisor 2'");
   }
 }
