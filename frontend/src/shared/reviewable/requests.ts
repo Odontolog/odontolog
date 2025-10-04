@@ -1,5 +1,5 @@
 import { students } from '@/mocks/students';
-import { setNote, updateAssignee } from '@/mocks/treatment-plan';
+import { updateAssignee } from '@/mocks/treatment-plan';
 import { Supervisor, User } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 
@@ -66,10 +66,24 @@ export async function saveSupervisors(
   return { success: true };
 }
 
-export async function saveDetails(reviewableId: string, note: string) {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-  console.log('saving data', note, reviewableId);
-  // throw new Error('error saving data');
-  setNote(note);
+export async function saveDetails(reviewableId: string, notes: string) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/${reviewableId}/notes`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ notes }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao salvar observações.`);
+  }
+
   return { success: true };
 }
