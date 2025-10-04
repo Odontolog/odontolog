@@ -66,6 +66,32 @@ export default function ProcedureHistorySection({
   );
 }
 
+function getLastEmptyDay(proceduresByDate: Map<string, ProcedureShort[]>) {
+  if (proceduresByDate.size > 0) {
+    const oldestDateStr = Array.from(proceduresByDate.keys()).reduce(
+      (oldest, current) => {
+        const [dayOld, monthOld, yearOld] = oldest.split('/').map(Number);
+        const [dayCur, monthCur, yearCur] = current.split('/').map(Number);
+        const dateOld = new Date(yearOld, monthOld - 1, dayOld).getTime();
+        const dateCur = new Date(yearCur, monthCur - 1, dayCur).getTime();
+        return dateOld < dateCur ? oldest : current;
+      },
+    );
+
+    const [day, month, year] = oldestDateStr.split('/').map(Number);
+    const dateObj = new Date(year, month - 1, day);
+    dateObj.setDate(dateObj.getDate() - 1);
+
+    const newDay = String(dateObj.getDate()).padStart(2, '0');
+    const newMonth = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const newYear = dateObj.getFullYear();
+    const newDateKey = `${newDay}/${newMonth}/${newYear}`;
+
+    return <Timeline.Item title={newDateKey} />;
+  }
+  return null;
+}
+
 function ProceduresContent({ data }: { data: ProcedureShort[] }) {
   if (data.length === 0) {
     return (
@@ -103,21 +129,31 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
   return (
     <Timeline bulletSize={16}>
       {Array.from(proceduresByDate.entries())
-        .sort(([a], [b]) => Number(b) - Number(a))
-        .map(([year, plans]) => (
-          <Timeline.Item key={year} title={year}>
+        .sort(([dateA], [dateB]) => {
+          const [dayA, monthA, yearA] = dateA.split('/').map(Number);
+          const [dayB, monthB, yearB] = dateB.split('/').map(Number);
+          return (
+            new Date(yearB, monthB - 1, dayB).getTime() -
+            new Date(yearA, monthA - 1, dayA).getTime()
+          );
+        })
+        .map(([date, plans]) => (
+          <Timeline.Item key={date} title={date}>
             <Stack gap="sm" my="xs">
-              {plans.map((pcd) => (
-                <ProcedureCard
-                  key={pcd.id}
-                  disableSession
-                  procedure={pcd}
-                  fields={['patient', 'assignee', 'teeth', 'updated']}
-                />
-              ))}
+              {plans
+                .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+                .map((pcd) => (
+                  <ProcedureCard
+                    key={pcd.id}
+                    disableSession
+                    procedure={pcd}
+                    fields={['patient', 'assignee', 'teeth', 'updated']}
+                  />
+                ))}
             </Stack>
           </Timeline.Item>
         ))}
+      {getLastEmptyDay(proceduresByDate)}
     </Timeline>
   );
 }

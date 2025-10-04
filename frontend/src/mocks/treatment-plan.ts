@@ -136,6 +136,21 @@ export const procedures: ProcedureShort[] = [
     procedureType: 'TREATMENT_PLAN_PROCEDURE',
     type: 'PROCEDURE',
   },
+  {
+    id: '4',
+    status: 'DONE',
+    name: 'Limpeza',
+    studySector: 'Periodontia',
+    plannedSession: 3,
+    assignee: student,
+    patient,
+    teeth: ['11', '12', '13'],
+    updatedAt: new Date('2025-09-06T11:00:00Z'),
+    reviews: [],
+    notes: 'Limpeza realizada sem intercorrências.',
+    procedureType: 'TREATMENT_PLAN_PROCEDURE',
+    type: 'PROCEDURE',
+  },
 ];
 
 // Mock TreatmentPlan
