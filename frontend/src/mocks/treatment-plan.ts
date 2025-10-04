@@ -93,7 +93,7 @@ const history: Activity[] = [
 export const procedures: ProcedureShort[] = [
   {
     id: '1',
-    status: 'IN_REVIEW',
+    status: 'DONE',
     name: 'Obturação',
     studySector: 'Endodontia',
     plannedSession: 1,
@@ -108,7 +108,7 @@ export const procedures: ProcedureShort[] = [
   },
   {
     id: '2',
-    status: 'NOT_STARTED',
+    status: 'DONE',
     name: 'Extração',
     studySector: 'Cirurgia',
     plannedSession: 2,
