@@ -15,12 +15,12 @@ export default async function PatientTreatmentPlansPage({
   const { patientId } = await params;
 
   return (
-    <Group align="flex-start" py="md" px="lg" h="100%">
+    <Group align="flex-start" py="md" px="lg" h="100%" wrap="nowrap">
       <Box flex="1" h="100%">
         <TreatmentPlansSection patientId={patientId} />
       </Box>
 
-      <Box flex="1" h="100%">
+      <Box flex="1" h="100%" visibleFrom="md">
         <TreatmentPlanDetailSection />
       </Box>
     </Group>
