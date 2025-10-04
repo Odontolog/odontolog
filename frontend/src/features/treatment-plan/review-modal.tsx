@@ -98,6 +98,7 @@ function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
           autosize
           minRows={5}
           maxRows={8}
+          withAsterisk
           key={form.key('note')}
           {...form.getInputProps('note')}
         />
