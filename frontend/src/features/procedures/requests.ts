@@ -1,8 +1,9 @@
-import { procedures } from '@/mocks/treatment-plan';
-import { ProcedureShort } from '@/shared/models';
 import { queryOptions } from '@tanstack/react-query';
 
-export function getPatientProcedureList(patientId: string) {
+import { ProcedureShort } from '@/shared/models';
+import { procedures } from '@/mocks/treatment-plan';
+
+export function getPatientProcedureOptions(patientId: string) {
   return queryOptions({
     queryKey: ['patientProcedureList', patientId],
     queryFn: () => getPatientProcedures(patientId),

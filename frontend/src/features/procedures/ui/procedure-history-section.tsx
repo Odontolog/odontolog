@@ -15,7 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import ProcedureCard from '@/shared/components/procedure-card';
 import { ProcedureShort } from '@/shared/models';
-import { getPatientProcedureList } from '../requests';
+import { getPatientProcedureOptions } from '../requests';
 
 interface ProcedureHistorySectionProps {
   patientId: string;
@@ -24,14 +24,14 @@ interface ProcedureHistorySectionProps {
 export default function ProcedureHistorySection({
   patientId,
 }: ProcedureHistorySectionProps) {
-  const procedures = getPatientProcedureList(patientId);
+  const procedures = getPatientProcedureOptions(patientId);
 
   const { data, isLoading } = useQuery({
     ...procedures,
   });
 
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
+    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
           <Text fw={600} size="lg">

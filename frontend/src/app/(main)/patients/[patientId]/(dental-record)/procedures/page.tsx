@@ -1,5 +1,6 @@
+import { Box, Group } from '@mantine/core';
+
 import ProcedureHistorySection from '@/features/procedures/ui/procedure-history-section';
-import { Group, Box } from '@mantine/core';
 
 export default async function PatientProceduresPage({
   params,
