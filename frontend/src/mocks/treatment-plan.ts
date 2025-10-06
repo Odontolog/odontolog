@@ -7,6 +7,7 @@ import {
   ProcedureShort,
   TreatmentPlanShort,
   Procedure,
+  Attachments,
 } from '@/shared/models';
 
 // Usuários
@@ -139,6 +140,30 @@ export const proceduresShort: ProcedureShort[] = [
   },
 ];
 
+export const attachments: Attachments[] = [
+  {
+    id: '1',
+    location: 'radiografia-q2.png',
+    filename: 'radiografia-q2.png',
+    uploader: student,
+    size: '1,1 Mb',
+  },
+  {
+    id: '2',
+    location: 'radiografia-q2.png',
+    filename: 'radiografia-q2.png',
+    uploader: student,
+    size: '1,1 Mb',
+  },
+  {
+    id: '3',
+    location: 'radiografia-q2.png',
+    filename: 'radiografia-q2.png',
+    uploader: student,
+    size: '1,1 Mb',
+  },
+];
+
 export const procedures: Procedure[] = [
   {
     id: '2',
@@ -161,29 +186,7 @@ export const procedures: Procedure[] = [
     },
     history: [],
     treatmentPlanId: '1',
-    attachments: [
-      {
-        id: '1',
-        location: 'radiografia-q2.png',
-        filename: 'radiografia-q2.png',
-        uploader: student,
-        size: '1,1 Mb',
-      },
-      {
-        id: '2',
-        location: 'radiografia-q2.png',
-        filename: 'radiografia-q2.png',
-        uploader: student,
-        size: '1,1 Mb',
-      },
-      {
-        id: '3',
-        location: 'radiografia-q2.png',
-        filename: 'radiografia-q2.png',
-        uploader: student,
-        size: '1,1 Mb',
-      },
-    ],
+    attachments,
   },
   {
     id: '3',

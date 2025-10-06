@@ -17,7 +17,7 @@ import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 import { ProcedureDetail } from '../models';
-import { getDetails, saveDetails } from '../requests';
+import { getProcedureDetailsOptions, saveDetails } from '../requests';
 
 const LABELS: Record<string, string> = {
   diagnostic: 'Diagnóstico',
@@ -32,9 +32,8 @@ export default function DetailSection({ procedureId }: DetailSectionProps) {
   const [editing, setEditing] = useState(false);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['procedureDetails', procedureId],
-    queryFn: () => getDetails(procedureId),
-    enabled: false,
+    ...getProcedureDetailsOptions(procedureId),
+    enabled: !!procedureId,
   });
 
   return (
@@ -104,7 +103,10 @@ function DetailSectionContent({
   const mutation = useMutation({
     mutationFn: (values: ProcedureDetail) => saveDetails(procedureId, values),
     onSuccess: async (data) => {
-      await queryClient.setQueryData(['procedureDetails', procedureId], data);
+      await queryClient.setQueryData(
+        ['procedure', procedureId, 'details'],
+        data,
+      );
       setValues({});
       setEditing(false);
     },

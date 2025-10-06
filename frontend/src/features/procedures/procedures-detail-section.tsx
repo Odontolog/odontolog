@@ -24,7 +24,7 @@ import { useSearchParams } from 'next/navigation';
 import CardInfo from '@/shared/components/card-info';
 import { StatusBadge } from '@/shared/components/status';
 import { getProcedureOptions } from '../procedure/requests';
-import NotesSection from '@/shared/reviewable/notes-section';
+import DetailSection from '../procedure/ui/detail-section';
 
 export default function ProcedureDetailSection() {
   const searchParams = useSearchParams();
@@ -94,9 +94,9 @@ export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
         <Group justify="space-between" align="flex-start">
           <Text fw={600} size="lg">
             {procedure.name}{' '}
-            <span style={{ color: 'var(--mantine-color-dimmed)' }}>
+            <Text span c="dimmed">
               #{procedure.id}
-            </span>
+            </Text>
           </Text>
           <StatusBadge status={procedure.status} />
         </Group>
@@ -133,11 +133,7 @@ export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
                 }
               />
             </Group>
-            <NotesSection
-              reviewableId={procedureId}
-              queryOptions={queryOptions}
-              mode="read"
-            />
+            <DetailSection procedureId={procedureId} />
           </Stack>
 
           <Flex justify="end" py="lg">
