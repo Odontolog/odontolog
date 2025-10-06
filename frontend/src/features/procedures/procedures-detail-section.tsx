@@ -133,7 +133,11 @@ export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
                 }
               />
             </Group>
-            <DetailSection procedureId={procedureId} />
+            <DetailSection
+              mode="read"
+              queryOptions={queryOptions}
+              reviewableId={procedureId}
+            />
           </Stack>
 
           <Flex justify="end" py="lg">
