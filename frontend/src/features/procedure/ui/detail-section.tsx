@@ -16,6 +16,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
+
 import { ProcedureDetail } from '../models';
 import { saveDetails } from '../requests';
 import { ReviewableSectionProps } from '@/shared/reviewable/models';
@@ -39,8 +40,6 @@ export default function DetailSection<T extends Procedure>({
     },
     enabled: false,
   });
-
-  console.log(details);
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm">

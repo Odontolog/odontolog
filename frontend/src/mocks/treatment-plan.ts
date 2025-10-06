@@ -143,24 +143,38 @@ export const proceduresShort: ProcedureShort[] = [
 export const attachments: Attachments[] = [
   {
     id: '1',
-    location: 'radiografia-q2.png',
-    filename: 'radiografia-q2.png',
+    location: 'radiografia-periapical-16.jpg',
+    filename: 'radiografia-periapical-16.jpg',
     uploader: student,
-    size: '1,1 Mb',
+    size: '2.3 MB',
   },
   {
     id: '2',
-    location: 'radiografia-q2.png',
-    filename: 'radiografia-q2.png',
+    location: 'fotografia-clinica-anterior.jpg',
+    filename: 'fotografia-clinica-anterior.jpg',
     uploader: student,
-    size: '1,1 Mb',
+    size: '1.8 MB',
   },
   {
     id: '3',
-    location: 'radiografia-q2.png',
-    filename: 'radiografia-q2.png',
+    location: 'radiografia-panoramica.jpg',
+    filename: 'radiografia-panoramica.jpg',
+    uploader: supervisor,
+    size: '4.1 MB',
+  },
+  {
+    id: '4',
+    location: 'exame-periodontal.pdf',
+    filename: 'exame-periodontal.pdf',
     uploader: student,
-    size: '1,1 Mb',
+    size: '856 KB',
+  },
+  {
+    id: '5',
+    location: 'tomografia-cone-beam.dcm',
+    filename: 'tomografia-cone-beam.dcm',
+    uploader: supervisor2,
+    size: '12.7 MB',
   },
 ];
 

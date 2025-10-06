@@ -25,13 +25,14 @@ import CardInfo from '@/shared/components/card-info';
 import { StatusBadge } from '@/shared/components/status';
 import { getProcedureOptions } from '../procedure/requests';
 import DetailSection from '../procedure/ui/detail-section';
+import DocSection from '../procedure/ui/docs-section';
 
 export default function ProcedureDetailSection() {
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
+    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
       {active !== null ? (
         <ProcedureDetailContent procedureId={active} />
       ) : (
@@ -89,7 +90,7 @@ export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
   }
 
   return (
-    <Box>
+    <Box h="100%">
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between" align="flex-start">
           <Text fw={600} size="lg">
@@ -134,6 +135,11 @@ export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
               />
             </Group>
             <DetailSection
+              mode="read"
+              queryOptions={queryOptions}
+              reviewableId={procedureId}
+            />
+            <DocSection
               mode="read"
               queryOptions={queryOptions}
               reviewableId={procedureId}
