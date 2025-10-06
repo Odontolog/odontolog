@@ -25,7 +25,7 @@ import CardInfo from '@/shared/components/card-info';
 import { StatusBadge } from '@/shared/components/status';
 import { getProcedureOptions } from '../procedure/requests';
 import DetailSection from '../procedure/ui/detail-section';
-import DocSection from '../procedure/ui/docs-section';
+import AttachmentsSection from '../procedure/ui/atts-section';
 
 export default function ProcedureDetailSection() {
   const searchParams = useSearchParams();
@@ -111,7 +111,7 @@ export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
           offsetScrollbars
           scrollbars="y"
           w="100%"
-          h="510px"
+          h="600px"
         >
           <Stack gap="md" flex="1">
             <Group gap="md">
@@ -139,7 +139,7 @@ export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
               queryOptions={queryOptions}
               reviewableId={procedureId}
             />
-            <DocSection
+            <AttachmentsSection
               mode="read"
               queryOptions={queryOptions}
               reviewableId={procedureId}

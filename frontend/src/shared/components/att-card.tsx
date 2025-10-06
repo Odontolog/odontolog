@@ -14,26 +14,34 @@ export default function AttachmentCard({ att, mode }: AttachmentCardProps) {
 
   return (
     <Group gap="14" bg="gray.0" px="sm" py="xs">
-      <Flex justify="center" c="blue.5">
+      <Flex justify="center" c="blue.5" wrap="nowrap">
         <IconFile size={32} />
       </Flex>
-      <Stack gap="0">
-        <Title order={6}>{att.filename}</Title>
-        <Text size="xs" c="dimmed">
+      <Stack
+        gap="0"
+        flex="1"
+        style={{
+          overflow: 'hidden',
+        }}
+      >
+        <Title order={6} lineClamp={1} w="100%">
+          {att.filename}
+        </Title>
+        <Text truncate="end" size="xs" c="dimmed" w="100%">
           <b>{att.size}</b> • Enviado por <b>{att.uploader.name}</b>
         </Text>
       </Stack>
       {mode === 'edit' && (
-        <Group gap={8}>
+        <Group gap={8} wrap="nowrap">
           <ActionIcon
-            onClick={() => onView?.(att.id)}
+            onClick={() => onView(att.id)}
             variant="light"
             aria-label="Visualizar arquivo"
           >
             <IconEye size={16} />
           </ActionIcon>
           <ActionIcon
-            onClick={() => onDelete?.(att)}
+            onClick={() => onDelete(att)}
             variant="light"
             color="red"
             aria-label="Deletar arquivo"

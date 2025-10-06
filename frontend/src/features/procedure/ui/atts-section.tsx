@@ -1,5 +1,5 @@
 'use client';
-import AttachmentCard from '@/shared/components/card-docs';
+import AttachmentCard from '@/shared/components/att-card';
 import { Attachments, Procedure } from '@/shared/models';
 import { ReviewableSectionProps } from '@/shared/reviewable/models';
 import {
@@ -16,13 +16,13 @@ import { IconEdit } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
-export default function DocSection<T extends Procedure>({
+export default function AttachmentsSection<T extends Procedure>({
   queryOptions,
   mode,
 }: ReviewableSectionProps<T>) {
   const [editing, setEditing] = useState(false);
 
-  const { data: docs, isLoading } = useQuery({
+  const { data: atts, isLoading } = useQuery({
     ...queryOptions,
     select: (data) => {
       return data.attachments;
@@ -53,27 +53,27 @@ export default function DocSection<T extends Procedure>({
       <Divider my="none" />
 
       <Card.Section inheritPadding px="md" py="sm">
-        {isLoading || !docs ? (
+        {isLoading || !atts ? (
           <Center py="md">
             <Loader size="sm" />
           </Center>
         ) : (
-          <DocSectionContent docs={docs} />
+          <AttSectionContent atts={atts} />
         )}
       </Card.Section>
     </Card>
   );
 }
 
-interface DocsSectionContentProps {
-  docs: Attachments[];
+interface AttachmentsSectionProps {
+  atts: Attachments[];
 }
 
-function DocSectionContent({ docs }: DocsSectionContentProps) {
+function AttSectionContent({ atts }: AttachmentsSectionProps) {
   return (
     <Grid>
-      {docs.map((att) => (
-        <Grid.Col span={6} key={att.id}>
+      {atts.map((att) => (
+        <Grid.Col span={{ base: 12, md: 6 }} key={att.id}>
           <AttachmentCard att={att} mode="read" />
         </Grid.Col>
       ))}
