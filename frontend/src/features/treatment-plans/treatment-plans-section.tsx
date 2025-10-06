@@ -81,35 +81,11 @@ export default function TreatmentPlansSection({
       <Divider my="none" />
 
       <Card.Section inheritPadding px="md" py="sm" h="100%">
-        {isError && (
-          <Center py="md" h="100%">
-            <Text fw={600} size="lg" c="dimmed">
-              Algo deu errado. Não foi possível carregar os planos de
-              tratamento.
-            </Text>
-          </Center>
-        )}
-
-        {(isLoading || !data) && (
-          <Stack h="100%" gap="xs">
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-          </Stack>
-        )}
-
-        {data && (
-          <ScrollArea
-            scrollbarSize={6}
-            offsetScrollbars
-            scrollbars="y"
-            w="100%"
-            h="510px"
-          >
-            <TreatmentPlansContent data={data} />
-          </ScrollArea>
-        )}
+        <TreatmentPlansContent
+          data={data}
+          isLoading={isLoading}
+          isError={isError}
+        />
       </Card.Section>
     </Card>
   );
@@ -128,11 +104,47 @@ function getLastEmptyYear(
   return null;
 }
 
-function TreatmentPlansContent({ data }: { data: TreatmentPlanShort[] }) {
+interface TreatmentPlanContentProps {
+  data?: TreatmentPlanShort[];
+  isLoading: boolean;
+  isError: boolean;
+}
+
+function TreatmentPlansContent({
+  data,
+  isLoading,
+  isError,
+}: TreatmentPlanContentProps) {
   const matches = useMediaQuery('(max-width: 62em)');
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
+
+  if (isError) {
+    return (
+      <Center py="md" h="100%">
+        <Text fw={600} size="lg" c="dimmed" ta="center">
+          Algo deu errado. <br />
+          Não foi possível carregar os planos de tratamento.
+        </Text>
+      </Center>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Stack h="100%" gap="xs">
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+      </Stack>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
 
   function onTreatmentPlanSelect(treatmentPlanId: string, patientId: string) {
     const newParams = new URLSearchParams(searchParams);
@@ -171,26 +183,36 @@ function TreatmentPlansContent({ data }: { data: TreatmentPlanShort[] }) {
   }, new Map<string, TreatmentPlanShort[]>());
 
   return (
-    <Timeline bulletSize={16}>
-      {Array.from(treatmentPlansByYear.entries())
-        .sort(([a], [b]) => Number(b) - Number(a))
-        .map(([year, plans]) => (
-          <Timeline.Item key={year} title={year}>
-            <Stack gap="sm" my="xs">
-              {plans
-                .sort((a, b) => +b.updatedAt - +a.updatedAt)
-                .map((tp) => (
-                  <TreatmentPlanCard
-                    key={tp.id}
-                    treatmentPlan={tp}
-                    selected={tp.id === active?.toString()}
-                    onSelect={() => onTreatmentPlanSelect(tp.id, tp.patient.id)}
-                  />
-                ))}
-            </Stack>
-          </Timeline.Item>
-        ))}
-      {getLastEmptyYear(treatmentPlansByYear)}
-    </Timeline>
+    <ScrollArea
+      scrollbarSize={6}
+      offsetScrollbars
+      scrollbars="y"
+      w="100%"
+      h="510px"
+    >
+      <Timeline bulletSize={16}>
+        {Array.from(treatmentPlansByYear.entries())
+          .sort(([a], [b]) => Number(b) - Number(a))
+          .map(([year, plans]) => (
+            <Timeline.Item key={year} title={year}>
+              <Stack gap="sm" my="xs">
+                {plans
+                  .sort((a, b) => +b.updatedAt - +a.updatedAt)
+                  .map((tp) => (
+                    <TreatmentPlanCard
+                      key={tp.id}
+                      treatmentPlan={tp}
+                      selected={tp.id === active?.toString()}
+                      onSelect={() =>
+                        onTreatmentPlanSelect(tp.id, tp.patient.id)
+                      }
+                    />
+                  ))}
+              </Stack>
+            </Timeline.Item>
+          ))}
+        {getLastEmptyYear(treatmentPlansByYear)}
+      </Timeline>
+    </ScrollArea>
   );
 }
