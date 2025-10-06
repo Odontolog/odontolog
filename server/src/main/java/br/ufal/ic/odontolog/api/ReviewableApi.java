@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.dtos.ActivityDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,7 +33,7 @@ public interface ReviewableApi {
         @ApiResponse(responseCode = "200", description = "Search completed successfully."),
         @ApiResponse(responseCode = "422", description = "Authenticated supervisor not found."),
       })
-  public ResponseEntity<PagedModel<ReviewableDTO>> getCurrentSupervisorReviewables(
+  public ResponseEntity<PagedModel<ReviewableShortDTO>> getCurrentSupervisorReviewables(
       @ParameterObject Pageable pageable,
       @ParameterObject ReviewableCurrentSupervisorFilterDTO filter,
       @Parameter(hidden = true) UserDetails currentUser);

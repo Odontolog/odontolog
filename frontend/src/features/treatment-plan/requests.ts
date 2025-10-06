@@ -117,7 +117,7 @@ export async function submitTreatmentPlanForReview(
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ note }),
+      body: JSON.stringify({ comments: note }),
     },
   );
 

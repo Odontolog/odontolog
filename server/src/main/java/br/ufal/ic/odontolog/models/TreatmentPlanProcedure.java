@@ -21,4 +21,9 @@ public class TreatmentPlanProcedure extends Procedure {
   @JoinColumn(name = "treatment_plan_id")
   @NotNull
   private TreatmentPlan treatmentPlan;
+
+  @Override
+  public String getProcedureType() {
+    return "TREATMENT_PLAN_PROCEDURE";
+  }
 }

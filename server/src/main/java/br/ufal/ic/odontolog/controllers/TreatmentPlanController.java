@@ -35,7 +35,7 @@ public class TreatmentPlanController implements TreatmentPlanApi {
     return treatmentPlanService.getTreatmentPlanById(treatmentId);
   }
 
-  @PostMapping("/{treatment_id}/submit-for-review")
+  @PostMapping("/treatment-plan/{treatment_id}/submit-for-review")
   @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
   public ResponseEntity<TreatmentPlanDTO> submitForReview(
       @PathVariable Long treatment_id, @RequestBody TreatmentPlanSubmitForReviewDTO requestDTO) {
