@@ -1,5 +1,5 @@
 'use client';
-import CardDocs from '@/shared/components/card-docs';
+import AttachmentCard from '@/shared/components/card-docs';
 import { Attachments, Procedure } from '@/shared/models';
 import { ReviewableSectionProps } from '@/shared/reviewable/models';
 import {
@@ -74,7 +74,7 @@ function DocSectionContent({ docs }: DocsSectionContentProps) {
     <Grid>
       {docs.map((att) => (
         <Grid.Col span={6} key={att.id}>
-          <CardDocs doc={att} mode="read" />
+          <AttachmentCard att={att} mode="read" />
         </Grid.Col>
       ))}
     </Grid>

@@ -1,23 +1,16 @@
 'use client';
-import {
-  ActionIcon,
-  Flex,
-  Group,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
+import { ActionIcon, Flex, Group, Stack, Text, Title } from '@mantine/core';
 import { IconEye, IconFile, IconTrash } from '@tabler/icons-react';
 import { Attachments, Mode } from '../models';
 
-interface CardDocsProps {
-  doc: Attachments;
+interface AttachmentCardProps {
+  att: Attachments;
   mode: Mode;
 }
 
-export default function CardDocs({ doc, mode }: CardDocsProps) {
-  function onDelete(doc: Attachments) {}
-  function onView(docId: string) {}
+export default function AttachmentCard({ att, mode }: AttachmentCardProps) {
+  function onDelete(att: Attachments) {}
+  function onView(attId: string) {}
 
   return (
     <Group gap="14" bg="gray.0" px="sm" py="xs">
@@ -25,25 +18,25 @@ export default function CardDocs({ doc, mode }: CardDocsProps) {
         <IconFile size={32} />
       </Flex>
       <Stack gap="0">
-        <Title order={6}>{doc.filename}</Title>
+        <Title order={6}>{att.filename}</Title>
         <Text size="xs" c="dimmed">
-          <b>{doc.size}</b> • Enviado por <b>{doc.uploader.name}</b>
+          <b>{att.size}</b> • Enviado por <b>{att.uploader.name}</b>
         </Text>
       </Stack>
       {mode === 'edit' && (
         <Group gap={8}>
           <ActionIcon
-            onClick={() => onView?.(doc.id)}
+            onClick={() => onView?.(att.id)}
             variant="light"
-            aria-label="Visualizar documento"
+            aria-label="Visualizar arquivo"
           >
             <IconEye size={16} />
           </ActionIcon>
           <ActionIcon
-            onClick={() => onDelete?.(doc)}
+            onClick={() => onDelete?.(att)}
             variant="light"
             color="red"
-            aria-label="Deletar documento"
+            aria-label="Deletar arquivo"
           >
             <IconTrash size={16} />
           </ActionIcon>
