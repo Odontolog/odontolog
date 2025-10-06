@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.Activity;
@@ -15,6 +16,7 @@ import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,5 +85,18 @@ class TreatmentPlanServiceIntegrationTest {
 
     assertThrows(
         EntityNotFoundException.class, () -> treatmentPlanService.createTreatmentPlan(dto));
+  }
+
+  @Test
+  void getTreatmentPlansByPatientId_returnsPlansForPatient() {
+    TreatmentPlan plan =
+        TreatmentPlan.builder().patient(patient).status(TreatmentPlanStatus.DRAFT).build();
+    plan = treatmentPlanRepository.save(plan);
+
+    List<TreatmentPlanShortDTO> result =
+        treatmentPlanService.getTreatmentPlansByPatientId(patient.getId());
+
+    assertThat(result).isNotEmpty();
+    assertThat(result.get(0).getId()).isEqualTo(plan.getId());
   }
 }

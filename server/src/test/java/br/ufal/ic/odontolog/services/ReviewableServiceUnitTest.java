@@ -2,21 +2,36 @@ package br.ufal.ic.odontolog.services;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+import br.ufal.ic.odontolog.dtos.ActivityDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
+import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
+import br.ufal.ic.odontolog.mappers.ActivityMapper;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
+import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Reviewable;
 import br.ufal.ic.odontolog.models.Supervisor;
+import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
+import br.ufal.ic.odontolog.repositories.UserRepository;
+import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,7 +48,13 @@ public class ReviewableServiceUnitTest {
 
   @Mock private SupervisorRepository supervisorRepository;
 
+  @Mock private UserRepository userRepository;
+
   @Mock private ReviewableMapper reviewableMapper;
+
+  @Mock private ActivityMapper activityMapper;
+
+  @Mock private CurrentUserProvider currentUserProvider;
 
   @InjectMocks private ReviewableService reviewableService;
 
@@ -59,15 +80,14 @@ public class ReviewableServiceUnitTest {
     when(reviewableRepository.findAll(any(Specification.class), eq(pageable)))
         .thenReturn(mockPageOfReviewables);
 
-    ReviewableDTO reviewableDTO = new ReviewableDTO();
-    reviewableDTO.setId(reviewableEntity.getId());
-    when(reviewableMapper.toDTO(reviewableEntity)).thenReturn(reviewableDTO);
+    ReviewableShortDTO reviewableShortDTO = new ReviewableShortDTO();
+    when(reviewableMapper.toShortDTO(reviewableEntity)).thenReturn(reviewableShortDTO);
 
     ReviewableCurrentSupervisorFilterDTO filter = new ReviewableCurrentSupervisorFilterDTO();
 
     // Act
 
-    Page<ReviewableDTO> result =
+    Page<ReviewableShortDTO> result =
         reviewableService.findForCurrentSupervisor(pageable, mockUserDetails, filter);
 
     // Assert
@@ -75,11 +95,10 @@ public class ReviewableServiceUnitTest {
     assertThat(result).isNotNull();
     assertThat(result.getTotalElements()).isEqualTo(1);
     assertThat(result.getContent()).hasSize(1);
-    assertThat(result.getContent().get(0).getId()).isEqualTo(reviewableEntity.getId());
 
     verify(supervisorRepository, times(1)).findByEmail("testsupervisor@test.com");
     verify(reviewableRepository, times(1)).findAll(any(Specification.class), eq(pageable));
-    verify(reviewableMapper, times(1)).toDTO(reviewableEntity);
+    verify(reviewableMapper, times(1)).toShortDTO(reviewableEntity);
   }
 
   @Test
@@ -99,5 +118,155 @@ public class ReviewableServiceUnitTest {
         });
 
     verify(supervisorRepository, times(1)).findByEmail("nonexistent@test.com");
+  }
+
+  @Test
+  public void givenExistentReviewable_whenFindForHistory_thenReturnListOfActivityDTOs() {
+    // Arrange
+    Long reviewableId = 1L;
+
+    Reviewable reviewable = mock(Reviewable.class);
+    when(reviewableRepository.findById(reviewableId)).thenReturn(Optional.of(reviewable));
+
+    Set<Activity> mockHistory = Set.of(new Activity(), new Activity());
+    when(reviewable.getHistory()).thenReturn(mockHistory);
+
+    List<ActivityDTO> mockActivityDTOs = List.of(new ActivityDTO(), new ActivityDTO());
+    when(activityMapper.toDTOs(mockHistory)).thenReturn(mockActivityDTOs);
+
+    // Act
+    List<ActivityDTO> result = reviewableService.getReviewableHistory(reviewableId);
+
+    // Assert
+    assertThat(result).isNotNull();
+    assertThat(result).hasSize(2);
+
+    verify(reviewableRepository, times(1)).findById(reviewableId);
+    verify(activityMapper, times(1)).toDTOs(mockHistory);
+  }
+
+  @Test
+  public void givenNonExistentReviewable_whenFindForHistory_thenThrowException() {
+    // Arrange
+    Long reviewableId = 1L;
+    when(reviewableRepository.findById(reviewableId)).thenReturn(Optional.empty());
+
+    // Act & Assert
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> {
+          reviewableService.getReviewableHistory(reviewableId);
+        });
+
+    verify(reviewableRepository, times(1)).findById(reviewableId);
+    verify(activityMapper, times(0)).toDTOs(any());
+  }
+
+  @Test
+  public void givenValidRequest_whenAssignUserToReviewable_thenReturnUpdatedReviewableDTO() {
+    // Arrange
+    Long reviewableId = 1L;
+    UUID assigneeId = UUID.randomUUID();
+    UUID currentUserId = UUID.randomUUID();
+
+    ReviewableAssignUserRequestDTO requestDTO = new ReviewableAssignUserRequestDTO();
+    requestDTO.setUserId(assigneeId);
+
+    Reviewable reviewable = mock(Reviewable.class);
+    when(reviewableRepository.findById(reviewableId)).thenReturn(Optional.of(reviewable));
+    when(reviewable.getHistory()).thenReturn(new HashSet<>());
+
+    User assignee = new User();
+    assignee.setId(assigneeId);
+    assignee.setName("Assignee User");
+    when(userRepository.findById(assigneeId)).thenReturn(Optional.of(assignee));
+
+    User currentUser = new User();
+    currentUser.setId(currentUserId);
+    currentUser.setName("Current User");
+    when(currentUserProvider.getCurrentUser()).thenReturn(currentUser);
+
+    ReviewableDTO reviewableDTO = new ReviewableDTO();
+    when(reviewableMapper.toDTO(reviewable)).thenReturn(reviewableDTO);
+
+    // Act
+    ReviewableDTO result = reviewableService.assignUserToReviewable(requestDTO, reviewableId);
+
+    // Assert
+    ArgumentCaptor<Reviewable> reviewableCaptor = ArgumentCaptor.forClass(Reviewable.class);
+    verify(reviewableRepository).save(reviewableCaptor.capture());
+
+    Reviewable savedReviewable = reviewableCaptor.getValue();
+    assertThat(result).isNotNull();
+    assertThat(result).isEqualTo(reviewableDTO);
+
+    assertThat(savedReviewable.getHistory()).isNotEmpty();
+
+    Activity activity = savedReviewable.getHistory().iterator().next();
+    assertThat(activity.getActor()).isEqualTo(currentUser);
+    assertThat(activity.getType()).isEqualTo(ActivityType.EDITED);
+
+    String expectedDescription =
+        String.format(
+            "User %s (%s) assigned to %s (%s) by user %s (%s)",
+            assignee.getName(),
+            assignee.getId(),
+            reviewable.getName(),
+            reviewable.getId(),
+            currentUser.getName(),
+            currentUser.getEmail());
+    assertThat(activity.getDescription()).isEqualTo(expectedDescription);
+
+    verify(reviewableRepository, times(1)).findById(reviewableId);
+    verify(userRepository, times(1)).findById(assigneeId);
+    verify(reviewable, times(1)).assignUser(assignee);
+    verify(reviewableRepository, times(1)).save(reviewable);
+  }
+
+  @Test
+  public void givenNonExistentReviewable_whenAssignUserToReviewable_thenThrowException() {
+    // Arrange
+    Long reviewableId = 1L;
+    UUID assigneeId = UUID.randomUUID();
+
+    ReviewableAssignUserRequestDTO requestDTO = new ReviewableAssignUserRequestDTO();
+    requestDTO.setUserId(assigneeId);
+
+    when(userRepository.findById(assigneeId)).thenReturn(Optional.of(new User()));
+    when(reviewableRepository.findById(reviewableId)).thenReturn(Optional.empty());
+
+    // Act & Assert
+    assertThrows(
+        ResourceNotFoundException.class,
+        () -> {
+          reviewableService.assignUserToReviewable(requestDTO, reviewableId);
+        });
+
+    verify(reviewableRepository, times(1)).findById(reviewableId);
+    verify(reviewableRepository, times(0)).save(any());
+  }
+
+  @Test
+  public void givenNonExistentUser_whenAssignUserToReviewable_thenThrowException() {
+    // Arrange
+    Long reviewableId = 1L;
+    UUID assigneeId = UUID.randomUUID();
+
+    ReviewableAssignUserRequestDTO requestDTO = new ReviewableAssignUserRequestDTO();
+    requestDTO.setUserId(assigneeId);
+
+    Reviewable reviewable = mock(Reviewable.class);
+
+    when(userRepository.findById(assigneeId)).thenReturn(Optional.empty());
+
+    // Act & Assert
+    assertThrows(
+        UnprocessableRequestException.class,
+        () -> {
+          reviewableService.assignUserToReviewable(requestDTO, reviewableId);
+        });
+
+    verify(userRepository, times(1)).findById(assigneeId);
+    verify(reviewableRepository, times(0)).save(any());
   }
 }

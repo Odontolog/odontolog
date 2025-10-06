@@ -1,6 +1,8 @@
 package br.ufal.ic.odontolog.models;
 
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
+import br.ufal.ic.odontolog.states.procedure.ProcedureState;
+import br.ufal.ic.odontolog.states.procedure.ProcedureStates;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,10 +25,10 @@ public abstract class Procedure extends Reviewable {
   @JoinColumn(name = "patient_id", nullable = false)
   private Patient patient;
 
-  // TODO: Add state machine to manage the status transitions
-  // For now, we will just use the enum directly
   @Enumerated(EnumType.STRING)
   private ProcedureStatus status;
+
+  @Transient private ProcedureState state;
 
   @ManyToMany(
       cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -47,5 +49,34 @@ public abstract class Procedure extends Reviewable {
 
   public void addTooth(String tooth) {
     this.teeth.add(tooth);
+  }
+
+  public abstract String getProcedureType();
+
+  public ProcedureState getState() {
+    switch (this.status) {
+      case DRAFT:
+        return new ProcedureStates.DraftState();
+      case NOT_STARTED:
+        return new ProcedureStates.NotStartedState();
+      case IN_PROGRESS:
+        return new ProcedureStates.InProgressState();
+      case IN_REVIEW:
+        return new ProcedureStates.InReviewState();
+      case COMPLETED:
+        return new ProcedureStates.CompletedState();
+      default:
+        throw new IllegalStateException("Unexpected value: " + this.status);
+    }
+  }
+
+  public void setState(ProcedureState state) {
+    this.state = state;
+    this.status = state.getStatus();
+  }
+
+  @Override
+  public void assignUser(User user) {
+    this.getState().assignUser(this, user);
   }
 }

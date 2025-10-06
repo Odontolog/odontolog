@@ -10,6 +10,8 @@ import {
 import { useForm } from '@mantine/form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { submitTreatmentPlanForReview } from './requests';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconExclamationCircle } from '@tabler/icons-react';
 
 interface RequestReviewModalProps {
   treatmentPlanId: string;
@@ -58,7 +60,6 @@ function RequestReviewModalBody({
     },
   });
 
-  // TODO: Sistema de notificação
   const mutation = useMutation({
     mutationFn: (values: string) =>
       submitTreatmentPlanForReview(treatmentPlanId, values),
@@ -68,11 +69,26 @@ function RequestReviewModalBody({
       });
       form.reset();
       close();
+      notifications.show({
+        title: 'Enviado para validação com sucesso',
+        message: 'Sua atividade foi enviado para validação.',
+        color: 'green',
+        icon: <IconCheck />,
+        autoClose: 5000,
+      });
+    },
+    onError(error) {
+      notifications.show({
+        title: 'Não foi possível enviar para a validação',
+        message: `Um erro inesperado aconteceu. Tente novamente mais tarde. ${error}`,
+        color: 'red',
+        icon: <IconExclamationCircle />,
+        autoClose: 5000,
+      });
     },
   });
 
   function handleSubmit(values: typeof form.values) {
-    console.log('Saved to backend (mock):', values);
     mutation.mutate(values.note);
   }
 

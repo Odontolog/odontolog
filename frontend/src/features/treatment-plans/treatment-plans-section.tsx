@@ -16,6 +16,7 @@ import { modals } from '@mantine/modals';
 import { IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useMediaQuery } from '@mantine/hooks';
 
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
 import { TreatmentPlanShort } from '@/shared/models';
@@ -117,14 +118,21 @@ function getLastEmptyYear(
 }
 
 function TreatmentPlansContent({ data }: { data: TreatmentPlanShort[] }) {
+  const matches = useMediaQuery('(max-width: 62em)');
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
-  function onTreatmentPlanSelect(treatmentPlanId: string) {
+  function onTreatmentPlanSelect(treatmentPlanId: string, patientId: string) {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('active', treatmentPlanId);
-    router.push(`?${newParams.toString()}`, { scroll: false });
+
+    // Check if we're on mobile (below 'md' breakpoint)
+    if (matches) {
+      router.push(`/patients/${patientId}/treatments/${treatmentPlanId}`);
+    } else {
+      router.push(`?${newParams.toString()}`, { scroll: false });
+    }
   }
 
   if (data.length === 0) {
@@ -163,7 +171,7 @@ function TreatmentPlansContent({ data }: { data: TreatmentPlanShort[] }) {
                   key={tp.id}
                   treatmentPlan={tp}
                   selected={tp.id === active?.toString()}
-                  onSelect={onTreatmentPlanSelect}
+                  onSelect={() => onTreatmentPlanSelect(tp.id, tp.patient.id)}
                 />
               ))}
             </Stack>

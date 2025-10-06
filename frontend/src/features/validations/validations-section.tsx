@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Badge,
   Card,
@@ -12,6 +13,7 @@ import {
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useMediaQuery } from '@mantine/hooks';
 
 import ProcedureCard from '@/shared/components/procedure-card';
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
@@ -74,14 +76,22 @@ function isTreatmentPlan(r: ReviewableShort): r is TreatmentPlanShort {
 }
 
 function ValidationsContent({ data }: { data: ReviewableShort[] }) {
+  const matches = useMediaQuery('(min-width: 56.25em)');
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
-  function onReviewableSelect(reviewableId: string) {
+  function onReviewableSelect(reviewableId: string, patientId: string) {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('active', reviewableId);
-    router.push(`?${newParams.toString()}`, { scroll: false });
+
+    // Check if we're on mobile (below 'md' breakpoint)
+    // TODO: Depois checar se é treatment-plan ou procedure e mandar para rota correta
+    if (matches) {
+      router.push(`/patients/${patientId}/treatments/${reviewableId}`);
+    } else {
+      router.push(`?${newParams.toString()}`, { scroll: false });
+    }
   }
 
   if (data.length === 0) {
@@ -106,7 +116,7 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
               key={index}
               procedure={rev}
               selected={rev.id === active?.toString()}
-              onSelect={onReviewableSelect}
+              onSelect={() => onReviewableSelect(rev.id, rev.patient.id)}
               disableSession
             />
           );
@@ -117,7 +127,7 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
               key={index}
               treatmentPlan={rev}
               selected={rev.id === active?.toString()}
-              onSelect={onReviewableSelect}
+              onSelect={() => onReviewableSelect(rev.id, rev.patient.id)}
             />
           );
         }

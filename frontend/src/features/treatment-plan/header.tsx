@@ -27,7 +27,7 @@ import { Mode, TreatmentPlan } from '@/shared/models';
 import { type User } from 'next-auth';
 import styles from './header.module.css';
 import RequestReviewModal from './request-review-modal';
-import ReviewMenu from './review-menu';
+import ReviewModal from './review-modal';
 import { getLatestActorAndDate } from './utils';
 
 interface TreatmentPlanHeaderProps {
@@ -37,7 +37,6 @@ interface TreatmentPlanHeaderProps {
   user: User;
 }
 
-// NOTE: falta considerar se é supervisor ou student; falta ver como puxar o id do treatmentPlan se for Procedure (linha 114); conferir as requisições
 export default function TreatmentPlanHeader(props: TreatmentPlanHeaderProps) {
   return (
     <header className={styles.header}>
@@ -185,14 +184,22 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
             />
           </Flex>
         ) : (
-          <ReviewMenu
-            buttonProps={{
-              className: styles.button,
-              disabled: props.mode === 'read' || data.status === 'IN_PROGRESS',
-            }}
-          >
-            Revisar
-          </ReviewMenu>
+          <Flex align="center" gap={8}>
+            <Button
+              fw={500}
+              rightSection={<IconChevronDown />}
+              className={styles.button}
+              onClick={open}
+            >
+              Validar
+            </Button>
+            <ReviewModal
+              treatmentPlanId={id}
+              close={close}
+              open={open}
+              opened={opened}
+            />
+          </Flex>
         )}
       </Group>
     </Stack>
