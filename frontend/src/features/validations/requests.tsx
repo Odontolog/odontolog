@@ -28,14 +28,13 @@ async function getValidations(params: {
     awaitingMyReview: String(awaitingMyReview),
   });
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/me?${searchParams}`;
-  
+
   const res = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  
   if (res.status >= 500) {
     throw new Error(
       `Erro ao buscar lista de atividades revisáveis: ${res.status}`,
@@ -43,7 +42,7 @@ async function getValidations(params: {
   } else if (res.status >= 400) {
     notFound();
   }
-  
+
   const data = (await res.json()) as { content: ReviewableShort[] };
   // console.log(data.content);
 
