@@ -44,7 +44,6 @@ async function getValidations(params: {
   }
 
   const data = (await res.json()) as { content: ReviewableShort[] };
-  // console.log(data.content);
 
   return data.content;
 }
