@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 
+import { proceduresShort } from '@/mocks/treatment-plan';
 import { ProcedureShort } from '@/shared/models';
-import { procedures } from '@/mocks/treatment-plan';
 
 export function getPatientProcedureOptions(patientId: string) {
   return queryOptions({
@@ -15,5 +15,5 @@ async function getPatientProcedures(
 ): Promise<ProcedureShort[]> {
   console.log(`fetching data for patient ${patientId} procedures`);
   await new Promise((resolve) => setTimeout(resolve, 300));
-  return procedures.filter((procedure) => procedure.status === 'DONE');
+  return proceduresShort.filter((procedure) => procedure.status === 'DONE');
 }

@@ -132,7 +132,7 @@ export type Attachments = {
   location: string;
   filename: string;
   uploader: User;
-  size: number;
+  size: string;
 };
 
 export type ProcedureDetail = {

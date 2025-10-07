@@ -1,39 +1,44 @@
 'use client';
 
-import { useState } from 'react';
 import {
+  ActionIcon,
+  Button,
+  Card,
+  Center,
+  Divider,
+  Flex,
+  Group,
+  Loader,
   Text,
   Textarea,
-  Button,
-  Group,
-  Card,
-  Divider,
-  Center,
-  Loader,
-  Flex,
-  ActionIcon,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+
+import { Procedure } from '@/shared/models';
+import { ReviewableSectionProps } from '@/shared/reviewable/models';
 import { ProcedureDetail } from '../models';
-import { getDetails, saveDetails } from '../requests';
+import { saveDetails } from '../requests';
 
 const LABELS: Record<string, string> = {
   diagnostic: 'Diagnóstico',
   notes: 'Observações',
 };
 
-interface DetailSectionProps {
-  procedureId: string;
-}
-
-export default function DetailSection({ procedureId }: DetailSectionProps) {
+export default function DetailSection<T extends Procedure>({
+  reviewableId,
+  queryOptions,
+  mode,
+}: ReviewableSectionProps<T>) {
   const [editing, setEditing] = useState(false);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ['procedureDetails', procedureId],
-    queryFn: () => getDetails(procedureId),
+  const { data: details, isLoading } = useQuery({
+    ...queryOptions,
+    select: (data) => ({
+      diagnostic: data.details.diagnostic,
+      notes: data.notes,
+    }),
     enabled: false,
   });
 
@@ -44,7 +49,7 @@ export default function DetailSection({ procedureId }: DetailSectionProps) {
           <Text fw={700} size="lg">
             Detalhes
           </Text>
-          {!editing && (
+          {mode === 'edit' && !editing && (
             <ActionIcon
               variant="subtle"
               color="gray"
@@ -60,16 +65,16 @@ export default function DetailSection({ procedureId }: DetailSectionProps) {
       <Divider my="none" />
 
       <Card.Section inheritPadding px="md" py="sm">
-        {isLoading || !data ? (
+        {isLoading || !details ? (
           <Center py="md">
             <Loader size="sm" />
           </Center>
         ) : (
           <DetailSectionContent
-            data={data}
+            details={details}
             editing={editing}
             setEditing={setEditing}
-            procedureId={procedureId}
+            procedureId={reviewableId}
           />
         )}
       </Card.Section>
@@ -78,14 +83,14 @@ export default function DetailSection({ procedureId }: DetailSectionProps) {
 }
 
 interface DetailSectionContentProps {
-  data: ProcedureDetail;
+  details: ProcedureDetail;
   editing: boolean;
   setEditing: (value: boolean) => void;
   procedureId: string;
 }
 
 function DetailSectionContent({
-  data,
+  details,
   editing,
   setEditing,
   procedureId,
@@ -95,7 +100,7 @@ function DetailSectionContent({
   // NOTE: This is necessary to make reactive UI changes and keep the useState
   //       in sync with the query.
   const [values, setValues] = useState({});
-  const displayValues = editing ? { ...data, ...values } : data;
+  const displayValues = editing ? { ...details, ...values } : details;
 
   function handleChange(key: string, value: string) {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -103,8 +108,11 @@ function DetailSectionContent({
 
   const mutation = useMutation({
     mutationFn: (values: ProcedureDetail) => saveDetails(procedureId, values),
-    onSuccess: async (data) => {
-      await queryClient.setQueryData(['procedureDetails', procedureId], data);
+    onSuccess: async (details) => {
+      await queryClient.setQueryData(
+        ['procedure', procedureId, 'details'],
+        details,
+      );
       setValues({});
       setEditing(false);
     },
@@ -124,7 +132,7 @@ function DetailSectionContent({
   }
 
   function handleCancel() {
-    setValues(data);
+    setValues(details);
     setEditing(false);
     mutation.reset();
   }
