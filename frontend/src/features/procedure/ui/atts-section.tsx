@@ -1,20 +1,24 @@
 'use client';
-import AttachmentCard from '@/shared/components/att-card';
-import { Attachments, Procedure } from '@/shared/models';
-import { ReviewableSectionProps } from '@/shared/reviewable/models';
+
 import {
   ActionIcon,
   Card,
   Center,
   Divider,
+  Flex,
   Grid,
   Group,
   Loader,
   Text,
+  ThemeIcon,
 } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
+import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+
+import AttachmentCard from '@/shared/components/att-card';
+import { Attachments, Procedure } from '@/shared/models';
+import { ReviewableSectionProps } from '@/shared/reviewable/models';
 
 export default function AttachmentsSection<T extends Procedure>({
   queryOptions,
@@ -22,11 +26,13 @@ export default function AttachmentsSection<T extends Procedure>({
 }: ReviewableSectionProps<T>) {
   const [editing, setEditing] = useState(false);
 
-  const { data: atts, isLoading } = useQuery({
+  const {
+    data: atts,
+    isLoading,
+    isError,
+  } = useQuery({
     ...queryOptions,
-    select: (data) => {
-      return data.attachments;
-    },
+    select: (data) => data.attachments,
     enabled: false,
   });
 
@@ -53,23 +59,58 @@ export default function AttachmentsSection<T extends Procedure>({
       <Divider my="none" />
 
       <Card.Section inheritPadding px="md" py="sm">
-        {isLoading || !atts ? (
-          <Center py="md">
-            <Loader size="sm" />
-          </Center>
-        ) : (
-          <AttSectionContent atts={atts} />
-        )}
+        <AttSectionContent
+          atts={atts}
+          isError={isError}
+          isLoading={isLoading}
+        />
       </Card.Section>
     </Card>
   );
 }
 
 interface AttachmentsSectionProps {
-  atts: Attachments[];
+  atts?: Attachments[];
+  isError: boolean;
+  isLoading: boolean;
 }
 
-function AttSectionContent({ atts }: AttachmentsSectionProps) {
+function AttSectionContent(props: AttachmentsSectionProps) {
+  const { atts, isLoading, isError } = props;
+
+  if (isLoading) {
+    return (
+      <Center py="md">
+        <Loader size="sm" />
+      </Center>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Flex align="center" gap="xs">
+        <ThemeIcon variant="white" color="red">
+          <IconExclamationCircle size={24} />
+        </ThemeIcon>
+        <Text size="sm" c="red" py="none">
+          Erro ao carregar documentos e arquivos
+        </Text>
+      </Flex>
+    );
+  }
+
+  if (!atts) {
+    return null;
+  }
+
+  if (atts.length === 0) {
+    return (
+      <Text size="sm" c="dimmed" ta="center">
+        Não há documentos ou arquivos anexados a esse procedimento.
+      </Text>
+    );
+  }
+
   return (
     <Grid>
       {atts.map((att) => (

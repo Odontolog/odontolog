@@ -1,6 +1,6 @@
 'use client';
 
-import { Center, Text, Card } from '@mantine/core';
+import { Card, Center, Text } from '@mantine/core';
 import { useSearchParams } from 'next/navigation';
 import ProcedureDetailSection from '../procedures/procedures-detail-section';
 import TreatmentPlanDetailSection from '../treatment-plans/treatment-plan-detail-section';

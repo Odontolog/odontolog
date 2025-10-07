@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 'use client';
+
 import { ActionIcon, Flex, Group, Stack, Text, Title } from '@mantine/core';
 import { IconEye, IconFile, IconTrash } from '@tabler/icons-react';
 import { Attachments, Mode } from '../models';

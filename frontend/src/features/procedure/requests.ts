@@ -1,7 +1,8 @@
-import { Attachments, Procedure } from '@/shared/models';
-import { ProcedureDetail } from './models';
-import { attachments, procedures } from '@/mocks/treatment-plan';
 import { queryOptions } from '@tanstack/react-query';
+
+import { Attachments, Procedure } from '@/shared/models';
+import { attachments, procedures } from '@/mocks/treatment-plan';
+import { ProcedureDetail } from './models';
 
 export function getProcedureOptions(procedureId: string) {
   return queryOptions({

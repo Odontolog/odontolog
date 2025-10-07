@@ -1,26 +1,26 @@
 'use client';
 
-import { useState } from 'react';
 import {
+  ActionIcon,
+  Button,
+  Card,
+  Center,
+  Divider,
+  Flex,
+  Group,
+  Loader,
   Text,
   Textarea,
-  Button,
-  Group,
-  Card,
-  Divider,
-  Center,
-  Loader,
-  Flex,
-  ActionIcon,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
+import { Procedure } from '@/shared/models';
+import { ReviewableSectionProps } from '@/shared/reviewable/models';
 import { ProcedureDetail } from '../models';
 import { saveDetails } from '../requests';
-import { ReviewableSectionProps } from '@/shared/reviewable/models';
-import { Procedure } from '@/shared/models';
 
 const LABELS: Record<string, string> = {
   diagnostic: 'Diagnóstico',
@@ -35,9 +35,10 @@ export default function DetailSection<T extends Procedure>({
   const [editing, setEditing] = useState(false);
   const { data: details, isLoading } = useQuery({
     ...queryOptions,
-    select: (data) => {
-      return { diagnostic: data.details.diagnostic, notes: data.notes };
-    },
+    select: (data) => ({
+      diagnostic: data.details.diagnostic,
+      notes: data.notes,
+    }),
     enabled: false,
   });
 
