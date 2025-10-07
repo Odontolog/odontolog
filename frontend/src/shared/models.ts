@@ -140,7 +140,6 @@ export type ProcedureDetail = {
 };
 
 export type Procedure = Reviewable & {
-  id: string;
   status: ProcedureStatus;
   name: string;
   attachments: Attachments[];

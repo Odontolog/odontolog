@@ -1,8 +1,25 @@
+import { queryOptions } from '@tanstack/react-query';
+
+import { Procedure } from '@/shared/models';
 import { ProcedureDetail } from './models';
+import { mockProcedure } from '@/mocks/procedure';
 
 let Superdata: ProcedureDetail = {
   notes: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
 };
+
+export function getProcedureOptions(procedureId: string) {
+  return queryOptions({
+    queryKey: ['procedure', procedureId],
+    queryFn: () => getProcedure(procedureId),
+  });
+}
+
+export async function getProcedure(procedureId: string): Promise<Procedure> {
+  console.log('fething procedure of procedureID: ', procedureId);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return mockProcedure;
+}
 
 export async function getDetails(
   procedureId: string,
