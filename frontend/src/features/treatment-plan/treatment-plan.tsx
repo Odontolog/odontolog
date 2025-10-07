@@ -38,7 +38,6 @@ export default function TreatmentPlan({
       <TreatmentPlanHeader
         id={treatmentPlanId}
         queryOptions={options}
-        mode={mode}
         user={user}
       />
       <ScrollArea w="100%" style={{ flex: 1 }}>

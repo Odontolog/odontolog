@@ -60,6 +60,7 @@ export function StatusIndicator({ status, className }: StatusProps) {
         processing
         inline
         color={props.color}
+        zIndex={1}
       >
         <Box w={8} h={8} />
       </Indicator>

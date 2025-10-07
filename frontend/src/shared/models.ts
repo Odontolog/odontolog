@@ -36,7 +36,7 @@ export type Student = User & {
 };
 
 export type Supervisor = User & {
-  specialty: string;
+  specialization: string;
   siape: string;
 };
 
@@ -49,7 +49,7 @@ export type ActivityType =
   | 'COMPLETED';
 
 export type Activity = {
-  id: string;
+  id: number;
   type: ActivityType;
   actor: User;
   description: string;
@@ -64,7 +64,7 @@ export type Review = {
   note: string;
   grade: number;
   reviewStatus: ReviewStatus;
-  supervisor: User;
+  supervisor: Supervisor;
 };
 
 export type ProcedureStatus =
@@ -117,6 +117,7 @@ export type Reviewable = {
   updatedAt: Date;
   notes: string;
   reviews: Review[];
+  reviewers: Supervisor[];
   history: Activity[];
   type: 'TREATMENT_PLAN' | 'PROCEDURE';
 };

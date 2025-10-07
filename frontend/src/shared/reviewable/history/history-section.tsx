@@ -68,9 +68,11 @@ export default function HistorySection<T extends Reviewable>({
 
         <Timeline bulletSize={24} lineWidth={3}>
           {history &&
-            history.map((activity) => (
-              <ActivityItem key={activity.id} activity={activity} />
-            ))}
+            history
+              .sort((a, b) => +a.createdAt - +b.createdAt)
+              .map((activity) => (
+                <ActivityItem key={activity.id} activity={activity} />
+              ))}
         </Timeline>
       </Card.Section>
     </Card>

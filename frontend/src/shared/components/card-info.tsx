@@ -6,9 +6,15 @@ export interface CardInfoProps {
   icon: ElementType;
   text: ReactNode;
   href?: string;
+  className?: string;
 }
 
-export default function CardInfo({ icon: Icon, text, href }: CardInfoProps) {
+export default function CardInfo({
+  icon: Icon,
+  text,
+  href,
+  className,
+}: CardInfoProps) {
   const content = (
     <Text size="sm" c="dimmed" style={{ marginTop: '0.125rem' }}>
       {text}
@@ -16,7 +22,7 @@ export default function CardInfo({ icon: Icon, text, href }: CardInfoProps) {
   );
 
   return (
-    <Group gap={4} align="center">
+    <Group gap={4} align="center" className={className}>
       <Icon size={16} color="gray" />
 
       {href !== undefined ? (
