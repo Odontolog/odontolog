@@ -16,6 +16,7 @@ import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.util.HashMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,7 @@ public class TreatmentPlanService {
     TreatmentPlan plan =
         TreatmentPlan.builder()
             .author(currentUser)
+            .name("Plano de Tratamento")
             .patient(patient)
             .assignee(currentUser)
             .type(ReviewableType.TREATMENT_PLAN)
@@ -54,11 +56,8 @@ public class TreatmentPlanService {
             .type(ActivityType.CREATED)
             .description(
                 String.format(
-                    "TreatmentPlan created for patient %s (%s) by user %s (%s)",
-                    patient.getName(),
-                    patient.getId(),
-                    currentUser.getName(),
-                    currentUser.getEmail()))
+                    "Plano de Tratamento criado para %s por %s (%s)",
+                    patient.getName(), currentUser.getName(), currentUser.getEmail()))
             .reviewable(plan)
             .build();
     plan.getHistory().add(activity);
@@ -97,8 +96,14 @@ public class TreatmentPlanService {
 
     treatmentPlan.getState().submitForReview(treatmentPlan);
 
+    String description = buildSubmissionDescription(currentUser, treatmentPlan);
+
     String comments = requestDTO.getComments();
-    String description = buildSubmissionDescription(currentUser, treatmentPlan, comments);
+    HashMap<String, Object> metadata = null;
+    if (comments != null && !comments.trim().isEmpty()) {
+      metadata = new HashMap<>();
+      metadata.put("data", comments);
+    }
 
     Activity activity =
         Activity.builder()
@@ -106,6 +111,7 @@ public class TreatmentPlanService {
             .type(ActivityType.REVIEW_REQUESTED)
             .description(description)
             .reviewable(treatmentPlan)
+            .metadata(metadata)
             .build();
     treatmentPlan.getHistory().add(activity);
 
@@ -114,20 +120,12 @@ public class TreatmentPlanService {
     return treatmentPlanMapper.toDTO(treatmentPlan);
   }
 
-  private String buildSubmissionDescription(
-      User currentUser, TreatmentPlan treatmentPlan, String comments) {
-
+  private String buildSubmissionDescription(User currentUser, TreatmentPlan treatmentPlan) {
     StringBuilder descriptionBuilder = new StringBuilder();
     descriptionBuilder.append(
         String.format(
-            "User %s (%s) submitted Treatment Plan (%s) for review",
-            currentUser.getName(), currentUser.getId(), treatmentPlan.getId()));
-
-    if (comments != null && !comments.trim().isEmpty()) {
-      descriptionBuilder.append(", with additional comments: ").append(comments);
-    } else {
-      descriptionBuilder.append(" without additional comments");
-    }
+            "%s (%s) enviou Plano de Tratamento #%s para validação",
+            currentUser.getName(), currentUser.getEmail(), treatmentPlan.getId()));
 
     return descriptionBuilder.toString();
   }

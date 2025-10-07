@@ -208,9 +208,8 @@ public class ReviewableServiceUnitTest {
 
     String expectedDescription =
         String.format(
-            "User %s (%s) assigned to %s (%s) by user %s (%s)",
+            "%s atribuído a %s #%s por %s (%s)",
             assignee.getName(),
-            assignee.getId(),
             reviewable.getName(),
             reviewable.getId(),
             currentUser.getName(),

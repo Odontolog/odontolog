@@ -57,6 +57,36 @@ public class DevDataLoader implements CommandLineRunner {
                 .build());
     logger.info("Student created: {}", studentTest001.getName());
 
+    Student studentTest002 =
+        studentRepository.save(
+            Student.builder()
+                .name("Student_Test_002")
+                .email("student.test.002@test.com")
+                .role(Role.STUDENT)
+                .password(passwordEncoder.encode("password1"))
+                .enrollmentSemester(1)
+                .enrollmentCode("20250916")
+                .enrollmentYear(2025)
+                .clinicNumber(1)
+                .photoUrl("some-url")
+                .build());
+    logger.info("Student created: {}", studentTest002.getName());
+
+    Student studentTest003 =
+        studentRepository.save(
+            Student.builder()
+                .name("Student_Test_003")
+                .email("student.test.003@test.com")
+                .role(Role.STUDENT)
+                .password(passwordEncoder.encode("password1"))
+                .enrollmentSemester(1)
+                .enrollmentCode("20250915")
+                .enrollmentYear(2025)
+                .clinicNumber(1)
+                .photoUrl("some-url")
+                .build());
+    logger.info("Student created: {}", studentTest003.getName());
+
     Supervisor supervisorTest001 =
         supervisorRepository.save(
             Supervisor.builder()
@@ -85,6 +115,19 @@ public class DevDataLoader implements CommandLineRunner {
                 .build());
     logger.info("Supervisor created: {}", supervisorTest002.getName());
 
+    Supervisor supervisorTest003 =
+        supervisorRepository.save(
+            Supervisor.builder()
+                .name("Supervisor_Test_003")
+                .email("supervisor.test.003@test.com")
+                .role(Role.SUPERVISOR)
+                .password(passwordEncoder.encode("password2"))
+                .specialization("Dentistics")
+                .siape("20250832")
+                .photoUrl("some-url")
+                .build());
+    logger.info("Supervisor created: {}", supervisorTest003.getName());
+
     Patient patientTest001 =
         patientRepository.save(
             Patient.builder()
@@ -105,7 +148,7 @@ public class DevDataLoader implements CommandLineRunner {
     TreatmentPlan treatmentPlanTest001 =
         treatmentPlanRepository.save(
             TreatmentPlan.builder()
-                .name("Treatment_Plan_Test_001")
+                .name("Plano de Tratamento")
                 .patient(patientTest001)
                 .status(TreatmentPlanStatus.DRAFT)
                 .author(studentTest001)
@@ -185,7 +228,7 @@ public class DevDataLoader implements CommandLineRunner {
 
     Activity activityTest001 =
         Activity.builder()
-            .description("Created Treatment Plan")
+            .description("Plano de tratamento criado")
             .reviewable(treatmentPlanTest001)
             .actor(studentTest001)
             .type(ActivityType.CREATED)

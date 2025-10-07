@@ -73,8 +73,8 @@ class TreatmentPlanServiceIntegrationTest {
     assertThat(activity.getType()).isEqualTo(ActivityType.CREATED);
     assertThat(activity.getActor().getEmail()).isEqualTo("supervisor@test.com");
     assertThat(activity.getDescription())
-        .contains("TreatmentPlan")
-        .contains("created for patient")
+        .contains("Plano de Tratamento")
+        .contains("criado para")
         .contains(patient.getName());
   }
 
