@@ -21,6 +21,12 @@ export async function getProcedure(procedureId: string): Promise<Procedure> {
   return mockProcedure;
 }
 
+export async function saveTeeth(procedureId: string, teeth: string[]) {
+  console.log('fething procedure of procedureID: ', procedureId);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return { sucess: true };
+}
+
 export async function getDetails(
   procedureId: string,
 ): Promise<ProcedureDetail> {

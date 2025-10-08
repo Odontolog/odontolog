@@ -80,7 +80,7 @@ export const mockProcedure: Procedure = {
     },
   ],
   studySector: 'Dentística',
-  teeth: ['14', '15'],
+  teeth: ['11', '12', '13', '22', '24', '27', '47', '45'],
   details: {
     diagnostic: 'Cárie incipiente em dente 14.',
   },

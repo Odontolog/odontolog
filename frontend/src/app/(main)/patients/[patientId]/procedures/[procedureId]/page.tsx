@@ -1,4 +1,5 @@
 import { getQueryClient } from '@/app/get-query-client';
+import Procedure from '@/features/procedure/ui/procedure';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 interface ProcedureParams {
@@ -21,7 +22,7 @@ export default async function ProcedurePage({
         Página de um procedimento id={procedureId},{patientId}
       </p>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <div>Em construção</div>
+        <Procedure procedureId={procedureId} />
       </HydrationBoundary>
     </div>
   );

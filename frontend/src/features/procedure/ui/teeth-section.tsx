@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  Avatar,
+  Badge,
   Card,
   Center,
   Divider,
@@ -12,10 +12,11 @@ import {
   Text,
   ThemeIcon,
 } from '@mantine/core';
-import { IconExclamationCircle } from '@tabler/icons-react';
+import { IconDental, IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
-import { Mode, Procedure, User } from '@/shared/models';
+import { Mode, Procedure } from '@/shared/models';
+import TeethMenu from './teeth-menu';
 
 interface TeethSectionProps {
   procedureId: string;
@@ -45,15 +46,15 @@ export default function TeethSection({
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
           <Text fw={600} size="lg">
-            Encarregado
+            Dentes/Regiões
           </Text>
-          {/* {showActionManu && (
-            <AssigneeMenu
-              reviewableId={reviewableId}
+          {showActionManu && (
+            <TeethMenu
+              procedureId={procedureId}
               queryOptions={queryOptions}
-              currentAssignee={assignee}
+              currentTeeth={teeth}
             />
-          )} */}
+          )}
         </Group>
       </Card.Section>
 
@@ -94,7 +95,7 @@ function TeethSectionContent(props: TeethSectionContentProps) {
           <IconExclamationCircle size={24} />
         </ThemeIcon>
         <Text size="sm" c="red" py="none">
-          Erro ao carregar Encarregado
+          Erro ao carregar dentes
         </Text>
       </Stack>
     );
@@ -105,11 +106,17 @@ function TeethSectionContent(props: TeethSectionContentProps) {
   }
 
   return (
-    <Flex gap="xs" direction="column">
-      <Group key={assignee.id} gap="xs">
-        <Avatar src={assignee.avatarUrl} size="sm" variant="filled" />
-        <Text size="sm">{assignee.name}</Text>
-      </Group>
+    <Flex gap="xs" wrap="wrap" justify="center">
+      {teeth.map((tooth) => (
+        <Badge size="lg" variant="light" key={tooth}>
+          <Flex align="center" wrap="nowrap" gap="4px">
+            <IconDental size={16} />
+            <Text size="sm" fw="500" style={{ marginTop: '0.125rem' }}>
+              {tooth}
+            </Text>
+          </Flex>
+        </Badge>
+      ))}
     </Flex>
   );
 }
