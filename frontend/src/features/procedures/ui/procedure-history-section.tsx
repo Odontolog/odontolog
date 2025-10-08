@@ -16,6 +16,7 @@ import { useQuery } from '@tanstack/react-query';
 import ProcedureCard from '@/shared/components/procedure-card';
 import { ProcedureShort } from '@/shared/models';
 import { getPatientProcedureOptions } from '../requests';
+import HistorySummary from './history-summary';
 
 interface ProcedureHistorySectionProps {
   patientId: string;
@@ -25,44 +26,54 @@ export default function ProcedureHistorySection({
   patientId,
 }: ProcedureHistorySectionProps) {
   const procedures = getPatientProcedureOptions(patientId);
-
   const { data, isLoading } = useQuery({
     ...procedures,
   });
+  const lastConsultationDate =
+    data && data.length > 0
+      ? new Date(
+          Math.max(...data.map((pcd) => new Date(pcd.updatedAt).getTime())),
+        )
+      : null;
 
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
-      <Card.Section inheritPadding py="sm">
-        <Group justify="space-between">
-          <Text fw={600} size="lg">
-            Histórico de procedimentos
-          </Text>
-        </Group>
-      </Card.Section>
+    <Stack>
+      <HistorySummary
+        lastConsultation={lastConsultationDate?.toLocaleDateString('pt-BR')}
+      />
+      <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
+        <Card.Section inheritPadding py="sm">
+          <Group justify="space-between">
+            <Text fw={600} size="lg">
+              Histórico de procedimentos
+            </Text>
+          </Group>
+        </Card.Section>
 
-      <Divider my="none" />
+        <Divider my="none" />
 
-      <Card.Section inheritPadding px="md" py="sm" h="100%">
-        {isLoading || data === undefined ? (
-          <Stack h="100%" gap="xs">
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-          </Stack>
-        ) : (
-          <ScrollArea
-            scrollbarSize={6}
-            offsetScrollbars
-            scrollbars="y"
-            w="100%"
-            h="510px"
-          >
-            <ProceduresContent data={data} />
-          </ScrollArea>
-        )}
-      </Card.Section>
-    </Card>
+        <Card.Section inheritPadding px="md" py="sm" h="100%">
+          {isLoading || data === undefined ? (
+            <Stack h="100%" gap="xs">
+              <Skeleton height={120} radius="none" />
+              <Skeleton height={120} radius="none" />
+              <Skeleton height={120} radius="none" />
+              <Skeleton height={120} radius="none" />
+            </Stack>
+          ) : (
+            <ScrollArea
+              scrollbarSize={6}
+              offsetScrollbars
+              scrollbars="y"
+              w="100%"
+              h="510px"
+            >
+              <ProceduresContent data={data} />
+            </ScrollArea>
+          )}
+        </Card.Section>
+      </Card>
+    </Stack>
   );
 }
 
