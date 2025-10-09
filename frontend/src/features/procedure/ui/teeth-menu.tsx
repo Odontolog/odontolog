@@ -1,23 +1,23 @@
 'use client';
 
-import { useState } from 'react';
 import {
-  Text,
-  Button,
-  Stack,
-  Menu,
   ActionIcon,
+  Button,
+  Menu,
   MultiSelect,
+  Stack,
+  Text,
 } from '@mantine/core';
+import { IconEdit } from '@tabler/icons-react';
 import {
   useMutation,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query';
-import { IconEdit } from '@tabler/icons-react';
+import { useState } from 'react';
 
-import { Procedure } from '@/shared/models';
 import { teeth } from '@/shared/data';
+import { Procedure } from '@/shared/models';
 import { saveTeeth } from '../requests';
 
 interface TeethMenuProps {
@@ -86,7 +86,7 @@ function TeethMenuContent({
     <>
       <Menu.Label>
         <Text fw={600} size="sm">
-          Selecione o encarregado
+          Selecione o dentes ou regiões relacionadas
         </Text>
       </Menu.Label>
       <Stack p="xs" gap="sm" w={400}>

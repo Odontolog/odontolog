@@ -51,6 +51,11 @@ public abstract class Procedure extends Reviewable {
     this.teeth.add(tooth);
   }
 
+  public void setTeeth(Set<String> teeth) {
+    this.teeth.clear();
+    this.teeth.addAll(teeth);
+  }
+
   public abstract String getProcedureType();
 
   public ProcedureState getState() {

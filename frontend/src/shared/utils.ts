@@ -25,5 +25,3 @@ export async function getAuthToken(): Promise<string> {
 
   return session.user.accessToken;
 }
-
-export type Replace<T, R> = Omit<T, keyof R> & R;

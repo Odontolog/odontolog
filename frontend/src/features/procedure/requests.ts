@@ -1,12 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
 
 import { Procedure } from '@/shared/models';
+import { getAuthToken } from '@/shared/utils';
+import { mapToProcedure, ProcedureDto } from './mapper';
 import { ProcedureDetail } from './models';
-import { mockProcedure } from '@/mocks/procedure';
-
-let Superdata: ProcedureDetail = {
-  notes: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
-};
 
 export function getProcedureOptions(procedureId: string) {
   return queryOptions({
@@ -16,16 +14,52 @@ export function getProcedureOptions(procedureId: string) {
 }
 
 export async function getProcedure(procedureId: string): Promise<Procedure> {
-  console.log('fething procedure of procedureID: ', procedureId);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return mockProcedure;
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/procedures/${procedureId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (res.status >= 500) {
+    throw new Error(`Erro ao buscar procedimento: ${res.status}`);
+  } else if (res.status >= 400) {
+    notFound();
+  }
+
+  const data = (await res.json()) as ProcedureDto;
+  return mapToProcedure(data);
 }
 
 export async function saveTeeth(procedureId: string, teeth: string[]) {
-  console.log('fething procedure of procedureID: ', procedureId);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return { sucess: true };
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/procedures/${procedureId}/teeth`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ teeth }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao salvar dentes/regiões.`);
+  }
+
+  return { success: true };
 }
+
+let Superdata: ProcedureDetail = {
+  notes: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
+};
 
 export async function getDetails(
   procedureId: string,

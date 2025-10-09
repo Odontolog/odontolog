@@ -1,8 +1,8 @@
 import { ActivityDto, mapToActivity, Replace } from '@/shared/mappers';
-import { TreatmentPlan } from '@/shared/models';
+import { Procedure } from '@/shared/models';
 
-export type TreatmentPlanDto = Replace<
-  TreatmentPlan,
+export type ProcedureDto = Replace<
+  Procedure,
   {
     id: number;
     updatedAt: string;
@@ -10,7 +10,7 @@ export type TreatmentPlanDto = Replace<
   }
 >;
 
-export function mapToTreatmentPlan(dto: TreatmentPlanDto): TreatmentPlan {
+export function mapToProcedure(dto: ProcedureDto): Procedure {
   return {
     ...dto,
     id: dto.id.toString(),
