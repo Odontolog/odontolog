@@ -2,13 +2,15 @@
 
 import {
   ActionIcon,
+  Button,
   Card,
   Center,
   Divider,
   Flex,
-  Grid,
   Group,
   Loader,
+  SimpleGrid,
+  Stack,
   Text,
   ThemeIcon,
 } from '@mantine/core';
@@ -19,6 +21,7 @@ import { useState } from 'react';
 import AttachmentCard from '@/shared/components/att-card';
 import { Attachments, Procedure } from '@/shared/models';
 import { ReviewableSectionProps } from '@/shared/reviewable/models';
+import { ProcedureDropzone } from './dropzone';
 
 export default function AttachmentsSection<T extends Procedure>({
   queryOptions,
@@ -61,6 +64,8 @@ export default function AttachmentsSection<T extends Procedure>({
       <Card.Section inheritPadding px="md" py="sm">
         <AttSectionContent
           atts={atts}
+          editing={editing}
+          setEditing={setEditing}
           isError={isError}
           isLoading={isLoading}
         />
@@ -73,11 +78,17 @@ interface AttachmentsSectionProps {
   atts?: Attachments[];
   isError: boolean;
   isLoading: boolean;
+  editing: boolean;
+  setEditing: (value: boolean) => void;
 }
 
-function AttSectionContent(props: AttachmentsSectionProps) {
-  const { atts, isLoading, isError } = props;
-
+function AttSectionContent({
+  atts,
+  isLoading,
+  isError,
+  editing,
+  setEditing,
+}: AttachmentsSectionProps) {
   if (isLoading) {
     return (
       <Center py="md">
@@ -111,13 +122,42 @@ function AttSectionContent(props: AttachmentsSectionProps) {
     );
   }
 
+  function handleCancel() {
+    setEditing(false);
+  }
+
   return (
-    <Grid>
-      {atts.map((att) => (
-        <Grid.Col span={{ base: 12, md: 6 }} key={att.id}>
-          <AttachmentCard att={att} mode="read" />
-        </Grid.Col>
-      ))}
-    </Grid>
+    <Stack>
+      {editing && <ProcedureDropzone />}
+      <SimpleGrid type="container" cols={{ base: 1, '800px': 3, '1000px': 5 }}>
+        {atts.map((att) => (
+          <AttachmentCard
+            key={att.id}
+            att={att}
+            mode={editing ? 'edit' : 'read'}
+          />
+        ))}
+      </SimpleGrid>
+      {editing && (
+        <Flex
+          justify="space-between"
+          align="center"
+          direction="row-reverse"
+          mt="sm"
+        >
+          <Group gap="xs">
+            <Button variant="default" fw="normal" onClick={handleCancel}>
+              Cancelar
+            </Button>
+            <Button
+            // onClick={() => mutation.mutate(displayValue)}
+            // loading={mutation.isPending}
+            >
+              Salvar
+            </Button>
+          </Group>
+        </Flex>
+      )}
+    </Stack>
   );
 }
