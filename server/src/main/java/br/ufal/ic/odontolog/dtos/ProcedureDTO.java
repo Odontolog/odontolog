@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
   @JsonSubTypes.Type(value = PreProcedureDTO.class, name = "PRE_PROCEDURE")
 })
 public class ProcedureDTO extends ReviewableDTO {
-  private Integer planned_session;
+  private Integer plannedSession;
   private ProcedureStatus status;
   private String studySector;
   private Set<Attachment> attachments;

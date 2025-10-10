@@ -4,6 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { type User } from 'next-auth';
 
 import { getProcedureOptions } from '../requests';
+import StudySectorSection from './study-sector-section';
 import TeethSection from './teeth-section';
 
 interface ProcedureProps {
@@ -26,6 +27,11 @@ export default function Procedure({ procedureId }: ProcedureProps) {
     <>
       {status}
       <TeethSection
+        procedureId={procedureId}
+        mode={mode}
+        queryOptions={options}
+      />
+      <StudySectorSection
         procedureId={procedureId}
         mode={mode}
         queryOptions={options}

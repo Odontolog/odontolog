@@ -70,4 +70,36 @@ public class ProcedureService {
     procedureRepository.save(procedure);
     return procedureMapper.toDTO(procedure);
   }
+
+  @Transactional
+  public ProcedureDTO updateStudySector(Long procedureId, String studySector) {
+    Procedure procedure =
+        procedureRepository
+            .findById(procedureId)
+            .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
+
+    String oldStudySector = new String(procedure.getStudySector());
+    procedure.setStudySector(studySector);
+
+    HashMap<String, Object> metadata = new HashMap<>();
+    metadata.put("data", studySector);
+    metadata.put("oldData", oldStudySector);
+
+    User currentUser = currentUserProvider.getCurrentUser();
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .description(
+                String.format(
+                    "Seção de estudo atualizada por %s (%s)",
+                    currentUser.getName(), currentUser.getEmail()))
+            .reviewable(procedure)
+            .metadata(metadata)
+            .build();
+    procedure.getHistory().add(activity);
+
+    procedureRepository.save(procedure);
+    return procedureMapper.toDTO(procedure);
+  }
 }
