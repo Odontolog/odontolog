@@ -8,6 +8,7 @@ import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.ProcedureRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -45,22 +46,21 @@ public class ProcedureService {
             .findById(procedureId)
             .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
 
-    Set<String> oldTeeth = procedure.getTeeth();
+    Set<String> oldTeeth = new HashSet<>(procedure.getTeeth());
     procedure.setTeeth(teeth);
-
-    User currentUser = currentUserProvider.getCurrentUser();
 
     HashMap<String, Object> metadata = new HashMap<>();
     metadata.put("data", teeth);
     metadata.put("oldData", oldTeeth);
 
+    User currentUser = currentUserProvider.getCurrentUser();
     Activity activity =
         Activity.builder()
             .actor(currentUser)
             .type(ActivityType.EDITED)
             .description(
                 String.format(
-                    "Observações atualizadas por %s (%s)",
+                    "Dentes/regiões atualizados por %s (%s)",
                     currentUser.getName(), currentUser.getEmail()))
             .reviewable(procedure)
             .metadata(metadata)
