@@ -23,8 +23,8 @@ export default function HistorySummary({
   };
 
   return (
-    <Flex gap="xs" justify="space-between">
-      <Card withBorder shadow="sm" radius="md" px="sm">
+    <Flex gap="xs">
+      <Card withBorder shadow="sm" radius="md" px="sm" flex={1}>
         <Card.Section inheritPadding py="sm">
           <Group>
             <Text fw={400} size="md">
@@ -37,7 +37,7 @@ export default function HistorySummary({
         </Card.Section>
         <Text fw={600}>{lastConsultation}</Text>
       </Card>
-      <Card withBorder shadow="sm" radius="md" px="sm">
+      <Card withBorder shadow="sm" radius="md" px="sm" flex={1}>
         <Card.Section inheritPadding py="sm">
           <Group>
             <Text>Próxima consulta</Text>

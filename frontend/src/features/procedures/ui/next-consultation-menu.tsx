@@ -41,7 +41,7 @@ export default function NextConsultationMenu(props: NextConsultationMenuProps) {
     >
       <Menu.Target>
         <ActionIcon variant="subtle" color="gray">
-          <IconEdit size={160} />
+          <IconEdit size={24} />
         </ActionIcon>
       </Menu.Target>
       <Menu.Dropdown>
@@ -125,18 +125,21 @@ function NextConsultationMenuContent({
           Escolha a data da próxima consulta
         </Text>
       </Menu.Label>
-      <DatePickerInput
-        popoverProps={{ withinPortal: false }}
-        value={date}
-        onChange={handleDateChange}
-      />
-      <Button
-        size="xs"
-        onClick={() => mutation.mutate(date)}
-        loading={mutation.isPending}
-      >
-        Salvar
-      </Button>
+      <Stack p="xs" gap="sm">
+        <DatePickerInput
+          placeholder="Selecione uma data"
+          popoverProps={{ withinPortal: false }}
+          value={date}
+          onChange={handleDateChange}
+        />
+        <Button
+          size="xs"
+          onClick={() => mutation.mutate(date)}
+          loading={mutation.isPending}
+        >
+          Salvar
+        </Button>
+      </Stack>
     </>
   );
 }
