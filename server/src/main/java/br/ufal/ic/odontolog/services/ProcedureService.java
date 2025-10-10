@@ -1,6 +1,7 @@
 package br.ufal.ic.odontolog.services;
 
 import br.ufal.ic.odontolog.dtos.ProcedureDTO;
+import br.ufal.ic.odontolog.dtos.ProcedureShortDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.mappers.ProcedureMapper;
@@ -23,10 +24,9 @@ public class ProcedureService {
   private final CurrentUserProvider currentUserProvider;
 
   @Transactional(readOnly = true)
-  public List<ProcedureDTO> getAllPatientProcedures(long patientId) {
+  public List<ProcedureShortDTO> getAllPatientProcedures(long patientId) {
     List<Procedure> procedures = procedureRepository.findAll();
-
-    return procedureMapper.toDTOs(procedures);
+    return procedureMapper.toShortDTOs(procedures);
   }
 
   @Transactional(readOnly = true)

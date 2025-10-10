@@ -2,6 +2,7 @@ package br.ufal.ic.odontolog.models;
 
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,6 +30,8 @@ public class Patient {
   private Long id;
 
   private String name;
+
+  private String avatarUrl;
 
   private String address;
 

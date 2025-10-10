@@ -132,6 +132,7 @@ public class DevDataLoader implements CommandLineRunner {
         patientRepository.save(
             Patient.builder()
                 .name("Patient_Test_001")
+                .avatarUrl("some-url")
                 .birthDate("1990-01-01")
                 .CPF("123.456.789-00")
                 .RG("12.345.678-9")
