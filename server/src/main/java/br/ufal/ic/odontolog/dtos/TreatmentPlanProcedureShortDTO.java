@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class TreatmentPlanProcedureShortDTO extends ProcedureShortDTO {
-    private Long treatmentPlanId;
+  private Long treatmentPlanId;
 }
