@@ -6,22 +6,29 @@ import {
   Activity,
   ProcedureShort,
   TreatmentPlanShort,
+  Procedure,
+  Attachments,
+  Supervisor,
 } from '@/shared/models';
 
 // Usuários
-export const supervisor: User = {
+export const supervisor: Supervisor = {
   id: '7',
   role: 'SUPERVISOR',
   name: 'Dr. João Silva',
   email: 'joao.silva@clinic.com',
+  siape: '21324234',
+  specialization: 'Dentística',
   avatarUrl: '',
 };
 
-export const supervisor2: User = {
+export const supervisor2: Supervisor = {
   id: '8',
   role: 'SUPERVISOR',
   name: 'Dr. João Martino',
   email: 'joao.martino@clinic.com',
+  siape: '21324234',
+  specialization: 'Periodontia',
   avatarUrl: '',
 };
 
@@ -61,14 +68,14 @@ const reviews: Review[] = [
 // Histórico
 const history: Activity[] = [
   {
-    id: '1',
+    id: 1,
     type: 'CREATED',
     actor: student,
     description: 'Plano de tratamento criado pelo aluno.',
     createdAt: new Date('2025-09-01T10:00:00Z'),
   },
   {
-    id: '2',
+    id: 2,
     type: 'REVIEW_REQUESTED',
     actor: student,
     description: 'Solicitação de validação enviada para o(s) supervisor(es).',
@@ -78,7 +85,7 @@ const history: Activity[] = [
     },
   },
   {
-    id: '3',
+    id: 3,
     type: 'REVIEW_APPROVED',
     actor: supervisor,
     description: 'Plano de tratamento aprovado pelo supervisor.',
@@ -90,9 +97,9 @@ const history: Activity[] = [
 ];
 
 // Procedimentos curtos
-export const procedures: ProcedureShort[] = [
+export const proceduresShort: ProcedureShort[] = [
   {
-    id: '1',
+    id: '2',
     status: 'IN_REVIEW',
     name: 'Obturação',
     studySector: 'Endodontia',
@@ -107,8 +114,8 @@ export const procedures: ProcedureShort[] = [
     type: 'PROCEDURE',
   },
   {
-    id: '2',
-    status: 'NOT_STARTED',
+    id: '3',
+    status: 'DONE',
     name: 'Extração',
     studySector: 'Cirurgia',
     plannedSession: 2,
@@ -122,7 +129,7 @@ export const procedures: ProcedureShort[] = [
     type: 'PROCEDURE',
   },
   {
-    id: '3',
+    id: '4',
     status: 'DONE',
     name: 'Limpeza',
     studySector: 'Periodontia',
@@ -130,11 +137,124 @@ export const procedures: ProcedureShort[] = [
     assignee: student,
     patient,
     teeth: ['11', '12', '13'],
-    updatedAt: new Date('2025-09-08T11:00:00Z'),
+    updatedAt: new Date('2025-09-06T11:00:00Z'),
     reviews: [],
     notes: 'Limpeza realizada sem intercorrências.',
     procedureType: 'TREATMENT_PLAN_PROCEDURE',
     type: 'PROCEDURE',
+  },
+];
+
+export const attachments: Attachments[] = [
+  {
+    id: '1',
+    location: 'radiografia-periapical-16.jpg',
+    filename: 'radiografia-periapical-16.jpg',
+    uploader: student,
+    size: '2.3 MB',
+  },
+  {
+    id: '2',
+    location: 'fotografia-clinica-anterior.jpg',
+    filename: 'fotografia-clinica-anterior.jpg',
+    uploader: student,
+    size: '1.8 MB',
+  },
+  {
+    id: '3',
+    location: 'radiografia-panoramica.jpg',
+    filename: 'radiografia-panoramica.jpg',
+    uploader: supervisor,
+    size: '4.1 MB',
+  },
+  {
+    id: '4',
+    location: 'exame-periodontal.pdf',
+    filename: 'exame-periodontal.pdf',
+    uploader: student,
+    size: '856 KB',
+  },
+  {
+    id: '5',
+    location: 'tomografia-cone-beam.dcm',
+    filename: 'tomografia-cone-beam.dcm',
+    uploader: supervisor2,
+    size: '12.7 MB',
+  },
+];
+
+export const procedures: Procedure[] = [
+  {
+    id: '2',
+    status: 'IN_REVIEW',
+    name: 'Obturação',
+    studySector: 'Endodontia',
+    assignee: student,
+    patient,
+    teeth: ['12'],
+    updatedAt: new Date('2025-09-05T13:00:00Z'),
+    reviews,
+    notes: 'Revisar técnica de isolamento.',
+    procedureType: 'PRE_PROCEDURE',
+    type: 'PROCEDURE',
+    author: student,
+    createdAt: new Date('2025-09-05T11:00:00Z'),
+    details: {
+      diagnostic:
+        'Cárie profunda em dente 16 (primeiro molar superior direito) com necessidade de tratamento endodôntico. Presença de sensibilidade ao frio e dor espontânea. Radiografia periapical revela radiolucidez próxima à polpa.',
+    },
+    history: [],
+    treatmentPlanId: '1',
+    attachments,
+    reviewers: [supervisor, supervisor2],
+  },
+  {
+    id: '3',
+    status: 'NOT_STARTED',
+    name: 'Extração',
+    studySector: 'Cirurgia',
+    assignee: student,
+    patient,
+    teeth: ['14'],
+    updatedAt: new Date('2025-09-07T16:30:00Z'),
+    reviews: [],
+    notes: 'Aguardando autorização do paciente.',
+    procedureType: 'TRATMENT_PLAN_PROCEDURE',
+    type: 'PROCEDURE',
+    author: student,
+    details: {
+      diagnostic:
+        'Dente 14 com cárie extensa e comprometimento estrutural severo. Indicação de extração por impossibilidade de restauração conservadora.',
+    },
+    history: [],
+    treatmentPlanId: '1',
+    attachments: [],
+    createdAt: new Date('2025-09-07T16:02:00Z'),
+    reviewers: [supervisor],
+  },
+  {
+    id: '4',
+    status: 'DONE',
+    name: 'Limpeza',
+    studySector: 'Periodontia',
+    assignee: student,
+    patient,
+    teeth: ['11', '12', '13'],
+    updatedAt: new Date('2025-09-08T11:00:00Z'),
+    reviews: [],
+    notes: 'Limpeza realizada sem intercorrências.',
+    procedureType: 'TRATMENT_PLAN_PROCEDURE',
+    type: 'PROCEDURE',
+    author: student,
+    createdAt: new Date('2025-09-08T10:00:00Z'),
+    details: {
+      diagnostic:
+        'Profilaxia e raspagem supragengival nos dentes anteriores superiores. Remoção de placa bacteriana e cálculo dental.',
+    },
+    history: [],
+    treatmentPlanId: '1',
+    attachments: [],
+    reviewers: [supervisor2],
   },
 ];
 
@@ -151,7 +271,8 @@ export const treatmentPlanMock: TreatmentPlan = {
   history,
   type: 'TREATMENT_PLAN',
   status: 'DRAFT',
-  procedures,
+  procedures: proceduresShort,
+  reviewers: [supervisor, supervisor2],
 };
 
 export const mockTreatmentPlans: TreatmentPlanShort[] = [

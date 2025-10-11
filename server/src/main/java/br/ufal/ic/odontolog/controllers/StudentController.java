@@ -4,6 +4,10 @@ import br.ufal.ic.odontolog.dtos.StudentDTO;
 import br.ufal.ic.odontolog.services.StudentService;
 import java.util.List;
 import java.util.UUID;
+import br.ufal.ic.odontolog.api.StudentApi;
+import br.ufal.ic.odontolog.dtos.StudentDTO;
+import br.ufal.ic.odontolog.services.StudentService;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("isAuthenticated()")
 @RestController
 @RequestMapping("api/students")
-public class StudentController {
+public class StudentController implements StudentApi {
 
   private final StudentService studentService;
 

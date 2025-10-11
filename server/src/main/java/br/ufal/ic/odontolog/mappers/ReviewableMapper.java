@@ -1,8 +1,11 @@
 package br.ufal.ic.odontolog.mappers;
 
 import br.ufal.ic.odontolog.dtos.ProcedureDTO;
+import br.ufal.ic.odontolog.dtos.ProcedureShortDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.models.Procedure;
 import br.ufal.ic.odontolog.models.Reviewable;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
@@ -19,4 +22,8 @@ public interface ReviewableMapper {
   ReviewableDTO toDTO(Reviewable reviewable);
 
   List<ReviewableDTO> toDTOs(List<Reviewable> reviewables);
+
+  @SubclassMapping(source = TreatmentPlan.class, target = TreatmentPlanShortDTO.class)
+  @SubclassMapping(source = Procedure.class, target = ProcedureShortDTO.class)
+  ReviewableShortDTO toShortDTO(Reviewable reviewable);
 }

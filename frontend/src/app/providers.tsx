@@ -11,6 +11,13 @@ import { ModalsProvider } from '@mantine/modals';
 
 const theme = createTheme({
   fontFamily: 'Roboto, sans-serif',
+  breakpoints: {
+    xs: '36em',
+    sm: '48em',
+    md: '62em',
+    lg: '75em',
+    xl: '88em',
+  },
 });
 
 export default function Providers({

@@ -2,6 +2,8 @@ package br.ufal.ic.odontolog.models;
 
 import br.ufal.ic.odontolog.enums.ReviewableType;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,8 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 @Getter
 @Setter
@@ -20,6 +21,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor()
 @Table(name = "reviewables")
 @Inheritance(strategy = InheritanceType.JOINED)
+@SQLRestriction("deleted = false")
 public abstract class Reviewable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +66,9 @@ public abstract class Reviewable {
 
   @Enumerated(EnumType.STRING)
   private ReviewableType type;
+
+  @Column(name = "deleted", nullable = false)
+  private boolean deleted = false;
 
   public void addReview(Review review) {
     this.reviews.add(review);

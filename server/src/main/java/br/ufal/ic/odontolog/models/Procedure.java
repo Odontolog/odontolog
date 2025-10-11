@@ -19,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "procedures")
 public abstract class Procedure extends Reviewable {
-  private Integer planned_session;
+  private Integer plannedSession;
 
   @ManyToOne
   @JoinColumn(name = "patient_id", nullable = false)
@@ -50,6 +50,8 @@ public abstract class Procedure extends Reviewable {
   public void addTooth(String tooth) {
     this.teeth.add(tooth);
   }
+
+  public abstract String getProcedureType();
 
   public ProcedureState getState() {
     switch (this.status) {

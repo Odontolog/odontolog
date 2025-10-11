@@ -1,8 +1,8 @@
 import { Box, Group } from '@mantine/core';
 
-import TreatmentPlanDetailSection from '@/features/treatment-plans/treatment-plan-detail-section';
 import ValidationsSection from '@/features/validations/validations-section';
 import Header from '@/shared/components/header';
+import ValidationDetailSection from '@/features/validations/validation-details-section';
 
 export default function ProcedureValidationPage() {
   return (
@@ -17,8 +17,8 @@ export default function ProcedureValidationPage() {
         </Box>
 
         {/* TODO: Colocar o DetailSection do Procedure */}
-        <Box flex="1" h="100%">
-          <TreatmentPlanDetailSection />
+        <Box flex="1" h="100%" visibleFrom="md">
+          <ValidationDetailSection />
         </Box>
       </Group>
     </>

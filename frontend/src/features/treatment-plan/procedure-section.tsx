@@ -5,13 +5,15 @@ import {
   Card,
   Center,
   Divider,
+  Flex,
   Group,
   Loader,
   Stack,
   Text,
+  ThemeIcon,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconPlus } from '@tabler/icons-react';
+import { IconExclamationCircle, IconPlus } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -35,7 +37,11 @@ export default function ProcedureSection({
     ProcedureShort | undefined
   >();
 
-  const { data: procedures, isLoading } = useQuery({
+  const {
+    data: procedures,
+    isLoading,
+    isError,
+  } = useQuery({
     ...queryOptions,
     select: (data) => data.procedures,
   });
@@ -72,26 +78,14 @@ export default function ProcedureSection({
       <Divider my="none" />
 
       <Card.Section inheritPadding px="md" py="sm">
-        {isLoading || !procedures ? (
-          <Center py="md">
-            <Loader size="sm" />
-          </Center>
-        ) : (
-          <Stack gap="sm">
-            {procedures
-              .slice()
-              .sort((a, b) => a.plannedSession - b.plannedSession)
-              .map((p) => (
-                <ProcedureCard
-                  key={p.id}
-                  procedure={p}
-                  onEdit={handleProcedureEdit}
-                  onDelete={handleProcedureDelete}
-                  mode={mode}
-                />
-              ))}
-          </Stack>
-        )}
+        <ProcedureSectionContent
+          procedures={procedures}
+          isLoading={isLoading}
+          isError={isError}
+          mode={mode}
+          handleProcedureEdit={handleProcedureEdit}
+          handleProcedureDelete={handleProcedureDelete}
+        />
       </Card.Section>
       <ProcedureSectionModal
         treatmentPlanId={treatmentPlanId}
@@ -102,5 +96,68 @@ export default function ProcedureSection({
         selectedProcedure={selectedProcedure}
       />
     </Card>
+  );
+}
+
+interface ProcedureSectionContentProps {
+  procedures?: ProcedureShort[];
+  isLoading: boolean;
+  isError: boolean;
+  mode: Mode;
+  handleProcedureEdit: (procedure: ProcedureShort) => void;
+  handleProcedureDelete: (procedure: ProcedureShort) => void;
+}
+
+export function ProcedureSectionContent(props: ProcedureSectionContentProps) {
+  const { procedures, isError, isLoading } = props;
+
+  if (isLoading) {
+    return (
+      <Center py="md">
+        <Loader size="sm" />
+      </Center>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Flex align="center" gap="xs">
+        <ThemeIcon variant="white" color="red">
+          <IconExclamationCircle size={24} />
+        </ThemeIcon>
+        <Text size="sm" c="red" py="none">
+          Erro ao carregar procedimentos do plano
+        </Text>
+      </Flex>
+    );
+  }
+
+  if (!procedures) {
+    return null;
+  }
+
+  if (procedures.length === 0) {
+    return (
+      <Text size="sm" c="dimmed" ta="center">
+        Nenhum procedimento adicionado
+      </Text>
+    );
+  }
+
+  return (
+    <Stack gap="sm">
+      {procedures
+        .slice()
+        .sort((a, b) => a.plannedSession - b.plannedSession)
+        .map((p) => (
+          <ProcedureCard
+            key={p.id}
+            procedure={p}
+            onEdit={props.handleProcedureEdit}
+            onDelete={props.handleProcedureDelete}
+            mode={props.mode}
+          />
+        ))}
+    </Stack>
   );
 }

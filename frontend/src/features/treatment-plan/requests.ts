@@ -9,6 +9,7 @@ import {
 } from '@/mocks/treatment-plan';
 import { TreatmentPlan } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
+import { mapToTreatmentPlan, TreatmentPlanDto } from './mappers';
 import { ProcedureFormValues } from './models';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
@@ -37,8 +38,8 @@ export async function getTreatmentPlan(
   } else if (res.status >= 400) {
     notFound();
   }
-
-  return (await res.json()) as TreatmentPlan;
+  const data = (await res.json()) as TreatmentPlanDto;
+  return mapToTreatmentPlan(data);
 }
 
 export async function editTreatmentPlanProcedure(
@@ -105,7 +106,7 @@ export async function createTreatmentPlanProcedure(
 
 export async function submitTreatmentPlanForReview(
   treatmentPlanId: string,
-  note: string,
+  comments: string,
 ) {
   const token = await getAuthToken();
 
@@ -117,7 +118,7 @@ export async function submitTreatmentPlanForReview(
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ note }),
+      body: JSON.stringify({ comments }),
     },
   );
 
@@ -126,4 +127,11 @@ export async function submitTreatmentPlanForReview(
       `[${res.status}] Erro ao submeter plano de tratamento para validação.`,
     );
   }
+}
+
+export async function submitReviewForTreatmentPlan(treatmentPlanId: string) {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  console.log(`Submitting review for plan ${treatmentPlanId}`);
+
+  return { success: true };
 }

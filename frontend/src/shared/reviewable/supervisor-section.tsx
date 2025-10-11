@@ -16,8 +16,9 @@ import { useQuery } from '@tanstack/react-query';
 
 import { StatusIndicator } from '@/shared/components/status';
 import { Reviewable } from '@/shared/models';
-import { ReviewableSectionProps } from './models';
+import { ReviewableSectionProps, SupervisorReviewStatus } from './models';
 import SupervisorMenu from './supervisor-menu';
+import { getSupervisorReviewStatus } from './utils';
 
 export default function SupervisorSection<T extends Reviewable>({
   reviewableId,
@@ -25,12 +26,12 @@ export default function SupervisorSection<T extends Reviewable>({
   mode,
 }: ReviewableSectionProps<T>) {
   const {
-    data: reviews,
+    data: supervisors,
     isLoading,
     isError,
   } = useQuery({
     ...queryOptions,
-    select: (data) => data.reviews,
+    select: (data) => getSupervisorReviewStatus(data.reviews, data.reviewers),
   });
 
   return (
@@ -40,11 +41,11 @@ export default function SupervisorSection<T extends Reviewable>({
           <Text fw={600} size="lg">
             Supervisores
           </Text>
-          {mode === 'edit' && reviews && (
+          {mode === 'edit' && supervisors && (
             <SupervisorMenu
               reviewableId={reviewableId}
               queryOptions={queryOptions}
-              currentReviews={reviews}
+              supervisors={supervisors}
             />
           )}
         </Group>
@@ -53,46 +54,69 @@ export default function SupervisorSection<T extends Reviewable>({
       <Divider my="none" />
 
       <Card.Section inheritPadding p="md">
-        {isLoading && (
-          <Center py="md">
-            <Loader size="sm" />
-          </Center>
-        )}
-
-        {isError && (
-          <Flex align="center" gap="xs">
-            <ThemeIcon variant="white" color="red">
-              <IconExclamationCircle size={24} />
-            </ThemeIcon>
-            <Text size="sm" c="red" py="none">
-              Erro ao carregar supervisores
-            </Text>
-          </Flex>
-        )}
-
-        {reviews && reviews.length === 0 && (
-          <Text size="sm" c="dimmed" ta="center">
-            Nenhum supervisor selecionado
-          </Text>
-        )}
-
-        <Flex gap="xs" direction="column">
-          {reviews &&
-            reviews.map((review) => (
-              <Group key={review.id} justify="space-between" gap="xs">
-                <Group gap="xs">
-                  <Avatar
-                    src={review.supervisor.avatarUrl}
-                    size="sm"
-                    variant="filled"
-                  />
-                  <Text size="sm">{review.supervisor.name}</Text>
-                </Group>
-                <StatusIndicator status={review.reviewStatus} />
-              </Group>
-            ))}
-        </Flex>
+        <SupervisorSectionContent
+          supervisors={supervisors}
+          isError={isError}
+          isLoading={isLoading}
+        />
       </Card.Section>
     </Card>
+  );
+}
+
+interface SupervisorSectionContentProps {
+  supervisors?: SupervisorReviewStatus[];
+  isLoading: boolean;
+  isError: boolean;
+}
+
+export function SupervisorSectionContent(props: SupervisorSectionContentProps) {
+  const { supervisors, isLoading, isError } = props;
+
+  if (isLoading) {
+    return (
+      <Center py="md">
+        <Loader size="sm" />
+      </Center>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Flex align="center" gap="xs">
+        <ThemeIcon variant="white" color="red">
+          <IconExclamationCircle size={24} />
+        </ThemeIcon>
+        <Text size="sm" c="red" py="none">
+          Erro ao carregar supervisores
+        </Text>
+      </Flex>
+    );
+  }
+
+  if (!supervisors) {
+    return null;
+  }
+
+  if (supervisors.length === 0) {
+    return (
+      <Text size="sm" c="dimmed" ta="center">
+        Nenhum supervisor selecionado
+      </Text>
+    );
+  }
+
+  return (
+    <Flex gap="xs" direction="column">
+      {supervisors.map((supervisor) => (
+        <Group key={supervisor.id} justify="space-between" gap="xs">
+          <Group gap="xs">
+            <Avatar src={supervisor.avatarUrl} size="sm" variant="filled" />
+            <Text size="sm">{supervisor.name}</Text>
+          </Group>
+          <StatusIndicator status={supervisor.reviewStatus} />
+        </Group>
+      ))}
+    </Flex>
   );
 }

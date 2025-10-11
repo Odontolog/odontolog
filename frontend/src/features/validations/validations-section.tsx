@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Badge,
   Card,
@@ -12,6 +13,7 @@ import {
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useMediaQuery } from '@mantine/hooks';
 
 import ProcedureCard from '@/shared/components/procedure-card';
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
@@ -74,14 +76,26 @@ function isTreatmentPlan(r: ReviewableShort): r is TreatmentPlanShort {
 }
 
 function ValidationsContent({ data }: { data: ReviewableShort[] }) {
+  const matches = useMediaQuery('(min-width: 56.25em)');
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
-  function onReviewableSelect(reviewableId: string) {
+  function onReviewableSelect(
+    reviewableId: string,
+    patientId: string,
+    type: string,
+  ) {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('active', reviewableId);
-    router.push(`?${newParams.toString()}`, { scroll: false });
+    newParams.set('type', type);
+
+    if (matches) {
+      router.push(`?${newParams.toString()}`, { scroll: false });
+    } else {
+      const basePath = type === 'TREATMENT_PLAN' ? 'treatments' : 'procedures';
+      router.push(`/patients/${patientId}/${basePath}/${reviewableId}`);
+    }
   }
 
   if (data.length === 0) {
@@ -106,7 +120,9 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
               key={index}
               procedure={rev}
               selected={rev.id === active?.toString()}
-              onSelect={onReviewableSelect}
+              onSelect={() =>
+                onReviewableSelect(rev.id, rev.patient.id, rev.type)
+              }
               disableSession
             />
           );
@@ -117,7 +133,9 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
               key={index}
               treatmentPlan={rev}
               selected={rev.id === active?.toString()}
-              onSelect={onReviewableSelect}
+              onSelect={() =>
+                onReviewableSelect(rev.id, rev.patient.id, rev.type)
+              }
             />
           );
         }

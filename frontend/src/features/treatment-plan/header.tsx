@@ -21,19 +21,18 @@ import {
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { type User } from 'next-auth';
 
 import { StatusBadge, StatusIndicator } from '@/shared/components/status';
-import { Mode, TreatmentPlan } from '@/shared/models';
-import { type User } from 'next-auth';
+import { TreatmentPlan } from '@/shared/models';
 import styles from './header.module.css';
 import RequestReviewModal from './request-review-modal';
-import ReviewMenu from './review-menu';
+import ReviewModal from './review-modal';
 import { getLatestActorAndDate } from './utils';
 
 interface TreatmentPlanHeaderProps {
   id: string;
   queryOptions: UseQueryOptions<TreatmentPlan, Error, TreatmentPlan, string[]>;
-  mode: Mode;
   user: User;
 }
 
@@ -48,7 +47,6 @@ export default function TreatmentPlanHeader(props: TreatmentPlanHeaderProps) {
 interface TreatmentPlanHeaderContentProps {
   id: string;
   queryOptions: UseQueryOptions<TreatmentPlan, Error, TreatmentPlan, string[]>;
-  mode: Mode;
   user: User;
 }
 
@@ -63,7 +61,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       status: data.status,
       updatedAt: data.updatedAt,
       assignee: data.assignee,
-      reviews: data.reviews,
+      reviewers: data.reviewers,
       latest: getLatestActorAndDate(data.history),
     }),
   });
@@ -156,7 +154,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
         </Stack>
         {props.user.role === 'STUDENT' ? (
           <Flex align="center" gap={8}>
-            {data.reviews.length === 0 && (
+            {data.reviewers.length === 0 && (
               <Tooltip
                 label="Escolha o(s) supervisor(es)"
                 color="red"
@@ -172,7 +170,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
               rightSection={<IconChevronDown />}
               className={styles.button}
               onClick={open}
-              disabled={props.mode === 'read' || data.reviews.length === 0}
+              disabled={data.status !== 'DRAFT' || data.reviewers.length === 0}
             >
               Enviar para validação
             </Button>
@@ -184,14 +182,26 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
             />
           </Flex>
         ) : (
-          <ReviewMenu
-            buttonProps={{
-              className: styles.button,
-              disabled: props.mode === 'read' || data.status === 'IN_PROGRESS',
-            }}
-          >
-            Revisar
-          </ReviewMenu>
+          <Flex align="center" gap={8}>
+            <Button
+              fw={500}
+              rightSection={<IconChevronDown />}
+              className={styles.button}
+              onClick={open}
+              disabled={
+                data.status !== 'IN_REVIEW' ||
+                !data.reviewers.find((rev) => rev.id === props.user.id)
+              }
+            >
+              Validar
+            </Button>
+            <ReviewModal
+              treatmentPlanId={id}
+              close={close}
+              open={open}
+              opened={opened}
+            />
+          </Flex>
         )}
       </Group>
     </Stack>
