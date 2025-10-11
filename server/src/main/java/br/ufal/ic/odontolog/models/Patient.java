@@ -35,6 +35,8 @@ public class Patient {
   // TODO: Add validation for CPF
   private String CPF;
 
+  private String avatarUrl;
+
   // TODO: Add validation for phone number
   private String phoneNumber;
 
