@@ -9,6 +9,7 @@ import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,23 +30,22 @@ public class SupervisorService {
     return supervisorMapper.toDTOList(supervisors);
   }
 
-  public SupervisorDTO getSupervisorByEmail(String email) {
+  public SupervisorDTO getSupervisorById(UUID id) {
     Supervisor supervisor =
         supervisorRepository
-            .findByEmail(email)
+            .findById(id)
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Supervisor not found"));
     return supervisorMapper.toDTO(supervisor);
   }
 
   @Transactional
-  public SupervisorDTO updateSupervisor(String email, SupervisorUpdateDTO supervisorUpdateDTO) {
+  public SupervisorDTO updateSupervisor(UUID id, SupervisorUpdateDTO supervisorUpdateDTO) {
     Supervisor supervisor =
         supervisorRepository
-            .findByEmail(email)
+            .findById(id)
             .orElseThrow(
                 () ->
-                    new ResponseStatusException(
-                        NOT_FOUND, "Supervisor not found with email: " + email));
+                    new ResponseStatusException(NOT_FOUND, "Supervisor not found with id: " + id));
 
     supervisorMapper.toEntity(supervisorUpdateDTO, supervisor);
     supervisorRepository.save(supervisor);
