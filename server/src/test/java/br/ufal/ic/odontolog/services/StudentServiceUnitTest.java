@@ -123,7 +123,7 @@ public class StudentServiceUnitTest {
         assertThrows(
             ResponseStatusException.class, () -> studentService.getStudentById(nonExistentId));
 
-    // Verifica se a exceção tem status 404
+    // Check if the exception has status 404
     assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     assertThat(exception.getReason()).contains("Student not found");
 
