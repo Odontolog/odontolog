@@ -32,7 +32,7 @@ public class SupervisorController {
   }
 
   @PutMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN')")
+  @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
   public ResponseEntity<SupervisorDTO> updateSupervisorById(
       @PathVariable UUID id, @RequestBody @Valid SupervisorUpdateDTO supervisorUpdateDTO) {
 
