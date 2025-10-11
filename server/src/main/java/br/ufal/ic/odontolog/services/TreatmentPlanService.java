@@ -74,7 +74,7 @@ public class TreatmentPlanService {
   public TreatmentPlanDTO getTreatmentPlanById(Long id) {
     TreatmentPlan plan =
         treatmentPlanRepository
-            .findById(id)
+            .findByIdWithActiveProcedures(id)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment plan not found"));
     return treatmentPlanMapper.toDTO(plan);
   }
