@@ -145,7 +145,7 @@ export type Procedure = Reviewable & {
   attachments: Attachments[];
   studySector: string;
   teeth: string[];
-  details: ProcedureDetail;
+  procedureDetail: ProcedureDetail;
   procedureType: 'PRE_PROCEDURE' | 'TRATMENT_PLAN_PROCEDURE';
   treatmentPlanId?: string;
 };

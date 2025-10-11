@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 public class ProcedureDTO extends ReviewableDTO {
   private Integer plannedSession;
   private ProcedureStatus status;
+  private PatientShortDTO patient;
   private String studySector;
   private Set<Attachment> attachments;
   private Set<String> teeth;
