@@ -81,7 +81,7 @@ class TreatmentPlanProceduresControllerIntegrationTest {
         """
         {
           "name": "Restoration",
-          "tooth": ["11","12"],
+          "teeth": ["11","12"],
           "plannedSession": 2,
           "studySector": "Dentística"
         }
@@ -113,7 +113,7 @@ class TreatmentPlanProceduresControllerIntegrationTest {
         """
         {
           "name": "Restoration Modified",
-          "tooth": ["21"],
+          "teeth": ["21"],
           "plannedSession": 3,
           "studySector": "Endodontia"
         }

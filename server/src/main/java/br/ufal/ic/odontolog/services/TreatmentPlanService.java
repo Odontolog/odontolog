@@ -147,6 +147,11 @@ public class TreatmentPlanService {
             .findById(treatmentPlanId)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
+    if (treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
+      throw new IllegalStateException(
+          "Não é possível adicionar procedimentos enquanto o plano não está em rascunho (DRAFT)");
+    }
+
     TreatmentPlanProcedure procedure =
         TreatmentPlanProcedure.builder()
             .author(currentUser)
@@ -160,7 +165,7 @@ public class TreatmentPlanService {
             .build();
 
     procedure.setPlannedSession(dto.getPlannedSession());
-    dto.getTooth().forEach(procedure::addTooth);
+    dto.getTeeth().forEach(procedure::addTooth);
 
     treatmentPlan.addProcedure(procedure);
 
@@ -195,11 +200,17 @@ public class TreatmentPlanService {
       throw new ResourceNotFoundException("Procedure does not belong to this Treatment Plan");
     }
 
+    TreatmentPlan treatmentPlan = procedure.getTreatmentPlan();
+    if (treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
+      throw new IllegalStateException(
+          "Não é possível editar procedimentos enquanto o plano não está em rascunho (DRAFT)");
+    }
+
     procedure.setName(dto.getName());
     procedure.setStudySector(dto.getStudySector());
     procedure.setPlannedSession(dto.getPlannedSession());
     procedure.getTeeth().clear();
-    dto.getTooth().forEach(procedure::addTooth);
+    dto.getTeeth().forEach(procedure::addTooth);
 
     Activity activity =
         Activity.builder()
@@ -215,7 +226,6 @@ public class TreatmentPlanService {
 
     treatmentPlanProcedureRepository.save(procedure);
 
-    TreatmentPlan treatmentPlan = procedure.getTreatmentPlan();
     treatmentPlan.getHistory().add(activity);
 
     treatmentPlanRepository.save(treatmentPlan);
@@ -231,6 +241,11 @@ public class TreatmentPlanService {
         treatmentPlanRepository
             .findById(treatmentPlanId)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+
+    if (treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
+      throw new IllegalStateException(
+          "Não é possível remover procedimentos enquanto o plano não está em rascunho (DRAFT)");
+    }
 
     TreatmentPlanProcedure procedure =
         treatmentPlan.getProcedures().stream()

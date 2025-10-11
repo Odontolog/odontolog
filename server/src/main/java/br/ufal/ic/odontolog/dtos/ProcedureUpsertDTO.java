@@ -11,8 +11,7 @@ import lombok.Data;
 public class ProcedureUpsertDTO {
   @NotBlank private String name;
 
-  // Matches front "tooth" array; we keep the same name for payload compatibility
-  @NotNull @NotEmpty private List<String> tooth;
+  @NotNull @NotEmpty private List<String> teeth;
 
   @NotNull
   @Min(0)
