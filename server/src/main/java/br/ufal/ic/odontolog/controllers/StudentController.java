@@ -1,13 +1,10 @@
 package br.ufal.ic.odontolog.controllers;
 
-import br.ufal.ic.odontolog.dtos.StudentDTO;
-import br.ufal.ic.odontolog.services.StudentService;
-import java.util.List;
-import java.util.UUID;
 import br.ufal.ic.odontolog.api.StudentApi;
 import br.ufal.ic.odontolog.dtos.StudentDTO;
 import br.ufal.ic.odontolog.services.StudentService;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
