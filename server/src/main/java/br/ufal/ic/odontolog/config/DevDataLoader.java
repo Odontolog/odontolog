@@ -162,7 +162,7 @@ public class DevDataLoader implements CommandLineRunner {
     TreatmentPlanProcedure treatmentPlanProcedureTest001 =
         TreatmentPlanProcedure.builder()
             .name("Treatment_Plan_Procedure_Test_001")
-            .planned_session(1)
+            .plannedSession(1)
             .patient(patientTest001)
             .author(studentTest001)
             .assignee(supervisorTest001)
@@ -210,7 +210,7 @@ public class DevDataLoader implements CommandLineRunner {
         preProcedureRepository.save(
             PreProcedure.builder()
                 .name("Pre_Procedure_Test_001")
-                .planned_session(1)
+                .plannedSession(1)
                 .patient(patientTest001)
                 .author(studentTest001)
                 .assignee(supervisorTest001)
