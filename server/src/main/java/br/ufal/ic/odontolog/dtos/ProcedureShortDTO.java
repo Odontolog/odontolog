@@ -35,4 +35,5 @@ public class ProcedureShortDTO extends ReviewableShortDTO {
   private String notes;
   private String type;
   private String procedureType;
+  private Boolean deleted;
 }
