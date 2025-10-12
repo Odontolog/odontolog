@@ -10,6 +10,8 @@ import br.ufal.ic.odontolog.enums.Sex;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
+
+import java.time.LocalDate;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -143,7 +145,7 @@ public class DevDataLoader implements CommandLineRunner {
         patientRepository.save(
             Patient.builder()
                 .name("João da Silva")
-                .birthDate("1990-01-01")
+                .birthDate(LocalDate.parse("1990-01-01"))
                 .CPF("123.456.789-00")
                 .RG("12.345.678-9")
                 .sex(Sex.MALE)
@@ -161,7 +163,7 @@ public class DevDataLoader implements CommandLineRunner {
         patientRepository.save(
             Patient.builder()
                 .name("Mário Telles")
-                .birthDate("1990-01-01")
+                .birthDate(LocalDate.parse("1990-01-01"))
                 .CPF("123.456.780-00")
                 .RG("12.345.678-9")
                 .sex(Sex.MALE)
@@ -180,7 +182,7 @@ public class DevDataLoader implements CommandLineRunner {
         patientRepository.save(
             Patient.builder()
                 .name("Marina Costa Sampaio")
-                .birthDate("1990-01-01")
+                .birthDate(LocalDate.parse("1990-01-01"))
                 .CPF("123.456.589-00")
                 .RG("12.345.678-9")
                 .sex(Sex.FEMALE)
@@ -199,7 +201,7 @@ public class DevDataLoader implements CommandLineRunner {
         patientRepository.save(
             Patient.builder()
                 .name("Laura Medeiros dos Santos")
-                .birthDate("1990-01-01")
+                .birthDate(LocalDate.parse("1990-01-01"))
                 .CPF("123.456.781-00")
                 .RG("12.345.678-9")
                 .sex(Sex.FEMALE)
@@ -218,7 +220,7 @@ public class DevDataLoader implements CommandLineRunner {
         patientRepository.save(
             Patient.builder()
                 .name("Maria de Lourdes dos Anjos")
-                .birthDate("1962-01-01")
+                .birthDate(LocalDate.parse("1962-01-01"))
                 .CPF("001.456.781-00")
                 .RG("11.345.678-9")
                 .sex(Sex.FEMALE)

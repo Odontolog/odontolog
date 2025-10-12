@@ -10,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -51,7 +53,7 @@ public class Patient {
   @Enumerated(EnumType.STRING)
   private Sex sex;
 
-  private String birthDate;
+  private LocalDate birthDate;
 
   @Enumerated(EnumType.STRING)
   private MaritalStatus maritalStatus;

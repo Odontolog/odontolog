@@ -1,5 +1,7 @@
 package br.ufal.ic.odontolog.dtos;
 
+import java.time.LocalDate;
+
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
 import lombok.Data;
@@ -17,7 +19,7 @@ public class PatientDTO {
   private String state;
   private String race;
   private Sex sex;
-  private String birthDate;
+  private LocalDate birthDate;
   private MaritalStatus maritalStatus;
   private String profession;
 }
