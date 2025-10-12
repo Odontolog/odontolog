@@ -40,31 +40,28 @@ public class TreatmentPlanService {
   public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-    Patient patient =
-        patientRepository
-            .findById(request.getPatientId())
-            .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+    Patient patient = patientRepository
+        .findById(request.getPatientId())
+        .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
-    TreatmentPlan plan =
-        TreatmentPlan.builder()
-            .author(currentUser)
-            .name("Plano de Tratamento")
-            .patient(patient)
-            .assignee(currentUser)
-            .type(ReviewableType.TREATMENT_PLAN)
-            .status(TreatmentPlanStatus.DRAFT)
-            .build();
+    TreatmentPlan plan = TreatmentPlan.builder()
+        .author(currentUser)
+        .name("Plano de Tratamento")
+        .patient(patient)
+        .assignee(currentUser)
+        .type(ReviewableType.TREATMENT_PLAN)
+        .status(TreatmentPlanStatus.DRAFT)
+        .build();
 
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.CREATED)
-            .description(
-                String.format(
-                    "Plano de Tratamento criado para %s por %s (%s)",
-                    patient.getName(), currentUser.getName(), currentUser.getEmail()))
-            .reviewable(plan)
-            .build();
+    Activity activity = Activity.builder()
+        .actor(currentUser)
+        .type(ActivityType.CREATED)
+        .description(
+            String.format(
+                "Plano de Tratamento criado para %s por %s (%s)",
+                patient.getName(), currentUser.getName(), currentUser.getEmail()))
+        .reviewable(plan)
+        .build();
     plan.getHistory().add(activity);
     plan = treatmentPlanRepository.save(plan);
     return treatmentPlanMapper.toDTO(plan);
@@ -72,18 +69,16 @@ public class TreatmentPlanService {
 
   @Transactional
   public TreatmentPlanDTO getTreatmentPlanById(Long id) {
-    TreatmentPlan plan =
-        treatmentPlanRepository
-            .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Treatment plan not found"));
+    TreatmentPlan plan = treatmentPlanRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Treatment plan not found"));
     return treatmentPlanMapper.toDTO(plan);
   }
 
   public List<TreatmentPlanShortDTO> getTreatmentPlansByPatientId(Long patientId) {
-    Patient patient =
-        patientRepository
-            .findById(patientId)
-            .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+    Patient patient = patientRepository
+        .findById(patientId)
+        .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     List<TreatmentPlan> treatmentPlans = treatmentPlanRepository.findByPatient(patient);
     return treatmentPlanMapper.toShortDTOs(treatmentPlans);
   }
@@ -93,12 +88,11 @@ public class TreatmentPlanService {
       Long treatment_id, TreatmentPlanSubmitForReviewDTO requestDTO) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-    TreatmentPlan treatmentPlan =
-        treatmentPlanRepository
-            .findById(treatment_id)
-            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+    TreatmentPlan treatmentPlan = treatmentPlanRepository
+        .findById(treatment_id)
+        .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
-    treatmentPlan.getState().submitForReview(treatmentPlan);
+    treatmentPlan.submitForReview();
 
     String description = buildSubmissionDescription(currentUser, treatmentPlan);
 
@@ -109,14 +103,13 @@ public class TreatmentPlanService {
       metadata.put("data", comments);
     }
 
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.REVIEW_REQUESTED)
-            .description(description)
-            .reviewable(treatmentPlan)
-            .metadata(metadata)
-            .build();
+    Activity activity = Activity.builder()
+        .actor(currentUser)
+        .type(ActivityType.REVIEW_REQUESTED)
+        .description(description)
+        .reviewable(treatmentPlan)
+        .metadata(metadata)
+        .build();
     treatmentPlan.getHistory().add(activity);
 
     treatmentPlanRepository.save(treatmentPlan);
@@ -140,43 +133,40 @@ public class TreatmentPlanService {
       Long treatmentPlanId, ProcedureUpsertDTO dto) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-    TreatmentPlan treatmentPlan =
-        treatmentPlanRepository
-            .findById(treatmentPlanId)
-            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+    TreatmentPlan treatmentPlan = treatmentPlanRepository
+        .findById(treatmentPlanId)
+        .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
     if (treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
       throw new IllegalStateException(
           "Não é possível adicionar procedimentos enquanto o plano não está em rascunho (DRAFT)");
     }
 
-    TreatmentPlanProcedure procedure =
-        TreatmentPlanProcedure.builder()
-            .author(currentUser)
-            .assignee(currentUser)
-            .type(ReviewableType.PROCEDURE)
-            .status(ProcedureStatus.DRAFT)
-            .name(dto.getName())
-            .studySector(dto.getStudySector())
-            .patient(treatmentPlan.getPatient())
-            .treatmentPlan(treatmentPlan)
-            .build();
+    TreatmentPlanProcedure procedure = TreatmentPlanProcedure.builder()
+        .author(currentUser)
+        .assignee(currentUser)
+        .type(ReviewableType.PROCEDURE)
+        .status(ProcedureStatus.DRAFT)
+        .name(dto.getName())
+        .studySector(dto.getStudySector())
+        .patient(treatmentPlan.getPatient())
+        .treatmentPlan(treatmentPlan)
+        .build();
 
     procedure.setPlannedSession(dto.getPlannedSession());
     dto.getTeeth().forEach(procedure::addTooth);
 
     treatmentPlan.addProcedure(procedure);
 
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.CREATED)
-            .description(
-                String.format(
-                    "Procedimento #%s adicionado ao Plano de Tratamento #%s",
-                    dto.getName(), treatmentPlan.getId()))
-            .reviewable(treatmentPlan)
-            .build();
+    Activity activity = Activity.builder()
+        .actor(currentUser)
+        .type(ActivityType.CREATED)
+        .description(
+            String.format(
+                "Procedimento #%s adicionado ao Plano de Tratamento #%s",
+                dto.getName(), treatmentPlan.getId()))
+        .reviewable(treatmentPlan)
+        .build();
     treatmentPlan.getHistory().add(activity);
 
     treatmentPlanRepository.save(treatmentPlan);
@@ -189,10 +179,9 @@ public class TreatmentPlanService {
       Long treatmentPlanId, Long procedureId, ProcedureUpsertDTO dto) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-    TreatmentPlanProcedure procedure =
-        treatmentPlanProcedureRepository
-            .findById(procedureId)
-            .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
+    TreatmentPlanProcedure procedure = treatmentPlanProcedureRepository
+        .findById(procedureId)
+        .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
 
     if (!procedure.getTreatmentPlan().getId().equals(treatmentPlanId)) {
       throw new ResourceNotFoundException("Procedure does not belong to this Treatment Plan");
@@ -210,15 +199,14 @@ public class TreatmentPlanService {
     procedure.getTeeth().clear();
     dto.getTeeth().forEach(procedure::addTooth);
 
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.EDITED)
-            .description(
-                String.format(
-                    "Procedimento #%s (%s) editado em Plano de Tratamento #%s",
-                    procedure.getId(), procedure.getName(), treatmentPlanId))
-            .build();
+    Activity activity = Activity.builder()
+        .actor(currentUser)
+        .type(ActivityType.EDITED)
+        .description(
+            String.format(
+                "Procedimento #%s (%s) editado em Plano de Tratamento #%s",
+                procedure.getId(), procedure.getName(), treatmentPlanId))
+        .build();
 
     procedure.getHistory().add(activity);
 
@@ -235,32 +223,29 @@ public class TreatmentPlanService {
   public void removeProcedureFromTreatmentPlan(Long treatmentPlanId, Long procedureId) {
     User currentUser = currentUserProvider.getCurrentUser();
 
-    TreatmentPlan treatmentPlan =
-        treatmentPlanRepository
-            .findById(treatmentPlanId)
-            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+    TreatmentPlan treatmentPlan = treatmentPlanRepository
+        .findById(treatmentPlanId)
+        .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
     if (treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
       throw new IllegalStateException(
           "Não é possível remover procedimentos enquanto o plano não está em rascunho (DRAFT)");
     }
 
-    TreatmentPlanProcedure procedure =
-        treatmentPlan.getProcedures().stream()
-            .filter(p -> p.getId().equals(procedureId))
-            .findFirst()
-            .orElseThrow(
-                () -> new ResourceNotFoundException("Procedure not found in this Treatment Plan"));
+    TreatmentPlanProcedure procedure = treatmentPlan.getProcedures().stream()
+        .filter(p -> p.getId().equals(procedureId))
+        .findFirst()
+        .orElseThrow(
+            () -> new ResourceNotFoundException("Procedure not found in this Treatment Plan"));
 
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.EDITED)
-            .description(
-                String.format(
-                    "Procedimento #%s removido do plano de tratamento #%s por %s (%s)",
-                    procedureId, treatmentPlanId, currentUser.getName(), currentUser.getEmail()))
-            .build();
+    Activity activity = Activity.builder()
+        .actor(currentUser)
+        .type(ActivityType.EDITED)
+        .description(
+            String.format(
+                "Procedimento #%s removido do plano de tratamento #%s por %s (%s)",
+                procedureId, treatmentPlanId, currentUser.getName(), currentUser.getEmail()))
+        .build();
 
     procedure.setDeleted(true);
     procedure.getHistory().add(activity);

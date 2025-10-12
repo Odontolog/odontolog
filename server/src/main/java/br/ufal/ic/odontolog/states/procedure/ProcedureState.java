@@ -16,4 +16,8 @@ public interface ProcedureState {
   public default void setReviewers(Procedure procedure, Set<Supervisor> supervisors) {
     throw new UnsupportedOperationException("Operation not allowed in the current state.");
   }
+
+  public default void submitForReview(Procedure procedure) {
+    throw new UnsupportedOperationException("Operation not allowed in the current state.");
+  }
 }

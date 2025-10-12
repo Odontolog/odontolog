@@ -25,15 +25,13 @@ public class TreatmentPlanStates {
     public void setReviewers(TreatmentPlan treatmentPlan, Set<Supervisor> reviewers) {
       Set<Supervisor> currentReviewers = treatmentPlan.getReviewers();
 
-      Set<Supervisor> reviewersToAdd =
-          reviewers.stream()
-              .filter(reviewer -> !currentReviewers.contains(reviewer))
-              .collect(Collectors.toSet());
+      Set<Supervisor> reviewersToAdd = reviewers.stream()
+          .filter(reviewer -> !currentReviewers.contains(reviewer))
+          .collect(Collectors.toSet());
 
-      Set<Supervisor> reviewersToRemove =
-          currentReviewers.stream()
-              .filter(reviewer -> !reviewers.contains(reviewer))
-              .collect(Collectors.toSet());
+      Set<Supervisor> reviewersToRemove = currentReviewers.stream()
+          .filter(reviewer -> !reviewers.contains(reviewer))
+          .collect(Collectors.toSet());
 
       reviewersToAdd.forEach(treatmentPlan::addReviewer);
       reviewersToRemove.forEach(treatmentPlan::removeReviewer);
@@ -51,18 +49,10 @@ public class TreatmentPlanStates {
 
       treatmentPlan.setStatus(TreatmentPlanStatus.IN_REVIEW);
 
-      // FIXME: This is wrong, we should not create new reviews every time we submit
-      // for review.
-      for (Supervisor reviewer : treatmentPlan.getReviewers()) {
-        treatmentPlan
-            .getReviews()
-            .add(
-                Review.builder()
-                    .supervisor(reviewer)
-                    .reviewable(treatmentPlan)
-                    .reviewStatus(ReviewStatus.PENDING)
-                    .build());
-      }
+      treatmentPlan.getReviews().stream()
+          .filter(review -> review.getReviewStatus() == ReviewStatus.DRAFT ||
+              review.getReviewStatus() == ReviewStatus.REJECTED)
+          .forEach(review -> review.setReviewStatus(ReviewStatus.PENDING));
     }
   }
 

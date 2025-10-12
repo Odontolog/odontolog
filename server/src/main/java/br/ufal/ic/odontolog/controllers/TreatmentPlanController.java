@@ -37,12 +37,13 @@ public class TreatmentPlanController implements TreatmentPlanApi {
     return treatmentPlanService.getTreatmentPlanById(treatmentId);
   }
 
+  // TODO: Move to ReviewableController
+  // because it's related to reviewable actions
   @PostMapping("/treatment-plan/{treatment_id}/submit-for-review")
   @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
   public ResponseEntity<TreatmentPlanDTO> submitForReview(
       @PathVariable Long treatment_id, @RequestBody TreatmentPlanSubmitForReviewDTO requestDTO) {
-    TreatmentPlanDTO updatedTreatmentPlan =
-        treatmentPlanService.submitTreatmentPlanForReview(treatment_id, requestDTO);
+    TreatmentPlanDTO updatedTreatmentPlan = treatmentPlanService.submitTreatmentPlanForReview(treatment_id, requestDTO);
 
     return ResponseEntity.ok(updatedTreatmentPlan);
   }

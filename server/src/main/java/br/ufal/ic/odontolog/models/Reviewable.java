@@ -38,28 +38,22 @@ public abstract class Reviewable {
   @JoinColumn(name = "assignee_id")
   private User assignee;
 
-  @CreationTimestamp private Instant createdAt;
+  @CreationTimestamp
+  private Instant createdAt;
 
-  @UpdateTimestamp private Instant updatedAt;
+  @UpdateTimestamp
+  private Instant updatedAt;
 
   // FIXME: I don't know if this cascade type is correct. Check if this is
   // necessary.
   // Or if I should use CascadeType.PERSIST only.
-  @OneToMany(
-      mappedBy = "reviewable",
-      cascade = CascadeType.ALL,
-      orphanRemoval = true,
-      fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   @Builder.Default
   private Set<Review> reviews = new java.util.HashSet<>();
 
   private String notes;
 
-  @OneToMany(
-      mappedBy = "reviewable",
-      cascade = CascadeType.ALL,
-      orphanRemoval = true,
-      fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "reviewable", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
   @Builder.Default
   private Set<Activity> history = new java.util.HashSet<>();
 
@@ -80,12 +74,11 @@ public abstract class Reviewable {
   }
 
   public void addReviewer(Supervisor supervisor) {
-    Review review =
-        Review.builder()
-            .supervisor(supervisor)
-            .reviewable(this)
-            .reviewStatus(ReviewStatus.DRAFT)
-            .build();
+    Review review = Review.builder()
+        .supervisor(supervisor)
+        .reviewable(this)
+        .reviewStatus(ReviewStatus.DRAFT)
+        .build();
     this.addReview(review);
   }
 
@@ -96,4 +89,6 @@ public abstract class Reviewable {
   public abstract void assignUser(User user);
 
   public abstract void setReviewers(Set<Supervisor> supervisors);
+
+  public abstract void submitForReview();
 }
