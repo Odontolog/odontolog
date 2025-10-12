@@ -20,4 +20,13 @@ public interface ProcedureState {
   public default void submitForReview(Procedure procedure) {
     throw new UnsupportedOperationException("Operation not allowed in the current state.");
   }
+
+  public default void submitSupervisorReview(
+      Procedure procedure,
+      Supervisor supervisor,
+      String comments,
+      Integer grade,
+      Boolean approved) {
+    throw new UnsupportedOperationException("Operation not allowed in the current state.");
+  }
 }

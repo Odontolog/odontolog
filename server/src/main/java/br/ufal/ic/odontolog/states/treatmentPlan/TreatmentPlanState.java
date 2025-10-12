@@ -20,4 +20,13 @@ public interface TreatmentPlanState {
   public default void setReviewers(TreatmentPlan treatmentPlan, Set<Supervisor> supervisors) {
     throw new UnsupportedOperationException("Operation not allowed in the current state.");
   }
+
+  public default void submitSupervisorReview(
+      TreatmentPlan treatmentPlan,
+      Supervisor supervisor,
+      String comments,
+      Integer grade,
+      Boolean approved) {
+    throw new UnsupportedOperationException("Operation not allowed in the current state.");
+  }
 }

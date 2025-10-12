@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.models;
 
+import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.states.treatmentPlan.TreatmentPlanState;
 import br.ufal.ic.odontolog.states.treatmentPlan.TreatmentPlanStates;
@@ -23,8 +24,7 @@ public class TreatmentPlan extends Reviewable {
   @Enumerated(EnumType.STRING)
   private TreatmentPlanStatus status;
 
-  @Transient
-  private TreatmentPlanState state;
+  @Transient private TreatmentPlanState state;
 
   @ManyToOne
   @JoinColumn(name = "patient_id", nullable = false)
@@ -59,6 +59,15 @@ public class TreatmentPlan extends Reviewable {
     this.status = state.getStatus();
   }
 
+  public void approve() {
+    this.status = TreatmentPlanStatus.IN_PROGRESS;
+    this.procedures.forEach(procedure -> procedure.setStatus(ProcedureStatus.NOT_STARTED));
+  }
+
+  public void reject() {
+    this.status = TreatmentPlanStatus.DRAFT;
+  }
+
   @Override
   public void assignUser(User user) {
     this.getState().assignUser(this, user);
@@ -72,5 +81,11 @@ public class TreatmentPlan extends Reviewable {
   @Override
   public void submitForReview() {
     this.getState().submitForReview(this);
+  }
+
+  @Override
+  public void submitSupervisorReview(
+      Supervisor supervisor, String comments, Integer grade, Boolean approved) {
+    this.getState().submitSupervisorReview(this, supervisor, comments, grade, approved);
   }
 }
