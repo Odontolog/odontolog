@@ -1,7 +1,8 @@
-import { Text, Card, Flex, ThemeIcon, Group } from '@mantine/core';
+import { ActionIcon, Card, Flex, Group, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import NextConsultationMenu from './next-consultation-menu';
 import { useState } from 'react';
+
+import NextConsultationMenu from './next-consultation-menu';
 
 interface procedureSummaryProps {
   lastConsultation?: string | null;
@@ -24,35 +25,37 @@ export default function HistorySummary({
 
   return (
     <Flex gap="xs">
-      <Card withBorder shadow="sm" radius="md" px="sm" flex={1}>
-        <Card.Section inheritPadding py="sm">
-          <Group>
-            <Text fw={400} size="md">
-              Última consulta
-            </Text>
-            <ThemeIcon variant="light" size="md" color="gray" radius="xl">
-              <IconInfoCircle style={{ width: '70%', height: '70%' }} />
-            </ThemeIcon>
+      <Card withBorder shadow="sm" radius="md" p="sm" flex={1}>
+        <Stack gap="4" h="100%" justify="center">
+          <Group justify="space-between">
+            <Text size="sm">Última consulta</Text>
+            <ActionIcon
+              variant="subtle"
+              color="gray"
+              style={{ '--ai-hover': '#FFF' }}
+            >
+              <IconInfoCircle size={16} color="gray" />
+            </ActionIcon>
           </Group>
-        </Card.Section>
-        <Text fw={600}>{lastConsultation}</Text>
+          <Text fw={600}>{lastConsultation}</Text>
+        </Stack>
       </Card>
-      <Card withBorder shadow="sm" radius="md" px="sm" flex={1}>
-        <Card.Section inheritPadding py="sm">
-          <Group>
-            <Text>Próxima consulta</Text>
+      <Card withBorder shadow="sm" radius="md" p="sm" flex={1}>
+        <Stack gap="4" h="100%" justify="center">
+          <Group justify="space-between">
+            <Text size="sm">Próxima consulta</Text>
             <NextConsultationMenu
               patientId={patientId}
               queryOptions={nextConsultationQueryOptions}
               onSave={handleSaveNextConsultation}
             />
           </Group>
-        </Card.Section>
-        <Text fw={550}>
-          {nextConsultationDate
-            ? new Date(nextConsultationDate).toLocaleDateString('pt-BR')
-            : 'Não agendada'}
-        </Text>
+          <Text fw={600}>
+            {nextConsultationDate
+              ? new Date(nextConsultationDate).toLocaleDateString('pt-BR')
+              : 'Não agendada'}
+          </Text>
+        </Stack>
       </Card>
     </Flex>
   );

@@ -37,6 +37,7 @@ export async function saveNextConsultation(
   date: Date | undefined,
   patientId: string,
 ) {
+  console.log(JSON.stringify({ date }));
   console.log(
     `Next consultation on date ${date ? date.toISOString() : 'undefined'} saved for patient ${patientId}`,
   );

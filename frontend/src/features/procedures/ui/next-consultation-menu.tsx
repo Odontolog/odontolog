@@ -19,6 +19,7 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query';
 import { useState } from 'react';
+
 import { getNextConsultationDate, saveNextConsultation } from '../requests';
 
 const MENU_WIDTH = 260;
@@ -40,8 +41,8 @@ export default function NextConsultationMenu(props: NextConsultationMenuProps) {
       onChange={setMenuOpened}
     >
       <Menu.Target>
-        <ActionIcon variant="subtle" color="gray">
-          <IconEdit size={24} />
+        <ActionIcon variant="white" color="gray">
+          <IconEdit size={16} />
         </ActionIcon>
       </Menu.Target>
       <Menu.Dropdown>
@@ -86,7 +87,10 @@ function NextConsultationMenuContent({
   });
 
   const handleDateChange = (value: string | null) => {
-    setDate(value ? new Date(value) : undefined);
+    if (value === null) {
+      return;
+    }
+    setDate(value !== null ? new Date(`${value}T00:00:00.000`) : undefined);
   };
 
   if (isLoading) {
