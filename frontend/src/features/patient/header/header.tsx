@@ -154,8 +154,8 @@ function LeftContent({ patient }: { patient: Patient }) {
             <Text>{patient.birthDate.toLocaleDateString('pt-BR')}</Text>
           </Group>
           <Group gap={4}>
-            {genderMap[patient.gender].icon}
-            <Text>{genderMap[patient.gender].label}</Text>
+            {genderMap[patient.sex].icon}
+            <Text>{genderMap[patient.sex].label}</Text>
           </Group>
         </Group>
         <Group gap={4}>
@@ -176,7 +176,7 @@ function RightContent({ patient }: { patient: Patient }) {
         </Text>
         <Text>
           <b>Telefone:</b>{' '}
-          {patient.phone.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')}
+          {patient.phoneNumber.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')}
         </Text>
         <Text>
           <b>Cidade:</b> {patient.city}
@@ -244,7 +244,7 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
               <Title order={2}>{patient.name}</Title>
               <Text size="sm" c="dimmed">
                 {patient.birthDate.toLocaleDateString('pt-BR')} •{' '}
-                {genderMap[patient.gender].label}
+                {genderMap[patient.sex].label}
               </Text>
             </Stack>
           </Group>
@@ -282,7 +282,7 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
             <DetailItem label="RG" value={`${patient.rg} ${patient.ssp}`} />
             <DetailItem
               label="Contato"
-              value={patient.phone.replace(
+              value={patient.phoneNumber.replace(
                 /^(\d{2})(\d{5})(\d{4})$/,
                 '($1) $2-$3',
               )}

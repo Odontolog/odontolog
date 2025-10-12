@@ -1,188 +1,26 @@
+import { notFound } from 'next/navigation';
+
 import { Patient } from '@/shared/models';
+import { getAuthToken } from '@/shared/utils';
+import { mapToPatient, PatientDTO } from './mappers';
 
-const patientData: Patient[] = [
-  {
-    id: '1',
-    avatarUrl: '',
-    name: 'João Silva',
-    birthDate: new Date('1985-03-15'),
-    phone: '82999999991',
-    cpf: '123.456.789-01',
-    rg: '12.345.678-9',
-    ssp: 'AL',
-    maritalStatus: 'MARRIED',
-    gender: 'MALE',
-    ethnicity: 'WHITE',
-    address: 'Rua do Sol, 123',
-    city: 'Maceió',
-    state: 'AL',
-    occupation: 'Engenheiro',
-  },
-  {
-    id: '2',
-    avatarUrl: 'https://randomuser.me/api/portraits/women/2.jpg',
-    name: 'Maria Oliveira',
-    birthDate: new Date('1990-07-22'),
-    phone: '82999999992',
-    cpf: '234.567.890-12',
-    rg: '23.456.789-0',
-    ssp: 'AL',
-    maritalStatus: 'SINGLE',
-    gender: 'FEMALE',
-    ethnicity: 'YELLOW',
-    address: 'Avenida Fernandes Lima, 456',
-    city: 'Maceió',
-    state: 'AL',
-    occupation: 'Médica',
-  },
-  {
-    id: '3',
-    avatarUrl: 'https://randomuser.me/api/portraits/men/3.jpg',
-    name: 'Carlos Pereira',
-    birthDate: new Date('1978-11-05'),
-    phone: '82999999993',
-    cpf: '345.678.901-23',
-    rg: '34.567.890-1',
-    ssp: 'AL',
-    maritalStatus: 'DIVORCED',
-    gender: 'MALE',
-    ethnicity: 'BLACK',
-    address: 'Rua Jatiúca, 789',
-    city: 'Maceió',
-    state: 'AL',
-    occupation: 'Professor',
-  },
-  {
-    id: '4',
-    avatarUrl: 'https://randomuser.me/api/portraits/women/4.jpg',
-    name: 'Ana Souza',
-    birthDate: new Date('1982-02-28'),
-    phone: '82999999994',
-    cpf: '456.789.012-34',
-    rg: '45.678.901-2',
-    ssp: 'AL',
-    maritalStatus: 'WIDOWED',
-    gender: 'FEMALE',
-    ethnicity: 'WHITE',
-    address: 'Rua Ponta Verde, 321',
-    city: 'Maceió',
-    state: 'AL',
-    occupation: 'Advogada',
-  },
-  {
-    id: '5',
-    avatarUrl: '',
-    name: 'Pedro Costa',
-    birthDate: new Date('1995-09-10'),
-    phone: '82999999995',
-    cpf: '567.890.123-45',
-    rg: '56.789.012-3',
-    ssp: 'AL',
-    maritalStatus: 'CIVIL_UNION',
-    gender: 'MALE',
-    ethnicity: 'BROWN',
-    address: 'Avenida da Paz, 654',
-    city: 'Maceió',
-    state: 'AL',
-    occupation: 'Designer',
-  },
-  {
-    id: '6',
-    avatarUrl: 'https://randomuser.me/api/portraits/women/6.jpg',
-    name: 'Fernanda Lima',
-    birthDate: new Date('1988-06-18'),
-    phone: '82999999996',
-    cpf: '678.901.234-56',
-    rg: '67.890.123-4',
-    ssp: 'AL',
-    maritalStatus: 'SINGLE',
-    gender: 'FEMALE',
-    ethnicity: 'YELLOW',
-    address: 'Rua do Comércio, 987',
-    city: 'Arapiraca',
-    state: 'AL',
-    occupation: 'Arquiteta',
-  },
-  {
-    id: '7',
-    avatarUrl: 'https://randomuser.me/api/portraits/men/7.jpg',
-    name: 'Rafael Martins',
-    birthDate: new Date('1975-12-30'),
-    phone: '82999999997',
-    cpf: '789.012.345-67',
-    rg: '78.901.234-5',
-    ssp: 'AL',
-    maritalStatus: 'MARRIED',
-    gender: 'MALE',
-    ethnicity: 'INDIGENOUS',
-    address: 'Rua das Acácias, 159',
-    city: 'Penedo',
-    state: 'AL',
-    occupation: 'Veterinário',
-  },
-  {
-    id: '8',
-    avatarUrl: 'https://randomuser.me/api/portraits/women/8.jpg',
-    name: 'Juliana Alves',
-    birthDate: new Date('1992-04-25'),
-    phone: '82999999998',
-    cpf: '890.123.456-78',
-    rg: '89.012.345-6',
-    ssp: 'AL',
-    maritalStatus: 'SINGLE',
-    gender: 'FEMALE',
-    ethnicity: 'BLACK',
-    address: 'Rua do Lago, 753',
-    city: 'Palmeira dos Índios',
-    state: 'AL',
-    occupation: 'Psicóloga',
-  },
-  {
-    id: '9',
-    avatarUrl: '',
-    name: 'Lucas Rocha',
-    birthDate: new Date('1980-08-12'),
-    phone: '82999999999',
-    cpf: '901.234.567-89',
-    rg: '90.123.456-7',
-    ssp: 'AL',
-    maritalStatus: 'DIVORCED',
-    gender: 'MALE',
-    ethnicity: 'WHITE',
-    address: 'Rua das Oliveiras, 852',
-    city: 'União dos Palmares',
-    state: 'AL',
-    occupation: 'Contador',
-  },
-  {
-    id: '10',
-    avatarUrl: 'https://randomuser.me/api/portraits/women/10.jpg',
-    name: 'Patrícia Mendes',
-    birthDate: new Date('1987-01-20'),
-    phone: '82999999910',
-    cpf: '012.345.678-90',
-    rg: '01.234.567-8',
-    ssp: 'AL',
-    maritalStatus: 'WIDOWED',
-    gender: 'FEMALE',
-    ethnicity: 'OTHER',
-    address: 'Rua do Porto, 369',
-    city: 'Maceió',
-    state: 'AL',
-    occupation: 'Enfermeira',
-  },
-];
+export async function getPatientById(patientId: string): Promise<Patient> {
+  const token = await getAuthToken();
 
-export async function getAllPatients(): Promise<Patient[]> {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return patientData;
-}
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
 
-export async function getPatientById(
-  patientId: string,
-): Promise<Patient | undefined> {
-  console.log('fething detail for procedureID: ', patientId);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  const res = patientData.find((p) => p.id === patientId);
-  return res;
+  if (res.status >= 500) {
+    throw new Error(`Erro ao buscar plano: ${res.status}`);
+  } else if (res.status >= 400) {
+    notFound();
+  }
+  const data = (await res.json()) as PatientDTO;
+  return mapToPatient(data);
 }
