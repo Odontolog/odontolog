@@ -115,7 +115,7 @@ export const proceduresShort: ProcedureShort[] = [
   },
   {
     id: '3',
-    status: 'DONE',
+    status: 'COMPLETED',
     name: 'Extração',
     studySector: 'Cirurgia',
     plannedSession: 2,
@@ -130,7 +130,7 @@ export const proceduresShort: ProcedureShort[] = [
   },
   {
     id: '4',
-    status: 'DONE',
+    status: 'COMPLETED',
     name: 'Limpeza',
     studySector: 'Periodontia',
     plannedSession: 3,
@@ -234,7 +234,7 @@ export const procedures: Procedure[] = [
   },
   {
     id: '4',
-    status: 'DONE',
+    status: 'COMPLETED',
     name: 'Limpeza',
     studySector: 'Periodontia',
     assignee: student,

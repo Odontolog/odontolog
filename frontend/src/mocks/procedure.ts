@@ -63,7 +63,7 @@ export const mockProcedure: Procedure = {
         email: 'joao.silva@example.com',
         avatarUrl: 'https://example.com/avatars/student-101.png',
       },
-      size: 2450000, // bytes
+      size: '8.5mb',
     },
     {
       id: '502',
@@ -76,12 +76,12 @@ export const mockProcedure: Procedure = {
         email: 'joao.silva@example.com',
         avatarUrl: 'https://example.com/avatars/student-101.png',
       },
-      size: 2800000,
+      size: '1.2mb',
     },
   ],
   studySector: 'Dentística',
   teeth: ['11', '12', '13', '22', '24', '27', '47', '45'],
-  details: {
+  procedureDetail: {
     diagnostic: 'Cárie incipiente em dente 14.',
   },
   procedureType: 'PRE_PROCEDURE',

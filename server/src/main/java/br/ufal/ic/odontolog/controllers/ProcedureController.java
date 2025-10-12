@@ -17,9 +17,9 @@ public class ProcedureController {
 
   @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @GetMapping("/patients/{patientId}/procedures")
-  public ResponseEntity<List<ProcedureShortDTO>> getPatientProcedures(
+  public ResponseEntity<List<ProcedureShortDTO>> getPatientDoneProcedures(
       @PathVariable Long patientId) {
-    List<ProcedureShortDTO> procedures = procedureService.getAllPatientProcedures(patientId);
+    List<ProcedureShortDTO> procedures = procedureService.getDonePatientProcedures(patientId);
     return ResponseEntity.ok(procedures);
   }
 

@@ -144,7 +144,7 @@ export function TreatmentPlanDetailContent({
                     transitionProps={{ duration: 200 }}
                   >
                     <span>
-                      {`${treatmentPlan.procedures.filter((procedure) => procedure.status === 'DONE').length} / ${treatmentPlan.procedures.length.toString()}`}
+                      {`${treatmentPlan.procedures.filter((procedure) => procedure.status === 'COMPLETED').length} / ${treatmentPlan.procedures.length.toString()}`}
                     </span>
                   </Tooltip>
                 }

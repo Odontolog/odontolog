@@ -72,7 +72,7 @@ export type ProcedureStatus =
   | 'NOT_STARTED'
   | 'IN_PROGRESS'
   | 'IN_REVIEW'
-  | 'DONE';
+  | 'COMPLETED';
 
 export type ProcedureShort = {
   id: string;
