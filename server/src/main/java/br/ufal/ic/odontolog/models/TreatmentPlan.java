@@ -62,4 +62,9 @@ public class TreatmentPlan extends Reviewable {
   public void assignUser(User user) {
     this.getState().assignUser(this, user);
   }
+
+  @Override
+  public void setReviewers(Set<Supervisor> supervisors) {
+    this.getState().setReviewers(this, supervisors);
+  }
 }

@@ -33,24 +33,6 @@ public class ReviewableController implements ReviewableApi {
   }
 
   @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
-  @PostMapping("/{reviewableId}/reviewers")
-  public ResponseEntity<ReviewableDTO> addReviewers(
-      @PathVariable Long reviewableId, @Valid @RequestBody ReviewersDTO request) {
-
-    var updated = reviewableService.addSupervisorsToReviewable(reviewableId, request);
-    return ResponseEntity.ok(updated);
-  }
-
-  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
-  @DeleteMapping("/{reviewableId}/reviewers")
-  public ResponseEntity<ReviewableDTO> removeReviewers(
-      @PathVariable Long reviewableId, @Valid @RequestBody ReviewersDTO request) {
-
-    var updated = reviewableService.removeSupervisorsFromReviewable(reviewableId, request);
-    return ResponseEntity.ok(updated);
-  }
-
-  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @PutMapping("/{reviewableId}/reviewers")
   public ResponseEntity<ReviewableDTO> updateReviewers(
       @PathVariable Long reviewableId, @Valid @RequestBody ReviewersDTO request) {

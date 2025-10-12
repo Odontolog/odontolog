@@ -1,12 +1,13 @@
 package br.ufal.ic.odontolog.models;
 
+import br.ufal.ic.odontolog.enums.ReviewStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,8 +37,6 @@ public abstract class Reviewable {
   @ManyToOne
   @JoinColumn(name = "assignee_id")
   private User assignee;
-
-  @ManyToMany @Builder.Default private Set<Supervisor> reviewers = new HashSet<>();
 
   @CreationTimestamp private Instant createdAt;
 
@@ -75,5 +74,26 @@ public abstract class Reviewable {
     review.setReviewable(this);
   }
 
+  @Transient
+  public Set<Supervisor> getReviewers() {
+    return this.reviews.stream().map(Review::getSupervisor).collect(Collectors.toUnmodifiableSet());
+  }
+
+  public void addReviewer(Supervisor supervisor) {
+    Review review =
+        Review.builder()
+            .supervisor(supervisor)
+            .reviewable(this)
+            .reviewStatus(ReviewStatus.DRAFT)
+            .build();
+    this.addReview(review);
+  }
+
+  public void removeReviewer(Supervisor supervisor) {
+    this.reviews.removeIf(review -> review.getSupervisor().equals(supervisor));
+  }
+
   public abstract void assignUser(User user);
+
+  public abstract void setReviewers(Set<Supervisor> supervisors);
 }

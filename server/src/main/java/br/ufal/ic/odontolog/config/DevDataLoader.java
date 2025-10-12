@@ -10,7 +10,6 @@ import br.ufal.ic.odontolog.enums.Sex;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +152,6 @@ public class DevDataLoader implements CommandLineRunner {
                 .status(TreatmentPlanStatus.DRAFT)
                 .author(studentTest001)
                 .assignee(supervisorTest001)
-                .reviewers(Set.of(supervisorTest001))
                 .notes("Test Notes")
                 .type(ReviewableType.TREATMENT_PLAN)
                 .build());
@@ -168,7 +166,6 @@ public class DevDataLoader implements CommandLineRunner {
             .assignee(supervisorTest001)
             .notes("Test Notes")
             .type(ReviewableType.PROCEDURE)
-            .reviewers(Set.of(supervisorTest001))
             .status(ProcedureStatus.DRAFT)
             .studySector("Surgery")
             .procedureDetail(new ProcedureDetail("Test Procedure Detail"))
@@ -214,7 +211,6 @@ public class DevDataLoader implements CommandLineRunner {
                 .patient(patientTest001)
                 .author(studentTest001)
                 .assignee(supervisorTest001)
-                .reviewers(Set.of(supervisorTest001))
                 .notes("Test Notes")
                 .type(ReviewableType.PROCEDURE)
                 .status(ProcedureStatus.DRAFT)
