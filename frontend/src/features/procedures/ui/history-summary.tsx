@@ -1,4 +1,12 @@
-import { ActionIcon, Card, Flex, Group, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Card,
+  Flex,
+  Group,
+  Skeleton,
+  Stack,
+  Text,
+} from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useState } from 'react';
 
@@ -7,11 +15,13 @@ import NextConsultationMenu from './next-consultation-menu';
 interface procedureSummaryProps {
   lastConsultation?: string | null;
   patientId: string;
+  isLoading?: boolean;
 }
 
 export default function HistorySummary({
   lastConsultation,
   patientId,
+  isLoading,
 }: procedureSummaryProps) {
   const nextConsultationQueryOptions = {
     queryKey: ['nextConsultationDate', patientId],
@@ -37,7 +47,11 @@ export default function HistorySummary({
               <IconInfoCircle size={16} color="gray" />
             </ActionIcon>
           </Group>
-          <Text fw={600}>{lastConsultation}</Text>
+          {(isLoading ?? false) || lastConsultation === undefined ? (
+            <Skeleton height={24} radius="none" />
+          ) : (
+            <Text fw={600}>{lastConsultation}</Text>
+          )}
         </Stack>
       </Card>
       <Card withBorder shadow="sm" radius="md" p="sm" flex={1}>

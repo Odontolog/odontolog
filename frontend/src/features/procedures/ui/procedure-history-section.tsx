@@ -41,6 +41,7 @@ export default function ProcedureHistorySection({
       <HistorySummary
         lastConsultation={lastConsultationDate?.toLocaleDateString('pt-BR')}
         patientId={patientId}
+        isLoading={isLoading}
       />
       <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
         <Card.Section inheritPadding py="sm">
