@@ -8,6 +8,7 @@ import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
+import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
@@ -145,9 +146,16 @@ public class TreatmentPlanService {
             .findById(treatmentPlanId)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
-    if (treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
+    if (currentUser.getRole() == Role.STUDENT && treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
       throw new IllegalStateException(
           "Não é possível adicionar procedimentos enquanto o plano não está em rascunho (DRAFT)");
+    }
+
+    ProcedureStatus status;
+    if (treatmentPlan.getStatus() == TreatmentPlanStatus.DRAFT) {
+      status = ProcedureStatus.DRAFT;
+    } else {
+      status = ProcedureStatus.NOT_STARTED;
     }
 
     TreatmentPlanProcedure procedure =
@@ -155,7 +163,7 @@ public class TreatmentPlanService {
             .author(currentUser)
             .assignee(currentUser)
             .type(ReviewableType.PROCEDURE)
-            .status(ProcedureStatus.DRAFT)
+            .status(status)
             .name(dto.getName())
             .studySector(dto.getStudySector())
             .patient(treatmentPlan.getPatient())
