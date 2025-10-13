@@ -47,7 +47,7 @@ public class Patient {
 
   private String city;
   private String state;
-  
+
   @Enumerated(EnumType.STRING)
   private Ethnicity ethnicity;
 
