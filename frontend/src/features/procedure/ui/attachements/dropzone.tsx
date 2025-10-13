@@ -14,17 +14,24 @@ import {
   IconUpload,
   IconX,
 } from '@tabler/icons-react';
-import { ComponentProps, useState } from 'react';
+import { ComponentProps } from 'react';
 
 import { FilePreview } from './file-preview';
 
-export function ProcedureDropzone(
-  props: Partial<ComponentProps<typeof Dropzone>>,
-) {
-  const [files, setFiles] = useState<FileWithPath[]>([]);
+interface ProcedureDropzoneProps
+  extends Partial<ComponentProps<typeof Dropzone>> {
+  files: FileWithPath[];
+  onFilesChange: (files: FileWithPath[]) => void;
+}
 
+export function ProcedureDropzone({
+  files,
+  onFilesChange,
+  ...props
+}: ProcedureDropzoneProps) {
   function onRemove(id: number) {
-    setFiles((prevFiles) => prevFiles.filter((_, index) => index !== id));
+    const newFiles = files.filter((_, index) => index !== id);
+    onFilesChange(newFiles);
   }
 
   const previews = files.map((file, index) => (
@@ -45,7 +52,7 @@ export function ProcedureDropzone(
   return (
     <div>
       <Dropzone
-        onDrop={setFiles}
+        onDrop={onFilesChange}
         onReject={handleRejection}
         maxSize={10 * 1024 ** 2}
         accept={[...IMAGE_MIME_TYPE, ...PDF_MIME_TYPE, 'video/*']}
@@ -87,13 +94,13 @@ export function ProcedureDropzone(
         </Group>
       </Dropzone>
 
-      {previews.length > 0 && (
-        <Box mt="md" bd="1px solid gray.3" p='xs' bdrs={4}>
-          <Group>
-            <Text size="sm" fw={500} c="dimmed">
-              Arquivos selecionados ({previews.length})
-            </Text>
-          </Group>
+      <Box mt="md" bd="1px solid gray.3" p="xs" bdrs={4}>
+        <Group>
+          <Text size="sm" fw={500} c="dimmed">
+            Arquivos selecionados ({previews.length})
+          </Text>
+        </Group>
+        {previews.length > 0 && (
           <SimpleGrid
             cols={{ base: 1, md: 6 }}
             spacing="xs"
@@ -102,8 +109,8 @@ export function ProcedureDropzone(
           >
             {previews}
           </SimpleGrid>
-        </Box>
-      )}
+        )}
+      </Box>
     </div>
   );
 }

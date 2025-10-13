@@ -2,7 +2,7 @@
 import { type User } from 'next-auth';
 import { getProcedureOptions } from './requests';
 
-import AttachmentsSection from './ui/atts-section';
+import AttachmentsSection from './ui/attachements/atts-section';
 
 interface ProcedureProps {
   patientId: string;
@@ -10,7 +10,7 @@ interface ProcedureProps {
   user: User;
 }
 
-export default function Procedure({ procedureId }: ProcedureProps) {
+export default function Procedure({ procedureId, user }: ProcedureProps) {
   const options = getProcedureOptions(procedureId);
   const mode = 'edit';
 
@@ -19,6 +19,7 @@ export default function Procedure({ procedureId }: ProcedureProps) {
       <>header</>
 
       <AttachmentsSection
+        user={user}
         reviewableId={procedureId}
         mode={mode}
         queryOptions={options}

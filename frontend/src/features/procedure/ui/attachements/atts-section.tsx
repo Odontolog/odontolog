@@ -15,19 +15,36 @@ import {
   ThemeIcon,
 } from '@mantine/core';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import { useState } from 'react';
 
 import AttachmentCard from '@/shared/components/att-card';
-import { Attachments, Procedure } from '@/shared/models';
-import { ReviewableSectionProps } from '@/shared/reviewable/models';
+import { Attachments, Mode, Procedure, User } from '@/shared/models';
+import { type FileWithPath } from '@mantine/dropzone';
 import { ProcedureDropzone } from './dropzone';
+import { saveAttachments } from '../../requests';
+import { notifications } from '@mantine/notifications';
 
-export default function AttachmentsSection<T extends Procedure>({
+interface AttachmentCardProps {
+  user?: User;
+  reviewableId: string;
+  queryOptions: UseQueryOptions<Procedure, Error, Procedure, string[]>;
+  mode: Mode;
+}
+
+export default function AttachmentsSection({
+  user,
+  reviewableId,
   queryOptions,
   mode,
-}: ReviewableSectionProps<T>) {
+}: AttachmentCardProps) {
   const [editing, setEditing] = useState(false);
+  const [files, setFiles] = useState<FileWithPath[]>([]);
 
   const {
     data: atts,
@@ -36,7 +53,7 @@ export default function AttachmentsSection<T extends Procedure>({
   } = useQuery({
     ...queryOptions,
     select: (data) => data.attachments,
-    enabled: false,
+    enabled: true,
   });
 
   return (
@@ -63,11 +80,15 @@ export default function AttachmentsSection<T extends Procedure>({
 
       <Card.Section inheritPadding px="md" py="sm">
         <AttSectionContent
+          user={user}
+          reviewableId={reviewableId}
           atts={atts}
           editing={editing}
           setEditing={setEditing}
           isError={isError}
           isLoading={isLoading}
+          files={files}
+          onFilesChange={setFiles}
         />
       </Card.Section>
     </Card>
@@ -75,20 +96,70 @@ export default function AttachmentsSection<T extends Procedure>({
 }
 
 interface AttachmentsSectionProps {
+  user?: User;
+  reviewableId: string;
   atts?: Attachments[];
   isError: boolean;
   isLoading: boolean;
   editing: boolean;
   setEditing: (value: boolean) => void;
+  files: FileWithPath[];
+  onFilesChange: (files: FileWithPath[]) => void;
 }
 
 function AttSectionContent({
+  user,
+  reviewableId,
   atts,
   isLoading,
   isError,
   editing,
   setEditing,
+  files,
+  onFilesChange,
 }: AttachmentsSectionProps) {
+  const queryClient = useQueryClient();
+
+  const newAtts: Attachments[] = [];
+
+  if (user) {
+    files.forEach((file) => {
+      newAtts.push({
+        id: crypto.randomUUID(),
+        filename: file.name,
+        location: file.path,
+        size: file.size,
+        uploader: user,
+      });
+    });
+  }
+
+  const uploadMutation = useMutation({
+    mutationFn: () => saveAttachments(reviewableId, newAtts),
+    onSuccess: async (updatedProcedure) => {
+      await queryClient.setQueryData(
+        ['procedure', reviewableId],
+        updatedProcedure,
+      );
+
+      await queryClient.invalidateQueries({
+        queryKey: ['procedure', reviewableId],
+      });
+
+      onFilesChange([]);
+      setEditing(false);
+    },
+    onError: (error) => {
+      notifications.show({
+        title: 'Não foi possível salvar os arquivos',
+        message: `Um erro inesperado aconteceu e não foi possível salvar os arquivos. Tente novamente mais tarde. ${error}`,
+        color: 'red',
+        icon: <IconExclamationCircle />,
+        autoClose: 5000,
+      });
+    },
+  });
+
   if (isLoading) {
     return (
       <Center py="md">
@@ -128,7 +199,9 @@ function AttSectionContent({
 
   return (
     <Stack>
-      {editing && <ProcedureDropzone />}
+      {editing && (
+        <ProcedureDropzone files={files} onFilesChange={onFilesChange} />
+      )}
       <SimpleGrid type="container" cols={{ base: 1, '800px': 3, '1000px': 5 }}>
         {atts.map((att) => (
           <AttachmentCard
@@ -150,8 +223,8 @@ function AttSectionContent({
               Cancelar
             </Button>
             <Button
-            // onClick={() => mutation.mutate(displayValue)}
-            // loading={mutation.isPending}
+              onClick={() => uploadMutation.mutate()}
+              loading={uploadMutation.isPending}
             >
               Salvar
             </Button>
