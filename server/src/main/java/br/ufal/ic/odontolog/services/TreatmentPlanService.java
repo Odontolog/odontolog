@@ -146,7 +146,8 @@ public class TreatmentPlanService {
             .findById(treatmentPlanId)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
-    if (currentUser.getRole() == Role.STUDENT && treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
+    if (currentUser.getRole() == Role.STUDENT
+        && treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
       throw new IllegalStateException(
           "Não é possível adicionar procedimentos enquanto o plano não está em rascunho (DRAFT)");
     }
@@ -178,7 +179,9 @@ public class TreatmentPlanService {
             .actor(currentUser)
             .type(ActivityType.CREATED)
             .reviewable(procedure)
-            .description(String.format("Procedimento criado no Plano de Tratamento #%s", treatmentPlan.getId()))
+            .description(
+                String.format(
+                    "Procedimento criado no Plano de Tratamento #%s", treatmentPlan.getId()))
             .build();
     procedure.getHistory().add(procedureActivity);
 
@@ -227,7 +230,8 @@ public class TreatmentPlanService {
     procedure.getTeeth().clear();
     dto.getTeeth().forEach(procedure::addTooth);
 
-    Activity tpActivity = Activity.builder()
+    Activity tpActivity =
+        Activity.builder()
             .actor(currentUser)
             .type(ActivityType.EDITED)
             .reviewable(treatmentPlan)
@@ -239,12 +243,13 @@ public class TreatmentPlanService {
     procedure.getHistory().add(tpActivity);
     treatmentPlanProcedureRepository.save(procedure);
 
-
-    Activity procedureActivity = Activity.builder()
+    Activity procedureActivity =
+        Activity.builder()
             .actor(currentUser)
             .type(ActivityType.EDITED)
             .reviewable(procedure)
-            .description(String.format("Procedimento editado em Plano de Tratamento #%s", treatmentPlanId))
+            .description(
+                String.format("Procedimento editado em Plano de Tratamento #%s", treatmentPlanId))
             .build();
     treatmentPlan.getHistory().add(procedureActivity);
     treatmentPlanRepository.save(treatmentPlan);

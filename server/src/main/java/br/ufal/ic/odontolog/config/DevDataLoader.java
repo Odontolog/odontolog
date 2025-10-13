@@ -11,7 +11,6 @@ import br.ufal.ic.odontolog.enums.Sex;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
-
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -126,7 +125,7 @@ public class DevDataLoader implements CommandLineRunner {
                 .photoUrl("some-url")
                 .build());
     logger.info("Supervisor created: {}", supervisorTest003.getName());
-    
+
     Supervisor supervisorTest004 =
         supervisorRepository.save(
             Supervisor.builder()
@@ -157,7 +156,7 @@ public class DevDataLoader implements CommandLineRunner {
                 .state("TS")
                 .avatarUrl("https://randomuser.me/api/portraits/men/7.jpg")
                 .build());
-    
+
     Patient patientTest002 =
         patientRepository.save(
             Patient.builder()
@@ -176,7 +175,7 @@ public class DevDataLoader implements CommandLineRunner {
                 .avatarUrl("https://randomuser.me/api/portraits/men/3.jpg")
                 .build());
     patientRepository.save(patientTest002);
-    
+
     Patient patientTest003 =
         patientRepository.save(
             Patient.builder()
@@ -195,7 +194,7 @@ public class DevDataLoader implements CommandLineRunner {
                 .avatarUrl("https://randomuser.me/api/portraits/women/5.jpg")
                 .build());
     patientRepository.save(patientTest003);
-    
+
     Patient patientTest004 =
         patientRepository.save(
             Patient.builder()
@@ -214,7 +213,7 @@ public class DevDataLoader implements CommandLineRunner {
                 .avatarUrl("https://randomuser.me/api/portraits/women/4.jpg")
                 .build());
     patientRepository.save(patientTest004);
-    
+
     Patient patientTest005 =
         patientRepository.save(
             Patient.builder()
@@ -309,7 +308,9 @@ public class DevDataLoader implements CommandLineRunner {
                 .type(ReviewableType.PROCEDURE)
                 .status(ProcedureStatus.DRAFT)
                 .studySector("Periodontia")
-                .procedureDetail(new ProcedureDetail("Indícios de gengivite. Será necessário Periograma completo."))
+                .procedureDetail(
+                    new ProcedureDetail(
+                        "Indícios de gengivite. Será necessário Periograma completo."))
                 .build());
 
     preProcedureTest001.getAttachments().add(attachmentTest001);

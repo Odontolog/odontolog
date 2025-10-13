@@ -1,8 +1,7 @@
 package br.ufal.ic.odontolog.dtos;
 
-import java.time.Instant;
-
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -8,14 +8,12 @@ import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -45,33 +43,36 @@ public class PatientService {
   }
 
   public List<PatientAndTreatmentPlanDTO> searchForPatients(Optional<String> searchTerm) {
-    List<Patient> patients = patientRepository.searchPatients(searchTerm.orElse(null), PageRequest.of(0, 10)).getContent();
+    List<Patient> patients =
+        patientRepository
+            .searchPatients(searchTerm.orElse(null), PageRequest.of(0, 10))
+            .getContent();
 
     if (patients.isEmpty()) {
       return Collections.emptyList();
     }
 
-    List<Long> patientIds = patients.stream()
-                                    .map(Patient::getId)
-                                    .toList();
+    List<Long> patientIds = patients.stream().map(Patient::getId).toList();
 
     List<TreatmentPlan> lastPlans = patientRepository.findLastTreatmentPlans(patientIds);
 
-    Map<Long, TreatmentPlan> lastPlanByPatientId = lastPlans.stream()
+    Map<Long, TreatmentPlan> lastPlanByPatientId =
+        lastPlans.stream()
             .collect(Collectors.toMap(tp -> tp.getPatient().getId(), Function.identity()));
-    
+
     return patients.stream()
-            .map(p -> {
-                TreatmentPlan plan = lastPlanByPatientId.get(p.getId());
-                return PatientAndTreatmentPlanDTO.builder()
-                        .id(p.getId())
-                        .name(p.getName())
-                        .avatarUrl(p.getAvatarUrl())
-                        .lastTreatmentPlanId(plan != null ? plan.getId() : null)
-                        .lastTreatmentPlanStatus(plan != null ? plan.getStatus() : null)
-                        .lastTreatmentPlanUpdatedAt(plan != null ? plan.getUpdatedAt() : null)
-                        .build();
+        .map(
+            p -> {
+              TreatmentPlan plan = lastPlanByPatientId.get(p.getId());
+              return PatientAndTreatmentPlanDTO.builder()
+                  .id(p.getId())
+                  .name(p.getName())
+                  .avatarUrl(p.getAvatarUrl())
+                  .lastTreatmentPlanId(plan != null ? plan.getId() : null)
+                  .lastTreatmentPlanStatus(plan != null ? plan.getStatus() : null)
+                  .lastTreatmentPlanUpdatedAt(plan != null ? plan.getUpdatedAt() : null)
+                  .build();
             })
-            .toList();
+        .toList();
   }
 }
