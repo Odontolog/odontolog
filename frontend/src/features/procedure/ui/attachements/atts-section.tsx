@@ -27,8 +27,9 @@ import AttachmentCard from '@/shared/components/att-card';
 import { Attachments, Mode, Procedure, User } from '@/shared/models';
 import { type FileWithPath } from '@mantine/dropzone';
 import { ProcedureDropzone } from './dropzone';
-import { saveAttachments } from '../../requests';
+import { saveAttachments, deleteAttachment } from '../../requests';
 import { notifications } from '@mantine/notifications';
+import { modals } from '@mantine/modals';
 import AttachmentsModal from './att-modal';
 
 interface AttachmentCardProps {
@@ -119,7 +120,8 @@ function AttSectionContent({
   files,
   onFilesChange,
 }: AttachmentsSectionProps) {
-  const [selectedAttachment, setSelectedAttachment] = useState<Attachments | null>(null);
+  const [selectedAttachment, setSelectedAttachment] =
+    useState<Attachments | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
   const queryClient = useQueryClient();
 
@@ -156,6 +158,37 @@ function AttSectionContent({
       notifications.show({
         title: 'Não foi possível salvar os arquivos',
         message: `Um erro inesperado aconteceu e não foi possível salvar os arquivos. Tente novamente mais tarde. ${error}`,
+        color: 'red',
+        icon: <IconExclamationCircle />,
+        autoClose: 5000,
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (attachment: Attachments) =>
+      deleteAttachment(reviewableId, attachment),
+    onSuccess: async (updatedProcedure) => {
+      await queryClient.setQueryData(
+        ['procedure', reviewableId],
+        updatedProcedure,
+      );
+
+      await queryClient.invalidateQueries({
+        queryKey: ['procedure', reviewableId],
+      });
+
+      notifications.show({
+        title: 'Arquivo removido',
+        message: 'O arquivo foi removido com sucesso.',
+        color: 'green',
+        autoClose: 5000,
+      });
+    },
+    onError: (error) => {
+      notifications.show({
+        title: 'Não foi possível remover o arquivo',
+        message: `Um erro inesperado aconteceu e não foi possível remover o arquivo. Tente novamente mais tarde. ${error}`,
         color: 'red',
         icon: <IconExclamationCircle />,
         autoClose: 5000,
@@ -206,9 +239,19 @@ function AttSectionContent({
   }
 
   function handleDeleteAttachment(attachment: Attachments) {
-    // TODO: Implementar lógica de exclusão de attachment
-    // Por enquanto, apenas um placeholder
-    void attachment;
+    modals.openConfirmModal({
+      title: 'Remover arquivo',
+      children: (
+        <Text size="sm">
+          Tem certeza que deseja remover o arquivo{' '}
+          <strong>{attachment.filename}</strong>? Esta ação não pode ser
+          desfeita.
+        </Text>
+      ),
+      labels: { confirm: 'Remover', cancel: 'Cancelar' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => deleteMutation.mutate(attachment),
+    });
   }
 
   function closeModal() {
@@ -232,7 +275,7 @@ function AttSectionContent({
           />
         ))}
       </SimpleGrid>
-      
+
       <AttachmentsModal
         opened={modalOpened}
         onClose={closeModal}

@@ -35,10 +35,10 @@ export default function AttachmentsModal({
                 alt={attachment.filename}
                 fit="contain"
                 mah={400}
-                fallbackSrc="/assets/file-preview.png"
+                fallbackSrc="/assets/not-found-file.jpg"
               />
             ) : (
-              <Stack align="center" py="xl">
+              <Stack align="center" py="xl" gap={2}>
                 <Text size="lg" c="dimmed">
                   Preview não disponível para este tipo de arquivo
                 </Text>
@@ -48,7 +48,7 @@ export default function AttachmentsModal({
               </Stack>
             )}
 
-            <Group justify="flex-end" mt="md">
+            <Group justify="flex-end" mt="sm">
               <Button
                 component="a"
                 href={`/api/attachments/${attachment.id}/download`}
