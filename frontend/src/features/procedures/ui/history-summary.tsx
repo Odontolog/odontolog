@@ -1,13 +1,4 @@
-import {
-  ActionIcon,
-  Card,
-  Flex,
-  Group,
-  Skeleton,
-  Stack,
-  Text,
-} from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { Card, Flex, Group, Skeleton, Stack, Text } from '@mantine/core';
 import { useState } from 'react';
 
 import NextConsultationMenu from './next-consultation-menu';
@@ -37,16 +28,7 @@ export default function HistorySummary({
     <Flex gap="xs">
       <Card withBorder shadow="sm" radius="md" p="sm" flex={1}>
         <Stack gap="4" h="100%" justify="center">
-          <Group justify="space-between">
-            <Text size="sm">Última consulta</Text>
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              style={{ '--ai-hover': '#FFF' }}
-            >
-              <IconInfoCircle size={16} color="gray" />
-            </ActionIcon>
-          </Group>
+          <Text size="sm">Última consulta</Text>
           {(isLoading ?? false) || lastConsultation === undefined ? (
             <Skeleton height={24} radius="none" />
           ) : (
