@@ -266,7 +266,7 @@ public class DevDataLoader implements CommandLineRunner {
     treatmentPlanProcedureTest001.addTooth("25");
 
     Review reviewTest003 =
-        Review.builder().reviewStatus(ReviewStatus.PENDING).supervisor(supervisorTest001).build();
+        Review.builder().reviewStatus(ReviewStatus.DRAFT).supervisor(supervisorTest001).build();
     treatmentPlanProcedureTest001.addReview(reviewTest003);
 
     treatmentPlanTest001.addProcedure(treatmentPlanProcedureTest001);
@@ -339,8 +339,8 @@ public class DevDataLoader implements CommandLineRunner {
 
     Review reviewTest001 =
         Review.builder()
-            .comments("Parece ok.")
-            .reviewStatus(ReviewStatus.APPROVED)
+            .comments("")
+            .reviewStatus(ReviewStatus.DRAFT)
             .grade(8)
             .supervisor(supervisorTest001)
             .build();
@@ -349,7 +349,7 @@ public class DevDataLoader implements CommandLineRunner {
     logger.info("Review added to Treatment Plan: {}", treatmentPlanTest001.getId());
 
     Review reviewTest002 =
-        Review.builder().reviewStatus(ReviewStatus.PENDING).supervisor(supervisorTest001).build();
+        Review.builder().reviewStatus(ReviewStatus.DRAFT).supervisor(supervisorTest001).build();
     preProcedureTest001.addReview(reviewTest002);
     preProcedureRepository.save(preProcedureTest001);
     logger.info("Review added to Pre Procedure: {}", preProcedureTest001.getName());
