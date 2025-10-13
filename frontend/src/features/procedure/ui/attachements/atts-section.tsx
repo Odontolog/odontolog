@@ -29,6 +29,7 @@ import { type FileWithPath } from '@mantine/dropzone';
 import { ProcedureDropzone } from './dropzone';
 import { saveAttachments } from '../../requests';
 import { notifications } from '@mantine/notifications';
+import AttachmentsModal from './att-modal';
 
 interface AttachmentCardProps {
   user?: User;
@@ -118,6 +119,8 @@ function AttSectionContent({
   files,
   onFilesChange,
 }: AttachmentsSectionProps) {
+  const [selectedAttachment, setSelectedAttachment] = useState<Attachments | null>(null);
+  const [modalOpened, setModalOpened] = useState(false);
   const queryClient = useQueryClient();
 
   const newAtts: Attachments[] = [];
@@ -197,6 +200,22 @@ function AttSectionContent({
     setEditing(false);
   }
 
+  function handleViewAttachment(attachment: Attachments) {
+    setSelectedAttachment(attachment);
+    setModalOpened(true);
+  }
+
+  function handleDeleteAttachment(attachment: Attachments) {
+    // TODO: Implementar lógica de exclusão de attachment
+    // Por enquanto, apenas um placeholder
+    void attachment;
+  }
+
+  function closeModal() {
+    setModalOpened(false);
+    setSelectedAttachment(null);
+  }
+
   return (
     <Stack>
       {editing && (
@@ -208,9 +227,17 @@ function AttSectionContent({
             key={att.id}
             att={att}
             mode={editing ? 'edit' : 'read'}
+            onView={handleViewAttachment}
+            onDelete={handleDeleteAttachment}
           />
         ))}
       </SimpleGrid>
+      
+      <AttachmentsModal
+        opened={modalOpened}
+        onClose={closeModal}
+        attachment={selectedAttachment}
+      />
       {editing && (
         <Flex
           justify="space-between"
