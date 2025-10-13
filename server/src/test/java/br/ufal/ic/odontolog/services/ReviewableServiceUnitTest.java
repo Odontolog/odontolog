@@ -7,16 +7,21 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import br.ufal.ic.odontolog.dtos.ActivityDTO;
+import br.ufal.ic.odontolog.dtos.ReviewDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableSubmitSupervisorReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.enums.ReviewStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.ActivityMapper;
+import br.ufal.ic.odontolog.mappers.ReviewMapper;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.models.Activity;
+import br.ufal.ic.odontolog.models.Review;
 import br.ufal.ic.odontolog.models.Reviewable;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.User;
@@ -24,6 +29,7 @@ import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +59,8 @@ public class ReviewableServiceUnitTest {
   @Mock private ReviewableMapper reviewableMapper;
 
   @Mock private ActivityMapper activityMapper;
+
+  @Mock private ReviewMapper reviewMapper;
 
   @Mock private CurrentUserProvider currentUserProvider;
 
@@ -267,5 +275,67 @@ public class ReviewableServiceUnitTest {
 
     verify(userRepository, times(1)).findById(assigneeId);
     verify(reviewableRepository, times(0)).save(any());
+  }
+
+  @Test
+  public void givenValidRequest_whenSubmitSupervisorReview_thenReturnUpdatedReview() {
+    // Arrange
+    Long reviewableId = 1L;
+    UUID currentUserId = UUID.randomUUID();
+
+    ReviewableSubmitSupervisorReviewDTO requestDTO = new ReviewableSubmitSupervisorReviewDTO();
+    requestDTO.setComments("Good job");
+    requestDTO.setGrade(9);
+    requestDTO.setApproved(true);
+
+    UserDetails mockUserDetails = mock(UserDetails.class);
+    when(mockUserDetails.getUsername()).thenReturn("testsupervisor@test.com");
+
+    Supervisor supervisor = new Supervisor();
+    supervisor.setEmail("testsupervisor@test.com");
+    supervisor.setId(UUID.randomUUID());
+    when(supervisorRepository.findByEmail("testsupervisor@test.com"))
+        .thenReturn(Optional.of(supervisor));
+
+    Review review = new Review();
+    review.setReviewStatus(ReviewStatus.PENDING);
+    review.setSupervisor(supervisor);
+
+    Reviewable reviewable = mock(Reviewable.class);
+    when(reviewableRepository.findById(reviewableId)).thenReturn(Optional.of(reviewable));
+    when(reviewable.getReviewers()).thenReturn(Collections.singleton(supervisor));
+    when(reviewable.getHistory()).thenReturn(new HashSet<>());
+    when(reviewable.getReviewFor(supervisor)).thenReturn(Optional.of(review));
+
+    ReviewDTO reviewDTO = new ReviewDTO();
+    when(reviewMapper.toDTO(review)).thenReturn(reviewDTO);
+
+    // Act
+    ReviewDTO result =
+        reviewableService.submitSupervisorReview(reviewableId, requestDTO, mockUserDetails);
+
+    // Assert
+    ArgumentCaptor<Reviewable> reviewableCaptor = ArgumentCaptor.forClass(Reviewable.class);
+    verify(reviewableRepository).save(reviewableCaptor.capture());
+
+    Reviewable savedReviewable = reviewableCaptor.getValue();
+    assertThat(result).isNotNull();
+    assertThat(result).isEqualTo(reviewDTO);
+
+    assertThat(savedReviewable.getHistory()).isNotEmpty();
+
+    Activity activity = savedReviewable.getHistory().iterator().next();
+    assertThat(activity.getActor()).isEqualTo(supervisor);
+    assertThat(activity.getType()).isEqualTo(ActivityType.REVIEW_APPROVED);
+
+    String expectedDescription =
+        String.format(
+            "Avaliação submetida para %s #%s por %s (%s)",
+            reviewable.getName(), reviewable.getId(), supervisor.getName(), supervisor.getEmail());
+    assertThat(activity.getDescription()).isEqualTo(expectedDescription);
+
+    verify(reviewableRepository, times(1)).findById(reviewableId);
+    verify(reviewable, times(1)).submitSupervisorReview(supervisor, "Good job", 9, true);
+    verify(reviewableRepository, times(1)).save(reviewable);
   }
 }

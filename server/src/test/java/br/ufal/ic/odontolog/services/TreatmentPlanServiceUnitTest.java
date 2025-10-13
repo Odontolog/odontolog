@@ -100,7 +100,7 @@ public class TreatmentPlanServiceUnitTest {
     TreatmentPlan treatmentPlan = new TreatmentPlan();
     treatmentPlan.setId(treatmentId);
     treatmentPlan.setStatus(TreatmentPlanStatus.DRAFT);
-    treatmentPlan.getReviewers().add(supervisor);
+    treatmentPlan.addReviewer(supervisor);
     treatmentPlan.setAssignee(new User());
 
     when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
@@ -164,7 +164,7 @@ public class TreatmentPlanServiceUnitTest {
     TreatmentPlan treatmentPlan = new TreatmentPlan();
     treatmentPlan.setId(treatmentId);
     treatmentPlan.setStatus(TreatmentPlanStatus.DRAFT);
-    treatmentPlan.getReviewers().add(supervisor);
+    treatmentPlan.addReviewer(supervisor);
     treatmentPlan.setAssignee(new User());
 
     when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
@@ -336,7 +336,7 @@ public class TreatmentPlanServiceUnitTest {
     treatmentPlan.setStatus(TreatmentPlanStatus.DRAFT);
     Supervisor supervisor = new Supervisor();
     supervisor.setId(UUID.randomUUID());
-    treatmentPlan.getReviewers().add(supervisor);
+    treatmentPlan.addReviewer(supervisor);
 
     when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
 
