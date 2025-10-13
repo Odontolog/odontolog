@@ -1,11 +1,11 @@
 import { ActionIcon, Flex, Group, Text } from '@mantine/core';
 import { type FileWithPath } from '@mantine/dropzone';
 import {
-    IconFile,
-    IconFileTypePdf,
-    IconPhoto,
-    IconVideo,
-    IconX,
+  IconFile,
+  IconFileTypePdf,
+  IconPhoto,
+  IconVideo,
+  IconX,
 } from '@tabler/icons-react';
 
 function getFileIcon(file: FileWithPath) {
