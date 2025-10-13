@@ -1,6 +1,7 @@
 package br.ufal.ic.odontolog.config;
 
 import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.enums.Ethnicity;
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.ReviewStatus;
@@ -147,8 +148,8 @@ public class DevDataLoader implements CommandLineRunner {
                 .CPF("123.456.789-00")
                 .RG("12.345.678-9")
                 .sex(Sex.MALE)
-                .profession("Tester")
-                .race("Black")
+                .occupation("Tester")
+                .ethnicity(Ethnicity.BLACK)
                 .maritalStatus(MaritalStatus.SINGLE)
                 .phoneNumber("(12) 34567-8901")
                 .address("123 Test St, Test City, TS")
@@ -165,8 +166,8 @@ public class DevDataLoader implements CommandLineRunner {
                 .CPF("123.456.780-00")
                 .RG("12.345.678-9")
                 .sex(Sex.MALE)
-                .profession("Tester")
-                .race("Black")
+                .occupation("Tester")
+                .ethnicity(Ethnicity.WHITE)
                 .maritalStatus(MaritalStatus.SINGLE)
                 .phoneNumber("(12) 34567-8901")
                 .address("123 Test St, Test City, TS")
@@ -184,8 +185,8 @@ public class DevDataLoader implements CommandLineRunner {
                 .CPF("123.456.589-00")
                 .RG("12.345.678-9")
                 .sex(Sex.FEMALE)
-                .profession("Tester")
-                .race("Black")
+                .occupation("Tester")
+                .ethnicity(Ethnicity.OTHER)
                 .maritalStatus(MaritalStatus.SINGLE)
                 .phoneNumber("(12) 34567-8901")
                 .address("123 Test St, Test City, TS")
@@ -203,8 +204,8 @@ public class DevDataLoader implements CommandLineRunner {
                 .CPF("123.456.781-00")
                 .RG("12.345.678-9")
                 .sex(Sex.FEMALE)
-                .profession("Tester")
-                .race("Black")
+                .occupation("Tester")
+                .ethnicity(Ethnicity.WHITE)
                 .maritalStatus(MaritalStatus.MARRIED)
                 .phoneNumber("(12) 34567-8901")
                 .address("123 Test St, Test City, TS")
@@ -222,8 +223,8 @@ public class DevDataLoader implements CommandLineRunner {
                 .CPF("001.456.781-00")
                 .RG("11.345.678-9")
                 .sex(Sex.FEMALE)
-                .profession("Tester")
-                .race("Black")
+                .occupation("Tester")
+                .ethnicity(Ethnicity.INDIGENOUS)
                 .maritalStatus(MaritalStatus.SEPARATED)
                 .phoneNumber("(12) 34567-8901")
                 .address("123 Test St, Test City, TS")

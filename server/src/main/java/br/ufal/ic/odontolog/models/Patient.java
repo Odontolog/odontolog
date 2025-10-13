@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.models;
 
+import br.ufal.ic.odontolog.enums.Ethnicity;
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
 import jakarta.persistence.Entity;
@@ -47,7 +48,7 @@ public class Patient {
 
   private String city;
   private String state;
-  private String race;
+  private Ethnicity ethnicity;
 
   // TODO: This must be Sex or Gender?
   @Enumerated(EnumType.STRING)
@@ -58,7 +59,7 @@ public class Patient {
   @Enumerated(EnumType.STRING)
   private MaritalStatus maritalStatus;
 
-  private String profession;
+  private String occupation;
 
   @OneToMany(mappedBy = "patient")
   private final Set<TreatmentPlan> treatmentPlans = new HashSet<>();
