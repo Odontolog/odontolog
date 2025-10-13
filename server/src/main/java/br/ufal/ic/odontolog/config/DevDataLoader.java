@@ -12,7 +12,6 @@ import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
 
 import java.time.LocalDate;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,6 @@ public class DevDataLoader implements CommandLineRunner {
     Student studentTest001 =
         studentRepository.save(
             Student.builder()
-                // .id(UUID.fromString("de66e248-f5ca-441d-9d6f-9494ac7e8144"))
                 .name("João Argel")
                 .email("student.test.001@test.com")
                 .role(Role.STUDENT)
