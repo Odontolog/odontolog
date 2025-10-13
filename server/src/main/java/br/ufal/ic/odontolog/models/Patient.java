@@ -47,6 +47,8 @@ public class Patient {
 
   private String city;
   private String state;
+  
+  @Enumerated(EnumType.STRING)
   private Ethnicity ethnicity;
 
   // TODO: This must be Sex or Gender?
