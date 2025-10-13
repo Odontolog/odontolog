@@ -5,3 +5,9 @@ export type ProcedureFormValues = {
   plannedSession: number | undefined;
   studySector: string;
 };
+
+export type ReviewFormValues = {
+  comments: string;
+  decision: string;
+  grade?: number;
+};

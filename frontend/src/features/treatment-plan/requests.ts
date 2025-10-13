@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { TreatmentPlan } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 import { mapToTreatmentPlan, TreatmentPlanDto } from './mappers';
-import { ProcedureFormValues } from './models';
+import { ProcedureFormValues, ReviewFormValues } from './models';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
   return queryOptions({
@@ -138,9 +138,39 @@ export async function submitTreatmentPlanForReview(
   }
 }
 
-export async function submitReviewForTreatmentPlan(treatmentPlanId: string) {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  console.log(`Submitting review for plan ${treatmentPlanId}`);
+type SupervisorReviewDto = {
+  comments: string;
+  grade: number;
+  approved: boolean;
+};
 
-  return { success: true };
+export async function submitReviewForTreatmentPlan(
+  treatmentPlanId: string,
+  review: ReviewFormValues,
+) {
+  const token = await getAuthToken();
+
+  const payload: SupervisorReviewDto = {
+    comments: review.comments,
+    grade: review.grade ?? 0,
+    approved: review.decision === 'Aprovar',
+  };
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/${treatmentPlanId}/reviews/submit`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
 }
