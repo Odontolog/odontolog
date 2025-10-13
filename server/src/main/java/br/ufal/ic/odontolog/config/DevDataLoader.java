@@ -243,7 +243,6 @@ public class DevDataLoader implements CommandLineRunner {
                 .status(TreatmentPlanStatus.DRAFT)
                 .author(studentTest001)
                 .assignee(studentTest001)
-                .reviewers(Set.of(supervisorTest001))
                 .notes("Suspeita de diabetes.")
                 .type(ReviewableType.TREATMENT_PLAN)
                 .build());
@@ -307,7 +306,6 @@ public class DevDataLoader implements CommandLineRunner {
                 .patient(patientTest001)
                 .author(studentTest001)
                 .assignee(studentTest001)
-                .reviewers(Set.of(supervisorTest001, supervisorTest002))
                 .notes("Profundidade de sonda anormal.")
                 .type(ReviewableType.PROCEDURE)
                 .status(ProcedureStatus.DRAFT)

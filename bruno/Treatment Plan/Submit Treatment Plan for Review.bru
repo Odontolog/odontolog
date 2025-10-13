@@ -6,8 +6,14 @@ meta {
 
 post {
   url: http://localhost:8080/api/treatment-plan/1/submit-for-review
-  body: none
+  body: json
   auth: inherit
+}
+
+body:json {
+  {
+    "comments": "test"
+  }
 }
 
 settings {

@@ -98,7 +98,7 @@ public class TreatmentPlanService {
             .findById(treatment_id)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
-    treatmentPlan.getState().submitForReview(treatmentPlan);
+    treatmentPlan.submitForReview();
 
     String description = buildSubmissionDescription(currentUser, treatmentPlan);
 

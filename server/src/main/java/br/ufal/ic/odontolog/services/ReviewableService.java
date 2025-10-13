@@ -1,15 +1,18 @@
 package br.ufal.ic.odontolog.services;
 
 import br.ufal.ic.odontolog.dtos.ActivityDTO;
+import br.ufal.ic.odontolog.dtos.ReviewDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableSubmitSupervisorReviewDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.ActivityMapper;
+import br.ufal.ic.odontolog.mappers.ReviewMapper;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.ReviewableRepository;
@@ -40,7 +43,7 @@ public class ReviewableService {
   private final ReviewableMapper reviewableMapper;
   private final CurrentUserProvider currentUserProvider;
   private final ActivityMapper activityMapper;
-  private final TreatmentPlanService treatmentPlanService;
+  private final ReviewMapper reviewMapper;
 
   @Transactional(readOnly = true)
   public Page<ReviewableShortDTO> findForCurrentSupervisor(
@@ -69,87 +72,6 @@ public class ReviewableService {
     Page<ReviewableShortDTO> dtoPage = page.map(reviewableMapper::toShortDTO);
 
     return dtoPage;
-  }
-
-  @Transactional
-  public ReviewableDTO addSupervisorsToReviewable(Long reviewableId, ReviewersDTO request) {
-    if (request == null
-        || request.getSupervisorIds() == null
-        || request.getSupervisorIds().isEmpty()) {
-      throw new UnprocessableRequestException("At least one supervisor ID must be provided");
-    }
-
-    Reviewable reviewable =
-        reviewableRepository
-            .findById(reviewableId)
-            .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
-
-    Set<UUID> requestedIds = new HashSet<>(request.getSupervisorIds());
-
-    Set<Supervisor> supervisorsToAdd =
-        new HashSet<>(supervisorRepository.findAllById(requestedIds));
-
-    Set<UUID> foundIds =
-        supervisorsToAdd.stream().map(Supervisor::getId).collect(Collectors.toSet());
-
-    Set<UUID> invalidIds =
-        requestedIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toSet());
-
-    if (!invalidIds.isEmpty()) {
-      throw new UnprocessableRequestException(
-          "The following supervisor IDs do not exist: " + invalidIds);
-    }
-
-    Set<UUID> currentlyLinkedIds =
-        reviewable.getReviewers().stream().map(Supervisor::getId).collect(Collectors.toSet());
-
-    Set<UUID> alreadyLinked =
-        foundIds.stream().filter(currentlyLinkedIds::contains).collect(Collectors.toSet());
-
-    if (!alreadyLinked.isEmpty()) {
-      throw new UnprocessableRequestException(
-          "The following supervisor IDs are already linked to this reviewable: " + alreadyLinked);
-    }
-
-    reviewable.getReviewers().addAll(supervisorsToAdd);
-    reviewableRepository.save(reviewable);
-
-    return reviewableMapper.toDTO(reviewable);
-  }
-
-  @Transactional
-  public ReviewableDTO removeSupervisorsFromReviewable(Long reviewableId, ReviewersDTO request) {
-    if (request == null
-        || request.getSupervisorIds() == null
-        || request.getSupervisorIds().isEmpty()) {
-      throw new UnprocessableRequestException("At least one supervisor ID must be provided");
-    }
-
-    Reviewable reviewable =
-        reviewableRepository
-            .findById(reviewableId)
-            .orElseThrow(() -> new UnprocessableRequestException("Reviewable not found"));
-
-    Set<Supervisor> supervisorsToRemove =
-        reviewable.getReviewers().stream()
-            .filter(s -> request.getSupervisorIds().contains(s.getId()))
-            .collect(Collectors.toSet());
-
-    Set<UUID> invalidIds =
-        request.getSupervisorIds().stream()
-            .filter(id -> reviewable.getReviewers().stream().noneMatch(s -> s.getId().equals(id)))
-            .collect(Collectors.toSet());
-
-    if (!invalidIds.isEmpty()) {
-      throw new UnprocessableRequestException(
-          "The following supervisor IDs are invalid or not linked to this reviewable: "
-              + invalidIds);
-    }
-
-    reviewable.getReviewers().removeAll(supervisorsToRemove);
-    reviewableRepository.save(reviewable);
-
-    return reviewableMapper.toDTO(reviewable);
   }
 
   @Transactional
@@ -326,5 +248,62 @@ public class ReviewableService {
         reviewable.getId(),
         currentUser.getName(),
         currentUser.getEmail());
+  }
+
+  public ReviewDTO submitSupervisorReview(
+      Long reviewableId, ReviewableSubmitSupervisorReviewDTO requestDTO, UserDetails currentUser) {
+    Supervisor supervisor =
+        supervisorRepository
+            .findByEmail(currentUser.getUsername())
+            .orElseThrow(
+                () ->
+                    new UnprocessableRequestException(
+                        "Supervisor profile not found for the current user"));
+
+    Reviewable reviewable =
+        reviewableRepository
+            .findById(reviewableId)
+            .orElseThrow(() -> new ResourceNotFoundException("Reviewable not found"));
+
+    if (!reviewable.getReviewers().contains(supervisor)) {
+      throw new UnprocessableRequestException("You are not a reviewer for this reviewable");
+    }
+
+    reviewable.submitSupervisorReview(
+        supervisor, requestDTO.getComments(), requestDTO.getGrade(), requestDTO.getApproved());
+
+    Activity activity = buildReviewSubmittedActivity(supervisor, reviewable, requestDTO);
+    reviewable.getHistory().add(activity);
+
+    reviewableRepository.save(reviewable);
+
+    return reviewMapper.toDTO(reviewable.getReviewFor(supervisor).get());
+  }
+
+  private Activity buildReviewSubmittedActivity(
+      User currentUser, Reviewable reviewable, ReviewableSubmitSupervisorReviewDTO requestDTO) {
+    String description =
+        String.format(
+            "Avaliação submetida para %s #%s por %s (%s)",
+            reviewable.getName(),
+            reviewable.getId(),
+            currentUser.getName(),
+            currentUser.getEmail());
+
+    HashMap<String, Object> metadata = new HashMap<>();
+    metadata.put("reviewNotes", requestDTO.getComments());
+    metadata.put("reviewGrade", requestDTO.getGrade());
+    metadata.put("reviewApproved", requestDTO.getApproved());
+
+    var type =
+        requestDTO.getApproved() ? ActivityType.REVIEW_APPROVED : ActivityType.REVIEW_REJECTED;
+
+    return Activity.builder()
+        .actor(currentUser)
+        .type(type)
+        .description(description)
+        .reviewable(reviewable)
+        .metadata(metadata)
+        .build();
   }
 }
