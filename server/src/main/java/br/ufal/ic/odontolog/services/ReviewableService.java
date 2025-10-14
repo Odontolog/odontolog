@@ -291,6 +291,7 @@ public class ReviewableService {
             currentUser.getEmail());
 
     HashMap<String, Object> metadata = new HashMap<>();
+    metadata.put("data", requestDTO.getComments());
     metadata.put("reviewNotes", requestDTO.getComments());
     metadata.put("reviewGrade", requestDTO.getGrade());
     metadata.put("reviewApproved", requestDTO.getApproved());

@@ -1,5 +1,3 @@
-import { notFound } from 'next/navigation';
-
 import PatientHeader from '@/features/patient/header/header';
 import { getPatientById } from '@/features/patient/requests';
 
@@ -12,10 +10,6 @@ export default async function PatientPageLayout({
 }) {
   const { patientId } = await params;
   const patient = await getPatientById(patientId);
-
-  if (patient === undefined) {
-    notFound();
-  }
 
   return (
     <>

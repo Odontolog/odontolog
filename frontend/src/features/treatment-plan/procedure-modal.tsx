@@ -1,12 +1,14 @@
+'use client';
+
 import {
-  Modal,
-  Group,
-  Text,
-  Stack,
-  Select,
   Button,
   Flex,
+  Group,
+  Modal,
   MultiSelect,
+  Select,
+  Stack,
+  Text,
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -16,13 +18,13 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query';
 
-import { TreatmentPlan, ProcedureShort } from '@/shared/models';
 import { procedureNames, studySectors, teeth } from '@/shared/data';
-import {
-  editTreatmentPlanProcedure,
-  createTreatmentPlanProcedure,
-} from './requests';
+import { ProcedureShort, TreatmentPlan } from '@/shared/models';
 import { ProcedureFormValues } from './models';
+import {
+  createTreatmentPlanProcedure,
+  editTreatmentPlanProcedure,
+} from './requests';
 
 interface ProcedureSectionModalProps {
   treatmentPlanId: string;
@@ -72,7 +74,7 @@ function ProcedureSectionModalForm({
 
   const initialValues: ProcedureFormValues = {
     name: '',
-    tooth: [],
+    teeth: [],
     plannedSession: undefined,
     studySector: '',
   };
@@ -81,7 +83,7 @@ function ProcedureSectionModalForm({
 
   if (selectedProcedure) {
     initialValues.name = selectedProcedure.name;
-    initialValues.tooth = selectedProcedure.teeth;
+    initialValues.teeth = selectedProcedure.teeth;
     initialValues.plannedSession = selectedProcedure.plannedSession;
     initialValues.studySector = selectedProcedure.studySector;
 
@@ -114,7 +116,6 @@ function ProcedureSectionModalForm({
     if (selectedProcedure) {
       values.id = selectedProcedure.id;
     }
-    console.log(values);
     mutation.mutate(values);
   }
 
@@ -145,8 +146,8 @@ function ProcedureSectionModalForm({
           placeholder="Selecione uma opção"
           required
           data={teeth}
-          key={form.key('tooth')}
-          {...form.getInputProps('tooth')}
+          key={form.key('teeth')}
+          {...form.getInputProps('teeth')}
         />
 
         <Group grow align="start">
