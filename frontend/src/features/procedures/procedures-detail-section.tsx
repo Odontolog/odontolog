@@ -27,14 +27,21 @@ import { getProcedureOptions } from '../procedure/requests';
 import DetailSection from '../procedure/ui/detail-section';
 import AttachmentsSection from '../procedure/ui/atts-section';
 
-export default function ProcedureDetailSection() {
+export default function ProcedureDetailSection({
+  scrollAreaHeight,
+}: {
+  scrollAreaHeight?: string;
+}) {
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
       {active !== null ? (
-        <ProcedureDetailContent procedureId={active} />
+        <ProcedureDetailContent
+          procedureId={active}
+          scrollAreaHeight={scrollAreaHeight}
+        />
       ) : (
         <Center py="md" h="100%">
           <Text fw={600} size="lg" c="dimmed">
@@ -48,9 +55,13 @@ export default function ProcedureDetailSection() {
 
 interface ProcedureContentProps {
   procedureId: string;
+  scrollAreaHeight?: string;
 }
 
-export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
+export function ProcedureDetailContent({
+  procedureId,
+  scrollAreaHeight = '610px',
+}: ProcedureContentProps) {
   const queryOptions = getProcedureOptions(procedureId);
   const {
     data: procedure,
@@ -111,7 +122,7 @@ export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
           offsetScrollbars
           scrollbars="y"
           w="100%"
-          h="600px"
+          h={scrollAreaHeight}
         >
           <Stack gap="md" flex="1">
             <Group gap="md">
