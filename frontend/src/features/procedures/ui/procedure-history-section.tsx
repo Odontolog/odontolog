@@ -17,13 +17,17 @@ import ProcedureCard from '@/shared/components/procedure-card';
 import { ProcedureShort } from '@/shared/models';
 import { getPatientProcedureOptions } from '../requests';
 import HistorySummary from './history-summary';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useMediaQuery } from '@mantine/hooks';
 
 interface ProcedureHistorySectionProps {
   patientId: string;
+  scrollAreaHeight?: string;
 }
 
 export default function ProcedureHistorySection({
   patientId,
+  scrollAreaHeight = '610px',
 }: ProcedureHistorySectionProps) {
   const procedures = getPatientProcedureOptions(patientId);
   const { data, isLoading } = useQuery({
@@ -68,7 +72,7 @@ export default function ProcedureHistorySection({
               offsetScrollbars
               scrollbars="y"
               w="100%"
-              h="510px"
+              h={scrollAreaHeight}
             >
               <ProceduresContent data={data} />
             </ScrollArea>
@@ -106,6 +110,11 @@ function getLastEmptyDay(proceduresByDate: Map<string, ProcedureShort[]>) {
 }
 
 function ProceduresContent({ data }: { data: ProcedureShort[] }) {
+  const matches = useMediaQuery('(max-width: 62em)');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const active = searchParams.get('active');
+
   if (data.length === 0) {
     return (
       <Center py="md" h="100%" px="lg">
@@ -117,6 +126,17 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
         </Stack>
       </Center>
     );
+  }
+
+  function onProcedureSelect(procedureId: string, patientId: string) {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('active', procedureId);
+
+    if (matches) {
+      router.push(`/patients/${patientId}/procedures/${procedureId}`);
+    } else {
+      router.push(`?${newParams.toString()}`, { scroll: false });
+    }
   }
 
   const proceduresByDate = data.reduce((acc, pcd) => {
@@ -161,6 +181,10 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
                     disableSession
                     procedure={pcd}
                     fields={['patient', 'assignee', 'teeth', 'updated']}
+                    selected={pcd.id === active?.toString()}
+                    onSelect={(procedureId: string) =>
+                      onProcedureSelect(procedureId, pcd.patient.id)
+                    }
                   />
                 ))}
             </Stack>

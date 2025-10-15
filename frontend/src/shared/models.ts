@@ -6,12 +6,12 @@ export type PatientShort = {
 
 export type Patient = PatientShort & {
   birthDate: Date;
-  phone: string;
+  phoneNumber: string;
   cpf: string;
   rg: string;
   ssp: string;
   maritalStatus: 'SINGLE' | 'MARRIED' | 'DIVORCED' | 'WIDOWED' | 'CIVIL_UNION';
-  gender: 'FEMALE' | 'MALE' | 'OTHER';
+  sex: 'FEMALE' | 'MALE' | 'OTHER';
   ethnicity: 'WHITE' | 'BLACK' | 'BROWN' | 'YELLOW' | 'INDIGENOUS' | 'OTHER';
   address: string;
   city: string;
@@ -26,7 +26,7 @@ export type User = {
   role: UserRole;
   name: string;
   email: string;
-  avatarUrl: string;
+  avatarUrl?: string;
 };
 
 export type Student = User & {
@@ -129,10 +129,12 @@ export type TreatmentPlan = Reviewable & {
 
 export type Attachments = {
   id: string;
-  location: string;
+  location?: string;
+  createdAt: Date;
   filename: string;
   uploader: User;
-  size: string;
+  size: number;
+  type: string;
 };
 
 export type ProcedureDetail = {
