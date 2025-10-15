@@ -21,7 +21,7 @@ export default async function PatientTreatmentPlansPage({
       </Box>
 
       <Box flex="1" h="100%" visibleFrom="md">
-        <TreatmentPlanDetailSection />
+        <TreatmentPlanDetailSection scrollAreaHeight="500px" />
       </Box>
     </Group>
   );
