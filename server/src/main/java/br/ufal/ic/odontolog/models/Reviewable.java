@@ -1,17 +1,20 @@
 package br.ufal.ic.odontolog.models;
 
+import br.ufal.ic.odontolog.enums.ReviewStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 @Getter
 @Setter
@@ -20,6 +23,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor()
 @Table(name = "reviewables")
 @Inheritance(strategy = InheritanceType.JOINED)
+@SQLRestriction("deleted = false")
 public abstract class Reviewable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +38,6 @@ public abstract class Reviewable {
   @ManyToOne
   @JoinColumn(name = "assignee_id")
   private User assignee;
-
-  @ManyToMany @Builder.Default private Set<Supervisor> reviewers = new HashSet<>();
 
   @CreationTimestamp private Instant createdAt;
 
@@ -65,10 +67,45 @@ public abstract class Reviewable {
   @Enumerated(EnumType.STRING)
   private ReviewableType type;
 
+  @Column(name = "deleted", nullable = false)
+  private boolean deleted = false;
+
   public void addReview(Review review) {
     this.reviews.add(review);
     review.setReviewable(this);
   }
 
+  @Transient
+  public Set<Supervisor> getReviewers() {
+    return this.reviews.stream().map(Review::getSupervisor).collect(Collectors.toUnmodifiableSet());
+  }
+
+  public void addReviewer(Supervisor supervisor) {
+    Review review =
+        Review.builder()
+            .supervisor(supervisor)
+            .reviewable(this)
+            .reviewStatus(ReviewStatus.DRAFT)
+            .build();
+    this.addReview(review);
+  }
+
+  public void removeReviewer(Supervisor supervisor) {
+    this.reviews.removeIf(review -> review.getSupervisor().equals(supervisor));
+  }
+
+  public Optional<Review> getReviewFor(Supervisor supervisor) {
+    return this.reviews.stream()
+        .filter(review -> review.getSupervisor().equals(supervisor))
+        .findFirst();
+  }
+
   public abstract void assignUser(User user);
+
+  public abstract void setReviewers(Set<Supervisor> supervisors);
+
+  public abstract void submitForReview();
+
+  public abstract void submitSupervisorReview(
+      Supervisor supervisor, String comments, Integer grade, Boolean approved);
 }

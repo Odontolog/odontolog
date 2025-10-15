@@ -10,8 +10,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class ReviewableSpecification {
   public static Specification<Reviewable> isReviewedBy(Supervisor supervisor) {
-    return (root, query, criteriaBuilder) ->
-        criteriaBuilder.isMember(supervisor, root.get("reviewers"));
+    return (root, query, criteriaBuilder) -> {
+      query.distinct(true);
+      Join<Reviewable, Review> reviewJoin = root.join("reviews");
+      return criteriaBuilder.equal(reviewJoin.get("supervisor"), supervisor);
+    };
   }
 
   public static Specification<Reviewable> hasNameLike(String name) {

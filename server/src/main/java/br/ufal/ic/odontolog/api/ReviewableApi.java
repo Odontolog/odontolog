@@ -1,10 +1,12 @@
 package br.ufal.ic.odontolog.api;
 
 import br.ufal.ic.odontolog.dtos.ActivityDTO;
+import br.ufal.ic.odontolog.dtos.ReviewDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableSubmitSupervisorReviewDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,54 +39,6 @@ public interface ReviewableApi {
       @ParameterObject Pageable pageable,
       @ParameterObject ReviewableCurrentSupervisorFilterDTO filter,
       @Parameter(hidden = true) UserDetails currentUser);
-
-  @Operation(
-      summary = "Add reviewers to a reviewable item",
-      description =
-          """
-            Adds one or more reviewers to the specified reviewable item.
-
-            Preconditions:
-
-            - The reviewable item must exist in the system.
-            - The reviewers to be added must exist in the system.
-            - The reviewers must not already be assigned to the reviewable item.
-
-            Postconditions:
-
-            - The specified reviewers will be associated with the reviewable item.
-            """)
-  @ApiResponses(
-      value = {
-        @ApiResponse(responseCode = "200", description = "Reviewers added successfully."),
-        @ApiResponse(responseCode = "404", description = "Reviewable item not found."),
-        @ApiResponse(responseCode = "422", description = "Invalid request data."),
-      })
-  public ResponseEntity<ReviewableDTO> addReviewers(Long reviewableId, ReviewersDTO request);
-
-  @Operation(
-      summary = "Remove reviewers from a reviewable item",
-      description =
-          """
-            Removes one or more reviewers from the specified reviewable item.
-
-            Preconditions:
-
-            - The reviewable item must exist in the system.
-            - The reviewers to be removed must exist in the system.
-            - The reviewers must be currently assigned to the reviewable item.
-
-            Postconditions:
-
-            - The specified reviewers will be disassociated from the reviewable item.
-            """)
-  @ApiResponses(
-      value = {
-        @ApiResponse(responseCode = "200", description = "Reviewers removed successfully."),
-        @ApiResponse(responseCode = "404", description = "Reviewable item not found."),
-        @ApiResponse(responseCode = "422", description = "Invalid request data."),
-      })
-  public ResponseEntity<ReviewableDTO> removeReviewers(Long reviewableId, ReviewersDTO request);
 
   @Operation(
       summary = "Update reviewers for a reviewable item",
@@ -155,4 +109,35 @@ public interface ReviewableApi {
       })
   public ResponseEntity<ReviewableDTO> assignUserToReviewable(
       @RequestBody ReviewableAssignUserRequestDTO requestDTO, @Parameter Long reviewableId);
+
+  @Operation(
+      summary = "Submit supervisor review for a reviewable item",
+      description =
+          """
+            Allows a supervisor to submit their review for a specific reviewable item.
+
+            Preconditions:
+
+            - The reviewable item must exist in the system.
+            - The authenticated user must be a supervisor assigned to the reviewable item.
+            - The reviewable item must be in a state that allows reviews to be submitted.
+
+            Postconditions:
+
+            - The supervisor's review will be recorded and associated with the reviewable item.
+            - If all assigned supervisors have submitted their reviews, the reviewable item's status may be updated accordingly.
+            """)
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "Review submitted successfully."),
+        @ApiResponse(responseCode = "404", description = "Reviewable item not found."),
+        @ApiResponse(responseCode = "422", description = "Invalid request data."),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Authenticated user is not authorized to review this item."),
+      })
+  public ResponseEntity<ReviewDTO> submitSupervisorReview(
+      @Parameter Long reviewableId,
+      @RequestBody ReviewableSubmitSupervisorReviewDTO requestDTO,
+      @Parameter(hidden = true) UserDetails currentUser);
 }

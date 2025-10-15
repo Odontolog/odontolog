@@ -19,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "procedures")
 public abstract class Procedure extends Reviewable {
-  private Integer planned_session;
+  private Integer plannedSession;
 
   @ManyToOne
   @JoinColumn(name = "patient_id", nullable = false)
@@ -78,5 +78,21 @@ public abstract class Procedure extends Reviewable {
   @Override
   public void assignUser(User user) {
     this.getState().assignUser(this, user);
+  }
+
+  @Override
+  public void setReviewers(Set<Supervisor> supervisors) {
+    this.getState().setReviewers(this, supervisors);
+  }
+
+  @Override
+  public void submitForReview() {
+    this.getState().submitForReview(this);
+  }
+
+  @Override
+  public void submitSupervisorReview(
+      Supervisor supervisor, String comments, Integer grade, Boolean approved) {
+    this.getState().submitSupervisorReview(this, supervisor, comments, grade, approved);
   }
 }

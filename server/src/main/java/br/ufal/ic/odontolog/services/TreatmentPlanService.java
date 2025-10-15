@@ -1,20 +1,23 @@
 package br.ufal.ic.odontolog.services;
 
 import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.ProcedureUpsertDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
+import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
 import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
+import br.ufal.ic.odontolog.models.TreatmentPlanProcedure;
 import br.ufal.ic.odontolog.models.User;
-import br.ufal.ic.odontolog.repositories.PatientRepository;
-import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
+import br.ufal.ic.odontolog.repositories.*;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,9 @@ public class TreatmentPlanService {
   private final TreatmentPlanMapper treatmentPlanMapper;
   private final PatientRepository patientRepository;
   private final CurrentUserProvider currentUserProvider;
+  private final TreatmentPlanProcedureRepository treatmentPlanProcedureRepository;
+  private final ReviewableRepository reviewableRepository;
+  private final ActivityRepository activityRepository;
 
   @Transactional
   public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
@@ -65,13 +71,12 @@ public class TreatmentPlanService {
     return treatmentPlanMapper.toDTO(plan);
   }
 
-  @Transactional(readOnly = true)
+  @Transactional
   public TreatmentPlanDTO getTreatmentPlanById(Long id) {
     TreatmentPlan plan =
         treatmentPlanRepository
-            .findById(id)
+            .findByIdWithActiveProcedures(id)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment plan not found"));
-
     return treatmentPlanMapper.toDTO(plan);
   }
 
@@ -94,7 +99,7 @@ public class TreatmentPlanService {
             .findById(treatment_id)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
-    treatmentPlan.getState().submitForReview(treatmentPlan);
+    treatmentPlan.submitForReview();
 
     String description = buildSubmissionDescription(currentUser, treatmentPlan);
 
@@ -128,5 +133,166 @@ public class TreatmentPlanService {
             currentUser.getName(), currentUser.getEmail(), treatmentPlan.getId()));
 
     return descriptionBuilder.toString();
+  }
+
+  // Procedures CRUD within a Treatment Plan
+  @Transactional
+  public TreatmentPlanDTO addProcedureToTreatmentPlan(
+      Long treatmentPlanId, ProcedureUpsertDTO dto) {
+    User currentUser = currentUserProvider.getCurrentUser();
+
+    TreatmentPlan treatmentPlan =
+        treatmentPlanRepository
+            .findById(treatmentPlanId)
+            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+
+    if (currentUser.getRole() == Role.STUDENT
+        && treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
+      throw new IllegalStateException(
+          "Não é possível adicionar procedimentos enquanto o plano não está em rascunho (DRAFT)");
+    }
+
+    ProcedureStatus status;
+    if (treatmentPlan.getStatus() == TreatmentPlanStatus.DRAFT) {
+      status = ProcedureStatus.DRAFT;
+    } else {
+      status = ProcedureStatus.NOT_STARTED;
+    }
+
+    TreatmentPlanProcedure procedure =
+        TreatmentPlanProcedure.builder()
+            .author(currentUser)
+            .assignee(currentUser)
+            .type(ReviewableType.PROCEDURE)
+            .status(status)
+            .name(dto.getName())
+            .studySector(dto.getStudySector())
+            .patient(treatmentPlan.getPatient())
+            .treatmentPlan(treatmentPlan)
+            .build();
+
+    procedure.setPlannedSession(dto.getPlannedSession());
+    dto.getTeeth().forEach(procedure::addTooth);
+
+    Activity procedureActivity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.CREATED)
+            .reviewable(procedure)
+            .description(
+                String.format(
+                    "Procedimento criado no Plano de Tratamento #%s", treatmentPlan.getId()))
+            .build();
+    procedure.getHistory().add(procedureActivity);
+
+    treatmentPlan.addProcedure(procedure);
+    treatmentPlanProcedureRepository.save(procedure);
+
+    Activity tpActivity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .reviewable(treatmentPlan)
+            .description(
+                String.format(
+                    "Procedimento #%s (%s) adicionado ao Plano de Tratamento #%s",
+                    procedure.getId(), dto.getName(), treatmentPlan.getId()))
+            .build();
+    treatmentPlan.getHistory().add(tpActivity);
+    treatmentPlanRepository.save(treatmentPlan);
+
+    return treatmentPlanMapper.toDTO(treatmentPlan);
+  }
+
+  @Transactional
+  public TreatmentPlanDTO updateProcedureInTreatmentPlan(
+      Long treatmentPlanId, Long procedureId, ProcedureUpsertDTO dto) {
+    User currentUser = currentUserProvider.getCurrentUser();
+
+    TreatmentPlanProcedure procedure =
+        treatmentPlanProcedureRepository
+            .findById(procedureId)
+            .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
+
+    if (!procedure.getTreatmentPlan().getId().equals(treatmentPlanId)) {
+      throw new ResourceNotFoundException("Procedure does not belong to this Treatment Plan");
+    }
+
+    TreatmentPlan treatmentPlan = procedure.getTreatmentPlan();
+    if (treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
+      throw new IllegalStateException(
+          "Não é possível editar procedimentos enquanto o plano não está em rascunho (DRAFT)");
+    }
+
+    procedure.setName(dto.getName());
+    procedure.setStudySector(dto.getStudySector());
+    procedure.setPlannedSession(dto.getPlannedSession());
+    procedure.getTeeth().clear();
+    dto.getTeeth().forEach(procedure::addTooth);
+
+    Activity tpActivity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .reviewable(treatmentPlan)
+            .description(
+                String.format(
+                    "Procedimento #%s (%s) editado em Plano de Tratamento #%s",
+                    procedure.getId(), procedure.getName(), treatmentPlanId))
+            .build();
+    procedure.getHistory().add(tpActivity);
+    treatmentPlanProcedureRepository.save(procedure);
+
+    Activity procedureActivity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .reviewable(procedure)
+            .description(
+                String.format("Procedimento editado em Plano de Tratamento #%s", treatmentPlanId))
+            .build();
+    treatmentPlan.getHistory().add(procedureActivity);
+    treatmentPlanRepository.save(treatmentPlan);
+
+    return treatmentPlanMapper.toDTO(treatmentPlan);
+  }
+
+  @Transactional
+  public void removeProcedureFromTreatmentPlan(Long treatmentPlanId, Long procedureId) {
+    User currentUser = currentUserProvider.getCurrentUser();
+
+    TreatmentPlan treatmentPlan =
+        treatmentPlanRepository
+            .findById(treatmentPlanId)
+            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
+
+    if (treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
+      throw new IllegalStateException(
+          "Não é possível remover procedimentos enquanto o plano não está em rascunho (DRAFT)");
+    }
+
+    TreatmentPlanProcedure procedure =
+        treatmentPlan.getProcedures().stream()
+            .filter(p -> p.getId().equals(procedureId))
+            .findFirst()
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Procedure not found in this Treatment Plan"));
+
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .description(
+                String.format(
+                    "Procedimento #%s removido do plano de tratamento #%s por %s (%s)",
+                    procedureId, treatmentPlanId, currentUser.getName(), currentUser.getEmail()))
+            .build();
+
+    procedure.setDeleted(true);
+    procedure.getHistory().add(activity);
+    treatmentPlanProcedureRepository.save(procedure);
+
+    treatmentPlan.getHistory().add(activity);
+    treatmentPlanRepository.save(treatmentPlan);
   }
 }

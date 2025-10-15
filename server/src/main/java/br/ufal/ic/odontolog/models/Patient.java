@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.models;
 
+import br.ufal.ic.odontolog.enums.Ethnicity;
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
 import jakarta.persistence.Entity;
@@ -10,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -35,6 +37,8 @@ public class Patient {
   // TODO: Add validation for CPF
   private String CPF;
 
+  private String avatarUrl;
+
   // TODO: Add validation for phone number
   private String phoneNumber;
 
@@ -43,18 +47,20 @@ public class Patient {
 
   private String city;
   private String state;
-  private String race;
+
+  @Enumerated(EnumType.STRING)
+  private Ethnicity ethnicity;
 
   // TODO: This must be Sex or Gender?
   @Enumerated(EnumType.STRING)
   private Sex sex;
 
-  private String birthDate;
+  private LocalDate birthDate;
 
   @Enumerated(EnumType.STRING)
   private MaritalStatus maritalStatus;
 
-  private String profession;
+  private String occupation;
 
   @OneToMany(mappedBy = "patient")
   private final Set<TreatmentPlan> treatmentPlans = new HashSet<>();
