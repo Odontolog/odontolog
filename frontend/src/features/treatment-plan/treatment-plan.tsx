@@ -3,6 +3,7 @@
 import { Box, Group, Loader, ScrollArea, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type User } from 'next-auth';
+import { notFound } from 'next/navigation';
 
 import AssigneeSection from '@/shared/reviewable/assignee-section';
 import HistorySection from '@/shared/reviewable/history/history-section';
@@ -13,6 +14,7 @@ import ProcedureSection from './procedure-section';
 import { getTratmentPlanOptions } from './requests';
 import styles from './treatment-plan.module.css';
 import { getTreatmentPlanPageMode } from './utils';
+import { ServerError } from '@/shared/components/server-error';
 
 interface TreatmentPlanProps {
   patientId: string;
@@ -26,12 +28,17 @@ export default function TreatmentPlan({
 }: TreatmentPlanProps) {
   const options = getTratmentPlanOptions(treatmentPlanId);
 
-  const { data: status, isLoading } = useQuery({
+  const {
+    data: status,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     ...options,
     select: (data) => data.status,
   });
 
-  if (isLoading || status === undefined) {
+  if (isLoading) {
     return (
       <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Stack align="center" mt={100} style={{ height: '100%' }}>
@@ -40,6 +47,24 @@ export default function TreatmentPlan({
         </Stack>
       </Box>
     );
+  }
+
+  if (isError) {
+    if (error instanceof TypeError) {
+      return (
+        <div>
+          <ServerError
+            title="Algo de errado aconteceu"
+            description="Nosso servidor não conseguiu suportar essa requisição. Tente recarregar a página."
+          />
+        </div>
+      );
+    }
+    notFound();
+  }
+
+  if (status === undefined) {
+    return null;
   }
 
   const mode = getTreatmentPlanPageMode(status, user.role);
