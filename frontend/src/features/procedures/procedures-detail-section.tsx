@@ -25,7 +25,7 @@ import CardInfo from '@/shared/components/card-info';
 import { StatusBadge } from '@/shared/components/status';
 import { getProcedureOptions } from '../procedure/requests';
 import DetailSection from '../procedure/ui/detail-section';
-import AttachmentsSection from '../procedure/ui/atts-section';
+import AttachmentsSection from '../procedure/ui/attachements/atts-section';
 
 export default function ProcedureDetailSection({
   scrollAreaHeight,
