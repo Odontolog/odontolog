@@ -1,15 +1,16 @@
 'use client';
 
-import { Card, Text, Image, Group, Badge, Stack } from '@mantine/core';
-import { Url } from 'next/dist/shared/lib/router/router';
+import { Card, Text, Image, Group, Badge, Stack, Tooltip } from '@mantine/core';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface DocumentPreviewCardProps {
-  imageSrc?: Url;
+  imageSrc?: string;
   title: string;
   fileType: string;
   uploader: string;
   size: string;
-  createdAt?: string;
+  createdAt: Date;
 }
 
 export default function DocumentPreviewCard(props: DocumentPreviewCardProps) {
@@ -25,10 +26,15 @@ export default function DocumentPreviewCard(props: DocumentPreviewCardProps) {
       </Card.Section>
       <Stack pt="md" gap="xs">
         <Group justify="space-between">
-          <Text size="xs" c="dimmed">
-            {props.createdAt}
-          </Text>
-          <Badge size="xs" color="blue">
+          <Tooltip label={props.createdAt.toLocaleDateString('pt-BR')}>
+            <Text size="xs" c="dimmed">
+              {formatDistanceToNow(props.createdAt, {
+                addSuffix: true,
+                locale: ptBR,
+              })}
+            </Text>
+          </Tooltip>
+          <Badge size="xs" variant="light" color="blue">
             {props.fileType}
           </Badge>
         </Group>
@@ -36,11 +42,11 @@ export default function DocumentPreviewCard(props: DocumentPreviewCardProps) {
           {props.title}
         </Text>
         <Group>
-          <Text size="sm" c="dimmed">
-            {props.size}
-          </Text>
-          <Text size="sm" c="dimmed">
-            {props.uploader}
+          <Text size="sm" c="dimmed" truncate>
+            <b>{props.size}</b> • Enviado por{' '}
+            <Tooltip label={props.uploader}>
+              <b>{props.uploader}</b>
+            </Tooltip>
           </Text>
         </Group>
       </Stack>
