@@ -1,10 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 
+import { attachments, procedures } from '@/mocks/treatment-plan';
+import { Attachments, Procedure } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 import { mapToProcedure, ProcedureDto } from './mapper';
-import { Attachments, Procedure } from '@/shared/models';
-import { attachments } from '@/mocks/treatment-plan';
 
 import { ProcedureDetail } from './models';
 
