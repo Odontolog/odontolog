@@ -26,7 +26,8 @@ public class ProcedureService {
 
   @Transactional(readOnly = true)
   public List<ProcedureShortDTO> getDonePatientProcedures(long patientId) {
-    List<Procedure> procedures = procedureRepository.findAllByPatientIdAndStatus(patientId, ProcedureStatus.COMPLETED);
+    List<Procedure> procedures =
+        procedureRepository.findAllByPatientIdAndStatus(patientId, ProcedureStatus.COMPLETED);
     return procedureMapper.toShortDTOs(procedures);
   }
 
