@@ -71,9 +71,10 @@ export default function Search() {
 
 function SearchContent({ query }: { query: string }) {
   const router = useRouter();
+  // TODO: Adicionar search query, mas apenas com Debounce
   const { data, isLoading } = useQuery({
     queryKey: ['patientsSearch'],
-    queryFn: getAllPatients,
+    queryFn: async () => await getAllPatients(),
   });
 
   if (isLoading || data === undefined) {
@@ -121,20 +122,22 @@ function SearchContent({ query }: { query: string }) {
             <Text c="dimmed" size="xs">
               Última modificação{' '}
               <b>
-                {patient.updatedAt.toLocaleString('pt-BR', {
+                {patient.lastTreatmentPlanUpdatedAt.toLocaleString('pt-BR', {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',
                   hour: '2-digit',
                   minute: '2-digit',
                 })}
-              </b>{' '}
-              por <b>{patient.assignee.name}</b>
+              </b>
             </Text>
           </div>
 
-          {patient.status && (
-            <Badge variant="light" {...getBadgeProps(patient.status)} />
+          {patient.lastTreatmentPlanStatus && (
+            <Badge
+              variant="light"
+              {...getBadgeProps(patient.lastTreatmentPlanStatus)}
+            />
           )}
         </Group>
       </Spotlight.Action>

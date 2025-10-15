@@ -54,9 +54,7 @@ export default function TreatmentPlansSection({
         </Text>
       ),
       labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
-      onConfirm: () => {
-        void handleConfirm(patientId);
-      },
+      onConfirm: () => void handleConfirm(patientId),
     });
   }
 
