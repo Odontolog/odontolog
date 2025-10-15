@@ -2,16 +2,16 @@ package br.ufal.ic.odontolog.services;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.AppointmentDTO;
+import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
-import java.util.Collections;
 import jakarta.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

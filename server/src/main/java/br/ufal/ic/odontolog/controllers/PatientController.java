@@ -1,7 +1,7 @@
 package br.ufal.ic.odontolog.controllers;
 
-import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.AppointmentDTO;
+import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.services.PatientService;
