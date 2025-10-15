@@ -1,7 +1,7 @@
 'use client';
 
-import { Group, ScrollArea, Stack } from '@mantine/core';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { Box, Group, Loader, ScrollArea, Stack } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 import { type User } from 'next-auth';
 
 import AssigneeSection from '@/shared/reviewable/assignee-section';
@@ -26,10 +26,21 @@ export default function TreatmentPlan({
 }: TreatmentPlanProps) {
   const options = getTratmentPlanOptions(treatmentPlanId);
 
-  const { data: status } = useSuspenseQuery({
+  const { data: status, isLoading } = useQuery({
     ...options,
     select: (data) => data.status,
   });
+
+  if (isLoading || status === undefined) {
+    return (
+      <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Stack align="center" mt={100} style={{ height: '100%' }}>
+          <Loader size="lg" />
+          Carregando Plano de Tratamento
+        </Stack>
+      </Box>
+    );
+  }
 
   const mode = getTreatmentPlanPageMode(status, user.role);
 
