@@ -1,24 +1,28 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 'use client';
 
 import { Card, Text, Image, Group, Badge, Stack, Tooltip } from '@mantine/core';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { Attachments } from '../models';
+import { formatFileSize } from '../utils';
 
 interface DocumentPreviewCardProps {
-  imageSrc?: string;
-  title: string;
-  fileType: string;
-  uploader: string;
-  size: string;
-  createdAt: Date;
+  attachment: Attachments;
 }
 
-export default function DocumentPreviewCard(props: DocumentPreviewCardProps) {
+export default function DocumentPreviewCard({
+  attachment,
+}: DocumentPreviewCardProps) {
+  function extensionExtractor(type: string) {
+    return type.split('/').pop();
+  }
+
   return (
     <Card shadow="sm" padding="lg" radius="sm" withBorder>
       <Card.Section>
         <Image
-          src={props.imageSrc}
+          src={attachment.location}
           height={180}
           alt="Norway"
           fallbackSrc="https://placehold.co/600x400?text=Placeholder"
@@ -26,26 +30,26 @@ export default function DocumentPreviewCard(props: DocumentPreviewCardProps) {
       </Card.Section>
       <Stack pt="md" gap="xs">
         <Group justify="space-between">
-          <Tooltip label={props.createdAt.toLocaleDateString('pt-BR')}>
+          <Tooltip label={attachment.createdAt.toLocaleDateString('pt-BR')}>
             <Text size="xs" c="dimmed">
-              {formatDistanceToNow(props.createdAt, {
+              {formatDistanceToNow(attachment.createdAt, {
                 addSuffix: true,
                 locale: ptBR,
               })}
             </Text>
           </Tooltip>
           <Badge size="xs" variant="light" color="blue">
-            {props.fileType}
+            {extensionExtractor(attachment.type)}
           </Badge>
         </Group>
         <Text fw={600} size="md" truncate="end">
-          {props.title}
+          {attachment.filename}
         </Text>
         <Group>
           <Text size="sm" c="dimmed" truncate>
-            <b>{props.size}</b> • Enviado por{' '}
-            <Tooltip label={props.uploader}>
-              <b>{props.uploader}</b>
+            <b>{formatFileSize(attachment.size)}</b> • Enviado por{' '}
+            <Tooltip label={attachment.uploader.name}>
+              <b>{attachment.uploader.name}</b>
             </Tooltip>
           </Text>
         </Group>

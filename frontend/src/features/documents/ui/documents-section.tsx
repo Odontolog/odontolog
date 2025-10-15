@@ -10,10 +10,15 @@ import {
   Divider,
   Grid,
   Group,
+  Loader,
+  Modal,
   ScrollArea,
   Stack,
   Text,
 } from '@mantine/core';
+import { Attachments } from '@/shared/models';
+import AttachmentsModal from '@/features/procedure/ui/attachements/att-modal';
+import { useState } from 'react';
 
 interface DocsSectionProps {
   patientId: string;
@@ -47,24 +52,10 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
   );
 }
 
-interface Document {
-  id: string;
-  createdAt: Date;
-  filename: string;
-  location: string;
-  type: string;
-  size: string;
-  uploader: string;
-}
-
 interface DocsSectionContentProps {
-  data?: Document[];
+  data?: Attachments[];
   isLoading: boolean;
   isError: boolean;
-}
-
-function extensionExtractor(type: string) {
-  return type.split('/').pop();
 }
 
 function DocsSectionContent({
@@ -72,6 +63,11 @@ function DocsSectionContent({
   isLoading,
   isError,
 }: DocsSectionContentProps) {
+  const [selectedAttachment, setSelectedAttachment] =
+    useState<Attachments | null>(null);
+  const [modalOpened, setModalOpened] = useState(false);
+  const [opened, setOpened] = useState(false);
+
   if (isError) {
     return (
       <Center py="md" h="100%">
@@ -79,6 +75,14 @@ function DocsSectionContent({
           Algo deu errado. <br />
           Não foi possível carregar os documentos.
         </Text>
+      </Center>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Center py="md">
+        <Loader size="sm" />
       </Center>
     );
   }
@@ -100,6 +104,16 @@ function DocsSectionContent({
     );
   }
 
+  function handleViewAttachment(attachment: Attachments) {
+    setSelectedAttachment(attachment);
+    setModalOpened(true);
+  }
+
+  function closeModal() {
+    setModalOpened(false);
+    setSelectedAttachment(null);
+  }
+
   return (
     <ScrollArea
       scrollbarSize={6}
@@ -111,14 +125,7 @@ function DocsSectionContent({
       <Grid p="md">
         {data.map((document) => (
           <Grid.Col span={3} key={document.id}>
-            <DocumentPreviewCard
-              imageSrc={document.location}
-              title={document.filename}
-              fileType={extensionExtractor(document.type) ?? ''}
-              uploader={document.uploader}
-              size={document.size}
-              createdAt={document.createdAt}
-            />
+            <DocumentPreviewCard attachment={document} />
           </Grid.Col>
         ))}
       </Grid>
