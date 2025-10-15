@@ -32,8 +32,6 @@ public class Patient {
 
   private String name;
 
-  private String avatarUrl;
-
   private String address;
 
   // TODO: Add validation for CPF
