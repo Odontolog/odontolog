@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  server:
+    image: registry.digitalocean.com/odontolog/server:latest
+    container_name: server
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      APP_JWT_SECRET: ${APP_JWT_SECRET}
+      APP_JWT_ISSUER: ${APP_JWT_ISSUER}
+      APP_JWT_EXPIRATION_SECONDS: ${APP_JWT_EXPIRATION_SECONDS}
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
