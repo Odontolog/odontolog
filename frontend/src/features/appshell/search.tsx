@@ -71,9 +71,10 @@ export default function Search() {
 
 function SearchContent({ query }: { query: string }) {
   const router = useRouter();
+  // TODO: Adicionar search query, mas apenas com Debounce
   const { data, isLoading } = useQuery({
-    queryKey: ['patientsSearch', query],
-    queryFn: async () => await getAllPatients(query),
+    queryKey: ['patientsSearch'],
+    queryFn: async () => await getAllPatients(),
   });
 
   if (isLoading || data === undefined) {
