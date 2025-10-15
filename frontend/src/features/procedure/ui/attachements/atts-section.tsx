@@ -130,8 +130,10 @@ function AttSectionContent({
     files.forEach((file) => {
       newAtts.push({
         id: crypto.randomUUID(),
+        createdAt: new Date(),
         filename: file.name,
         location: file.path,
+        type: file.type,
         size: file.size,
         uploader: user,
       });

@@ -148,20 +148,24 @@ export const proceduresShort: ProcedureShort[] = [
 export const attachments: Attachments[] = [
   {
     id: '1',
-    location: 'radiografia-periapical-16.jpg',
+    createdAt: new Date('2025-09-06T11:00:00Z'),
     filename: 'radiografia-periapical-16.jpg',
+    type: 'image/jpg',
     uploader: student,
     size: 2411724,
   },
   {
     id: '2',
-    location: 'fotografia-clinica-anterior.jpg',
+    createdAt: new Date('2025-02-16T11:00:00Z'),
+    type: 'image/jpg',
     filename: 'fotografia-clinica-anterior.jpg',
     uploader: student,
     size: 1887437,
   },
   {
     id: '3',
+    createdAt: new Date('2025-12-22T11:00:00Z'),
+    type: 'image/jpg',
     location: 'radiografia-panoramica.jpg',
     filename: 'radiografia-panoramica.jpg',
     uploader: supervisor,
@@ -169,6 +173,8 @@ export const attachments: Attachments[] = [
   },
   {
     id: '4',
+    createdAt: new Date('2025-02-02T11:00:00Z'),
+    type: 'application/pdf',
     location: 'exame-periodontal.pdf',
     filename: 'exame-periodontal.pdf',
     uploader: student,
@@ -176,8 +182,10 @@ export const attachments: Attachments[] = [
   },
   {
     id: '5',
-    location: 'tomografia-cone-beam.dcm',
-    filename: 'tomografia-cone-beam.dcm',
+    createdAt: new Date(),
+    type: 'video/mp4',
+    location: 'tomografia-cone-beam.mp4',
+    filename: 'tomografia-cone-beam.mp4',
     uploader: supervisor2,
     size: 13314662,
   },
