@@ -52,6 +52,7 @@ public class PatientController {
       @PathVariable Long id, @RequestBody @Valid AppointmentDTO appointmentDTO) {
 
     patientService.updateNextAppointment(id, appointmentDTO);
-    return ResponseEntity.ok(appointmentDTO);
+    AppointmentDTO updatedAppointment = patientService.getNextAppointment(id);
+    return ResponseEntity.ok(updatedAppointment);
   }
 }
