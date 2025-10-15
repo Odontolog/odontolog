@@ -10,6 +10,7 @@ import br.ufal.ic.odontolog.enums.Sex;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,6 +142,7 @@ public class DevDataLoader implements CommandLineRunner {
                 .phoneNumber("(12) 34567-8901")
                 .address("123 Test St, Test City, TS")
                 .city("Test City")
+                .appointmentDate(LocalDate.of(2025, 10, 20))
                 .state("TS")
                 .build());
 

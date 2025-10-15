@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -61,4 +62,6 @@ public class Patient {
 
   @OneToMany(mappedBy = "patient")
   private final Set<Procedure> procedures = new HashSet<>();
+
+  private LocalDate appointmentDate;
 }
