@@ -13,13 +13,20 @@ import {
   ThemeIcon,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { IconExclamationCircle, IconPlus } from '@tabler/icons-react';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import { useState } from 'react';
 
 import ProcedureCard from '@/shared/components/procedure-card';
 import { Mode, ProcedureShort, TreatmentPlan } from '@/shared/models';
 import ProcedureSectionModal from './procedure-modal';
+import { deleteTreatmentPlanProcedure } from './requests';
 
 interface ProcedureSectionProps {
   treatmentPlanId: string;
@@ -36,6 +43,7 @@ export default function ProcedureSection({
   const [selectedProcedure, setSelectedProcedure] = useState<
     ProcedureShort | undefined
   >();
+  const queryClient = useQueryClient();
 
   const {
     data: procedures,
@@ -44,6 +52,14 @@ export default function ProcedureSection({
   } = useQuery({
     ...queryOptions,
     select: (data) => data.procedures,
+  });
+
+  const mutation = useMutation({
+    mutationFn: (procedureId: string) =>
+      deleteTreatmentPlanProcedure(treatmentPlanId, procedureId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
+    },
   });
 
   function handleClose() {
@@ -57,7 +73,17 @@ export default function ProcedureSection({
   }
 
   function handleProcedureDelete(procedure: ProcedureShort) {
-    console.log(`handle delete of ${procedure.name}`);
+    return modals.openConfirmModal({
+      title: 'Deseja remover este Procedimento?',
+      children: (
+        <Text size="sm">
+          Clicando em confirmar você vai remover o Procedimento. Esta ação não
+          pode ser desfeita. Deseja continuar?
+        </Text>
+      ),
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: () => mutation.mutate(procedure.id),
+    });
   }
 
   return (

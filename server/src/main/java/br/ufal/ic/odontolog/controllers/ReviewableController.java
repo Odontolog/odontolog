@@ -33,24 +33,6 @@ public class ReviewableController implements ReviewableApi {
   }
 
   @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
-  @PostMapping("/{reviewableId}/reviewers")
-  public ResponseEntity<ReviewableDTO> addReviewers(
-      @PathVariable Long reviewableId, @Valid @RequestBody ReviewersDTO request) {
-
-    var updated = reviewableService.addSupervisorsToReviewable(reviewableId, request);
-    return ResponseEntity.ok(updated);
-  }
-
-  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
-  @DeleteMapping("/{reviewableId}/reviewers")
-  public ResponseEntity<ReviewableDTO> removeReviewers(
-      @PathVariable Long reviewableId, @Valid @RequestBody ReviewersDTO request) {
-
-    var updated = reviewableService.removeSupervisorsFromReviewable(reviewableId, request);
-    return ResponseEntity.ok(updated);
-  }
-
-  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @PutMapping("/{reviewableId}/reviewers")
   public ResponseEntity<ReviewableDTO> updateReviewers(
       @PathVariable Long reviewableId, @Valid @RequestBody ReviewersDTO request) {
@@ -82,5 +64,17 @@ public class ReviewableController implements ReviewableApi {
         reviewableService.assignUserToReviewable(requestDTO, reviewableId);
 
     return ResponseEntity.ok(updatedReviewable);
+  }
+
+  @PostMapping("/{reviewableId}/reviews/submit")
+  @PreAuthorize("hasRole('SUPERVISOR')")
+  public ResponseEntity<ReviewDTO> submitSupervisorReview(
+      @PathVariable Long reviewableId,
+      @Valid @RequestBody ReviewableSubmitSupervisorReviewDTO requestDTO,
+      @AuthenticationPrincipal UserDetails currentUser) {
+    ReviewDTO updatedReview =
+        reviewableService.submitSupervisorReview(reviewableId, requestDTO, currentUser);
+
+    return ResponseEntity.ok(updatedReview);
   }
 }

@@ -1,16 +1,10 @@
 import { queryOptions } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 
-import {
-  addProcedure,
-  patient,
-  supervisor,
-  treatmentPlanMock,
-} from '@/mocks/treatment-plan';
 import { TreatmentPlan } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 import { mapToTreatmentPlan, TreatmentPlanDto } from './mappers';
-import { ProcedureFormValues } from './models';
+import { ProcedureFormValues, ReviewFormValues } from './models';
 
 export function getTratmentPlanOptions(treatmentPlanId: string) {
   return queryOptions({
@@ -42,66 +36,81 @@ export async function getTreatmentPlan(
   return mapToTreatmentPlan(data);
 }
 
-export async function editTreatmentPlanProcedure(
-  treatmentPlanId: string,
-  procedure: ProcedureFormValues,
-) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log('saving changes to database for ', procedure.name);
-
-  const procedures = treatmentPlanMock.procedures;
-  const index = procedures.findIndex((p) => p.id === procedure.id);
-
-  if (index === -1) {
-    throw new Error(
-      `Procedure ${procedure.id} not found in treatment plan ${treatmentPlanId}`,
-    );
-  }
-
-  if (procedure.plannedSession === undefined) {
-    throw new Error('error saving data');
-  }
-
-  // atualiza in-place os campos editáveis
-  procedures[index] = {
-    ...procedures[index],
-    name: procedure.name,
-    studySector: procedure.studySector,
-    plannedSession: procedure.plannedSession,
-    teeth: procedure.tooth,
-  };
-
-  return { success: true };
-}
-
 export async function createTreatmentPlanProcedure(
   treatmentPlanId: string,
   procedure: ProcedureFormValues,
 ) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log('creating new procedure  ', procedure.name, treatmentPlanId);
+  const token = await getAuthToken();
 
-  if (procedure.plannedSession === undefined) {
-    throw new Error('error saving data');
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}/procedures`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(procedure),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
+}
+
+export async function editTreatmentPlanProcedure(
+  treatmentPlanId: string,
+  procedure: ProcedureFormValues,
+) {
+  const token = await getAuthToken();
+
+  if (procedure.id === undefined) {
+    throw new Error(`Esse procedimento não tem id e não pode ser editado.`);
   }
 
-  addProcedure({
-    id: (treatmentPlanMock.procedures.length + 101).toString(),
-    name: procedure.name,
-    studySector: procedure.studySector,
-    plannedSession: procedure.plannedSession,
-    teeth: procedure.tooth,
-    status: 'DRAFT',
-    reviews: [],
-    procedureType: 'TREATMENT_PLAN_PROCEDURE',
-    type: 'PROCEDURE',
-    patient,
-    assignee: supervisor,
-    updatedAt: new Date('2025-09-01T10:00:00Z'),
-    notes: 'Necessário avaliar radiografia complementar.',
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}/procedures/${procedure.id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(procedure),
+    },
+  );
 
-  return { success: true };
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
+}
+
+export async function deleteTreatmentPlanProcedure(
+  treatmentPlanId: string,
+  procedureId: string,
+) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}/procedures/${procedureId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
 }
 
 export async function submitTreatmentPlanForReview(
@@ -129,9 +138,39 @@ export async function submitTreatmentPlanForReview(
   }
 }
 
-export async function submitReviewForTreatmentPlan(treatmentPlanId: string) {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  console.log(`Submitting review for plan ${treatmentPlanId}`);
+type SupervisorReviewDto = {
+  comments: string;
+  grade: number;
+  approved: boolean;
+};
 
-  return { success: true };
+export async function submitReviewForTreatmentPlan(
+  treatmentPlanId: string,
+  review: ReviewFormValues,
+) {
+  const token = await getAuthToken();
+
+  const payload: SupervisorReviewDto = {
+    comments: review.comments,
+    grade: review.grade ?? 0,
+    approved: review.decision === 'Aprovar',
+  };
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/${treatmentPlanId}/reviews/submit`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
 }

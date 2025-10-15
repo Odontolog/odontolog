@@ -1,16 +1,18 @@
 import {
-  Modal,
-  Group,
-  Text,
-  Stack,
   Button,
   Flex,
+  Group,
+  Modal,
+  Radio,
+  Stack,
+  Text,
   Textarea,
   TextInput,
-  Radio,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { ReviewFormValues } from './models';
 import { submitReviewForTreatmentPlan } from './requests';
 
 interface ReviewModalProps {
@@ -52,20 +54,14 @@ export default function ReviewModal(props: ReviewModalProps) {
 function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
   const queryClient = useQueryClient();
 
-  type ReviewFormValues = {
-    note: string;
-    decision: string;
-    grade?: number;
-  };
-
   const form = useForm<ReviewFormValues>({
     mode: 'uncontrolled',
     initialValues: {
-      note: '',
+      comments: '',
       decision: '',
     },
     validate: {
-      note: (value) =>
+      comments: (value) =>
         value.length < 1 ? 'Insira uma explicação para o aluno.' : null,
       grade: (value, values) => {
         return values.decision === 'Aprovar' &&
@@ -78,7 +74,8 @@ function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
   });
 
   const mutation = useMutation({
-    mutationFn: () => submitReviewForTreatmentPlan(treatmentPlanId),
+    mutationFn: (review: ReviewFormValues) =>
+      submitReviewForTreatmentPlan(treatmentPlanId, review),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ['treatmentPlan', treatmentPlanId],
@@ -89,7 +86,7 @@ function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
   });
 
   return (
-    <form onSubmit={form.onSubmit(() => mutation.mutate())}>
+    <form onSubmit={form.onSubmit((values) => mutation.mutate(values))}>
       <Stack>
         <Textarea
           label="Observações adicionais"
@@ -99,8 +96,8 @@ function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
           minRows={5}
           maxRows={8}
           withAsterisk
-          key={form.key('note')}
-          {...form.getInputProps('note')}
+          key={form.key('comments')}
+          {...form.getInputProps('comments')}
         />
         <TextInput
           label="Nota"

@@ -164,15 +164,17 @@ export function TreatmentPlanDetailContent({
                 </Center>
               ) : (
                 <Stack gap="md">
-                  {treatmentPlan.procedures.map((procedure) => (
-                    <ProcedureCard
-                      key={procedure.id}
-                      procedure={procedure}
-                      fields={['teeth', 'study_sector', 'updated']}
-                      onEdit={undefined}
-                      onDelete={undefined}
-                    />
-                  ))}
+                  {treatmentPlan.procedures
+                    .sort((a, b) => a.plannedSession - b.plannedSession)
+                    .map((procedure) => (
+                      <ProcedureCard
+                        key={procedure.id}
+                        procedure={procedure}
+                        fields={['teeth', 'study_sector', 'updated']}
+                        onEdit={undefined}
+                        onDelete={undefined}
+                      />
+                    ))}
                 </Stack>
               )}
             </Stack>

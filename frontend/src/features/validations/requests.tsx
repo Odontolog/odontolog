@@ -20,7 +20,7 @@ async function getValidations(params: {
 
   const page = params?.page ?? 0;
   const size = params?.size ?? 20;
-  const awaitingMyReview = params?.awaitingMyReview ?? false;
+  const awaitingMyReview = params?.awaitingMyReview ?? true;
 
   const searchParams = new URLSearchParams({
     page: String(page),

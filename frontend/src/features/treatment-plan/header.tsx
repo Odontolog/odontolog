@@ -24,7 +24,12 @@ import { ptBR } from 'date-fns/locale';
 import { type User } from 'next-auth';
 
 import { StatusBadge, StatusIndicator } from '@/shared/components/status';
-import { TreatmentPlan } from '@/shared/models';
+import {
+  Review,
+  Supervisor,
+  TreatmentPlan,
+  TreatmentPlanStatus,
+} from '@/shared/models';
 import styles from './header.module.css';
 import RequestReviewModal from './request-review-modal';
 import ReviewModal from './review-modal';
@@ -62,6 +67,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       updatedAt: data.updatedAt,
       assignee: data.assignee,
       reviewers: data.reviewers,
+      reviews: data.reviews,
       latest: getLatestActorAndDate(data.history),
     }),
   });
@@ -114,6 +120,27 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       </Anchor>
     );
   });
+
+  function canSupervisorReview(
+    user: User,
+    status: TreatmentPlanStatus,
+    reviewers: Supervisor[],
+    reviews: Review[],
+  ): boolean {
+    if (user.role !== 'SUPERVISOR') {
+      throw new Error(
+        'This function can only be used when supervisor is logged in.',
+      );
+    }
+
+    const isInReview = status === 'IN_REVIEW';
+    const isReviewRequested = !!reviewers.find((r) => r.id === user.id);
+
+    const supervisorReview = reviews.find((r) => r.supervisor.id === user.id);
+    const isReviewPeding = supervisorReview?.reviewStatus === 'PENDING';
+
+    return isInReview && isReviewRequested && isReviewPeding;
+  }
 
   return (
     <Stack gap="sm">
@@ -189,8 +216,12 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
               className={styles.button}
               onClick={open}
               disabled={
-                data.status !== 'IN_REVIEW' ||
-                !data.reviewers.find((rev) => rev.id === props.user.id)
+                !canSupervisorReview(
+                  props.user,
+                  data.status,
+                  data.reviewers,
+                  data.reviews,
+                )
               }
             >
               Validar

@@ -8,6 +8,7 @@ import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
+import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
@@ -74,7 +75,7 @@ public class TreatmentPlanService {
   public TreatmentPlanDTO getTreatmentPlanById(Long id) {
     TreatmentPlan plan =
         treatmentPlanRepository
-            .findById(id)
+            .findByIdWithActiveProcedures(id)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment plan not found"));
     return treatmentPlanMapper.toDTO(plan);
   }
@@ -98,7 +99,7 @@ public class TreatmentPlanService {
             .findById(treatment_id)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
-    treatmentPlan.getState().submitForReview(treatmentPlan);
+    treatmentPlan.submitForReview();
 
     String description = buildSubmissionDescription(currentUser, treatmentPlan);
 
@@ -145,9 +146,17 @@ public class TreatmentPlanService {
             .findById(treatmentPlanId)
             .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
 
-    if (treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
+    if (currentUser.getRole() == Role.STUDENT
+        && treatmentPlan.getStatus() != TreatmentPlanStatus.DRAFT) {
       throw new IllegalStateException(
           "Não é possível adicionar procedimentos enquanto o plano não está em rascunho (DRAFT)");
+    }
+
+    ProcedureStatus status;
+    if (treatmentPlan.getStatus() == TreatmentPlanStatus.DRAFT) {
+      status = ProcedureStatus.DRAFT;
+    } else {
+      status = ProcedureStatus.NOT_STARTED;
     }
 
     TreatmentPlanProcedure procedure =
@@ -155,7 +164,7 @@ public class TreatmentPlanService {
             .author(currentUser)
             .assignee(currentUser)
             .type(ReviewableType.PROCEDURE)
-            .status(ProcedureStatus.DRAFT)
+            .status(status)
             .name(dto.getName())
             .studySector(dto.getStudySector())
             .patient(treatmentPlan.getPatient())
@@ -165,20 +174,31 @@ public class TreatmentPlanService {
     procedure.setPlannedSession(dto.getPlannedSession());
     dto.getTeeth().forEach(procedure::addTooth);
 
-    treatmentPlan.addProcedure(procedure);
-
-    Activity activity =
+    Activity procedureActivity =
         Activity.builder()
             .actor(currentUser)
             .type(ActivityType.CREATED)
+            .reviewable(procedure)
             .description(
                 String.format(
-                    "Procedimento #%s adicionado ao Plano de Tratamento #%s",
-                    dto.getName(), treatmentPlan.getId()))
-            .reviewable(treatmentPlan)
+                    "Procedimento criado no Plano de Tratamento #%s", treatmentPlan.getId()))
             .build();
-    treatmentPlan.getHistory().add(activity);
+    procedure.getHistory().add(procedureActivity);
 
+    treatmentPlan.addProcedure(procedure);
+    treatmentPlanProcedureRepository.save(procedure);
+
+    Activity tpActivity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .reviewable(treatmentPlan)
+            .description(
+                String.format(
+                    "Procedimento #%s (%s) adicionado ao Plano de Tratamento #%s",
+                    procedure.getId(), dto.getName(), treatmentPlan.getId()))
+            .build();
+    treatmentPlan.getHistory().add(tpActivity);
     treatmentPlanRepository.save(treatmentPlan);
 
     return treatmentPlanMapper.toDTO(treatmentPlan);
@@ -210,22 +230,28 @@ public class TreatmentPlanService {
     procedure.getTeeth().clear();
     dto.getTeeth().forEach(procedure::addTooth);
 
-    Activity activity =
+    Activity tpActivity =
         Activity.builder()
             .actor(currentUser)
             .type(ActivityType.EDITED)
+            .reviewable(treatmentPlan)
             .description(
                 String.format(
                     "Procedimento #%s (%s) editado em Plano de Tratamento #%s",
                     procedure.getId(), procedure.getName(), treatmentPlanId))
             .build();
-
-    procedure.getHistory().add(activity);
-
+    procedure.getHistory().add(tpActivity);
     treatmentPlanProcedureRepository.save(procedure);
 
-    treatmentPlan.getHistory().add(activity);
-
+    Activity procedureActivity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .reviewable(procedure)
+            .description(
+                String.format("Procedimento editado em Plano de Tratamento #%s", treatmentPlanId))
+            .build();
+    treatmentPlan.getHistory().add(procedureActivity);
     treatmentPlanRepository.save(treatmentPlan);
 
     return treatmentPlanMapper.toDTO(treatmentPlan);
