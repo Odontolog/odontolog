@@ -98,6 +98,6 @@ public class PatientService {
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
 
     patient.setAppointmentDate(dto.getAppointmentDate());
-    return patientRepository.save(patient);
+    return patient;
   }
 }
