@@ -126,7 +126,6 @@ function AttSectionContent({
   const queryClient = useQueryClient();
 
   const newAtts: Attachments[] = [];
-
   if (user) {
     files.forEach((file) => {
       newAtts.push({
@@ -140,13 +139,9 @@ function AttSectionContent({
   }
 
   const uploadMutation = useMutation({
-    mutationFn: () => saveAttachments(reviewableId, newAtts),
-    onSuccess: async (updatedProcedure) => {
-      await queryClient.setQueryData(
-        ['procedure', reviewableId],
-        updatedProcedure,
-      );
-
+    mutationFn: (newAtts: Attachments[]) =>
+      saveAttachments(reviewableId, newAtts),
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ['procedure', reviewableId],
       });
@@ -168,12 +163,7 @@ function AttSectionContent({
   const deleteMutation = useMutation({
     mutationFn: (attachment: Attachments) =>
       deleteAttachment(reviewableId, attachment),
-    onSuccess: async (updatedProcedure) => {
-      await queryClient.setQueryData(
-        ['procedure', reviewableId],
-        updatedProcedure,
-      );
-
+    onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ['procedure', reviewableId],
       });
@@ -293,7 +283,7 @@ function AttSectionContent({
               Cancelar
             </Button>
             <Button
-              onClick={() => uploadMutation.mutate()}
+              onClick={() => uploadMutation.mutate(newAtts)}
               loading={uploadMutation.isPending}
             >
               Salvar

@@ -1,3 +1,4 @@
+import { formatFileSize } from '@/shared/utils';
 import { ActionIcon, Flex, Group, Text } from '@mantine/core';
 import { type FileWithPath } from '@mantine/dropzone';
 import {
@@ -35,16 +36,6 @@ function getFileIcon(file: FileWithPath) {
       <IconFile size={16} />
     </Flex>
   );
-}
-
-function formatFileSize(bytes: number) {
-  if (bytes === 0) {
-    return '0 Bytes';
-  }
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 }
 
 interface FilePreviewProps {

@@ -3,25 +3,13 @@
 import { ActionIcon, Flex, Group, Stack, Text, Title } from '@mantine/core';
 import { IconEye, IconFile, IconTrash } from '@tabler/icons-react';
 import { Attachments, Mode } from '../models';
+import { formatFileSize } from '../utils';
 
 interface AttachmentCardProps {
   att: Attachments;
   mode: Mode;
   onView?: (attachment: Attachments) => void;
   onDelete?: (attachment: Attachments) => void;
-}
-
-function formatFileSize(size: number): string {
-  const units = ['B', 'KB', 'MB', 'GB'];
-  let unitIndex = 0;
-  let fileSize = size;
-
-  while (fileSize >= 1024 && unitIndex < units.length - 1) {
-    fileSize /= 1024;
-    unitIndex++;
-  }
-
-  return `${fileSize.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
 }
 
 export default function AttachmentCard({
