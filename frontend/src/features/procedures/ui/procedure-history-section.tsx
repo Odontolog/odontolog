@@ -133,7 +133,7 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
     newParams.set('active', procedureId);
 
     if (matches) {
-      router.push(`/patients/${patientId}/procedure/${procedureId}`);
+      router.push(`/patients/${patientId}/procedures/${procedureId}`);
     } else {
       router.push(`?${newParams.toString()}`, { scroll: false });
     }
