@@ -31,14 +31,21 @@ import CardInfo from '@/shared/components/card-info';
 import ProcedureCard from '@/shared/components/procedure-card';
 import { StatusBadge } from '@/shared/components/status';
 
-export default function TreatmentPlanDetailSection() {
+export default function TreatmentPlanDetailSection({
+  scrollAreaHeight,
+}: {
+  scrollAreaHeight?: string;
+}) {
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
       {active !== null ? (
-        <TreatmentPlanDetailContent treatmentPlanId={active} />
+        <TreatmentPlanDetailContent
+          treatmentPlanId={active}
+          scrollAreaHeight={scrollAreaHeight}
+        />
       ) : (
         <Center py="md" h="100%">
           <Text fw={600} size="lg" c="dimmed">
@@ -52,10 +59,12 @@ export default function TreatmentPlanDetailSection() {
 
 interface TreatmentPlanDetailContentProps {
   treatmentPlanId: string;
+  scrollAreaHeight?: string;
 }
 
 export function TreatmentPlanDetailContent({
   treatmentPlanId,
+  scrollAreaHeight = '610px',
 }: TreatmentPlanDetailContentProps) {
   const {
     data: treatmentPlan,
@@ -113,7 +122,7 @@ export function TreatmentPlanDetailContent({
           offsetScrollbars
           scrollbars="y"
           w="100%"
-          h="510px"
+          h={scrollAreaHeight}
         >
           <Stack gap="md">
             <Group gap="md">
