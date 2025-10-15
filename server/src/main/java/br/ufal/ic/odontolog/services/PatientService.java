@@ -95,7 +95,7 @@ public class PatientService {
     Patient patient =
         patientRepository
             .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
 
     patient.setAppointmentDate(dto.getAppointmentDate());
     return patientRepository.save(patient);
