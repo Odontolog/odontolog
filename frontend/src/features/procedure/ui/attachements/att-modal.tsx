@@ -31,7 +31,7 @@ export default function AttachmentsModal({
           <Stack gap="md">
             {isImage ? (
               <Image
-                src={`/api/attachments/${attachment.id}`}
+                src={attachment.location}
                 alt={attachment.filename}
                 fit="contain"
                 mah={400}
@@ -50,10 +50,25 @@ export default function AttachmentsModal({
 
             <Group justify="flex-end" mt="sm">
               <Button
-                component="a"
-                href={`/api/attachments/${attachment.id}/download`}
-                download={attachment.filename}
                 variant="outline"
+                onClick={async () => {
+                  if (attachment.location) {
+                    try {
+                      const response = await fetch(attachment.location);
+                      const blob = await response.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const link = document.createElement('a');
+                      link.href = url;
+                      link.download = attachment.filename;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      window.URL.revokeObjectURL(url);
+                    } catch (err) {
+                      alert('Falha ao baixar o arquivo.');
+                    }
+                  }
+                }}
               >
                 Download
               </Button>

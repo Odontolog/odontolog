@@ -66,7 +66,6 @@ function DocsSectionContent({
   const [selectedAttachment, setSelectedAttachment] =
     useState<Attachments | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
-  const [opened, setOpened] = useState(false);
 
   if (isError) {
     return (
@@ -125,10 +124,15 @@ function DocsSectionContent({
       <Grid p="md">
         {data.map((document) => (
           <Grid.Col span={3} key={document.id}>
-            <DocumentPreviewCard attachment={document} />
+            <DocumentPreviewCard attachment={document} onClick={handleViewAttachment} />
           </Grid.Col>
         ))}
       </Grid>
+      <AttachmentsModal
+        attachment={selectedAttachment}
+        onClose={closeModal}
+        opened={modalOpened}
+      />
     </ScrollArea>
   );
 }

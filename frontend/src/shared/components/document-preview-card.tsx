@@ -9,17 +9,26 @@ import { formatFileSize } from '../utils';
 
 interface DocumentPreviewCardProps {
   attachment: Attachments;
+  onClick: (attachment: Attachments) => void;
 }
 
 export default function DocumentPreviewCard({
   attachment,
+  onClick,
 }: DocumentPreviewCardProps) {
   function extensionExtractor(type: string) {
     return type.split('/').pop();
   }
 
   return (
-    <Card shadow="sm" padding="lg" radius="sm" withBorder>
+    <Card
+      shadow="sm"
+      padding="lg"
+      radius="sm"
+      withBorder
+      onClick={() => onClick(attachment)}
+      style={{ cursor: 'pointer' }}
+    >
       <Card.Section>
         <Image
           src={attachment.location}

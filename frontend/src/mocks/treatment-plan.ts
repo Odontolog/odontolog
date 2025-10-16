@@ -150,6 +150,7 @@ export const attachments: Attachments[] = [
     id: '1',
     createdAt: new Date('2025-09-06T11:00:00Z'),
     filename: 'radiografia-periapical-16.jpg',
+    location: "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png",
     type: 'image/jpg',
     uploader: student,
     size: 2411724,
