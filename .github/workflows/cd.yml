@@ -57,10 +57,21 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+            ref: ${{ github.head_ref }}
+
+      - name: Verify files exist
+        run: |
+          echo "Current path: $(pwd)"
+          ls -lah
+          test -f docker-compose.prod.yml && echo "✅ docker-compose.prod.yml found"
+          test -f nginx.conf && echo "✅ nginx.conf found"
+
 
       - name: Copy compose to Droplet
         uses: appleboy/scp-action@v1
         with:
+          ref: ${{ github.head_ref }}
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
