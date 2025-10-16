@@ -14,10 +14,8 @@ jobs:
 
       - name: Verify files exist
         run: |
-          echo "📁 Current path: $(pwd)"
+          echo "Current path: $(pwd)"
           ls -lah
-          test -f docker-compose.prod.yml && echo "✅ docker-compose.prod.yml found"
-          test -f nginx.conf && echo "✅ nginx.conf found"
 
       - name: Copy project files to Droplet
         uses: appleboy/scp-action@v1
@@ -26,11 +24,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: |
-            docker-compose.prod.yml
-            nginx.conf
-            frontend
-            server
+          source: "docker-compose.prod.yml nginx.conf frontend server"
           target: odontolog
 
       - name: Deploy to DigitalOcean Droplet via SSH
