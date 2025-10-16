@@ -153,6 +153,7 @@ public class DevDataLoader implements CommandLineRunner {
                 .phoneNumber("(12) 34567-8901")
                 .address("123 Test St, Test City, TS")
                 .city("Test City")
+                .appointmentDate(LocalDate.of(2025, 10, 20))
                 .state("TS")
                 .avatarUrl("https://randomuser.me/api/portraits/men/7.jpg")
                 .build());

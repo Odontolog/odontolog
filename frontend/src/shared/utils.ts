@@ -34,3 +34,16 @@ export function getBaseUrl() {
 }
 
 export type Replace<T, R> = Omit<T, keyof R> & R;
+
+export function formatFileSize(size: number): string {
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let unitIndex = 0;
+  let fileSize = size;
+
+  while (fileSize >= 1024 && unitIndex < units.length - 1) {
+    fileSize /= 1024;
+    unitIndex++;
+  }
+
+  return `${fileSize.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+}

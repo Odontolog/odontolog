@@ -1,5 +1,9 @@
-import { getQueryClient } from '@/app/get-query-client';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+
+import { getQueryClient } from '@/app/get-query-client';
+import Procedure from '@/features/procedure/procedure';
+import { getProcedureOptions } from '@/features/procedure/requests';
+import { requireAuth } from '@/shared/utils';
 
 interface ProcedureParams {
   patientId: string;
@@ -12,17 +16,14 @@ export default async function ProcedurePage({
   params: ProcedureParams;
 }) {
   const { procedureId, patientId } = await params;
+  const user = await requireAuth();
 
   const queryClient = getQueryClient();
+  await queryClient.prefetchQuery(getProcedureOptions(procedureId));
 
   return (
-    <div style={{ padding: '24px' }}>
-      <p>
-        Página de um procedimento id={procedureId},{patientId}
-      </p>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <div>Em construção</div>
-      </HydrationBoundary>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Procedure patientId={patientId} user={user} procedureId={procedureId} />
+    </HydrationBoundary>
   );
 }
