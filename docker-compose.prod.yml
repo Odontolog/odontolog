@@ -23,6 +23,26 @@ services:
     networks:
       - app-network
 
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_URL=${AUTH_URL}
+      - AUTH_TRUST_HOST=${AUTH_TRUST_HOST}
+      - BACKEND_URL=${BACKEND_URL}
+      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+    depends_on:
+      - postgres
+      - server
+    networks:
+      - app-network
+
   postgres:
     image: postgres:16
     container_name: postgres
@@ -38,9 +58,24 @@ services:
     networks:
       - app-network
 
+  nginx:
+    image: nginx:1.29-alpine
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+      - frontend
+    networks:
+      - app-network
+      - proxy
+
 volumes:
   postgres_data:
 
 networks:
-  app-network:
+  proxy:
     driver: bridge
+  app-network:
+    internal: true
