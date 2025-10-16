@@ -4,74 +4,24 @@ on:
   pull_request:
     branches: [ "**" ]
 
-env:
-  REGISTRY: "registry.digitalocean.com/odontolog"
-  IMAGE_NAME: "app"
 jobs:
-  publish_images:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout the repo 
-        uses: actions/checkout@v4
-
-      #build images
-      - name: Build backend image
-        working-directory: ./server
-        run: |
-          docker build \
-            -t $REGISTRY/$IMAGE_NAME:backend-${GITHUB_SHA::7} \
-            -t $REGISTRY/$IMAGE_NAME:backend-latest .
-
-      - name: Build frontend image
-        working-directory: ./frontend
-        run: |
-          docker build \
-            --build-arg NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }} \
-            -t $REGISTRY/$IMAGE_NAME:frontend-${GITHUB_SHA::7} \
-            -t $REGISTRY/$IMAGE_NAME:frontend-latest .
-
-      #publish steps
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
-        run: doctl registry login --expiry-seconds 600
-
-      - name: Remove old images from Container Registry
-        uses: mrsethsamuel/digitalocean-docker-registry-cleanup@v1
-        with:
-          repository: server
-          num_to_keep: 2
-          perform_gc: true
-
-      - name: Push image to DigitalOcean Container Registry
-        run: docker push -a $REGISTRY/$IMAGE_NAME
-
   deploy:
     runs-on: ubuntu-latest
-    needs: publish_images
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-            ref: ${{ github.head_ref }}
 
       - name: Verify files exist
         run: |
-          echo "Current path: $(pwd)"
+          echo "📁 Current path: $(pwd)"
           ls -lah
           test -f docker-compose.prod.yml && echo "✅ docker-compose.prod.yml found"
           test -f nginx.conf && echo "✅ nginx.conf found"
 
-
-      - name: Copy compose to Droplet
+      - name: Copy project files to Droplet
         uses: appleboy/scp-action@v1
         with:
-          ref: ${{ github.head_ref }}
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
@@ -79,9 +29,10 @@ jobs:
           source: |
             docker-compose.prod.yml
             nginx.conf
+            frontend
+            server
           target: odontolog
 
-      # Faz o deploy via SSH usando o compose
       - name: Deploy to DigitalOcean Droplet via SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -92,7 +43,7 @@ jobs:
           script: |
             set -e
             cd odontolog
-            docker login registry.digitalocean.com -u "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" -p "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}"
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d
+            echo "Building and starting containers..."
+            docker compose -f docker-compose.prod.yml build
+            docker compose -f docker-compose.prod.yml up -d --build
             docker system prune -f
