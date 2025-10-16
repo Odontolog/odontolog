@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: "docker-compose.prod.yml nginx.conf frontend server"
+          source: "./*"
           target: odontolog
 
       - name: Deploy to DigitalOcean Droplet via SSH
