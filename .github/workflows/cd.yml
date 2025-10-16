@@ -1,8 +1,8 @@
 name: Deploy to DigitalOcean Droplet
 
 on:
-  pull_request:
-    branches: [ "**" ]
+  push:
+    branches: [ "main" ]
 
 jobs:
   deploy:
