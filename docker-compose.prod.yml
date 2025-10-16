@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   server:
-    image: registry.digitalocean.com/odontolog/server:latest
+    image: registry.digitalocean.com/odontolog/app:backend-latest
     container_name: server
     restart: always
     ports:
@@ -24,10 +24,7 @@ services:
       - app-network
 
   frontend:
-    build:
-      context: ./frontend
-      args:
-        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
+    image: registry.digitalocean.com/odontolog/app:frontend-latest
     ports:
       - "3000:3000"
     environment:
