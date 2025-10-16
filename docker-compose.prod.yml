@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
   server:
-    image: registry.digitalocean.com/odontolog/app:backend-latest
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     container_name: server
     restart: always
     ports:
@@ -18,13 +20,23 @@ services:
       APP_JWT_SECRET: ${APP_JWT_SECRET}
       APP_JWT_ISSUER: ${APP_JWT_ISSUER}
       APP_JWT_EXPIRATION_SECONDS: ${APP_JWT_EXPIRATION_SECONDS}
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
     depends_on:
       - postgres
     networks:
       - app-network
 
   frontend:
-    image: registry.digitalocean.com/odontolog/app:frontend-latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
     ports:
       - "3000:3000"
     environment:
