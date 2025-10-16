@@ -1,8 +1,8 @@
 name: Deploy to DigitalOcean Droplet
 
 on:
-  push:
-    branches: [ "main" ]
+  pull_request:
+    branches: [ "**" ]
 
 env:
   REGISTRY: "registry.digitalocean.com/odontolog"
