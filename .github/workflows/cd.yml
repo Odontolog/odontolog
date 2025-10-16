@@ -65,7 +65,9 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          source: docker-compose.prod.yml
+          source: |
+            docker-compose.prod.yml
+            nginx.conf
           target: odontolog
 
       # Faz o deploy via SSH usando o compose
