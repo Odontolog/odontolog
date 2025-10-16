@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 'use client';
 
 import { Card, Text, Image, Group, Badge, Stack, Tooltip } from '@mantine/core';

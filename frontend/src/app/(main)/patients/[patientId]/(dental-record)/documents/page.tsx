@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import DocsSection from '@/features/documents/ui/documents-section';
-import { Box, Card, Group } from '@mantine/core';
+import { Box } from '@mantine/core';
 
 export default function PatientDocumentsPage() {
   return (

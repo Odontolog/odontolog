@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import DocumentPreviewCard from '@/shared/components/document-preview-card';
@@ -9,9 +8,7 @@ import {
   Center,
   Divider,
   Grid,
-  Group,
   Loader,
-  Modal,
   ScrollArea,
   Stack,
   Text,
@@ -124,7 +121,10 @@ function DocsSectionContent({
       <Grid p="md">
         {data.map((document) => (
           <Grid.Col span={3} key={document.id}>
-            <DocumentPreviewCard attachment={document} onClick={handleViewAttachment} />
+            <DocumentPreviewCard
+              attachment={document}
+              onClick={handleViewAttachment}
+            />
           </Grid.Col>
         ))}
       </Grid>

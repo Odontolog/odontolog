@@ -15,6 +15,22 @@ export default function AttachmentsModal({
   if (!attachment) {
     return null;
   }
+  async function handleDownload(att: Attachments) {
+    try {
+      const response = await fetch(att.location);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = att.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      throw new Error('Falha ao baixar o arquivo.');
+    }
+  }
 
   const isImage = attachment.filename.match(
     /\.(jpg|jpeg|png|gif|webp|svg|pdf)$/i,
@@ -51,23 +67,8 @@ export default function AttachmentsModal({
             <Group justify="flex-end" mt="sm">
               <Button
                 variant="outline"
-                onClick={async () => {
-                  if (attachment.location) {
-                    try {
-                      const response = await fetch(attachment.location);
-                      const blob = await response.blob();
-                      const url = window.URL.createObjectURL(blob);
-                      const link = document.createElement('a');
-                      link.href = url;
-                      link.download = attachment.filename;
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                      window.URL.revokeObjectURL(url);
-                    } catch (err) {
-                      alert('Falha ao baixar o arquivo.');
-                    }
-                  }
+                onClick={() => {
+                  void handleDownload(attachment);
                 }}
               >
                 Download
