@@ -1,5 +1,5 @@
 # Reference: https://github.com/leerob/next-self-host
-FROM node:22 AS base
+FROM node:22-alpine AS base
 
 # Stage 1: Install dependencies
 FROM base AS deps
