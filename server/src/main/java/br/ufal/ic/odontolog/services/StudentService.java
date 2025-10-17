@@ -7,6 +7,7 @@ import br.ufal.ic.odontolog.mappers.StudentMapper;
 import br.ufal.ic.odontolog.models.Student;
 import br.ufal.ic.odontolog.repositories.StudentRepository;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -26,10 +27,10 @@ public class StudentService {
     return studentMapper.toDTOs(students);
   }
 
-  public StudentDTO getStudentByEmail(String email) {
+  public StudentDTO getStudentById(UUID id) {
     Student student =
         studentRepository
-            .findByEmail(email)
+            .findById(id)
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Student not found"));
     return studentMapper.toDTO(student);
   }
