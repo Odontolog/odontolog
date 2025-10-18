@@ -16,6 +16,7 @@ import DiagnosticSection from './diagnostic-section';
 import styles from './procedure.module.css';
 import StudySectorSection from './study-sector-section';
 import TeethSection from './teeth-section';
+import ProcedureHeader from './header';
 
 interface ProcedureProps {
   patientId: string;
@@ -69,7 +70,11 @@ export default function Procedure({ procedureId, user }: ProcedureProps) {
 
   return (
     <>
-      <div>Header {status}</div>
+      <ProcedureHeader
+        procedureId={procedureId}
+        queryOptions={options}
+        user={user}
+      />
       <ScrollArea w="100%" style={{ flex: 1 }}>
         <Group className={styles.container}>
           <Stack className={styles.main}>
