@@ -4,9 +4,9 @@ import {
   Card,
   Center,
   Divider,
-  Flex,
   Group,
   Loader,
+  Stack,
   Text,
   ThemeIcon,
   Timeline,
@@ -14,20 +14,20 @@ import {
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 
-import { Reviewable } from '@/shared/models';
+import { Activity, Reviewable } from '@/shared/models';
 import { ReviewableSectionProps } from '@/shared/reviewable/models';
+import { getActivityTitleFn } from '../utils';
 import ActivityItem from './activity-item';
 
 export default function HistorySection<T extends Reviewable>({
   queryOptions,
 }: ReviewableSectionProps<T>) {
-  const {
-    data: history,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     ...queryOptions,
-    select: (data) => data.history,
+    select: (data) => ({
+      history: data.history,
+      type: data.type,
+    }),
   });
 
   return (
@@ -43,38 +43,73 @@ export default function HistorySection<T extends Reviewable>({
       <Divider my="none" />
 
       <Card.Section inheritPadding p="md">
-        {isLoading && (
-          <Center py="md">
-            <Loader size="sm" />
-          </Center>
-        )}
-
-        {isError && (
-          <Flex align="center" gap="xs">
-            <ThemeIcon variant="white" color="red">
-              <IconExclamationCircle size={24} />
-            </ThemeIcon>
-            <Text size="sm" c="red" py="none">
-              Erro ao carregar dados.
-            </Text>
-          </Flex>
-        )}
-
-        {history && history.length === 0 && (
-          <Text size="sm" c="dimmed" ta="center">
-            Nenhuma atividade realizada.
-          </Text>
-        )}
-
-        <Timeline bulletSize={24} lineWidth={3}>
-          {history &&
-            history
-              .sort((a, b) => +a.createdAt - +b.createdAt)
-              .map((activity) => (
-                <ActivityItem key={activity.id} activity={activity} />
-              ))}
-        </Timeline>
+        <HistorySectionContent
+          history={data?.history}
+          type={data?.type}
+          isLoading={isLoading}
+          isError={isError}
+        />
       </Card.Section>
     </Card>
+  );
+}
+
+interface HistorySectionContentProps {
+  history?: Activity[];
+  type?: Reviewable['type'];
+  isLoading: boolean;
+  isError: boolean;
+}
+
+function HistorySectionContent(props: HistorySectionContentProps) {
+  const { history, isLoading, isError, type } = props;
+
+  if (isLoading) {
+    return (
+      <Center py="md">
+        <Loader size="sm" />
+      </Center>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Stack align="center" gap="xs">
+        <ThemeIcon variant="white" color="red">
+          <IconExclamationCircle size={24} />
+        </ThemeIcon>
+        <Text size="sm" c="red" py="none">
+          Erro ao carregar histórico
+        </Text>
+      </Stack>
+    );
+  }
+
+  if (history === undefined || type === undefined) {
+    return null;
+  }
+
+  if (history.length === 0) {
+    return (
+      <Text size="sm" c="dimmed" ta="center">
+        Nenhuma atividade realizada.
+      </Text>
+    );
+  }
+
+  const activityTitleFn = getActivityTitleFn(type);
+
+  return (
+    <Timeline bulletSize={24} lineWidth={3}>
+      {history
+        .sort((a, b) => +a.createdAt - +b.createdAt)
+        .map((activity) => (
+          <ActivityItem
+            key={activity.id}
+            activity={activity}
+            getActivityTitle={activityTitleFn}
+          />
+        ))}
+    </Timeline>
   );
 }
