@@ -26,6 +26,8 @@ function getBadgeProps(status: string) {
       return { color: 'teal', text: 'APROVADO' };
     case 'DONE':
       return { color: 'teal', text: 'CONCLUÍDO' };
+    case 'COMPLETED':
+      return { color: 'teal', text: 'CONCLUÍDO' };
     case 'REJECTED':
       return { color: 'red', text: 'REJEITADO' };
     default:
