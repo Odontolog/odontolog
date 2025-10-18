@@ -61,10 +61,9 @@ export default function ProcedureHistorySection({
         <Card.Section inheritPadding px="md" py="sm" h="100%">
           {isLoading || data === undefined ? (
             <Stack h="100%" gap="xs">
-              <Skeleton height={120} radius="none" />
-              <Skeleton height={120} radius="none" />
-              <Skeleton height={120} radius="none" />
-              <Skeleton height={120} radius="none" />
+              <Skeleton height={131} radius="none" />
+              <Skeleton height={131} radius="none" />
+              <Skeleton height={131} radius="none" />
             </Stack>
           ) : (
             <ScrollArea

@@ -49,7 +49,7 @@ export default function TreatmentPlanDetailSection({
       ) : (
         <Center py="md" h="100%">
           <Text fw={600} size="lg" c="dimmed">
-            Selecione um procedimento
+            Selecione um plano de tratamento
           </Text>
         </Center>
       )}
