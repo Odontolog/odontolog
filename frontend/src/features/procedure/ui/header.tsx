@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Anchor,
   Flex,
   Group,
   Skeleton,
@@ -115,8 +116,20 @@ function ProcedureHeaderContent(props: ProcedureHeaderProps) {
                   })}
                 </Text>
               </Tooltip>
-              {data.treatmentPlanId !== undefined &&
-                ` no Plano de Tratamento ${data.treatmentPlanId}`}
+              {data.treatmentPlanId !== undefined && (
+                <>
+                  {' no '}
+                  <Anchor
+                    size="sm"
+                    fw={500}
+                    underline="hover"
+                    href={`/patient/${data.patient.id}/treatments/${data.treatmentPlanId}`}
+                    c="gray.9"
+                  >
+                    {`Plano de Tratamento #${data.treatmentPlanId}`}
+                  </Anchor>
+                </>
+              )}
             </Text>
           </Group>
         </Stack>
