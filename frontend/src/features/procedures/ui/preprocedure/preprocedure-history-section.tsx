@@ -61,7 +61,7 @@ export default function PreprocedureHistorySection({
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
           <Text fw={600} size="lg">
-            Histórico de Exames
+            Histórico de Pré-procedimentos
           </Text>
           <ActionIcon
             variant="subtle"
@@ -136,7 +136,7 @@ function PreproceduresContent({ data }: { data: ProcedureShort[] }) {
     return (
       <Center py="md" h="100%" px="lg">
         <Text fw={600} size="lg" c="dimmed" ta="center">
-          O paciente ainda não tem nenhum exame.
+          O paciente ainda não tem nenhum pré-procedimento.
         </Text>
       </Center>
     );
