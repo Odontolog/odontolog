@@ -1,7 +1,10 @@
 package br.ufal.ic.odontolog.states.procedure;
 
+import java.util.Set;
+
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.models.Procedure;
+import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.User;
 
 public class ProcedureStates {
@@ -22,12 +25,27 @@ public class ProcedureStates {
     public void assignUser(Procedure procedure, User user) {
       procedure.setAssignee(user);
     }
+
+    @Override
+    public void setReviewers(Procedure procedure, Set<Supervisor> supervisors) {
+      procedure.updateReviewers(procedure, supervisors);
+    }
   }
 
   public static class InProgressState implements ProcedureState {
     @Override
     public ProcedureStatus getStatus() {
       return ProcedureStatus.IN_PROGRESS;
+    }
+
+    @Override
+    public void assignUser(Procedure procedure, User user) {
+      procedure.setAssignee(user);
+    }
+
+    @Override
+    public void setReviewers(Procedure procedure, Set<Supervisor> supervisors) {
+      procedure.updateReviewers(procedure, supervisors);
     }
   }
 

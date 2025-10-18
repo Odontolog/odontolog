@@ -307,7 +307,7 @@ public class DevDataLoader implements CommandLineRunner {
                 .assignee(studentTest001)
                 .notes("Profundidade de sonda anormal.")
                 .type(ReviewableType.PROCEDURE)
-                .status(ProcedureStatus.DRAFT)
+                .status(ProcedureStatus.NOT_STARTED)
                 .studySector("Periodontia")
                 .procedureDetail(
                     new ProcedureDetail(

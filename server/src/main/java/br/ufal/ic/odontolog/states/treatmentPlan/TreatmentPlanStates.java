@@ -8,7 +8,6 @@ import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class TreatmentPlanStates {
   public static class DraftState implements TreatmentPlanState {
@@ -23,20 +22,7 @@ public class TreatmentPlanStates {
 
     @Override
     public void setReviewers(TreatmentPlan treatmentPlan, Set<Supervisor> reviewers) {
-      Set<Supervisor> currentReviewers = treatmentPlan.getReviewers();
-
-      Set<Supervisor> reviewersToAdd =
-          reviewers.stream()
-              .filter(reviewer -> !currentReviewers.contains(reviewer))
-              .collect(Collectors.toSet());
-
-      Set<Supervisor> reviewersToRemove =
-          currentReviewers.stream()
-              .filter(reviewer -> !reviewers.contains(reviewer))
-              .collect(Collectors.toSet());
-
-      reviewersToAdd.forEach(treatmentPlan::addReviewer);
-      reviewersToRemove.forEach(treatmentPlan::removeReviewer);
+      treatmentPlan.updateReviewers(treatmentPlan, reviewers);
     }
 
     @Override
