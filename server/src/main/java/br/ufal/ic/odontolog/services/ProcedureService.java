@@ -54,8 +54,8 @@ public class ProcedureService {
     procedure.setTeeth(teeth);
 
     HashMap<String, Object> metadata = new HashMap<>();
-    metadata.put("data", teeth);
-    metadata.put("oldData", oldTeeth);
+    metadata.put("data", String.join(", ", teeth));
+    metadata.put("oldData", String.join(", ", oldTeeth));
 
     User currentUser = currentUserProvider.getCurrentUser();
     Activity activity =
