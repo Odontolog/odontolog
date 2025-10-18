@@ -35,6 +35,12 @@ async function getPatientProcedures(
   return data.map((p) => mapToProcedureShort(p));
 }
 
+export async function createPreprocedure(patientId: string): Promise<string> {
+  console.log(`Creating preprocedure for patient's id ${patientId}`);
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  return '4';
+}
+
 export function getNextConsultationDate(patientId: string) {
   return queryOptions({
     queryKey: ['nextConsultationDate', patientId],
