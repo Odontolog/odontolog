@@ -12,10 +12,10 @@ import NotesSection from '@/shared/reviewable/notes-section';
 import SupervisorSection from '@/shared/reviewable/supervisor-section';
 import { getProcedureOptions } from '../requests';
 import AttachmentsSection from './attachements/atts-section';
+import DiagnosticSection from './diagnostic-section';
 import styles from './procedure.module.css';
 import StudySectorSection from './study-sector-section';
 import TeethSection from './teeth-section';
-import DetailSection from './detail-section';
 
 interface ProcedureProps {
   patientId: string;
@@ -43,7 +43,7 @@ export default function Procedure({ procedureId, user }: ProcedureProps) {
       <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Stack align="center" mt={100} style={{ height: '100%' }}>
           <Loader size="lg" />
-          Carregando Plano de Tratamento
+          Carregando Procedimento
         </Stack>
       </Box>
     );
@@ -73,8 +73,8 @@ export default function Procedure({ procedureId, user }: ProcedureProps) {
       <ScrollArea w="100%" style={{ flex: 1 }}>
         <Group className={styles.container}>
           <Stack className={styles.main}>
-            <DetailSection
-              reviewableId={procedureId}
+            <DiagnosticSection
+              procedureId={procedureId}
               queryOptions={options}
               mode={mode}
             />

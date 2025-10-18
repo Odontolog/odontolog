@@ -43,4 +43,13 @@ public class ProcedureController {
     return ResponseEntity.ok(
         procedureService.updateStudySector(procedureId, request.getStudySector()));
   }
+
+  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
+  @PatchMapping("/procedures/{procedureId}/diagnostic")
+  public ResponseEntity<ProcedureDTO> updateProcedureDetail(
+      @PathVariable Long procedureId, @Valid @RequestBody UpdateProcedureDetailDTO request) {
+    return ResponseEntity.ok(
+        procedureService.updateDiagnostic(procedureId, request.getDiagnostic())
+    );
+  }
 }

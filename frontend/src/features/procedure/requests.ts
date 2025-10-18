@@ -53,8 +53,6 @@ export async function saveTeeth(procedureId: string, teeth: string[]) {
   if (!res.ok) {
     throw new Error(`[${res.status}] Erro ao salvar dentes/regiões.`);
   }
-
-  return { success: true };
 }
 
 export async function saveStudySector(
@@ -78,8 +76,25 @@ export async function saveStudySector(
   if (!res.ok) {
     throw new Error(`[${res.status}] Erro ao salvar seção de estudo.`);
   }
+}
 
-  return { success: true };
+export async function saveDiagnostic(procedureId: string, diagnostic: string) {
+  const token = await getAuthToken();
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/procedures/${procedureId}/diagnostic`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ diagnostic }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao salvar diagnóstico.`);
+  }
 }
 
 export async function saveDetails(procedureId: string, data: ProcedureDetail) {

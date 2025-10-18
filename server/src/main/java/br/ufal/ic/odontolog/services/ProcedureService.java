@@ -2,6 +2,7 @@ package br.ufal.ic.odontolog.services;
 
 import br.ufal.ic.odontolog.dtos.ProcedureDTO;
 import br.ufal.ic.odontolog.dtos.ProcedureShortDTO;
+import br.ufal.ic.odontolog.dtos.UpdateProcedureDetailDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
@@ -12,6 +13,7 @@ import br.ufal.ic.odontolog.utils.CurrentUserProvider;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -101,6 +103,38 @@ public class ProcedureService {
             .build();
     procedure.getHistory().add(activity);
 
+    procedureRepository.save(procedure);
+    return procedureMapper.toDTO(procedure);
+  }
+
+  @Transactional
+  public ProcedureDTO updateDiagnostic(Long procedureId, String diagnostic) {
+    Procedure procedure =
+        procedureRepository
+            .findById(procedureId)
+            .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
+
+    String oldDiagnostic = new String(procedure.getProcedureDetail().getDiagnostic());
+    procedure.setProcedureDetail(new ProcedureDetail(diagnostic));
+
+    HashMap<String, Object> metadata = new HashMap<>();
+    metadata.put("data", diagnostic);
+    metadata.put("oldData", oldDiagnostic);
+
+    User currentUser = currentUserProvider.getCurrentUser();
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .description(
+                String.format(
+                    "Diagnóstico atualizado por %s (%s)",
+                    currentUser.getName(), currentUser.getEmail()))
+            .reviewable(procedure)
+            .metadata(metadata)
+            .build();
+    procedure.getHistory().add(activity);
+    
     procedureRepository.save(procedure);
     return procedureMapper.toDTO(procedure);
   }
