@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.api.StudentApi;
 import br.ufal.ic.odontolog.dtos.StudentDTO;
 import br.ufal.ic.odontolog.services.StudentService;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,8 +29,8 @@ public class StudentController implements StudentApi {
     return new ResponseEntity<>(studentService.getStudents(), HttpStatus.OK);
   }
 
-  @GetMapping("/{email}")
-  public ResponseEntity<StudentDTO> getStudent(@PathVariable String email) {
-    return new ResponseEntity<>(studentService.getStudentByEmail(email), HttpStatus.OK);
+  @GetMapping("/{id}")
+  public ResponseEntity<StudentDTO> getStudent(@PathVariable UUID id) {
+    return new ResponseEntity<>(studentService.getStudentById(id), HttpStatus.OK);
   }
 }

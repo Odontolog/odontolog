@@ -2,6 +2,7 @@ package br.ufal.ic.odontolog.services;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import br.ufal.ic.odontolog.dtos.AppointmentDTO;
 import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
@@ -16,6 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -74,5 +76,27 @@ public class PatientService {
                   .build();
             })
         .toList();
+  }
+
+  public AppointmentDTO getNextAppointment(Long id) {
+    Patient patient =
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+
+    AppointmentDTO appointmentDTO = new AppointmentDTO();
+    appointmentDTO.setAppointmentDate(patient.getAppointmentDate());
+    return appointmentDTO;
+  }
+
+  @Transactional
+  public Patient updateNextAppointment(Long id, AppointmentDTO dto) {
+    Patient patient =
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+
+    patient.setAppointmentDate(dto.getAppointmentDate());
+    return patient;
   }
 }

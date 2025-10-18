@@ -67,4 +67,6 @@ public class Patient {
 
   @OneToMany(mappedBy = "patient")
   private final Set<Procedure> procedures = new HashSet<>();
+
+  private LocalDate appointmentDate;
 }

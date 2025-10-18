@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -23,12 +24,12 @@ public interface StudentApi {
   public ResponseEntity<List<StudentDTO>> getAllStudents();
 
   @Operation(
-      summary = "Get a student by email",
-      description = "Retrieve a student by their email address.")
+      summary = "Get a student by ID",
+      description = "Retrieve a student by their UUID identifier.")
   @ApiResponses(
       value = {
         @ApiResponse(responseCode = "200", description = "Successful retrieval of student"),
         @ApiResponse(responseCode = "404", description = "Not Found")
       })
-  public ResponseEntity<StudentDTO> getStudent(@PathVariable String email);
+  public ResponseEntity<StudentDTO> getStudent(@PathVariable UUID id);
 }
