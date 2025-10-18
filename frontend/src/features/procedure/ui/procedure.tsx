@@ -15,6 +15,7 @@ import AttachmentsSection from './attachements/atts-section';
 import styles from './procedure.module.css';
 import StudySectorSection from './study-sector-section';
 import TeethSection from './teeth-section';
+import DetailSection from './detail-section';
 
 interface ProcedureProps {
   patientId: string;
@@ -72,6 +73,11 @@ export default function Procedure({ procedureId, user }: ProcedureProps) {
       <ScrollArea w="100%" style={{ flex: 1 }}>
         <Group className={styles.container}>
           <Stack className={styles.main}>
+            <DetailSection
+              reviewableId={procedureId}
+              queryOptions={options}
+              mode={mode}
+            />
             <NotesSection
               reviewableId={procedureId}
               queryOptions={options}
