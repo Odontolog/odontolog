@@ -6,9 +6,12 @@ import { useSession } from 'next-auth/react';
 
 import styles from './navbar.module.css';
 import Search from './search';
+import RecordModal from '../patient/recordModal';
+import { useState } from 'react';
 
 export default function Navbar() {
   const { data } = useSession();
+  const [opened, setOpen] = useState<boolean>(false);
 
   const user = data?.user;
 
@@ -19,13 +22,18 @@ export default function Navbar() {
           <Search />
         </div>
         <Group>
-          <ActionIcon
-            variant="default"
-            color="black"
-            onClick={() => console.log('Criar novo prontuário')}
-          >
-            <IconPlus />
-          </ActionIcon>
+          {user?.role !== 'STUDENT' && (
+            <>
+              <ActionIcon
+                variant="default"
+                color="black"
+                onClick={() => setOpen(true)}
+              >
+                <IconPlus />
+              </ActionIcon>
+              <RecordModal opened={opened} onClose={() => setOpen(false)} />
+            </>
+          )}
           <Avatar
             component="a"
             href={`/students/${user?.id}`}

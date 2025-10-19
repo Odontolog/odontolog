@@ -54,3 +54,15 @@ export const teeth = [
   '48',
   'Gengiva',
 ];
+
+export const maritalStatus = [
+  'Solteiro',
+  'Casado',
+  'Divorciado',
+  'Viúvo',
+  'União Estável',
+];
+
+export const sex = ['Feminino', 'Masculino', 'Outro'];
+
+export const ethnicity = ['Branco', 'Pardo', 'Preto', 'Amarelo', 'Indigena'];
