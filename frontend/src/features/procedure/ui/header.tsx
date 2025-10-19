@@ -192,13 +192,14 @@ function HeaderActionSection(props: HeaderActionSection) {
     });
   }
 
-  if (status === 'NOT_STARTED') {
+  if (status === 'NOT_STARTED' || status === 'DRAFT') {
     return (
       <Button
         fw={500}
         rightSection={<IconChevronDown />}
         className={styles.button}
         onClick={() => openStartProcedureModal()}
+        disabled={status === 'DRAFT'}
       >
         Iniciar
       </Button>
