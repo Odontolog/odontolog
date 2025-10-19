@@ -6,6 +6,8 @@ import br.ufal.ic.odontolog.models.Attachment;
 import br.ufal.ic.odontolog.models.ProcedureDetail;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import java.time.Instant;
 import java.util.Set;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,7 @@ public class ProcedureDTO extends ReviewableDTO {
   private Integer plannedSession;
   private ProcedureStatus status;
   private PatientShortDTO patient;
+  private Instant performedAt;
   private String studySector;
   private Set<Attachment> attachments;
   private Set<String> teeth;

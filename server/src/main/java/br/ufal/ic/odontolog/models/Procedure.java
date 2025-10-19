@@ -4,6 +4,8 @@ import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.states.procedure.ProcedureState;
 import br.ufal.ic.odontolog.states.procedure.ProcedureStates;
 import jakarta.persistence.*;
+
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -29,6 +31,8 @@ public abstract class Procedure extends Reviewable {
   private ProcedureStatus status;
 
   @Transient private ProcedureState state;
+
+  private Instant performedAt;
 
   @ManyToMany(
       cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -99,5 +103,9 @@ public abstract class Procedure extends Reviewable {
   public void submitSupervisorReview(
       Supervisor supervisor, String comments, Integer grade, Boolean approved) {
     this.getState().submitSupervisorReview(this, supervisor, comments, grade, approved);
+  }
+
+  public void startProcedure() {
+    this.getState().startProcedure(this);
   }
 }

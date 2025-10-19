@@ -22,6 +22,11 @@ public class ProcedureStates {
     }
 
     @Override
+    public void startProcedure(Procedure procedure) {
+      procedure.setStatus(ProcedureStatus.IN_PROGRESS);
+    }
+
+    @Override
     public void assignUser(Procedure procedure, User user) {
       procedure.setAssignee(user);
     }

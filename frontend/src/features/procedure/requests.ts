@@ -35,6 +35,24 @@ export async function getProcedure(procedureId: string): Promise<Procedure> {
   return mapToProcedure(data);
 }
 
+export async function startProcedure(procedureId: string) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/procedures/${procedureId}/start`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao iniciar procedimento.`);
+  }
+}
+
 export async function saveTeeth(procedureId: string, teeth: string[]) {
   const token = await getAuthToken();
 
