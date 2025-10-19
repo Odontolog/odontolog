@@ -10,13 +10,14 @@ import AssigneeSection from '@/shared/reviewable/assignee-section';
 import HistorySection from '@/shared/reviewable/history/history-section';
 import NotesSection from '@/shared/reviewable/notes-section';
 import SupervisorSection from '@/shared/reviewable/supervisor-section';
-import { getProcedureOptions } from '../requests';
+import { getProcedureOptions } from '@/features/procedure/requests';
+import { getProcedurePageMode } from '@/features/procedure/utils';
 import AttachmentsSection from './attachements/atts-section';
 import DiagnosticSection from './diagnostic-section';
+import ProcedureHeader from './header';
 import styles from './procedure.module.css';
 import StudySectorSection from './study-sector-section';
 import TeethSection from './teeth-section';
-import ProcedureHeader from './header';
 
 interface ProcedureProps {
   patientId: string;
@@ -26,8 +27,6 @@ interface ProcedureProps {
 
 export default function Procedure({ procedureId, user }: ProcedureProps) {
   const options = getProcedureOptions(procedureId);
-
-  const mode = 'edit';
 
   const {
     data: status,
@@ -67,6 +66,8 @@ export default function Procedure({ procedureId, user }: ProcedureProps) {
   if (status === undefined) {
     return null;
   }
+
+  const mode = getProcedurePageMode(status, user.role);
 
   return (
     <>
@@ -110,7 +111,7 @@ export default function Procedure({ procedureId, user }: ProcedureProps) {
             <AssigneeSection
               reviewableId={procedureId}
               queryOptions={options}
-              mode={mode}
+              mode={status === 'IN_PROGRESS' ? 'read' : mode}
             />
             <TeethSection
               procedureId={procedureId}
