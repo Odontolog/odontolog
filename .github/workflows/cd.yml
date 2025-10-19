@@ -38,7 +38,7 @@ jobs:
             set -e
             cd odontolog
             echo "Parando containers atuais de forma graciosa..."
-            docker compose -f docker-compose.prod.yml down --timeout 30
+            docker compose -f docker-compose.prod.yml stop --timeout 30
 
             echo "Building and starting containers..."
             docker compose -f docker-compose.prod.yml up -d --build
