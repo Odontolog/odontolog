@@ -1,0 +1,40 @@
+### 1) Login com Student
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "student.test.001@test.com",
+  "password": "password1"
+}
+
+> {% client.global.set("auth_token", response.body.accessToken); %}
+
+###
+
+### 2) Login com Supervisor
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "supervisor.test.001@test.com",
+  "password": "password"
+}
+
+> {% client.global.set("auth_token", response.body.accessToken); %}
+
+###
+
+### 3) Acessar rota pública (se existir)
+GET http://localhost:8080/api/public/ping
+
+###
+
+### 4) Acessar rota protegida (ex: lista de planos de tratamento)
+GET http://localhost:8080/api/treatment-plans
+Authorization: Bearer {{auth_token}}
+
+###
+
+### 5) Acessar rota hello protegida por ROLE_USER
+GET http://localhost:8080/api/hello
+Authorization: Bearer {{auth_token}}
