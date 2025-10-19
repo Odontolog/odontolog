@@ -1,0 +1,4 @@
+.tab:global([data-active]) {
+  background-color: var(--mantine-color-gray-0);
+  border-bottom: none;
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Get Reviewable History
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:8080/api/reviewables/1/history
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

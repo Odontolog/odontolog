@@ -1,0 +1,15 @@
+meta {
+  name: Get TreatmentPlan
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8080/api/treatment-plan/1
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

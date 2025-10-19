@@ -1,0 +1,176 @@
+import { queryOptions } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
+
+import { TreatmentPlan } from '@/shared/models';
+import { getAuthToken } from '@/shared/utils';
+import { mapToTreatmentPlan, TreatmentPlanDto } from './mappers';
+import { ProcedureFormValues, ReviewFormValues } from './models';
+
+export function getTratmentPlanOptions(treatmentPlanId: string) {
+  return queryOptions({
+    queryKey: ['treatmentPlan', treatmentPlanId],
+    queryFn: () => getTreatmentPlan(treatmentPlanId),
+  });
+}
+
+export async function getTreatmentPlan(
+  treatmentPlanId: string,
+): Promise<TreatmentPlan> {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (res.status >= 500) {
+    throw new Error(`Erro ao buscar plano: ${res.status}`);
+  } else if (res.status >= 400) {
+    notFound();
+  }
+  const data = (await res.json()) as TreatmentPlanDto;
+  return mapToTreatmentPlan(data);
+}
+
+export async function createTreatmentPlanProcedure(
+  treatmentPlanId: string,
+  procedure: ProcedureFormValues,
+) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}/procedures`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(procedure),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
+}
+
+export async function editTreatmentPlanProcedure(
+  treatmentPlanId: string,
+  procedure: ProcedureFormValues,
+) {
+  const token = await getAuthToken();
+
+  if (procedure.id === undefined) {
+    throw new Error(`Esse procedimento não tem id e não pode ser editado.`);
+  }
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}/procedures/${procedure.id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(procedure),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
+}
+
+export async function deleteTreatmentPlanProcedure(
+  treatmentPlanId: string,
+  procedureId: string,
+) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}/procedures/${procedureId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
+}
+
+export async function submitTreatmentPlanForReview(
+  treatmentPlanId: string,
+  comments: string,
+) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan/${treatmentPlanId}/submit-for-review`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ comments }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro ao submeter plano de tratamento para validação.`,
+    );
+  }
+}
+
+type SupervisorReviewDto = {
+  comments: string;
+  grade: number;
+  approved: boolean;
+};
+
+export async function submitReviewForTreatmentPlan(
+  treatmentPlanId: string,
+  review: ReviewFormValues,
+) {
+  const token = await getAuthToken();
+
+  const payload: SupervisorReviewDto = {
+    comments: review.comments,
+    grade: review.grade ?? 0,
+    approved: review.decision === 'Aprovar',
+  };
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/${treatmentPlanId}/reviews/submit`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
+}
