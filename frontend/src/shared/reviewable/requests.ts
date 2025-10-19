@@ -111,7 +111,7 @@ export async function submitReviewRequest(
   const token = await getAuthToken();
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewable/${reviewableId}/submit-for-review`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/${reviewableId}/submit-for-review`,
     {
       method: 'POST',
       headers: {
