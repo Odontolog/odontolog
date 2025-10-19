@@ -78,22 +78,9 @@ public class TreatmentPlanStates {
       updateOverallStatus(treatmentPlan);
     }
 
-    private boolean allReviewsSubmitted(TreatmentPlan treatmentPlan) {
-      return treatmentPlan.getReviews().stream()
-          .allMatch(
-              review ->
-                  review.getReviewStatus() == ReviewStatus.APPROVED
-                      || review.getReviewStatus() == ReviewStatus.REJECTED);
-    }
-
-    private boolean allReviewsApproved(TreatmentPlan treatmentPlan) {
-      return treatmentPlan.getReviews().stream()
-          .allMatch(review -> review.getReviewStatus() == ReviewStatus.APPROVED);
-    }
-
     private void updateOverallStatus(TreatmentPlan treatmentPlan) {
-      if (allReviewsSubmitted(treatmentPlan)) {
-        if (allReviewsApproved(treatmentPlan)) {
+      if (treatmentPlan.allReviewsSubmitted()) {
+        if (treatmentPlan.allReviewsApproved()) {
           treatmentPlan.approve();
         } else {
           treatmentPlan.reject();

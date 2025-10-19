@@ -125,4 +125,23 @@ public abstract class Reviewable {
 
   public abstract void submitSupervisorReview(
       Supervisor supervisor, String comments, Integer grade, Boolean approved);
+
+  public abstract void approve();
+
+  public abstract void reject();
+
+  public abstract boolean isInReview();
+
+  public boolean allReviewsSubmitted() {
+    return getReviews().stream()
+        .allMatch(
+            review ->
+                review.getReviewStatus() == ReviewStatus.APPROVED
+                    || review.getReviewStatus() == ReviewStatus.REJECTED);
+  }
+
+  public boolean allReviewsApproved() {
+    return getReviews().stream()
+        .allMatch(review -> review.getReviewStatus() == ReviewStatus.APPROVED);
+  }
 }

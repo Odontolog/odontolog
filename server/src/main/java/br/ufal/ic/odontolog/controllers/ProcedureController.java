@@ -55,7 +55,6 @@ public class ProcedureController {
   public ResponseEntity<ProcedureDTO> updateProcedureDetail(
       @PathVariable Long procedureId, @Valid @RequestBody UpdateProcedureDetailDTO request) {
     return ResponseEntity.ok(
-        procedureService.updateDiagnostic(procedureId, request.getDiagnostic())
-    );
+        procedureService.updateDiagnostic(procedureId, request.getDiagnostic()));
   }
 }

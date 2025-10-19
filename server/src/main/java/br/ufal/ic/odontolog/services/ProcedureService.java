@@ -9,7 +9,6 @@ import br.ufal.ic.odontolog.mappers.ProcedureMapper;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.ProcedureRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
-
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +48,7 @@ public class ProcedureService {
         procedureRepository
             .findById(procedureId)
             .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
-    
+
     procedure.startProcedure();
     procedure.setPerformedAt(Instant.now());
 
@@ -61,8 +60,10 @@ public class ProcedureService {
             .description(
                 String.format(
                     "Procedimento %s #%s iniciado por %s (%s)",
-                    procedure.getName(), procedure.getId(),
-                    currentUser.getName(), currentUser.getEmail()))
+                    procedure.getName(),
+                    procedure.getId(),
+                    currentUser.getName(),
+                    currentUser.getEmail()))
             .reviewable(procedure)
             .build();
     procedure.getHistory().add(activity);
@@ -162,7 +163,7 @@ public class ProcedureService {
             .metadata(metadata)
             .build();
     procedure.getHistory().add(activity);
-    
+
     procedureRepository.save(procedure);
     return procedureMapper.toDTO(procedure);
   }
