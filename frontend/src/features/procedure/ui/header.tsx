@@ -136,7 +136,7 @@ function ProcedureHeaderContent(props: ProcedureHeaderProps) {
                     size="sm"
                     fw={500}
                     underline="hover"
-                    href={`/patient/${data.patient.id}/treatments/${data.treatmentPlanId}`}
+                    href={`/patients/${data.patient.id}/treatments/${data.treatmentPlanId}`}
                     c="gray.9"
                   >
                     {`Plano de Tratamento #${data.treatmentPlanId}`}
