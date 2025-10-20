@@ -106,7 +106,7 @@ export function TreatmentPlanDetailContent({
   return (
     <Box>
       <Card.Section inheritPadding py="sm">
-        <Group justify="space-between" align="flex-start">
+        <Group justify="space-between" align="center">
           <Text fw={600} size="lg">
             Plano de Tratamento #{treatmentPlan.id}
           </Text>
