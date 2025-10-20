@@ -29,8 +29,10 @@ export default function HistorySummary({
       <Card withBorder shadow="sm" radius="md" p="sm" flex={1}>
         <Stack gap="4" h="100%" justify="center">
           <Text size="sm">Última consulta</Text>
-          {(isLoading ?? false) || lastConsultation === undefined ? (
+          {(isLoading ?? false) ? (
             <Skeleton height={24} radius="none" />
+          ) : lastConsultation == null ? (
+            <Text fw={600}>Não informado</Text>
           ) : (
             <Text fw={600}>{lastConsultation}</Text>
           )}

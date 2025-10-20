@@ -8,14 +8,11 @@ import { PatientRecordForm } from './models';
 export async function getPatientById(patientId: string): Promise<Patient> {
   const token = await getAuthToken();
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  const res = await fetch(`${process.env.BACKEND_URL}/patients/${patientId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-  );
+  });
 
   if (res.status >= 500) {
     throw new Error(`Erro ao buscar plano: ${res.status}`);

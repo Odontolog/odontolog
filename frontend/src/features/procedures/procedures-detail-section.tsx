@@ -103,7 +103,7 @@ export function ProcedureDetailContent({
   return (
     <Box h="100%">
       <Card.Section inheritPadding py="sm">
-        <Group justify="space-between" align="flex-start">
+        <Group justify="space-between" align="center">
           <Text fw={600} size="lg">
             {procedure.name}{' '}
             <Text span c="dimmed">
