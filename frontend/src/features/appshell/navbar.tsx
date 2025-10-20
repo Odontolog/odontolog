@@ -24,12 +24,8 @@ export default function Navbar() {
         <Group>
           {user?.role !== 'STUDENT' && (
             <>
-              <ActionIcon
-                variant="default"
-                color="black"
-                onClick={() => setOpen(true)}
-              >
-                <IconPlus />
+              <ActionIcon variant="default" onClick={() => setOpen(true)}>
+                <IconPlus size={14} />
               </ActionIcon>
               <RecordModal opened={opened} onClose={() => setOpen(false)} />
             </>
