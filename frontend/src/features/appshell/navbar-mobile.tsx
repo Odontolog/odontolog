@@ -25,12 +25,15 @@ import { type User } from 'next-auth';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import classes from './navbar-mobile.module.css';
 import Search from './search';
+import RecordModal from '../patient/recordModal';
 
 export default function NavbarMobile() {
   const [opened, { open, close }] = useDisclosure(false);
+  const [openedModal, setOpen] = useState<boolean>(false);
   const pathname = usePathname();
   const router = useRouter();
   const { data } = useSession();
@@ -148,10 +151,11 @@ export default function NavbarMobile() {
             color="black"
             size="lg"
             aria-label="Criar um novo prontuário"
-            onClick={() => console.log('Criar novo prontuário')}
+            onClick={() => setOpen(true)}
           >
             <IconPlus />
           </ActionIcon>
+          <RecordModal opened={openedModal} onClose={() => setOpen(false)} />
         </Group>
       </Group>
     </nav>

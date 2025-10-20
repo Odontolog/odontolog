@@ -19,6 +19,7 @@ import { IMaskInput } from 'react-imask';
 import { ethnicity, maritalStatus, sex } from '@/shared/data';
 import { Patient } from '@/shared/models';
 import { PatientRecordForm } from './models';
+import { notifications } from '@mantine/notifications';
 import { createPatientRecord } from './requests';
 
 interface recordModalProps {
@@ -112,7 +113,21 @@ function RecordForm({ onClose }: { onClose: () => void }) {
     onSuccess: (patient: Patient) => {
       form.reset();
       onClose();
+      notifications.show({
+        title: 'Prontuário criado',
+        message: `Prontuário de ${patient.name} criado com sucesso.`,
+        color: 'green',
+        autoClose: 5000,
+      });
       router.push(`/patients/${patient.id}`);
+    },
+    onError: () => {
+      onClose();
+      notifications.show({
+        message: 'Erro ao criar prontuário',
+        color: 'red',
+        autoClose: 5000,
+      });
     },
   });
 
