@@ -28,7 +28,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import classes from './navbar-mobile.module.css';
-import Search from './search';
+import SearchTrigger from './search-trigger';
 import RecordModal from '../patient/recordModal';
 
 export default function NavbarMobile() {
@@ -145,7 +145,7 @@ export default function NavbarMobile() {
           </Drawer.Root>
         </Group>
         <Group>
-          <Search />
+          <SearchTrigger variant="mobile" />
           <ActionIcon
             variant="default"
             color="black"

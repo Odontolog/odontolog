@@ -1,16 +1,13 @@
 'use client';
 
 import {
-  ActionIcon,
   Avatar,
   Badge,
   Center,
-  Code,
   Group,
   Loader,
   Stack,
   Text,
-  TextInput,
   UnstyledButton,
 } from '@mantine/core';
 import { Spotlight, spotlight } from '@mantine/spotlight';
@@ -19,41 +16,20 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import styles from './navbar.module.css';
 import { getAllPatients } from './requests';
+import RecordModal from '../patient/recordModal';
 
-export default function Search() {
+export default function SearchProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [query, setQuery] = useState('');
+  const [recordModalOpened, setRecordModalOpened] = useState(false);
 
   return (
     <>
-      <UnstyledButton
-        onClick={spotlight.open}
-        style={{ width: 300 }}
-        visibleFrom="md"
-      >
-        <TextInput
-          readOnly
-          placeholder="Buscar por Paciente..."
-          size="sm"
-          leftSection={<IconSearch size={14} stroke={1.5} />}
-          rightSectionWidth={70}
-          rightSection={<Code className={styles.searchCode}>Ctrl + K</Code>}
-          style={{ cursor: 'pointer', pointerEvents: 'none' }}
-        />
-      </UnstyledButton>
-
-      <ActionIcon
-        onClick={spotlight.open}
-        variant="default"
-        size="lg"
-        aria-label="Pesquisar pacientes"
-        color="gray"
-        hiddenFrom="md"
-      >
-        <IconSearch />
-      </ActionIcon>
-
+      {children}
       <Spotlight.Root
         query={query}
         onQueryChange={setQuery}
@@ -63,13 +39,29 @@ export default function Search() {
           placeholder="Buscar por Paciente..."
           leftSection={<IconSearch size={20} stroke={1.5} />}
         />
-        <SearchContent query={query} />
+        <SearchContent
+          query={query}
+          onCreateRecord={() => {
+            spotlight.close();
+            setRecordModalOpened(true);
+          }}
+        />
       </Spotlight.Root>
+      <RecordModal
+        opened={recordModalOpened}
+        onClose={() => setRecordModalOpened(false)}
+      />
     </>
   );
 }
 
-function SearchContent({ query }: { query: string }) {
+function SearchContent({
+  query,
+  onCreateRecord,
+}: {
+  query: string;
+  onCreateRecord: () => void;
+}) {
   const router = useRouter();
   // TODO: Adicionar search query, mas apenas com Debounce
   const { data, isLoading } = useQuery({
@@ -106,15 +98,13 @@ function SearchContent({ query }: { query: string }) {
         onClick={() => router.push(`/patients/${patient.id}/procedures`)}
       >
         <Group wrap="nowrap" w="100%">
-          {patient.avatarUrl && (
-            <Center>
-              <Avatar
-                src={patient?.avatarUrl}
-                name={patient.name}
-                color="initials"
-              />
-            </Center>
-          )}
+          <Center>
+            <Avatar
+              src={patient?.avatarUrl}
+              name={patient.name}
+              color="initials"
+            />
+          </Center>
 
           <div style={{ flex: 1 }}>
             <Text>{patient.name}</Text>
@@ -148,7 +138,7 @@ function SearchContent({ query }: { query: string }) {
       {patients.length > 0 ? (
         patients.slice(0, 7)
       ) : (
-        <Spotlight.Empty onClick={() => console.log('Criar novo prontuário')}>
+        <Spotlight.Empty onClick={onCreateRecord}>
           <UnstyledButton
             style={{
               width: '100%',
