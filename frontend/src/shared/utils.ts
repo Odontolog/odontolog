@@ -26,6 +26,13 @@ export async function getAuthToken(): Promise<string> {
   return session.user.accessToken;
 }
 
+export function getBaseUrl() {
+  if (typeof window === 'undefined') {
+    return process.env.BACKEND_URL ?? 'http://server:8080/api';
+  }
+  return process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080/api';
+}
+
 export type Replace<T, R> = Omit<T, keyof R> & R;
 
 export function formatFileSize(size: number): string {
