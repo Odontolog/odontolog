@@ -1,3 +1,4 @@
+// TODO: Remover esse arquivo. Tudo daqui está em @/shared/models
 export type procedureStatus =
   | 'draft'
   | 'not_started'

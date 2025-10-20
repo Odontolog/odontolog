@@ -1,7 +1,11 @@
 import { queryOptions } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
 
-import { Attachments, Procedure } from '@/shared/models';
 import { attachments, procedures } from '@/mocks/treatment-plan';
+import { Attachments, Procedure } from '@/shared/models';
+import { getAuthToken } from '@/shared/utils';
+import { mapToProcedure, ProcedureDto } from './mapper';
+
 import { ProcedureDetail } from './models';
 
 export function getProcedureOptions(procedureId: string) {
@@ -11,24 +15,80 @@ export function getProcedureOptions(procedureId: string) {
   });
 }
 
+export async function getProcedure(procedureId: string): Promise<Procedure> {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/procedures/${procedureId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (res.status >= 500) {
+    throw new Error(`Erro ao buscar procedimento: ${res.status}`);
+  } else if (res.status >= 400) {
+    notFound();
+  }
+
+  const data = (await res.json()) as ProcedureDto;
+  return mapToProcedure(data);
+}
+
+export async function saveTeeth(procedureId: string, teeth: string[]) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/procedures/${procedureId}/teeth`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ teeth }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao salvar dentes/regiões.`);
+  }
+
+  return { success: true };
+}
+
+export async function saveStudySector(
+  procedureId: string,
+  studySector: string,
+) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/procedures/${procedureId}/study-sector`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ studySector }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao salvar seção de estudo.`);
+  }
+
+  return { success: true };
+}
+
 export function getProcedureDetailsOptions(procedureId: string) {
   return queryOptions({
     queryKey: ['procedure', procedureId, 'details'],
     queryFn: () => getDetails(procedureId),
   });
-}
-
-export async function getProcedure(procedureId: string): Promise<Procedure> {
-  console.log('fething procedure ', procedureId);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  const procedure = procedures.find(
-    (procedure) => procedure.id === procedureId,
-  );
-  if (!procedure) {
-    throw new Error(`Procedure with id ${procedureId} not found`);
-  }
-  return procedure;
 }
 
 let Superdata: ProcedureDetail = {

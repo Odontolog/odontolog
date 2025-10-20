@@ -1,5 +1,5 @@
+import { Replace } from '@/shared/mappers';
 import { TreatmentPlanShort } from '@/shared/models';
-import { Replace } from '@/shared/utils';
 
 export type TreatmentPlanShortDto = Replace<
   TreatmentPlanShort,

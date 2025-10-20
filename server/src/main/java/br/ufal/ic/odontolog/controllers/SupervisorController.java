@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.services.SupervisorService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,17 +26,17 @@ public class SupervisorController {
     return new ResponseEntity<>(supervisorService.getSupervisors(), HttpStatus.OK);
   }
 
-  @GetMapping({"/{email}"})
-  public ResponseEntity<SupervisorDTO> getSupervisor(@PathVariable String email) {
-    return new ResponseEntity<>(supervisorService.getSupervisorByEmail(email), HttpStatus.OK);
+  @GetMapping({"/{id}"})
+  public ResponseEntity<SupervisorDTO> getSupervisor(@PathVariable UUID id) {
+    return new ResponseEntity<>(supervisorService.getSupervisorById(id), HttpStatus.OK);
   }
 
-  @PutMapping({"/{email}"})
-  @PreAuthorize("hasAnyRole('ADMIN') or authentication.name == #email")
-  public ResponseEntity<SupervisorDTO> updateSupervisorByEmail(
-      @PathVariable String email, @RequestBody @Valid SupervisorUpdateDTO supervisorUpdateDTO) {
-    SupervisorDTO supervisorDTO = supervisorService.updateSupervisor(email, supervisorUpdateDTO);
+  @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
+  public ResponseEntity<SupervisorDTO> updateSupervisorById(
+      @PathVariable UUID id, @RequestBody @Valid SupervisorUpdateDTO supervisorUpdateDTO) {
 
+    SupervisorDTO supervisorDTO = supervisorService.updateSupervisor(id, supervisorUpdateDTO);
     return new ResponseEntity<>(supervisorDTO, HttpStatus.OK);
   }
 }

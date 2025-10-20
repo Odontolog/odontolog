@@ -1,12 +1,13 @@
 'use client';
 
 import { Button, Container, Group, Text, Title } from '@mantine/core';
+
 import classes from './server-error.module.css';
 
 interface ServerErrorProps {
   title: string;
   description: string;
-  reset: () => void;
+  reset?: () => void;
 }
 
 export function ServerError(props: ServerErrorProps) {

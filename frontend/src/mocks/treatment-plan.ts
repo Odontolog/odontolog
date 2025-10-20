@@ -115,7 +115,7 @@ export const proceduresShort: ProcedureShort[] = [
   },
   {
     id: '3',
-    status: 'DONE',
+    status: 'COMPLETED',
     name: 'Extração',
     studySector: 'Cirurgia',
     plannedSession: 2,
@@ -130,7 +130,7 @@ export const proceduresShort: ProcedureShort[] = [
   },
   {
     id: '4',
-    status: 'DONE',
+    status: 'COMPLETED',
     name: 'Limpeza',
     studySector: 'Periodontia',
     plannedSession: 3,
@@ -207,7 +207,7 @@ export const procedures: Procedure[] = [
     type: 'PROCEDURE',
     author: student,
     createdAt: new Date('2025-09-05T11:00:00Z'),
-    details: {
+    procedureDetail: {
       diagnostic:
         'Cárie profunda em dente 16 (primeiro molar superior direito) com necessidade de tratamento endodôntico. Presença de sensibilidade ao frio e dor espontânea. Radiografia periapical revela radiolucidez próxima à polpa.',
     },
@@ -230,7 +230,7 @@ export const procedures: Procedure[] = [
     procedureType: 'TRATMENT_PLAN_PROCEDURE',
     type: 'PROCEDURE',
     author: student,
-    details: {
+    procedureDetail: {
       diagnostic:
         'Dente 14 com cárie extensa e comprometimento estrutural severo. Indicação de extração por impossibilidade de restauração conservadora.',
     },
@@ -242,7 +242,7 @@ export const procedures: Procedure[] = [
   },
   {
     id: '4',
-    status: 'DONE',
+    status: 'COMPLETED',
     name: 'Limpeza',
     studySector: 'Periodontia',
     assignee: student,
@@ -255,7 +255,7 @@ export const procedures: Procedure[] = [
     type: 'PROCEDURE',
     author: student,
     createdAt: new Date('2025-09-08T10:00:00Z'),
-    details: {
+    procedureDetail: {
       diagnostic:
         'Profilaxia e raspagem supragengival nos dentes anteriores superiores. Remoção de placa bacteriana e cálculo dental.',
     },

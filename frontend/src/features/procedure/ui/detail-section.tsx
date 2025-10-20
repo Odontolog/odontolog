@@ -36,7 +36,7 @@ export default function DetailSection<T extends Procedure>({
   const { data: details, isLoading } = useQuery({
     ...queryOptions,
     select: (data) => ({
-      diagnostic: data.details.diagnostic,
+      diagnostic: data.procedureDetail.diagnostic,
       notes: data.notes,
     }),
     enabled: false,
