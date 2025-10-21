@@ -32,6 +32,15 @@ jobs:
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            frontend/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+          
       - run: npm ci
       - run: npm run lint
       - run: npm run format-check
