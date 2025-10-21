@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Button,
   Flex,
@@ -10,22 +12,37 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { IconChevronDown } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { ReviewFormValues } from './models';
-import { submitReviewForTreatmentPlan } from './requests';
+import { ReviewableComponentProps, ReviewFormValues } from './models';
+import { submitReview } from './requests';
+import { Reviewable } from '@/shared/models';
 
-interface ReviewModalProps {
-  treatmentPlanId: string;
-  opened: boolean;
-  open: () => void;
-  close: () => void;
+interface ReviewModalProps<T extends Reviewable>
+  extends ReviewableComponentProps<T> {
+  disabled?: boolean;
+  className?: string;
 }
 
-export default function ReviewModal(props: ReviewModalProps) {
+export default function ReviewModal<T extends Reviewable>(
+  props: ReviewModalProps<T>,
+) {
+  const [opened, { open, close }] = useDisclosure(false);
+
   return (
     <>
-      <Modal.Root opened={props.opened} onClose={props.close} size="lg">
+      <Button
+        fw={500}
+        rightSection={<IconChevronDown />}
+        className={props.className}
+        onClick={open}
+        disabled={props.disabled}
+      >
+        Validar
+      </Button>
+      <Modal.Root opened={opened} onClose={close} size="lg">
         <Modal.Overlay />
         <Modal.Content>
           <Modal.Header>
@@ -43,7 +60,7 @@ export default function ReviewModal(props: ReviewModalProps) {
             </Stack>
           </Modal.Header>
           <Modal.Body>
-            <ReviewModalBody {...props} />
+            <ReviewModalBody {...props} close={close} />
           </Modal.Body>
         </Modal.Content>
       </Modal.Root>
@@ -51,7 +68,16 @@ export default function ReviewModal(props: ReviewModalProps) {
   );
 }
 
-function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
+interface ReviewModalBodyProps<T extends Reviewable>
+  extends ReviewModalProps<T> {
+  close: () => void;
+}
+
+function ReviewModalBody<T extends Reviewable>({
+  close,
+  reviewableId,
+  queryOptions,
+}: ReviewModalBodyProps<T>) {
   const queryClient = useQueryClient();
 
   const form = useForm<ReviewFormValues>({
@@ -75,11 +101,9 @@ function ReviewModalBody({ close, treatmentPlanId }: ReviewModalProps) {
 
   const mutation = useMutation({
     mutationFn: (review: ReviewFormValues) =>
-      submitReviewForTreatmentPlan(treatmentPlanId, review),
+      submitReview(reviewableId, review),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['treatmentPlan', treatmentPlanId],
-      });
+      await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       form.reset();
       close();
     },

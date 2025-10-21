@@ -4,7 +4,6 @@ import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.ProcedureUpsertDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
-import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.ReviewableType;
@@ -19,7 +18,6 @@ import br.ufal.ic.odontolog.models.TreatmentPlanProcedure;
 import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.*;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
-import java.util.HashMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -87,52 +85,6 @@ public class TreatmentPlanService {
             .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     List<TreatmentPlan> treatmentPlans = treatmentPlanRepository.findByPatient(patient);
     return treatmentPlanMapper.toShortDTOs(treatmentPlans);
-  }
-
-  @Transactional
-  public TreatmentPlanDTO submitTreatmentPlanForReview(
-      Long treatment_id, TreatmentPlanSubmitForReviewDTO requestDTO) {
-    User currentUser = currentUserProvider.getCurrentUser();
-
-    TreatmentPlan treatmentPlan =
-        treatmentPlanRepository
-            .findById(treatment_id)
-            .orElseThrow(() -> new ResourceNotFoundException("Treatment Plan not found"));
-
-    treatmentPlan.submitForReview();
-
-    String description = buildSubmissionDescription(currentUser, treatmentPlan);
-
-    String comments = requestDTO.getComments();
-    HashMap<String, Object> metadata = null;
-    if (comments != null && !comments.trim().isEmpty()) {
-      metadata = new HashMap<>();
-      metadata.put("data", comments);
-    }
-
-    Activity activity =
-        Activity.builder()
-            .actor(currentUser)
-            .type(ActivityType.REVIEW_REQUESTED)
-            .description(description)
-            .reviewable(treatmentPlan)
-            .metadata(metadata)
-            .build();
-    treatmentPlan.getHistory().add(activity);
-
-    treatmentPlanRepository.save(treatmentPlan);
-
-    return treatmentPlanMapper.toDTO(treatmentPlan);
-  }
-
-  private String buildSubmissionDescription(User currentUser, TreatmentPlan treatmentPlan) {
-    StringBuilder descriptionBuilder = new StringBuilder();
-    descriptionBuilder.append(
-        String.format(
-            "%s (%s) enviou Plano de Tratamento #%s para validação",
-            currentUser.getName(), currentUser.getEmail(), treatmentPlan.getId()));
-
-    return descriptionBuilder.toString();
   }
 
   // Procedures CRUD within a Treatment Plan

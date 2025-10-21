@@ -30,6 +30,12 @@ public class ProcedureController {
   }
 
   @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
+  @PostMapping("/procedures/{procedureId}/start")
+  public ResponseEntity<ProcedureDTO> startProcedure(@PathVariable Long procedureId) {
+    return ResponseEntity.ok(procedureService.startProcedure(procedureId));
+  }
+
+  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @PatchMapping("/procedures/{procedureId}/teeth")
   public ResponseEntity<ProcedureDTO> updateProcedureTeeth(
       @PathVariable Long procedureId, @Valid @RequestBody UpdateProcedureTeethDTO request) {
@@ -42,5 +48,13 @@ public class ProcedureController {
       @PathVariable Long procedureId, @Valid @RequestBody UpdateProcedureStudySectorDTO request) {
     return ResponseEntity.ok(
         procedureService.updateStudySector(procedureId, request.getStudySector()));
+  }
+
+  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
+  @PatchMapping("/procedures/{procedureId}/diagnostic")
+  public ResponseEntity<ProcedureDTO> updateProcedureDetail(
+      @PathVariable Long procedureId, @Valid @RequestBody UpdateProcedureDetailDTO request) {
+    return ResponseEntity.ok(
+        procedureService.updateDiagnostic(procedureId, request.getDiagnostic()));
   }
 }

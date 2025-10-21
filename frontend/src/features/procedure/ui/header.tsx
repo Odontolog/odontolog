@@ -1,6 +1,8 @@
 'use client';
 
 import {
+  Anchor,
+  Button,
   Flex,
   Group,
   Skeleton,
@@ -9,8 +11,14 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { IconAlertTriangle } from '@tabler/icons-react';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { modals } from '@mantine/modals';
+import { IconAlertTriangle, IconChevronDown } from '@tabler/icons-react';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { type User } from 'next-auth';
@@ -18,10 +26,10 @@ import { type User } from 'next-auth';
 import CustomBreadcrumbs from '@/shared/components/breadcrumbs';
 import { StatusBadge, StatusIndicator } from '@/shared/components/status';
 import {
+  Procedure,
+  ProcedureStatus,
   Review,
   Supervisor,
-  TreatmentPlan,
-  TreatmentPlanStatus,
 } from '@/shared/models';
 import styles from '@/shared/reviewable/header.module.css';
 import ReviewModal from '@/shared/reviewable/review-modal';
@@ -30,33 +38,36 @@ import {
   canSupervisorReview,
   getLatestActorAndDate,
 } from '@/shared/reviewable/utils';
+import { startProcedure } from '../requests';
 
-interface TreatmentPlanHeaderProps {
-  treatmentPlanId: string;
-  queryOptions: UseQueryOptions<TreatmentPlan, Error, TreatmentPlan, string[]>;
+interface ProcedureHeaderProps {
+  procedureId: string;
+  queryOptions: UseQueryOptions<Procedure, Error, Procedure, string[]>;
   user: User;
 }
 
-export default function TreatmentPlanHeader(props: TreatmentPlanHeaderProps) {
+export default function ProcedureHeader(props: ProcedureHeaderProps) {
   return (
     <header className={styles.header}>
-      <TreatmentPlanHeaderContent {...props} />
+      <ProcedureHeaderContent {...props} />
     </header>
   );
 }
 
-function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderProps) {
-  const { treatmentPlanId, queryOptions } = props;
+function ProcedureHeaderContent(props: ProcedureHeaderProps) {
+  const { procedureId, queryOptions } = props;
 
   const { data, isLoading } = useQuery({
     ...queryOptions,
     select: (data) => ({
+      name: data.name,
       patient: data.patient,
       status: data.status,
       updatedAt: data.updatedAt,
       assignee: data.assignee,
       reviewers: data.reviewers,
       reviews: data.reviews,
+      treatmentPlanId: data.treatmentPlanId,
       latest: getLatestActorAndDate(data.history),
     }),
   });
@@ -83,7 +94,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderProps) {
       title: `${data.patient.name}`,
       href: `/patients/${data.patient.id}/procedures`,
     },
-    { title: `Plano #${treatmentPlanId}` },
+    { title: `Procedimento #${procedureId}` },
   ];
 
   return (
@@ -94,8 +105,7 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderProps) {
         <Stack gap={8}>
           <Group gap="xs" justify="start" align="center">
             <Title c="gray.9" className={styles.title}>
-              Plano de Tratamento{' '}
-              <span className={styles.span}>#{treatmentPlanId}</span>
+              {data.name} <span className={styles.span}>#{procedureId}</span>
             </Title>
             <StatusIndicator
               className={styles.indicator}
@@ -119,6 +129,20 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderProps) {
                   })}
                 </Text>
               </Tooltip>
+              {data.treatmentPlanId !== undefined && (
+                <>
+                  {' no '}
+                  <Anchor
+                    size="sm"
+                    fw={500}
+                    underline="hover"
+                    href={`/patients/${data.patient.id}/treatments/${data.treatmentPlanId}`}
+                    c="gray.9"
+                  >
+                    {`Plano de Tratamento #${data.treatmentPlanId}`}
+                  </Anchor>
+                </>
+              )}
             </Text>
           </Group>
         </Stack>
@@ -135,15 +159,52 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderProps) {
   );
 }
 
-interface HeaderActionSection extends TreatmentPlanHeaderProps {
-  status: TreatmentPlanStatus;
+interface HeaderActionSection extends ProcedureHeaderProps {
+  status: ProcedureStatus;
   reviewers: Supervisor[];
   reviews: Review[];
 }
 
 function HeaderActionSection(props: HeaderActionSection) {
-  const { user, queryOptions, treatmentPlanId, status, reviewers, reviews } =
-    props;
+  const { user, queryOptions, procedureId, status, reviewers, reviews } = props;
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (procedureId: string) => startProcedure(procedureId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
+    },
+  });
+
+  function openStartProcedureModal() {
+    return modals.openConfirmModal({
+      title: 'Deseja iniciar este procedimento?',
+      children: (
+        <Text size="sm">
+          Ao confirmar, o procedimento vai ser registrado como executado na data
+          de hoje. Apenas inicie o procedimento se for realizá-lo na data de
+          inicialização.
+        </Text>
+      ),
+      labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
+      onConfirm: () => mutation.mutate(procedureId),
+    });
+  }
+
+  if (status === 'NOT_STARTED' || status === 'DRAFT') {
+    return (
+      <Button
+        fw={500}
+        rightSection={<IconChevronDown />}
+        className={styles.button}
+        onClick={() => openStartProcedureModal()}
+        disabled={status === 'DRAFT'}
+      >
+        Iniciar
+      </Button>
+    );
+  }
 
   if (user.role === 'STUDENT') {
     return (
@@ -160,9 +221,9 @@ function HeaderActionSection(props: HeaderActionSection) {
           </Tooltip>
         )}
         <ReviewRequestModal
-          reviewableId={treatmentPlanId}
+          reviewableId={procedureId}
           queryOptions={queryOptions}
-          disabled={status !== 'DRAFT' || reviewers.length === 0}
+          disabled={status !== 'IN_PROGRESS' || reviewers.length === 0}
           className={styles.button}
         />
       </>
@@ -171,7 +232,7 @@ function HeaderActionSection(props: HeaderActionSection) {
 
   return (
     <ReviewModal
-      reviewableId={treatmentPlanId}
+      reviewableId={procedureId}
       className={styles.button}
       queryOptions={queryOptions}
       disabled={!canSupervisorReview(user, status, reviewers, reviews)}

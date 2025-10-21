@@ -1,0 +1,2 @@
+ALTER TABLE procedures
+    ADD COLUMN performed_at TIMESTAMP WITHOUT TIME ZONE;

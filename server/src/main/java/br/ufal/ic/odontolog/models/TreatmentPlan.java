@@ -88,4 +88,9 @@ public class TreatmentPlan extends Reviewable {
       Supervisor supervisor, String comments, Integer grade, Boolean approved) {
     this.getState().submitSupervisorReview(this, supervisor, comments, grade, approved);
   }
+
+  @Override
+  public boolean isInReview() {
+    return this.status == TreatmentPlanStatus.IN_REVIEW;
+  }
 }

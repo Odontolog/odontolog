@@ -6,6 +6,7 @@ export type ProcedureShortDto = Replace<
   {
     id: number;
     updatedAt: string;
+    performedAt: string | null;
   }
 >;
 
@@ -14,5 +15,6 @@ export function mapToProcedureShort(dto: ProcedureShortDto): ProcedureShort {
     ...dto,
     id: dto.id.toString(),
     updatedAt: new Date(dto.updatedAt),
+    performedAt: dto.performedAt !== null ? new Date(dto.performedAt) : null,
   };
 }

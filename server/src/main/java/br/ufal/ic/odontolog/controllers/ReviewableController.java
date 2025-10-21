@@ -66,6 +66,15 @@ public class ReviewableController implements ReviewableApi {
     return ResponseEntity.ok(updatedReviewable);
   }
 
+  @PostMapping("/{reviewableId}/submit-for-review")
+  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
+  public ResponseEntity<ReviewableDTO> submitForReview(
+      @PathVariable Long reviewableId, @RequestBody SubmitForReviewDTO requestDTO) {
+    ReviewableDTO updatedReviewable = reviewableService.submitForReview(reviewableId, requestDTO);
+
+    return ResponseEntity.ok(updatedReviewable);
+  }
+
   @PostMapping("/{reviewableId}/reviews/submit")
   @PreAuthorize("hasRole('SUPERVISOR')")
   public ResponseEntity<ReviewDTO> submitSupervisorReview(

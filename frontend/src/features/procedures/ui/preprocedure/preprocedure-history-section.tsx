@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  ActionIcon,
   Card,
   Center,
   Divider,
@@ -15,70 +16,87 @@ import { useQuery } from '@tanstack/react-query';
 
 import ProcedureCard from '@/shared/components/procedure-card';
 import { ProcedureShort } from '@/shared/models';
-import { getPatientProcedureOptions } from '../requests';
-import HistorySummary from './history-summary';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMediaQuery } from '@mantine/hooks';
+import { createPreprocedure, getPatientProcedureOptions } from '../../requests';
+import { IconPlus } from '@tabler/icons-react';
+import { modals } from '@mantine/modals';
 
 interface ProcedureHistorySectionProps {
   patientId: string;
   scrollAreaHeight?: string;
 }
 
-export default function ProcedureHistorySection({
+export default function PreprocedureHistorySection({
   patientId,
-  scrollAreaHeight = '610px',
+  scrollAreaHeight = '510px',
 }: ProcedureHistorySectionProps) {
+  const router = useRouter();
   const procedures = getPatientProcedureOptions(patientId);
   const { data, isLoading } = useQuery({
     ...procedures,
   });
-  const lastConsultationDate =
-    data && data.length > 0
-      ? new Date(
-          Math.max(...data.map((pcd) => new Date(pcd.updatedAt).getTime())),
-        )
-      : null;
+
+  async function handleConfirm(patientId: string) {
+    const newPPcd: string = await createPreprocedure(patientId);
+    router.push(`/patients/${patientId}/procedures/${newPPcd}`);
+  }
+
+  function openTPCreationModal() {
+    return modals.openConfirmModal({
+      title: 'Deseja criar um novo Pré-procedimento?',
+      children: (
+        <Text size="sm">
+          Clicando em confirmar você cria um novo Pré-procedimento em branco
+          para o paciente. Deseja continuar?
+        </Text>
+      ),
+      labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
+      onConfirm: () => void handleConfirm(patientId),
+    });
+  }
 
   return (
-    <Stack>
-      <HistorySummary
-        lastConsultation={lastConsultationDate?.toLocaleDateString('pt-BR')}
-        patientId={patientId}
-        isLoading={isLoading}
-      />
-      <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
-        <Card.Section inheritPadding py="sm">
-          <Group justify="space-between">
-            <Text fw={600} size="lg">
-              Histórico de procedimentos
-            </Text>
-          </Group>
-        </Card.Section>
+    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
+      <Card.Section inheritPadding py="sm">
+        <Group justify="space-between">
+          <Text fw={600} size="lg">
+            Histórico de Pré-procedimentos
+          </Text>
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            disabled={isLoading}
+            onClick={() => openTPCreationModal()}
+          >
+            <IconPlus size={16} />
+          </ActionIcon>
+        </Group>
+      </Card.Section>
 
-        <Divider my="none" />
+      <Divider my="none" />
 
-        <Card.Section inheritPadding px="md" py="sm" h="100%">
-          {isLoading || data === undefined ? (
-            <Stack h="100%" gap="xs">
-              <Skeleton height={131} radius="none" />
-              <Skeleton height={131} radius="none" />
-              <Skeleton height={131} radius="none" />
-            </Stack>
-          ) : (
-            <ScrollArea
-              scrollbarSize={6}
-              offsetScrollbars
-              scrollbars="y"
-              w="100%"
-              h={scrollAreaHeight}
-            >
-              <ProceduresContent data={data} />
-            </ScrollArea>
-          )}
-        </Card.Section>
-      </Card>
-    </Stack>
+      <Card.Section inheritPadding px="md" py="sm" h="100%">
+        {isLoading || data === undefined ? (
+          <Stack h="100%" gap="xs">
+            <Skeleton height={120} radius="none" />
+            <Skeleton height={120} radius="none" />
+            <Skeleton height={120} radius="none" />
+            <Skeleton height={120} radius="none" />
+          </Stack>
+        ) : (
+          <ScrollArea
+            scrollbarSize={6}
+            offsetScrollbars
+            scrollbars="y"
+            w="100%"
+            h={scrollAreaHeight}
+          >
+            <PreproceduresContent data={data} />
+          </ScrollArea>
+        )}
+      </Card.Section>
+    </Card>
   );
 }
 
@@ -108,7 +126,7 @@ function getLastEmptyDay(proceduresByDate: Map<string, ProcedureShort[]>) {
   return null;
 }
 
-function ProceduresContent({ data }: { data: ProcedureShort[] }) {
+function PreproceduresContent({ data }: { data: ProcedureShort[] }) {
   const matches = useMediaQuery('(max-width: 62em)');
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -117,17 +135,14 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
   if (data.length === 0) {
     return (
       <Center py="md" h="100%" px="lg">
-        <Stack align="center">
-          <Text fw={600} size="lg" c="dimmed" ta="center">
-            O paciente ainda não tem procedimentos concluídos.
-            <br />
-          </Text>
-        </Stack>
+        <Text fw={600} size="lg" c="dimmed" ta="center">
+          O paciente ainda não tem nenhum pré-procedimento.
+        </Text>
       </Center>
     );
   }
 
-  function onProcedureSelect(procedureId: string, patientId: string) {
+  function onPreprocedureSelect(procedureId: string, patientId: string) {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('active', procedureId);
 
@@ -138,12 +153,9 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
     }
   }
 
-  function getDate(pcd: ProcedureShort): Date {
-    return pcd.performedAt === null ? pcd.updatedAt : pcd.performedAt;
-  }
-
   const proceduresByDate = data.reduce((acc, pcd) => {
-    const dateObj = getDate(pcd);
+    const dateObj =
+      pcd.updatedAt instanceof Date ? pcd.updatedAt : new Date(pcd.updatedAt);
     const day = String(dateObj.getDate()).padStart(2, '0');
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
     const year = dateObj.getFullYear();
@@ -158,7 +170,7 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
   }, new Map<string, ProcedureShort[]>());
 
   for (const [_date, procedures] of proceduresByDate) {
-    procedures.sort((a, b) => getDate(b).getTime() - getDate(a).getTime());
+    procedures.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   }
 
   return (
@@ -176,16 +188,16 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
           <Timeline.Item key={date} title={date}>
             <Stack gap="sm" my="xs">
               {plans
-                .sort((a, b) => getDate(b).getTime() - getDate(a).getTime())
+                .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
                 .map((pcd) => (
                   <ProcedureCard
                     key={pcd.id}
                     disableSession
                     procedure={pcd}
-                    fields={['patient', 'assignee', 'teeth', 'updated']}
+                    fields={['patient', 'assignee', 'updated']}
                     selected={pcd.id === active?.toString()}
                     onSelect={(procedureId: string) =>
-                      onProcedureSelect(procedureId, pcd.patient.id)
+                      onPreprocedureSelect(procedureId, pcd.patient.id)
                     }
                   />
                 ))}
