@@ -2,11 +2,9 @@ import { queryOptions } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 
 import { attachments, procedures } from '@/mocks/treatment-plan';
-import { Attachments, Procedure } from '@/shared/models';
+import { Attachments, Procedure, ProcedureDetail } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 import { mapToProcedure, ProcedureDto } from './mapper';
-
-import { ProcedureDetail } from './models';
 
 export function getProcedureOptions(procedureId: string) {
   return queryOptions({
@@ -37,6 +35,24 @@ export async function getProcedure(procedureId: string): Promise<Procedure> {
   return mapToProcedure(data);
 }
 
+export async function startProcedure(procedureId: string) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/procedures/${procedureId}/start`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao iniciar procedimento.`);
+  }
+}
+
 export async function saveTeeth(procedureId: string, teeth: string[]) {
   const token = await getAuthToken();
 
@@ -55,8 +71,6 @@ export async function saveTeeth(procedureId: string, teeth: string[]) {
   if (!res.ok) {
     throw new Error(`[${res.status}] Erro ao salvar dentes/regiões.`);
   }
-
-  return { success: true };
 }
 
 export async function saveStudySector(
@@ -80,38 +94,32 @@ export async function saveStudySector(
   if (!res.ok) {
     throw new Error(`[${res.status}] Erro ao salvar seção de estudo.`);
   }
-
-  return { success: true };
 }
 
-export function getProcedureDetailsOptions(procedureId: string) {
-  return queryOptions({
-    queryKey: ['procedure', procedureId, 'details'],
-    queryFn: () => getDetails(procedureId),
-  });
-}
+export async function saveDiagnostic(procedureId: string, diagnostic: string) {
+  const token = await getAuthToken();
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/procedures/${procedureId}/diagnostic`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ diagnostic }),
+    },
+  );
 
-let Superdata: ProcedureDetail = {
-  notes: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
-  diagnostic:
-    'Paciente apresenta boa colaboração durante o procedimento. Anestesia local efetiva. Isolamento absoluto realizado com sucesso. Acesso coronário realizado sem intercorrências.',
-};
-
-export async function getDetails(
-  procedureId: string,
-): Promise<ProcedureDetail> {
-  console.log('fething detail for procedureID: ', procedureId);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log(Superdata);
-  return Superdata;
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao salvar diagnóstico.`);
+  }
 }
 
 export async function saveDetails(procedureId: string, data: ProcedureDetail) {
   await new Promise((resolve) => setTimeout(resolve, 2000));
   console.log('saving data', data, procedureId);
   // throw new Error('error saving data');
-  Superdata = data;
-  return Superdata;
+  return { success: true };
 }
 
 export async function getAttachments(

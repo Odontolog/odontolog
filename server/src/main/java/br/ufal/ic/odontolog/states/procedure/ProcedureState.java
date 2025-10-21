@@ -29,4 +29,8 @@ public interface ProcedureState {
       Boolean approved) {
     throw new UnsupportedOperationException("Operation not allowed in the current state.");
   }
+
+  public default void startProcedure(Procedure procedure) {
+    throw new UnsupportedOperationException("Operation not allowed in the current state.");
+  }
 }
