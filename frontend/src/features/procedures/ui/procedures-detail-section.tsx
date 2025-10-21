@@ -27,7 +27,6 @@ import { getProcedureOptions } from '@/features/procedure/requests';
 import AttachmentsSection from '@/features/procedure/ui/attachements/atts-section';
 import DetailSection from '@/features/procedure/ui/detail-section';
 
-
 export default function ProcedureDetailSection({
   scrollAreaHeight,
 }: {

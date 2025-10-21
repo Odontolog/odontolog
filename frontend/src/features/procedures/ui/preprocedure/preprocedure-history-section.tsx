@@ -127,6 +127,7 @@ export default function PreprocedureHistorySection({
             data={preproceduresValues}
             value={selectedPreprocedure}
             onChange={(v) => setSelectedPreprocedure(v)}
+            data-autofocus
           />
           <Group justify="flex-end" mt="md">
             <Button variant="subtle" onClick={() => setModalOpened(false)}>
