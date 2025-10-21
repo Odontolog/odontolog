@@ -143,6 +143,7 @@ function RecordForm({ onClose }: { onClose: () => void }) {
             label="Nome Completo"
             placeholder="Nome do paciente"
             required
+            data-autofocus
             key={form.key('name')}
             {...form.getInputProps('name')}
           />
