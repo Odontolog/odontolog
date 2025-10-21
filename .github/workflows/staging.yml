@@ -14,7 +14,7 @@ jobs:
 
       - name: Build Docker image
         working-directory: frontend
-        run: docker build -t myapp-frontend:staging --build-arg NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL_STAGING} .
+        run: docker build -t myapp-frontend:staging --build-arg NEXT_PUBLIC_BACKEND_URL=${{secrets.NEXT_PUBLIC_BACKEND_URL_STAGING}} .
 
       - name: Save Docker image
         run: docker save myapp-frontend:staging | gzip > myapp-frontend.tar.gz
