@@ -298,22 +298,22 @@ public class DevDataLoader implements CommandLineRunner {
         logger.error("No procedure found in treatment plan while trying to add attachment");
       }
 
-      PreProcedure preProcedureTest001 =
-          preProcedureRepository.save(
-              PreProcedure.builder()
-                  .name("RPS")
-                  .plannedSession(1)
-                  .patient(patientTest001)
-                  .author(studentTest001)
-                  .assignee(studentTest001)
-                  .notes("Profundidade de sonda anormal.")
-                  .type(ReviewableType.PROCEDURE)
-                  .status(ProcedureStatus.DRAFT)
-                  .studySector("Periodontia")
-                  .procedureDetail(
-                      new ProcedureDetail(
-                          "Indícios de gengivite. Será necessário Periograma completo."))
-                  .build());
+    PreProcedure preProcedureTest001 =
+        preProcedureRepository.save(
+            PreProcedure.builder()
+                .name("RPS")
+                .plannedSession(1)
+                .patient(patientTest001)
+                .author(studentTest001)
+                .assignee(studentTest001)
+                .notes("Profundidade de sonda anormal.")
+                .type(ReviewableType.PROCEDURE)
+                .status(ProcedureStatus.NOT_STARTED)
+                .studySector("Periodontia")
+                .procedureDetail(
+                    new ProcedureDetail(
+                        "Indícios de gengivite. Será necessário Periograma completo."))
+                .build());
 
       preProcedureTest001.getAttachments().add(attachmentTest001);
       preProcedureTest001 = preProcedureRepository.save(preProcedureTest001);

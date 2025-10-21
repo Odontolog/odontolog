@@ -31,6 +31,7 @@ public class ProcedureShortDTO extends ReviewableShortDTO {
   private PatientShortDTO patient;
   private List<String> teeth;
   private Instant updatedAt;
+  private Instant performedAt;
   private List<ReviewDTO> reviews;
   private String notes;
   private String type;

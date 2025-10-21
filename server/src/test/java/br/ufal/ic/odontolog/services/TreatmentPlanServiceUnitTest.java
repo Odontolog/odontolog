@@ -7,20 +7,23 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
+import br.ufal.ic.odontolog.dtos.ReviewableDTO;
+import br.ufal.ic.odontolog.dtos.SubmitForReviewDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
-import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.ReviewSubmissionException;
+import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
 import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.Review;
+import br.ufal.ic.odontolog.models.Reviewable;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
+import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
@@ -38,12 +41,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class TreatmentPlanServiceUnitTest {
   @Mock private TreatmentPlanRepository treatmentPlanRepository;
+  @Mock private ReviewableRepository reviewableRepository;
   @Mock private UserRepository userRepository;
   @Mock private TreatmentPlanMapper treatmentPlanMapper;
+  @Mock private ReviewableMapper reviewableMapper;
   @Mock private CurrentUserProvider currentUserProvider;
   @Mock private PatientRepository patientRepository;
 
   @InjectMocks private TreatmentPlanService treatmentPlanService;
+  @InjectMocks private ReviewableService reviewableService;
 
   @Test
   public void givenValidPatientId_whenGetTreatmentPlansByPatientId_thenReturnsShortDTOList() {
@@ -103,55 +109,54 @@ public class TreatmentPlanServiceUnitTest {
     treatmentPlan.addReviewer(supervisor);
     treatmentPlan.setAssignee(new User());
 
-    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+    when(reviewableRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
 
-    TreatmentPlanDTO expectedDto = new TreatmentPlanDTO();
+    ReviewableDTO expectedDto = new ReviewableDTO();
     expectedDto.setId(treatmentId);
-    expectedDto.setStatus(TreatmentPlanStatus.IN_REVIEW);
 
-    when(treatmentPlanMapper.toDTO(treatmentPlan)).thenReturn(expectedDto);
+    when(reviewableMapper.toDTO(treatmentPlan)).thenReturn(expectedDto);
 
     User currentUser = new User();
     currentUser.setId(UUID.randomUUID());
     when(currentUserProvider.getCurrentUser()).thenReturn(currentUser);
 
-    TreatmentPlanSubmitForReviewDTO treatmentPlanSubmitForReviewDTO =
-        new TreatmentPlanSubmitForReviewDTO();
+    SubmitForReviewDTO submitForReviewDTO = new SubmitForReviewDTO();
 
     // Act
-    TreatmentPlanDTO result =
-        treatmentPlanService.submitTreatmentPlanForReview(
-            treatmentId, treatmentPlanSubmitForReviewDTO);
+    ReviewableDTO result = reviewableService.submitForReview(treatmentId, submitForReviewDTO);
 
     // Assert
     assertThat(result).isEqualTo(expectedDto);
 
-    ArgumentCaptor<TreatmentPlan> treatmentPlanCaptor =
-        ArgumentCaptor.forClass(TreatmentPlan.class);
-    verify(treatmentPlanRepository).save(treatmentPlanCaptor.capture());
+    ArgumentCaptor<Reviewable> reviewableCaptor = ArgumentCaptor.forClass(Reviewable.class);
+    verify(reviewableRepository).save(reviewableCaptor.capture());
 
-    TreatmentPlan savedPlan = treatmentPlanCaptor.getValue();
-    assertThat(savedPlan.getStatus()).isEqualTo(TreatmentPlanStatus.IN_REVIEW);
-    assertThat(savedPlan.getHistory()).isNotEmpty();
+    Reviewable savedReviewable = reviewableCaptor.getValue();
+    assertThat(savedReviewable.isInReview()).isTrue();
+    assertThat(savedReviewable.getHistory()).isNotEmpty();
 
-    Activity lastActivity = savedPlan.getHistory().iterator().next();
+    Activity lastActivity = savedReviewable.getHistory().iterator().next();
     assertThat(lastActivity.getType())
         .isEqualTo(br.ufal.ic.odontolog.enums.ActivityType.REVIEW_REQUESTED);
     assertThat(lastActivity.getDescription())
         .contains(
-            "%s (%s) enviou Plano de Tratamento #%s para validação"
+            "%s (%s) enviou %s #%s para validação"
                 .formatted(
-                    currentUser.getName(), currentUser.getEmail(), savedPlan.getId(), treatmentId));
+                    currentUser.getName(),
+                    currentUser.getEmail(),
+                    savedReviewable.getName(),
+                    savedReviewable.getId(),
+                    treatmentId));
     assertThat(lastActivity.getMetadata()).isNull();
 
-    assertThat(savedPlan.getReviews()).isNotEmpty();
+    assertThat(savedReviewable.getReviews()).isNotEmpty();
 
-    Review firstReview = savedPlan.getReviews().iterator().next();
+    Review firstReview = savedReviewable.getReviews().iterator().next();
     assertThat(firstReview.getSupervisor()).isEqualTo(supervisor);
 
-    verify(treatmentPlanRepository).findById(treatmentId);
-    verify(treatmentPlanMapper).toDTO(treatmentPlan);
-    verify(treatmentPlanRepository).save(treatmentPlan);
+    verify(reviewableRepository).findById(treatmentId);
+    verify(reviewableMapper).toDTO(treatmentPlan);
+    verify(reviewableRepository).save(treatmentPlan);
   }
 
   @Test
@@ -166,58 +171,56 @@ public class TreatmentPlanServiceUnitTest {
     treatmentPlan.setStatus(TreatmentPlanStatus.DRAFT);
     treatmentPlan.addReviewer(supervisor);
     treatmentPlan.setAssignee(new User());
+    when(reviewableRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
 
-    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
-
-    TreatmentPlanDTO expectedDto = new TreatmentPlanDTO();
+    ReviewableDTO expectedDto = new ReviewableDTO();
     expectedDto.setId(treatmentId);
-    expectedDto.setStatus(TreatmentPlanStatus.IN_REVIEW);
-
-    when(treatmentPlanMapper.toDTO(treatmentPlan)).thenReturn(expectedDto);
+    when(reviewableMapper.toDTO(treatmentPlan)).thenReturn(expectedDto);
 
     User currentUser = new User();
     currentUser.setId(UUID.randomUUID());
     when(currentUserProvider.getCurrentUser()).thenReturn(currentUser);
 
     String additionalComments = "Please review this plan carefully.";
-    TreatmentPlanSubmitForReviewDTO treatmentPlanSubmitForReviewDTO =
-        new TreatmentPlanSubmitForReviewDTO();
-    treatmentPlanSubmitForReviewDTO.setComments(additionalComments);
+    SubmitForReviewDTO submitForReviewDTO = new SubmitForReviewDTO();
+    submitForReviewDTO.setComments(additionalComments);
 
     // Act
-    TreatmentPlanDTO result =
-        treatmentPlanService.submitTreatmentPlanForReview(
-            treatmentId, treatmentPlanSubmitForReviewDTO);
+    ReviewableDTO result = reviewableService.submitForReview(treatmentId, submitForReviewDTO);
 
     // Assert
     assertThat(result).isEqualTo(expectedDto);
 
-    ArgumentCaptor<TreatmentPlan> treatmentPlanCaptor =
-        ArgumentCaptor.forClass(TreatmentPlan.class);
-    verify(treatmentPlanRepository).save(treatmentPlanCaptor.capture());
+    ArgumentCaptor<Reviewable> reviewableCaptor = ArgumentCaptor.forClass(Reviewable.class);
+    verify(reviewableRepository).save(reviewableCaptor.capture());
 
-    TreatmentPlan savedPlan = treatmentPlanCaptor.getValue();
-    assertThat(savedPlan.getStatus()).isEqualTo(TreatmentPlanStatus.IN_REVIEW);
-    assertThat(savedPlan.getHistory()).isNotEmpty();
-    Activity lastActivity = savedPlan.getHistory().iterator().next();
+    Reviewable savedReviewable = reviewableCaptor.getValue();
+    assertThat(savedReviewable.isInReview()).isTrue();
+    assertThat(savedReviewable.getHistory()).isNotEmpty();
+
+    Activity lastActivity = savedReviewable.getHistory().iterator().next();
     assertThat(lastActivity.getType())
         .isEqualTo(br.ufal.ic.odontolog.enums.ActivityType.REVIEW_REQUESTED);
     assertThat(lastActivity.getDescription())
         .contains(
-            "%s (%s) enviou Plano de Tratamento #%s para validação"
+            "%s (%s) enviou %s #%s para validação"
                 .formatted(
-                    currentUser.getName(), currentUser.getEmail(), savedPlan.getId(), treatmentId));
+                    currentUser.getName(),
+                    currentUser.getEmail(),
+                    savedReviewable.getName(),
+                    savedReviewable.getId(),
+                    treatmentId));
     assertThat(lastActivity.getMetadata()).isNotNull();
     assertThat(lastActivity.getMetadata()).containsKeys("data");
 
-    assertThat(savedPlan.getReviews()).isNotEmpty();
+    assertThat(savedReviewable.getReviews()).isNotEmpty();
 
-    Review firstReview = savedPlan.getReviews().iterator().next();
+    Review firstReview = savedReviewable.getReviews().iterator().next();
     assertThat(firstReview.getSupervisor()).isEqualTo(supervisor);
 
-    verify(treatmentPlanRepository).findById(treatmentId);
-    verify(treatmentPlanMapper).toDTO(treatmentPlan);
-    verify(treatmentPlanRepository).save(treatmentPlan);
+    verify(reviewableRepository).findById(treatmentId);
+    verify(reviewableMapper).toDTO(treatmentPlan);
+    verify(reviewableRepository).save(treatmentPlan);
   }
 
   @Test
@@ -225,17 +228,18 @@ public class TreatmentPlanServiceUnitTest {
     // Arrange
     Long treatmentId = 1L;
 
-    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.empty());
-    TreatmentPlanSubmitForReviewDTO requestDTO = new TreatmentPlanSubmitForReviewDTO();
+    when(reviewableRepository.findById(treatmentId)).thenReturn(Optional.empty());
+
+    SubmitForReviewDTO submitForReviewDTO = new SubmitForReviewDTO();
 
     // Act and Assert
     assertThrows(
         ResourceNotFoundException.class,
-        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId, requestDTO));
+        () -> reviewableService.submitForReview(treatmentId, submitForReviewDTO));
 
-    verify(treatmentPlanRepository).findById(treatmentId);
-    verify(treatmentPlanMapper, never()).toDTO(any());
-    verify(treatmentPlanRepository, never()).save(any());
+    verify(reviewableRepository).findById(treatmentId);
+    verify(reviewableMapper, never()).toDTO(any());
+    verify(reviewableRepository, never()).save(any());
   }
 
   @Test
@@ -246,18 +250,18 @@ public class TreatmentPlanServiceUnitTest {
     treatmentPlan.setId(treatmentId);
     treatmentPlan.setStatus(TreatmentPlanStatus.IN_PROGRESS);
 
-    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+    when(reviewableRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
 
-    TreatmentPlanSubmitForReviewDTO requestDTO = new TreatmentPlanSubmitForReviewDTO();
+    SubmitForReviewDTO submitForReviewDTO = new SubmitForReviewDTO();
 
     // Act and Assert
     assertThrows(
         UnsupportedOperationException.class,
-        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId, requestDTO));
+        () -> reviewableService.submitForReview(treatmentId, submitForReviewDTO));
 
-    verify(treatmentPlanRepository).findById(treatmentId);
-    verify(treatmentPlanMapper, never()).toDTO(any());
-    verify(treatmentPlanRepository, never()).save(any());
+    verify(reviewableRepository).findById(treatmentId);
+    verify(reviewableMapper, never()).toDTO(any());
+    verify(reviewableRepository, never()).save(any());
   }
 
   @Test
@@ -268,18 +272,18 @@ public class TreatmentPlanServiceUnitTest {
     treatmentPlan.setId(treatmentId);
     treatmentPlan.setStatus(TreatmentPlanStatus.DONE);
 
-    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+    when(reviewableRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
 
-    TreatmentPlanSubmitForReviewDTO requestDTO = new TreatmentPlanSubmitForReviewDTO();
+    SubmitForReviewDTO submitForReviewDTO = new SubmitForReviewDTO();
 
     // Act and Assert
     assertThrows(
         UnsupportedOperationException.class,
-        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId, requestDTO));
+        () -> reviewableService.submitForReview(treatmentId, submitForReviewDTO));
 
-    verify(treatmentPlanRepository).findById(treatmentId);
-    verify(treatmentPlanMapper, never()).toDTO(any());
-    verify(treatmentPlanRepository, never()).save(any());
+    verify(reviewableRepository).findById(treatmentId);
+    verify(reviewableMapper, never()).toDTO(any());
+    verify(reviewableRepository, never()).save(any());
   }
 
   @Test
@@ -290,18 +294,18 @@ public class TreatmentPlanServiceUnitTest {
     treatmentPlan.setId(treatmentId);
     treatmentPlan.setStatus(TreatmentPlanStatus.IN_REVIEW);
 
-    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+    when(reviewableRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
 
-    TreatmentPlanSubmitForReviewDTO requestDTO = new TreatmentPlanSubmitForReviewDTO();
+    SubmitForReviewDTO submitForReviewDTO = new SubmitForReviewDTO();
 
     // Act and Assert
     assertThrows(
         UnsupportedOperationException.class,
-        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId, requestDTO));
+        () -> reviewableService.submitForReview(treatmentId, submitForReviewDTO));
 
-    verify(treatmentPlanRepository).findById(treatmentId);
-    verify(treatmentPlanMapper, never()).toDTO(any());
-    verify(treatmentPlanRepository, never()).save(any());
+    verify(reviewableRepository).findById(treatmentId);
+    verify(reviewableMapper, never()).toDTO(any());
+    verify(reviewableRepository, never()).save(any());
   }
 
   @Test
@@ -313,18 +317,18 @@ public class TreatmentPlanServiceUnitTest {
     treatmentPlan.setStatus(TreatmentPlanStatus.DRAFT);
     treatmentPlan.setAssignee(new User());
 
-    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+    when(reviewableRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
 
-    TreatmentPlanSubmitForReviewDTO requestDTO = new TreatmentPlanSubmitForReviewDTO();
+    SubmitForReviewDTO submitForReviewDTO = new SubmitForReviewDTO();
 
     // Act and Assert
     assertThrows(
         ReviewSubmissionException.class,
-        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId, requestDTO));
+        () -> reviewableService.submitForReview(treatmentId, submitForReviewDTO));
 
-    verify(treatmentPlanRepository).findById(treatmentId);
-    verify(treatmentPlanMapper, never()).toDTO(any());
-    verify(treatmentPlanRepository, never()).save(any());
+    verify(reviewableRepository).findById(treatmentId);
+    verify(reviewableMapper, never()).toDTO(any());
+    verify(reviewableRepository, never()).save(any());
   }
 
   @Test
@@ -334,21 +338,22 @@ public class TreatmentPlanServiceUnitTest {
     TreatmentPlan treatmentPlan = new TreatmentPlan();
     treatmentPlan.setId(treatmentId);
     treatmentPlan.setStatus(TreatmentPlanStatus.DRAFT);
+
     Supervisor supervisor = new Supervisor();
     supervisor.setId(UUID.randomUUID());
     treatmentPlan.addReviewer(supervisor);
 
-    when(treatmentPlanRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
+    when(reviewableRepository.findById(treatmentId)).thenReturn(Optional.of(treatmentPlan));
 
-    TreatmentPlanSubmitForReviewDTO requestDTO = new TreatmentPlanSubmitForReviewDTO();
+    SubmitForReviewDTO submitForReviewDTO = new SubmitForReviewDTO();
 
     // Act and Assert
     assertThrows(
         ReviewSubmissionException.class,
-        () -> treatmentPlanService.submitTreatmentPlanForReview(treatmentId, requestDTO));
+        () -> reviewableService.submitForReview(treatmentId, submitForReviewDTO));
 
-    verify(treatmentPlanRepository).findById(treatmentId);
-    verify(treatmentPlanMapper, never()).toDTO(any());
-    verify(treatmentPlanRepository, never()).save(any());
+    verify(reviewableRepository).findById(treatmentId);
+    verify(reviewableMapper, never()).toDTO(any());
+    verify(reviewableRepository, never()).save(any());
   }
 }
