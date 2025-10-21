@@ -19,8 +19,11 @@ import br.ufal.ic.odontolog.models.TreatmentPlanProcedure;
 import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.*;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +39,7 @@ public class TreatmentPlanService {
   private final TreatmentPlanProcedureRepository treatmentPlanProcedureRepository;
   private final ReviewableRepository reviewableRepository;
   private final ActivityRepository activityRepository;
+  private final AiAnalysisService aiAnalysisService;
 
   @Transactional
   public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
@@ -121,8 +125,13 @@ public class TreatmentPlanService {
     treatmentPlan.getHistory().add(activity);
 
     treatmentPlanRepository.save(treatmentPlan);
+    var result = treatmentPlanMapper.toDTO(treatmentPlan);
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+    Map<String, Object> safeCopy = mapper.convertValue(result, Map.class);
 
-    return treatmentPlanMapper.toDTO(treatmentPlan);
+    aiAnalysisService.analyzeTreatmentPlanAsync(treatmentPlan, safeCopy, currentUser);
+    return result;
   }
 
   private String buildSubmissionDescription(User currentUser, TreatmentPlan treatmentPlan) {

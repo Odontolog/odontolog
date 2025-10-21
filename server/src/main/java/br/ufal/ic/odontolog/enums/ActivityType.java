@@ -6,5 +6,6 @@ public enum ActivityType {
   REVIEW_REQUESTED,
   REVIEW_APPROVED,
   REVIEW_REJECTED,
+  AI_ANALYSIS,
   COMPLETED
 }
