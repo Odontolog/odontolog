@@ -43,6 +43,7 @@ public abstract class Procedure extends Reviewable {
 
   // TODO: Improve this, mapping the tooth to a enum.
   // TODO: Use ElementCollection instead of this.
+  @Column
   private final Set<String> teeth = new HashSet<>();
 
   @Embedded private ProcedureDetail procedureDetail;
