@@ -21,8 +21,5 @@ services:
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
-    healthcheck:
-      test: [ "CMD", "awslocal", "s3", "ls" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    labels:
+      org.springframework.boot.readiness-check.tcp.disable: true

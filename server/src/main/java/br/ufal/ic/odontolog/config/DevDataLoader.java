@@ -342,7 +342,6 @@ public class DevDataLoader implements CommandLineRunner {
                 logger.info("Review added to Pre Procedure: {}", preProcedureTest001.getName());
 
                 InputStream is = new ByteArrayInputStream("Test file content".getBytes());
-
                 s3Template.createBucket("odontolog-dev");
                 s3Template.upload("odontolog-dev", "file.txt", is);
 
