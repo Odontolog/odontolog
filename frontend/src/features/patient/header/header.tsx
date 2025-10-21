@@ -25,7 +25,7 @@ import {
   IconGenderFemale,
   IconGenderMale,
   IconMapPin,
-  // IconMicroscope,
+  IconMicroscope,
   // IconReportSearch,
   // IconSettings2,
 } from '@tabler/icons-react';
@@ -41,11 +41,11 @@ const tabs = [
     icon: <IconDental size={14} />,
     label: 'Histórico Geral',
   },
-  // {
-  //   value: 'preprocedures',
-  //   icon: <IconMicroscope size={14} />,
-  //   label: 'Pré-Procedimentos',
-  // },
+  {
+    value: 'preprocedures',
+    icon: <IconMicroscope size={14} />,
+    label: 'Pré-Procedimentos',
+  },
   {
     value: 'treatments',
     icon: <IconCheckupList size={14} />,

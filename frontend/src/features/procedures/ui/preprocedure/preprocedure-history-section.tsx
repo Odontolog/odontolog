@@ -2,25 +2,29 @@
 
 import {
   ActionIcon,
+  Button,
   Card,
   Center,
   Divider,
   Group,
+  Modal,
   ScrollArea,
+  Select,
   Skeleton,
   Stack,
   Text,
   Timeline,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+import { IconPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 import ProcedureCard from '@/shared/components/procedure-card';
 import { ProcedureShort } from '@/shared/models';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useMediaQuery } from '@mantine/hooks';
+import { preproceduresValues } from '../../data';
 import { createPreprocedure, getPatientProcedureOptions } from '../../requests';
-import { IconPlus } from '@tabler/icons-react';
-import { modals } from '@mantine/modals';
 
 interface ProcedureHistorySectionProps {
   patientId: string;
@@ -32,71 +36,112 @@ export default function PreprocedureHistorySection({
   scrollAreaHeight = '510px',
 }: ProcedureHistorySectionProps) {
   const router = useRouter();
+  const [modalOpened, setModalOpened] = useState(false);
+  const [selectedPreprocedure, setSelectedPreprocedure] = useState<
+    string | null
+  >(null);
+
   const procedures = getPatientProcedureOptions(patientId);
   const { data, isLoading } = useQuery({
     ...procedures,
   });
 
-  async function handleConfirm(patientId: string) {
-    const newPPcd: string = await createPreprocedure(patientId);
+  async function handleConfirm(
+    patientId: string,
+    selectedPreprocedure: string,
+  ) {
+    const newPPcd: string = await createPreprocedure(
+      patientId,
+      selectedPreprocedure,
+    );
     router.push(`/patients/${patientId}/procedures/${newPPcd}`);
   }
 
   function openTPCreationModal() {
-    return modals.openConfirmModal({
-      title: 'Deseja criar um novo Pré-procedimento?',
-      children: (
-        <Text size="sm">
-          Clicando em confirmar você cria um novo Pré-procedimento em branco
-          para o paciente. Deseja continuar?
-        </Text>
-      ),
-      labels: { confirm: 'Confirmar', cancel: 'Cancelar' },
-      onConfirm: () => void handleConfirm(patientId),
-    });
+    setModalOpened(true);
+    setSelectedPreprocedure(null);
+  }
+
+  function handleModalConfirm() {
+    if (selectedPreprocedure !== null) {
+      void handleConfirm(patientId, selectedPreprocedure);
+      setModalOpened(false);
+    }
   }
 
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
-      <Card.Section inheritPadding py="sm">
-        <Group justify="space-between">
-          <Text fw={600} size="lg">
-            Histórico de Pré-procedimentos
+    <>
+      <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
+        <Card.Section inheritPadding py="sm">
+          <Group justify="space-between">
+            <Text fw={600} size="lg">
+              Histórico de Pré-procedimentos
+            </Text>
+            <ActionIcon
+              variant="subtle"
+              color="gray"
+              disabled={isLoading}
+              onClick={() => openTPCreationModal()}
+            >
+              <IconPlus size={16} />
+            </ActionIcon>
+          </Group>
+        </Card.Section>
+
+        <Divider my="none" />
+
+        <Card.Section inheritPadding px="md" py="sm" h="100%">
+          {isLoading || data === undefined ? (
+            <Stack h="100%" gap="xs">
+              <Skeleton height={120} radius="none" />
+              <Skeleton height={120} radius="none" />
+              <Skeleton height={120} radius="none" />
+              <Skeleton height={120} radius="none" />
+            </Stack>
+          ) : (
+            <ScrollArea
+              scrollbarSize={6}
+              offsetScrollbars
+              scrollbars="y"
+              w="100%"
+              h={scrollAreaHeight}
+            >
+              <PreproceduresContent data={data} />
+            </ScrollArea>
+          )}
+        </Card.Section>
+      </Card>
+
+      <Modal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        title="Deseja criar um novo Pré-procedimento?"
+      >
+        <Stack gap={8}>
+          <Text size="sm">
+            Clicando em confirmar você cria um novo Pré-procedimento em branco
+            para o paciente.
           </Text>
-          <ActionIcon
-            variant="subtle"
-            color="gray"
-            disabled={isLoading}
-            onClick={() => openTPCreationModal()}
-          >
-            <IconPlus size={16} />
-          </ActionIcon>
-        </Group>
-      </Card.Section>
-
-      <Divider my="none" />
-
-      <Card.Section inheritPadding px="md" py="sm" h="100%">
-        {isLoading || data === undefined ? (
-          <Stack h="100%" gap="xs">
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-          </Stack>
-        ) : (
-          <ScrollArea
-            scrollbarSize={6}
-            offsetScrollbars
-            scrollbars="y"
-            w="100%"
-            h={scrollAreaHeight}
-          >
-            <PreproceduresContent data={data} />
-          </ScrollArea>
-        )}
-      </Card.Section>
-    </Card>
+          <Select
+            placeholder="Escolha o pré-procedimento que vai realizar"
+            data={preproceduresValues}
+            value={selectedPreprocedure}
+            onChange={(v) => setSelectedPreprocedure(v)}
+          />
+          <Group justify="flex-end" mt="md">
+            <Button variant="subtle" onClick={() => setModalOpened(false)}>
+              Cancelar
+            </Button>
+            <Button
+              disabled={selectedPreprocedure === null}
+              onClick={handleModalConfirm}
+            >
+              Confirmar
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+    </>
   );
 }
 
