@@ -8,6 +8,7 @@ import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableSubmitSupervisorReviewDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
+import br.ufal.ic.odontolog.dtos.SubmitForReviewDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
@@ -248,6 +249,54 @@ public class ReviewableService {
         reviewable.getId(),
         currentUser.getName(),
         currentUser.getEmail());
+  }
+
+  @Transactional
+  public ReviewableDTO submitForReview(Long reviewableId, SubmitForReviewDTO requestDTO) {
+    User currentUser = currentUserProvider.getCurrentUser();
+
+    Reviewable reviewable =
+        reviewableRepository
+            .findById(reviewableId)
+            .orElseThrow(() -> new ResourceNotFoundException("Reviewable not found"));
+
+    reviewable.submitForReview();
+
+    String description = buildSubmissionDescription(currentUser, reviewable);
+
+    String comments = requestDTO.getComments();
+    HashMap<String, Object> metadata = null;
+    if (comments != null && !comments.trim().isEmpty()) {
+      metadata = new HashMap<>();
+      metadata.put("data", comments);
+    }
+
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.REVIEW_REQUESTED)
+            .description(description)
+            .reviewable(reviewable)
+            .metadata(metadata)
+            .build();
+    reviewable.getHistory().add(activity);
+
+    reviewableRepository.save(reviewable);
+
+    return reviewableMapper.toDTO(reviewable);
+  }
+
+  private String buildSubmissionDescription(User currentUser, Reviewable reviewable) {
+    StringBuilder descriptionBuilder = new StringBuilder();
+    descriptionBuilder.append(
+        String.format(
+            "%s (%s) enviou %s #%s para validação",
+            currentUser.getName(),
+            currentUser.getEmail(),
+            reviewable.getName(),
+            reviewable.getId()));
+
+    return descriptionBuilder.toString();
   }
 
   public ReviewDTO submitSupervisorReview(

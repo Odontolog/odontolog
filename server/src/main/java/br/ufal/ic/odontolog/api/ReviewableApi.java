@@ -8,6 +8,7 @@ import br.ufal.ic.odontolog.dtos.ReviewableDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
 import br.ufal.ic.odontolog.dtos.ReviewableSubmitSupervisorReviewDTO;
 import br.ufal.ic.odontolog.dtos.ReviewersDTO;
+import br.ufal.ic.odontolog.dtos.SubmitForReviewDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -109,6 +110,37 @@ public interface ReviewableApi {
       })
   public ResponseEntity<ReviewableDTO> assignUserToReviewable(
       @RequestBody ReviewableAssignUserRequestDTO requestDTO, @Parameter Long reviewableId);
+
+  @Operation(
+      summary = "Submit reviewable for review",
+      description =
+          """
+            Submits a reviewable for review by assigned reviewers.
+
+            Preconditions:
+
+            - The reviewable must be in the 'DRAFT' state (if it is a TreatmentPlan) or 'IN_PROGRESS' (if it is a Procedure).
+            - The reviewable must have at least one assigned reviewer.
+            - The reviewable must have an assigned user.
+            - The reviewable must exist in the system.
+
+            Postconditions:
+
+            - The reviewable status will be updated to 'IN_REVIEW'.
+            - Review entries will be created for each assigned reviewer with a status of 'PENDING'.""")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Reviewable submitted for review successfully."),
+        @ApiResponse(responseCode = "422", description = "Invalid request."),
+        @ApiResponse(responseCode = "404", description = "Reviewable not found."),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Reviewable is not in a state that allows submission for review.")
+      })
+  public ResponseEntity<ReviewableDTO> submitForReview(
+      @Parameter Long reviewableId, @RequestBody SubmitForReviewDTO requestDTO);
 
   @Operation(
       summary = "Submit supervisor review for a reviewable item",

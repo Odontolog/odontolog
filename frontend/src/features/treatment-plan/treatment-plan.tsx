@@ -72,7 +72,7 @@ export default function TreatmentPlan({
   return (
     <>
       <TreatmentPlanHeader
-        id={treatmentPlanId}
+        treatmentPlanId={treatmentPlanId}
         queryOptions={options}
         user={user}
       />

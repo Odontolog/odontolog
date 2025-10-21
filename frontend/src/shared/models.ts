@@ -84,6 +84,7 @@ export type ProcedureShort = {
   patient: PatientShort;
   teeth: string[];
   updatedAt: Date;
+  performedAt: Date | null;
   reviews: Review[];
   notes: string;
   type: 'TREATMENT_PLAN' | 'PROCEDURE';
@@ -142,6 +143,7 @@ export type ProcedureDetail = {
 };
 
 export type Procedure = Reviewable & {
+  performedAt: Date | null;
   status: ProcedureStatus;
   name: string;
   attachments: Attachments[];

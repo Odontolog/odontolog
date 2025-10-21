@@ -20,6 +20,8 @@ export const studySectors = [
 ];
 
 export const teeth = [
+  'Todos',
+  'Gengiva',
   '11',
   '12',
   '13',
@@ -52,7 +54,6 @@ export const teeth = [
   '46',
   '47',
   '48',
-  'Gengiva',
 ];
 
 export const maritalStatus = [

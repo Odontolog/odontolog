@@ -94,6 +94,23 @@ public abstract class Reviewable {
     this.reviews.removeIf(review -> review.getSupervisor().equals(supervisor));
   }
 
+  public void updateReviewers(Reviewable reviewable, Set<Supervisor> reviewers) {
+    Set<Supervisor> currentReviewers = reviewable.getReviewers();
+
+    Set<Supervisor> reviewersToAdd =
+        reviewers.stream()
+            .filter(reviewer -> !currentReviewers.contains(reviewer))
+            .collect(Collectors.toSet());
+
+    Set<Supervisor> reviewersToRemove =
+        currentReviewers.stream()
+            .filter(reviewer -> !reviewers.contains(reviewer))
+            .collect(Collectors.toSet());
+
+    reviewersToAdd.forEach(reviewable::addReviewer);
+    reviewersToRemove.forEach(reviewable::removeReviewer);
+  }
+
   public Optional<Review> getReviewFor(Supervisor supervisor) {
     return this.reviews.stream()
         .filter(review -> review.getSupervisor().equals(supervisor))
@@ -108,4 +125,23 @@ public abstract class Reviewable {
 
   public abstract void submitSupervisorReview(
       Supervisor supervisor, String comments, Integer grade, Boolean approved);
+
+  public abstract void approve();
+
+  public abstract void reject();
+
+  public abstract boolean isInReview();
+
+  public boolean allReviewsSubmitted() {
+    return getReviews().stream()
+        .allMatch(
+            review ->
+                review.getReviewStatus() == ReviewStatus.APPROVED
+                    || review.getReviewStatus() == ReviewStatus.REJECTED);
+  }
+
+  public boolean allReviewsApproved() {
+    return getReviews().stream()
+        .allMatch(review -> review.getReviewStatus() == ReviewStatus.APPROVED);
+  }
 }
