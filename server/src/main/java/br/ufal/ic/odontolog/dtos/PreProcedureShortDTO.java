@@ -7,4 +7,4 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class PreProcedureShortDTO extends ProcedureShortDTO { }
+public class PreProcedureShortDTO extends ProcedureShortDTO {}

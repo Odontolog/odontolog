@@ -42,7 +42,6 @@ public class PreProcedureService {
             .name(dto.getName())
             .patient(patient)
             .author(currentUser)
-            // .assignee(currentUser)
             .type(ReviewableType.PROCEDURE)
             .status(ProcedureStatus.IN_PROGRESS)
             .build();
