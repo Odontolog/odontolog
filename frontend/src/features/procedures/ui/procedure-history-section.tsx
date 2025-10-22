@@ -138,9 +138,12 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
     }
   }
 
+  function getDate(pcd: ProcedureShort): Date {
+    return pcd.performedAt === null ? pcd.updatedAt : pcd.performedAt;
+  }
+
   const proceduresByDate = data.reduce((acc, pcd) => {
-    const dateObj =
-      pcd.updatedAt instanceof Date ? pcd.updatedAt : new Date(pcd.updatedAt);
+    const dateObj = getDate(pcd);
     const day = String(dateObj.getDate()).padStart(2, '0');
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
     const year = dateObj.getFullYear();
@@ -155,7 +158,7 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
   }, new Map<string, ProcedureShort[]>());
 
   for (const [_date, procedures] of proceduresByDate) {
-    procedures.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+    procedures.sort((a, b) => getDate(b).getTime() - getDate(a).getTime());
   }
 
   return (
@@ -173,7 +176,7 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
           <Timeline.Item key={date} title={date}>
             <Stack gap="sm" my="xs">
               {plans
-                .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+                .sort((a, b) => getDate(b).getTime() - getDate(a).getTime())
                 .map((pcd) => (
                   <ProcedureCard
                     key={pcd.id}

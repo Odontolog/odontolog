@@ -5,12 +5,10 @@ import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.ProcedureUpsertDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
-import br.ufal.ic.odontolog.dtos.TreatmentPlanSubmitForReviewDTO;
 import br.ufal.ic.odontolog.services.TreatmentPlanService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,18 +33,6 @@ public class TreatmentPlanController implements TreatmentPlanApi {
   @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
   public TreatmentPlanDTO getTreatmentPlan(@PathVariable Long treatmentId) {
     return treatmentPlanService.getTreatmentPlanById(treatmentId);
-  }
-
-  // TODO: Move to ReviewableController
-  // because it's related to reviewable actions
-  @PostMapping("/treatment-plan/{treatment_id}/submit-for-review")
-  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
-  public ResponseEntity<TreatmentPlanDTO> submitForReview(
-      @PathVariable Long treatment_id, @RequestBody TreatmentPlanSubmitForReviewDTO requestDTO) {
-    TreatmentPlanDTO updatedTreatmentPlan =
-        treatmentPlanService.submitTreatmentPlanForReview(treatment_id, requestDTO);
-
-    return ResponseEntity.ok(updatedTreatmentPlan);
   }
 
   @GetMapping("/patients/{patientId}/treatment-plan")

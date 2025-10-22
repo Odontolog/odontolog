@@ -1,13 +1,21 @@
 'use client';
 
-import { Box, Loader, Stack } from '@mantine/core';
+import { Box, Group, Loader, ScrollArea, Stack } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { type User } from 'next-auth';
 import { notFound } from 'next/navigation';
 
 import { ServerError } from '@/shared/components/server-error';
-import { getProcedureOptions } from '../requests';
+import AssigneeSection from '@/shared/reviewable/assignee-section';
+import HistorySection from '@/shared/reviewable/history/history-section';
+import NotesSection from '@/shared/reviewable/notes-section';
+import SupervisorSection from '@/shared/reviewable/supervisor-section';
+import { getProcedureOptions } from '@/features/procedure/requests';
+import { getProcedurePageMode } from '@/features/procedure/utils';
 import AttachmentsSection from './attachements/atts-section';
+import DiagnosticSection from './diagnostic-section';
+import ProcedureHeader from './header';
+import styles from './procedure.module.css';
 import StudySectorSection from './study-sector-section';
 import TeethSection from './teeth-section';
 
@@ -19,8 +27,6 @@ interface ProcedureProps {
 
 export default function Procedure({ procedureId, user }: ProcedureProps) {
   const options = getProcedureOptions(procedureId);
-
-  const mode = 'edit';
 
   const {
     data: status,
@@ -61,25 +67,65 @@ export default function Procedure({ procedureId, user }: ProcedureProps) {
     return null;
   }
 
+  const mode = getProcedurePageMode(status, user.role);
+
   return (
     <>
-      {status}
-      <AttachmentsSection
+      <ProcedureHeader
+        procedureId={procedureId}
+        queryOptions={options}
         user={user}
-        reviewableId={procedureId}
-        mode={mode}
-        queryOptions={options}
       />
-      <TeethSection
-        procedureId={procedureId}
-        mode={mode}
-        queryOptions={options}
-      />
-      <StudySectorSection
-        procedureId={procedureId}
-        mode={mode}
-        queryOptions={options}
-      />
+      <ScrollArea w="100%" style={{ flex: 1 }}>
+        <Group className={styles.container}>
+          <Stack className={styles.main}>
+            <DiagnosticSection
+              procedureId={procedureId}
+              queryOptions={options}
+              mode={mode}
+            />
+            <NotesSection
+              reviewableId={procedureId}
+              queryOptions={options}
+              mode={mode}
+            />
+            <AttachmentsSection
+              user={user}
+              reviewableId={procedureId}
+              mode={mode}
+              queryOptions={options}
+            />
+            <HistorySection
+              reviewableId={procedureId}
+              queryOptions={options}
+              mode={mode}
+            />
+          </Stack>
+
+          <Stack className={styles.side}>
+            <SupervisorSection
+              reviewableId={procedureId}
+              queryOptions={options}
+              mode={mode}
+            />
+            <AssigneeSection
+              reviewableId={procedureId}
+              queryOptions={options}
+              mode={status === 'IN_PROGRESS' ? 'read' : mode}
+            />
+            <TeethSection
+              procedureId={procedureId}
+              mode={mode}
+              queryOptions={options}
+            />
+            <StudySectorSection
+              procedureId={procedureId}
+              mode={mode}
+              queryOptions={options}
+            />
+          </Stack>
+        </Group>
+      </ScrollArea>
     </>
   );
 }

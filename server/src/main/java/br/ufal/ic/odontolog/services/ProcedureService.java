@@ -9,6 +9,7 @@ import br.ufal.ic.odontolog.mappers.ProcedureMapper;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.ProcedureRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,36 @@ public class ProcedureService {
   }
 
   @Transactional
+  public ProcedureDTO startProcedure(Long procedureId) {
+    Procedure procedure =
+        procedureRepository
+            .findById(procedureId)
+            .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
+
+    procedure.startProcedure();
+    procedure.setPerformedAt(Instant.now());
+
+    User currentUser = currentUserProvider.getCurrentUser();
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .description(
+                String.format(
+                    "Procedimento %s #%s iniciado por %s (%s)",
+                    procedure.getName(),
+                    procedure.getId(),
+                    currentUser.getName(),
+                    currentUser.getEmail()))
+            .reviewable(procedure)
+            .build();
+    procedure.getHistory().add(activity);
+
+    procedureRepository.save(procedure);
+    return procedureMapper.toDTO(procedure);
+  }
+
+  @Transactional
   public ProcedureDTO updateTeeth(Long procedureId, Set<String> teeth) {
     Procedure procedure =
         procedureRepository
@@ -52,8 +83,8 @@ public class ProcedureService {
     procedure.setTeeth(teeth);
 
     HashMap<String, Object> metadata = new HashMap<>();
-    metadata.put("data", teeth);
-    metadata.put("oldData", oldTeeth);
+    metadata.put("data", String.join(", ", teeth));
+    metadata.put("oldData", String.join(", ", oldTeeth));
 
     User currentUser = currentUserProvider.getCurrentUser();
     Activity activity =
@@ -95,6 +126,38 @@ public class ProcedureService {
             .description(
                 String.format(
                     "Seção de estudo atualizada por %s (%s)",
+                    currentUser.getName(), currentUser.getEmail()))
+            .reviewable(procedure)
+            .metadata(metadata)
+            .build();
+    procedure.getHistory().add(activity);
+
+    procedureRepository.save(procedure);
+    return procedureMapper.toDTO(procedure);
+  }
+
+  @Transactional
+  public ProcedureDTO updateDiagnostic(Long procedureId, String diagnostic) {
+    Procedure procedure =
+        procedureRepository
+            .findById(procedureId)
+            .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
+
+    String oldDiagnostic = new String(procedure.getProcedureDetail().getDiagnostic());
+    procedure.setProcedureDetail(new ProcedureDetail(diagnostic));
+
+    HashMap<String, Object> metadata = new HashMap<>();
+    metadata.put("data", diagnostic);
+    metadata.put("oldData", oldDiagnostic);
+
+    User currentUser = currentUserProvider.getCurrentUser();
+    Activity activity =
+        Activity.builder()
+            .actor(currentUser)
+            .type(ActivityType.EDITED)
+            .description(
+                String.format(
+                    "Diagnóstico atualizado por %s (%s)",
                     currentUser.getName(), currentUser.getEmail()))
             .reviewable(procedure)
             .metadata(metadata)

@@ -6,21 +6,7 @@ import { Activity } from '@/shared/models';
 
 interface ActivityItemProps {
   activity: Activity;
-}
-
-function getTitle(activity: Activity) {
-  switch (activity.type) {
-    case 'CREATED':
-      return 'Plano criado';
-    case 'EDITED':
-      return 'Plano modificado';
-    case 'REVIEW_REQUESTED':
-      return 'Pedido de validação realizado';
-    case 'REVIEW_APPROVED':
-      return 'Plano aprovado';
-    case 'REVIEW_REJECTED':
-      return 'Plano rejeitado';
-  }
+  getActivityTitle: (activity: Activity) => string;
 }
 
 function getMetadataText(activity: Activity) {
@@ -32,12 +18,15 @@ function getMetadataText(activity: Activity) {
   return metadata.data as string;
 }
 
-export default function ActivityItem({ activity }: ActivityItemProps) {
+export default function ActivityItem({
+  activity,
+  getActivityTitle,
+}: ActivityItemProps) {
   const metadataText = getMetadataText(activity);
 
   return (
     <Timeline.Item
-      title={getTitle(activity)}
+      title={getActivityTitle(activity)}
       bullet={
         <Avatar
           size={22}

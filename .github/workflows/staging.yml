@@ -1,21 +1,28 @@
-name: Deploy to DigitalOcean Droplet
+name: Deploy to DigitalOcean Droplet Staging
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "staging" ]
 
 jobs:
-  deploy:
+  deploy-staging:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Build Docker image
+        working-directory: frontend
+        run: docker build -t myapp-frontend:staging --build-arg NEXT_PUBLIC_BACKEND_URL=${{secrets.NEXT_PUBLIC_BACKEND_URL_STAGING}} .
+
+      - name: Save Docker image
+        run: docker save myapp-frontend:staging | gzip > myapp-frontend.tar.gz
+
       - name: Copy project files to Droplet
         uses: appleboy/scp-action@v1
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
@@ -25,16 +32,22 @@ jobs:
       - name: Deploy to DigitalOcean Droplet via SSH
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             set -e
             cd odontolog
+
+            docker load < myapp-frontend.tar.gz
+
             echo "Parando containers atuais de forma graciosa..."
-            docker compose -f docker-compose.prod.yml stop --timeout 30
+            docker compose -f docker-compose.staging.yml stop --timeout 30
+
+            echo "Recriando containers do staging..."
+            docker compose -f docker-compose.staging.yml pull || true
 
             echo "Building and starting containers..."
-            docker compose -f docker-compose.prod.yml up -d --build
+            docker compose -f docker-compose.staging.yml up -d --build
             docker system prune -f
