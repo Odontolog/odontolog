@@ -1,4 +1,3 @@
-import { AnamneseFormValues } from '@/features/anamnese/ui/anamnese-section';
 import {
   Card,
   Flex,
@@ -9,6 +8,8 @@ import {
   Textarea,
 } from '@mantine/core';
 import { type UseFormReturnType } from '@mantine/form';
+
+import { AnamneseFormValues } from '@/features/anamnese/ui/anamnese-section';
 
 interface PatientConditionCardProps {
   index: number;

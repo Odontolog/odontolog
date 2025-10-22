@@ -10,18 +10,16 @@ import {
   Grid,
   Group,
   Loader,
-  ScrollArea,
-  Stack,
   Text,
   ThemeIcon,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { Anamnese, PatientCondition } from '@/shared/models';
 import PatientConditionCard from '@/shared/components/condition-card';
-import { useForm } from '@mantine/form';
+import { Anamnese, PatientCondition } from '@/shared/models';
 
 interface AnamneseSectionProps {
   patientId: string;
@@ -160,10 +158,8 @@ function AnamneseSectionContent(props: AnamneseSectionContent) {
   ));
 
   return (
-    <Stack h="100%" flex="1" gap="0">
-      <ScrollArea w="100%" h="100%" offsetScrollbars scrollbars="y">
-        <Grid gutter="xs">{fields}</Grid>
-      </ScrollArea>
+    <>
+      <Grid gutter="xs">{fields}</Grid>
       {editing && (
         <Flex
           justify="space-between"
@@ -184,6 +180,6 @@ function AnamneseSectionContent(props: AnamneseSectionContent) {
           </Group>
         </Flex>
       )}
-    </Stack>
+    </>
   );
 }
