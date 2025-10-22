@@ -18,7 +18,7 @@ import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import PatientConditionCard from '@/shared/components/condition-card';
+import PatientConditionCard from '@/features/anamnese/ui/condition-card';
 import { Anamnese, PatientCondition } from '@/shared/models';
 
 interface AnamneseSectionProps {
@@ -147,7 +147,7 @@ function AnamneseSectionContent(props: AnamneseSectionContent) {
   }
 
   const fields = form.getValues().conditions.map((_, index) => (
-    <Grid.Col span={4} key={conditions[index].id}>
+    <Grid.Col span={{ md: 12, lg: 6, xl: 4 }} key={conditions[index].id}>
       <PatientConditionCard
         index={index}
         condition={conditions[index].condition}

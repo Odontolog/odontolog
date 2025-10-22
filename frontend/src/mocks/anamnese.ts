@@ -10,14 +10,16 @@ export const mockAnamnese: Anamnese = {
       condition: 'BLOOD_PRESSURE',
       category: 'MEDICAL',
       hasCondition: true,
-      notes: 'Hipertenso controlado com losartana 50mg/dia.',
+      notes:
+        'Hipertenso controlado com losartana 50mg/dia.\n\nAtualização 20/09: Paciente trouxe exame.',
     },
     {
       id: '2',
       condition: 'CARDIAC',
       category: 'MEDICAL',
       hasCondition: false,
-      notes: '',
+      notes:
+        'Paciente relata boa higiene oral e visitas regulares ao dentista. Não apresenta dor ou desconforto no momento.Paciente relata boa higiene oral e visitas regulares ao dentista. Não apresenta dor ou desconforto no momento.Paciente relata boa higiene oral e visitas regulares ao dentista. Não apresenta dor ou desconforto no momento.',
     },
     {
       id: '3',

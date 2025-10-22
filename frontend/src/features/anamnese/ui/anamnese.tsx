@@ -22,7 +22,7 @@ export default function Anamnese({ patientId }: AnamneseProps) {
 
   return (
     <ScrollArea w="100%" h="100%" offsetScrollbars scrollbars="y">
-      <Group align="flex-start" py="md" px="lg" flex="1">
+      <Group className={styles.container}>
         <Stack flex="1" h="100%">
           <NotesSection
             id={patientId}

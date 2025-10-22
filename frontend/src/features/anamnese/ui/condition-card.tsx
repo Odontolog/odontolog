@@ -2,6 +2,7 @@ import {
   Card,
   Flex,
   Group,
+  ScrollArea,
   Stack,
   Switch,
   Text,
@@ -33,10 +34,8 @@ export default function PatientConditionCard({
       radius="md"
       withBorder
       style={{ height: '100%' }}
-      // className={selected !== undefined ? styles.cardClickable : undefined}
-      // onClick={() => onSelect?.(procedure.id)}
     >
-      <Stack p="md" gap="sm">
+      <Stack p="md" gap="sm" flex="1">
         <Group justify="space-between" align="center" wrap="nowrap">
           <Group gap="xs" justify="start" align="center">
             <Text span fw={600} c="gray.9">
@@ -46,6 +45,7 @@ export default function PatientConditionCard({
 
           <Group gap="sm" wrap="nowrap" style={{ alignSelf: 'flex-start' }}>
             <Switch
+              withThumbIndicator={false}
               disabled={!editing}
               key={form.key(`conditions.${index}.hasCondition`)}
               {...form.getInputProps(`conditions.${index}.hasCondition`, {
@@ -55,21 +55,24 @@ export default function PatientConditionCard({
           </Group>
         </Group>
 
-        <Flex gap="md" rowGap={0} direction="row" wrap="wrap">
+        <Flex gap="md" rowGap={0} direction="row" wrap="wrap" h="100%">
           {!editing ? (
-            <Text
-              size="sm"
-              c="dimmed"
-              style={{ whiteSpace: 'pre-line', textAlign: 'justify' }}
-            >
-              {notes || 'Sem observações'}
-            </Text>
+            <ScrollArea mah="80px" offsetScrollbars scrollbars="y" type="auto">
+              <Text
+                size="sm"
+                c="dimmed"
+                style={{ whiteSpace: 'pre-line', textAlign: 'justify' }}
+              >
+                {notes || 'Sem observações'}
+              </Text>
+            </ScrollArea>
           ) : (
             <Textarea
               key={form.key(`conditions.${index}.notes`)}
               {...form.getInputProps(`conditions.${index}.notes`)}
-              autosize
-              minRows={2}
+              placeholder="Insira observações específicas"
+              rows={3}
+              h="100%"
               flex={1}
             />
           )}
