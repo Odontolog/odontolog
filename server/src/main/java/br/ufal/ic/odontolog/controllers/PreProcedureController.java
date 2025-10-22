@@ -16,14 +16,14 @@ public class PreProcedureController {
 
   private final PreProcedureService preProcedureService;
 
-  @PostMapping("/patient/{patientId}/pre-procedures")
+  @PostMapping("/patients/{patientId}/pre-procedures")
   public ResponseEntity<PreProcedureDTO> createPreProcedure(
       @PathVariable Long patientId, @RequestBody @Valid PreProcedureUpsertDTO dto) {
     PreProcedureDTO created = preProcedureService.createPreProcedure(patientId, dto);
     return ResponseEntity.status(HttpStatus.CREATED).body(created);
   }
 
-  @GetMapping("/patient/{patientId}/pre-procedures/{preProcedureId}")
+  @GetMapping("/patients/{patientId}/pre-procedures/{preProcedureId}")
   public ResponseEntity<PreProcedureDTO> getPreProcedureByPatientAndId(
       @PathVariable Long patientId, @PathVariable Long preProcedureId) {
     PreProcedureDTO dto =
@@ -31,7 +31,7 @@ public class PreProcedureController {
     return ResponseEntity.ok(dto);
   }
 
-  @GetMapping("/patient/{patientId}/pre-procedures")
+  @GetMapping("/patients/{patientId}/pre-procedures")
   public ResponseEntity<List<PreProcedureShortDTO>> getPreProceduresForPatient(
       @PathVariable Long patientId) {
     List<PreProcedureShortDTO> list = preProcedureService.getPreProceduresForPatient(patientId);
