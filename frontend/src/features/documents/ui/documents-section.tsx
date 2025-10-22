@@ -1,13 +1,15 @@
 'use client';
 
-import DocumentPreviewCard from '@/shared/components/document-preview-card';
+import DocumentPreviewCard from '@/features/documents/ui/document-preview-card';
 import { getPatientDocumentsOptions } from '../requests';
 import { useQuery } from '@tanstack/react-query';
 import {
+  Button,
   Card,
   Center,
   Divider,
   Grid,
+  Group,
   Loader,
   ScrollArea,
   Stack,
@@ -28,12 +30,21 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
     ...docs,
   });
 
+  function handleUpload() {
+    console.log('yay!');
+  }
+
   return (
     <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
       <Card.Section inheritPadding py="sm">
-        <Text fw={600} size="lg">
-          Documentos e exames
-        </Text>
+        <Group justify="space-between">
+          <Text fw={600} size="lg">
+            Documentos e exames
+          </Text>
+          <Button variant="outline" onClick={handleUpload}>
+            Upload
+          </Button>
+        </Group>
       </Card.Section>
 
       <Divider my="none" />

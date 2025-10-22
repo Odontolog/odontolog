@@ -3,8 +3,8 @@
 import { Card, Text, Image, Group, Badge, Stack, Tooltip } from '@mantine/core';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Attachments } from '../models';
-import { formatFileSize } from '../utils';
+import { Attachments } from '../../../shared/models';
+import { formatFileSize } from '../../../shared/utils';
 
 interface DocumentPreviewCardProps {
   attachment: Attachments;
