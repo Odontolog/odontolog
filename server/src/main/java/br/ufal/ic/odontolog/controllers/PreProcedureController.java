@@ -25,9 +25,11 @@ public class PreProcedureController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @GetMapping("/pre-procedures/{id}")
-    public ResponseEntity<PreProcedureDTO> getPreProcedureById(@PathVariable Long id) {
-        PreProcedureDTO dto = preProcedureService.getPreProcedureById(id);
+    @GetMapping("/patient/{patientId}/pre-procedures/{preProcedureId}")
+    public ResponseEntity<PreProcedureDTO> getPreProcedureByPatientAndId(
+            @PathVariable Long patientId,
+            @PathVariable Long preProcedureId) {
+        PreProcedureDTO dto = preProcedureService.getPreProcedureByPatientAndId(patientId, preProcedureId);
         return ResponseEntity.ok(dto);
     }
 

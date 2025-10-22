@@ -54,12 +54,17 @@ public class PreProcedureService {
     }
 
     @Transactional(readOnly = true)
-    public PreProcedureDTO getPreProcedureById(Long preProcedureId) {
-        PreProcedure preProcedure = preProcedureRepository.findById(preProcedureId)
-                .orElseThrow(() -> new ResourceNotFoundException("PreProcedure not found"));
+    public PreProcedureDTO getPreProcedureByPatientAndId(Long patientId, Long preProcedureId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+
+        PreProcedure preProcedure = preProcedureRepository
+                .findByIdAndPatient(preProcedureId, patient)
+                .orElseThrow(() -> new ResourceNotFoundException("PreProcedure not found for this patient"));
 
         return preProcedureMapper.toDTO(preProcedure);
     }
+
 
     @Transactional(readOnly = true)
     public List<PreProcedureShortDTO> getPreProceduresForPatient(Long patientId) {

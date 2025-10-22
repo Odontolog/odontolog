@@ -11,12 +11,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class PreProcedureShortDTO extends ReviewableShortDTO {
-    private Long id;
-    private ProcedureStatus status;
-    private String name;
-    private int plannedSession;
-    private UserResponseDTO assignee;
-    private Instant updatedAt;
-    private Boolean deleted;
+public class PreProcedureShortDTO extends ProcedureShortDTO {
+//    private Long id;
+//    private ProcedureStatus status;
+//    private String name;
+//    private String notes;
+//    private UserResponseDTO assignee;
+//    private PatientShortDTO patient;
+//    private Instant updatedAt;
+//    private Boolean deleted;
 }
