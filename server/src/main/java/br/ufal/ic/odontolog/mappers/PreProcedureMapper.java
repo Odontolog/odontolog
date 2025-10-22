@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface PreProcedureMapper {
-    PreProcedureDTO toDTO(PreProcedure preProcedure);
+  PreProcedureDTO toDTO(PreProcedure preProcedure);
 
-    PreProcedureShortDTO toShortDTO(PreProcedure preProcedure);
+  PreProcedureShortDTO toShortDTO(PreProcedure preProcedure);
 }

@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PreProcedureUpsertDTO {
-    @NotBlank
-    private String name;
-    private String notes;
-    private String diagnostic;
+  @NotBlank private String name;
+  private String notes;
+  private String diagnostic;
 }
