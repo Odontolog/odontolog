@@ -11,10 +11,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ChangePasswordRequestDTO {
-  @NotBlank(message = "newPassword is required")
-  @Size(min = 6, message = "password must be at least 6 characters")
+  @NotBlank(message = "Necessário ter uma nova senha ")
+  @Size(min = 6, message = "A senha precisa ter ao menos 6 caracteres")
   private String newPassword;
 
-  @NotBlank(message = "confirmPassword is required")
+  @NotBlank(message = "Necessário ter a confirmação da nova senha")
   private String confirmPassword;
 }

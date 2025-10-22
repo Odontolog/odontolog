@@ -21,7 +21,7 @@ public class UserService {
   @Transactional
   public void changePassword(ChangePasswordRequestDTO req) {
     if (!req.getNewPassword().equals(req.getConfirmPassword())) {
-      throw new UnprocessableRequestException("Passwords do not match");
+      throw new UnprocessableRequestException("Senha e confirmação de senha não coincidem");
     }
 
     User user = currentUserProvider.getCurrentUser();
