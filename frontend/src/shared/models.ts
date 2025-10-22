@@ -72,7 +72,7 @@ export type ProcedureStatus =
   | 'NOT_STARTED'
   | 'IN_PROGRESS'
   | 'IN_REVIEW'
-  | 'DONE';
+  | 'COMPLETED';
 
 export type ProcedureShort = {
   id: string;
@@ -84,6 +84,7 @@ export type ProcedureShort = {
   patient: PatientShort;
   teeth: string[];
   updatedAt: Date;
+  performedAt: Date | null;
   reviews: Review[];
   notes: string;
   type: 'TREATMENT_PLAN' | 'PROCEDURE';
@@ -142,13 +143,13 @@ export type ProcedureDetail = {
 };
 
 export type Procedure = Reviewable & {
-  id: string;
+  performedAt: Date | null;
   status: ProcedureStatus;
   name: string;
   attachments: Attachments[];
   studySector: string;
   teeth: string[];
-  details: ProcedureDetail;
+  procedureDetail: ProcedureDetail;
   procedureType: 'PRE_PROCEDURE' | 'TRATMENT_PLAN_PROCEDURE';
   treatmentPlanId?: string;
 };

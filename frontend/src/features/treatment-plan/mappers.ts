@@ -1,12 +1,5 @@
-import { Activity, TreatmentPlan } from '@/shared/models';
-import { Replace } from '@/shared/utils';
-
-export type ActivityDto = Replace<
-  Activity,
-  {
-    createdAt: string;
-  }
->;
+import { ActivityDto, mapToActivity, Replace } from '@/shared/mappers';
+import { TreatmentPlan } from '@/shared/models';
 
 export type TreatmentPlanDto = Replace<
   TreatmentPlan,
@@ -16,13 +9,6 @@ export type TreatmentPlanDto = Replace<
     history: ActivityDto[];
   }
 >;
-
-function mapToActivity(dto: ActivityDto): Activity {
-  return {
-    ...dto,
-    createdAt: new Date(dto.createdAt),
-  };
-}
 
 export function mapToTreatmentPlan(dto: TreatmentPlanDto): TreatmentPlan {
   return {

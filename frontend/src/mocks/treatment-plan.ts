@@ -105,6 +105,7 @@ export const proceduresShort: ProcedureShort[] = [
     studySector: 'Endodontia',
     plannedSession: 1,
     assignee: student,
+    performedAt: new Date('2025-09-05T13:00:00Z'),
     patient,
     teeth: ['12'],
     updatedAt: new Date('2025-09-05T13:00:00Z'),
@@ -115,12 +116,13 @@ export const proceduresShort: ProcedureShort[] = [
   },
   {
     id: '3',
-    status: 'DONE',
+    status: 'COMPLETED',
     name: 'Extração',
     studySector: 'Cirurgia',
     plannedSession: 2,
     assignee: student,
     patient,
+    performedAt: new Date('2025-09-05T13:00:00Z'),
     teeth: ['14'],
     updatedAt: new Date('2025-09-07T16:30:00Z'),
     reviews: [],
@@ -130,13 +132,14 @@ export const proceduresShort: ProcedureShort[] = [
   },
   {
     id: '4',
-    status: 'DONE',
+    status: 'COMPLETED',
     name: 'Limpeza',
     studySector: 'Periodontia',
     plannedSession: 3,
     assignee: student,
     patient,
     teeth: ['11', '12', '13'],
+    performedAt: new Date('2025-09-05T13:00:00Z'),
     updatedAt: new Date('2025-09-06T11:00:00Z'),
     reviews: [],
     notes: 'Limpeza realizada sem intercorrências.',
@@ -200,6 +203,7 @@ export const procedures: Procedure[] = [
     name: 'Obturação',
     studySector: 'Endodontia',
     assignee: student,
+    performedAt: new Date('2025-09-05T13:00:00Z'),
     patient,
     teeth: ['12'],
     updatedAt: new Date('2025-09-05T13:00:00Z'),
@@ -209,7 +213,7 @@ export const procedures: Procedure[] = [
     type: 'PROCEDURE',
     author: student,
     createdAt: new Date('2025-09-05T11:00:00Z'),
-    details: {
+    procedureDetail: {
       diagnostic:
         'Cárie profunda em dente 16 (primeiro molar superior direito) com necessidade de tratamento endodôntico. Presença de sensibilidade ao frio e dor espontânea. Radiografia periapical revela radiolucidez próxima à polpa.',
     },
@@ -224,6 +228,7 @@ export const procedures: Procedure[] = [
     name: 'Extração',
     studySector: 'Cirurgia',
     assignee: student,
+    performedAt: new Date('2025-09-05T13:00:00Z'),
     patient,
     teeth: ['14'],
     updatedAt: new Date('2025-09-07T16:30:00Z'),
@@ -232,7 +237,7 @@ export const procedures: Procedure[] = [
     procedureType: 'TRATMENT_PLAN_PROCEDURE',
     type: 'PROCEDURE',
     author: student,
-    details: {
+    procedureDetail: {
       diagnostic:
         'Dente 14 com cárie extensa e comprometimento estrutural severo. Indicação de extração por impossibilidade de restauração conservadora.',
     },
@@ -244,9 +249,10 @@ export const procedures: Procedure[] = [
   },
   {
     id: '4',
-    status: 'DONE',
+    status: 'COMPLETED',
     name: 'Limpeza',
     studySector: 'Periodontia',
+    performedAt: new Date('2025-09-05T13:00:00Z'),
     assignee: student,
     patient,
     teeth: ['11', '12', '13'],
@@ -257,7 +263,7 @@ export const procedures: Procedure[] = [
     type: 'PROCEDURE',
     author: student,
     createdAt: new Date('2025-09-08T10:00:00Z'),
-    details: {
+    procedureDetail: {
       diagnostic:
         'Profilaxia e raspagem supragengival nos dentes anteriores superiores. Remoção de placa bacteriana e cálculo dental.',
     },

@@ -25,9 +25,9 @@ import {
   IconGenderFemale,
   IconGenderMale,
   IconMapPin,
-  IconMicroscope,
-  IconReportSearch,
-  IconSettings2,
+  // IconMicroscope,
+  // IconReportSearch,
+  // IconSettings2,
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { JSX } from 'react';
@@ -41,26 +41,26 @@ const tabs = [
     icon: <IconDental size={14} />,
     label: 'Histórico Geral',
   },
-  {
-    value: 'preprocedures',
-    icon: <IconMicroscope size={14} />,
-    label: 'Pré-Procedimentos',
-  },
+  // {
+  //   value: 'preprocedures',
+  //   icon: <IconMicroscope size={14} />,
+  //   label: 'Pré-Procedimentos',
+  // },
   {
     value: 'treatments',
     icon: <IconCheckupList size={14} />,
     label: 'Tratamentos',
   },
-  {
-    value: 'documents',
-    icon: <IconReportSearch size={14} />,
-    label: 'Documentos',
-  },
-  {
-    value: 'settings',
-    icon: <IconSettings2 size={14} />,
-    label: 'Configurações',
-  },
+  // {
+  //   value: 'documents',
+  //   icon: <IconReportSearch size={14} />,
+  //   label: 'Documentos',
+  // },
+  // {
+  //   value: 'settings',
+  //   icon: <IconSettings2 size={14} />,
+  //   label: 'Configurações',
+  // },
 ];
 
 export default function PatientHeader({ patient }: { patient: Patient }) {

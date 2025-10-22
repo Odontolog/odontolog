@@ -17,14 +17,12 @@ import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { Procedure } from '@/shared/models';
+import { Procedure, ProcedureDetail } from '@/shared/models';
 import { ReviewableSectionProps } from '@/shared/reviewable/models';
-import { ProcedureDetail } from '../models';
 import { saveDetails } from '../requests';
 
 const LABELS: Record<string, string> = {
   diagnostic: 'Diagnóstico',
-  notes: 'Observações',
 };
 
 export default function DetailSection<T extends Procedure>({
@@ -35,10 +33,7 @@ export default function DetailSection<T extends Procedure>({
   const [editing, setEditing] = useState(false);
   const { data: details, isLoading } = useQuery({
     ...queryOptions,
-    select: (data) => ({
-      diagnostic: data.details.diagnostic,
-      notes: data.notes,
-    }),
+    select: (data) => data.procedureDetail,
     enabled: false,
   });
 

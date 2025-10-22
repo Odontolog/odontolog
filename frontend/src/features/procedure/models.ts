@@ -1,31 +1,9 @@
-export type procedureStatus =
-  | 'draft'
-  | 'not_started'
-  | 'in_progress'
-  | 'in_review'
-  | 'finished';
-export type reviewStatus = 'draft' | 'pending' | 'approved' | 'rejected';
+import { UseQueryOptions } from '@tanstack/react-query';
 
-export type SupervisorReview = {
-  note: string;
-  grade: number;
-  status: reviewStatus;
-};
+import { Mode, Procedure } from '@/shared/models';
 
-export type Supervisor = {
-  id: string;
-  email: string;
-  name: string;
-  specialty: string;
-  siape: string;
-  avatarUrl: string;
-};
-
-export type SupervisorAndReview = Supervisor & {
-  lastReview: SupervisorReview;
-};
-
-export type ProcedureDetail = {
-  notes: string;
-  diagnostic?: string;
-};
+export interface ProcedureSectionProps {
+  procedureId: string;
+  queryOptions: UseQueryOptions<Procedure, Error, Procedure, string[]>;
+  mode: Mode;
+}

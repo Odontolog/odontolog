@@ -1,10 +1,11 @@
 package br.ufal.ic.odontolog.dtos;
 
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.time.Instant;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,13 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@type")
+@JsonSubTypes({
+  @JsonSubTypes.Type(
+      value = TreatmentPlanProcedureShortDTO.class,
+      name = "TREATMENT_PLAN_PROCEDURE"),
+  @JsonSubTypes.Type(value = PreProcedureShortDTO.class, name = "PRE_PROCEDURE")
+})
 public class ProcedureShortDTO extends ReviewableShortDTO {
   private Long id;
   private ProcedureStatus status;
@@ -24,6 +31,7 @@ public class ProcedureShortDTO extends ReviewableShortDTO {
   private PatientShortDTO patient;
   private List<String> teeth;
   private Instant updatedAt;
+  private Instant performedAt;
   private List<ReviewDTO> reviews;
   private String notes;
   private String type;

@@ -1,5 +1,6 @@
 import { Supervisor, User } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
+import { ReviewFormValues } from './models';
 
 export async function getAvailableUsers(): Promise<User[]> {
   const token = await getAuthToken();
@@ -101,4 +102,64 @@ export async function saveDetails(reviewableId: string, notes: string) {
   }
 
   return { success: true };
+}
+
+export async function submitReviewRequest(
+  reviewableId: string,
+  comments: string,
+) {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/${reviewableId}/submit-for-review`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ comments }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro ao submeter plano de tratamento para validação.`,
+    );
+  }
+}
+
+type SupervisorReviewDto = {
+  comments: string;
+  grade: number;
+  approved: boolean;
+};
+
+export async function submitReview(
+  reviewableId: string,
+  review: ReviewFormValues,
+) {
+  const token = await getAuthToken();
+
+  const payload: SupervisorReviewDto = {
+    comments: review.comments,
+    grade: review.grade ?? 0,
+    approved: review.decision === 'Aprovar',
+  };
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/${reviewableId}/reviews/submit`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao submeter revisão.`);
+  }
 }

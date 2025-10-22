@@ -49,7 +49,7 @@ export default function TreatmentPlanDetailSection({
       ) : (
         <Center py="md" h="100%">
           <Text fw={600} size="lg" c="dimmed">
-            Selecione um procedimento
+            Selecione um plano de tratamento
           </Text>
         </Center>
       )}
@@ -106,7 +106,7 @@ export function TreatmentPlanDetailContent({
   return (
     <Box>
       <Card.Section inheritPadding py="sm">
-        <Group justify="space-between" align="flex-start">
+        <Group justify="space-between" align="center">
           <Text fw={600} size="lg">
             Plano de Tratamento #{treatmentPlan.id}
           </Text>
@@ -153,7 +153,7 @@ export function TreatmentPlanDetailContent({
                     transitionProps={{ duration: 200 }}
                   >
                     <span>
-                      {`${treatmentPlan.procedures.filter((procedure) => procedure.status === 'DONE').length} / ${treatmentPlan.procedures.length.toString()}`}
+                      {`${treatmentPlan.procedures.filter((procedure) => procedure.status === 'COMPLETED').length} / ${treatmentPlan.procedures.length.toString()}`}
                     </span>
                   </Tooltip>
                 }

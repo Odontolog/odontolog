@@ -1,9 +1,6 @@
 'use client';
 
 import {
-  Anchor,
-  Breadcrumbs,
-  Button,
   Flex,
   Group,
   Skeleton,
@@ -12,17 +9,13 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import {
-  IconAlertTriangle,
-  IconChevronDown,
-  IconSlash,
-} from '@tabler/icons-react';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { type User } from 'next-auth';
 
+import CustomBreadcrumbs from '@/shared/components/breadcrumbs';
 import { StatusBadge, StatusIndicator } from '@/shared/components/status';
 import {
   Review,
@@ -30,13 +23,16 @@ import {
   TreatmentPlan,
   TreatmentPlanStatus,
 } from '@/shared/models';
-import styles from './header.module.css';
-import RequestReviewModal from './request-review-modal';
-import ReviewModal from './review-modal';
-import { getLatestActorAndDate } from './utils';
+import styles from '@/shared/reviewable/header.module.css';
+import ReviewModal from '@/shared/reviewable/review-modal';
+import ReviewRequestModal from '@/shared/reviewable/review-request-modal';
+import {
+  canSupervisorReview,
+  getLatestActorAndDate,
+} from '@/shared/reviewable/utils';
 
 interface TreatmentPlanHeaderProps {
-  id: string;
+  treatmentPlanId: string;
   queryOptions: UseQueryOptions<TreatmentPlan, Error, TreatmentPlan, string[]>;
   user: User;
 }
@@ -49,15 +45,8 @@ export default function TreatmentPlanHeader(props: TreatmentPlanHeaderProps) {
   );
 }
 
-interface TreatmentPlanHeaderContentProps {
-  id: string;
-  queryOptions: UseQueryOptions<TreatmentPlan, Error, TreatmentPlan, string[]>;
-  user: User;
-}
-
-function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
-  const { id, queryOptions } = props;
-  const [opened, { open, close }] = useDisclosure(false);
+function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderProps) {
+  const { treatmentPlanId, queryOptions } = props;
 
   const { data, isLoading } = useQuery({
     ...queryOptions,
@@ -94,65 +83,19 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
       title: `${data.patient.name}`,
       href: `/patients/${data.patient.id}/procedures`,
     },
-    { title: `Plano #${id}` },
+    { title: `Plano #${treatmentPlanId}` },
   ];
-
-  const breadcrumbsItems = breadcrumbsData.map((item, index) => {
-    const isLast = index === breadcrumbsData.length - 1;
-
-    if (isLast) {
-      return (
-        <Text size="sm" c="blue" fw={500} key={index}>
-          {item.title}
-        </Text>
-      );
-    }
-
-    return (
-      <Anchor
-        size="sm"
-        underline="hover"
-        href={item.href}
-        key={index}
-        c="gray.9"
-      >
-        {item.title}
-      </Anchor>
-    );
-  });
-
-  function canSupervisorReview(
-    user: User,
-    status: TreatmentPlanStatus,
-    reviewers: Supervisor[],
-    reviews: Review[],
-  ): boolean {
-    if (user.role !== 'SUPERVISOR') {
-      throw new Error(
-        'This function can only be used when supervisor is logged in.',
-      );
-    }
-
-    const isInReview = status === 'IN_REVIEW';
-    const isReviewRequested = !!reviewers.find((r) => r.id === user.id);
-
-    const supervisorReview = reviews.find((r) => r.supervisor.id === user.id);
-    const isReviewPeding = supervisorReview?.reviewStatus === 'PENDING';
-
-    return isInReview && isReviewRequested && isReviewPeding;
-  }
 
   return (
     <Stack gap="sm">
-      <Breadcrumbs separatorMargin="2" separator={<IconSlash size={16} />}>
-        {breadcrumbsItems}
-      </Breadcrumbs>
+      <CustomBreadcrumbs data={breadcrumbsData} />
 
       <Group justify="space-between">
         <Stack gap={8}>
           <Group gap="xs" justify="start" align="center">
             <Title c="gray.9" className={styles.title}>
-              Plano de Tratamento <span className={styles.span}>#{id}</span>
+              Plano de Tratamento{' '}
+              <span className={styles.span}>#{treatmentPlanId}</span>
             </Title>
             <StatusIndicator
               className={styles.indicator}
@@ -179,62 +122,59 @@ function TreatmentPlanHeaderContent(props: TreatmentPlanHeaderContentProps) {
             </Text>
           </Group>
         </Stack>
-        {props.user.role === 'STUDENT' ? (
-          <Flex align="center" gap={8}>
-            {data.reviewers.length === 0 && (
-              <Tooltip
-                label="Escolha o(s) supervisor(es)"
-                color="red"
-                position="left"
-                withArrow
-                arrowSize={6}
-              >
-                <IconAlertTriangle color="red" size={20} />
-              </Tooltip>
-            )}
-            <Button
-              fw={500}
-              rightSection={<IconChevronDown />}
-              className={styles.button}
-              onClick={open}
-              disabled={data.status !== 'DRAFT' || data.reviewers.length === 0}
-            >
-              Enviar para validação
-            </Button>
-            <RequestReviewModal
-              treatmentPlanId={id}
-              close={close}
-              open={open}
-              opened={opened}
-            />
-          </Flex>
-        ) : (
-          <Flex align="center" gap={8}>
-            <Button
-              fw={500}
-              rightSection={<IconChevronDown />}
-              className={styles.button}
-              onClick={open}
-              disabled={
-                !canSupervisorReview(
-                  props.user,
-                  data.status,
-                  data.reviewers,
-                  data.reviews,
-                )
-              }
-            >
-              Validar
-            </Button>
-            <ReviewModal
-              treatmentPlanId={id}
-              close={close}
-              open={open}
-              opened={opened}
-            />
-          </Flex>
-        )}
+        <Flex align="center" gap={8}>
+          <HeaderActionSection
+            {...props}
+            status={data.status}
+            reviewers={data.reviewers}
+            reviews={data.reviews}
+          />
+        </Flex>
       </Group>
     </Stack>
+  );
+}
+
+interface HeaderActionSection extends TreatmentPlanHeaderProps {
+  status: TreatmentPlanStatus;
+  reviewers: Supervisor[];
+  reviews: Review[];
+}
+
+function HeaderActionSection(props: HeaderActionSection) {
+  const { user, queryOptions, treatmentPlanId, status, reviewers, reviews } =
+    props;
+
+  if (user.role === 'STUDENT') {
+    return (
+      <>
+        {reviewers.length === 0 && (
+          <Tooltip
+            label="Escolha o(s) supervisor(es)"
+            color="red"
+            position="left"
+            withArrow
+            arrowSize={6}
+          >
+            <IconAlertTriangle color="red" size={20} />
+          </Tooltip>
+        )}
+        <ReviewRequestModal
+          reviewableId={treatmentPlanId}
+          queryOptions={queryOptions}
+          disabled={status !== 'DRAFT' || reviewers.length === 0}
+          className={styles.button}
+        />
+      </>
+    );
+  }
+
+  return (
+    <ReviewModal
+      reviewableId={treatmentPlanId}
+      className={styles.button}
+      queryOptions={queryOptions}
+      disabled={!canSupervisorReview(user, status, reviewers, reviews)}
+    />
   );
 }

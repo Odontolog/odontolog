@@ -8,10 +8,10 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Student extends User {
-  int clinicNumber;
+  Integer clinicNumber;
   String enrollmentCode;
-  int enrollmentYear;
-  int enrollmentSemester;
+  Integer enrollmentYear;
+  Integer enrollmentSemester;
 }
