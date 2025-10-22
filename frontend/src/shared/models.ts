@@ -109,6 +109,10 @@ export type TreatmentPlanShort = {
 
 export type ReviewableShort = TreatmentPlanShort | ProcedureShort;
 
+export type HasNotes = {
+  notes: string;
+};
+
 export type Reviewable = {
   id: string;
   author: User;
@@ -155,3 +159,29 @@ export type Procedure = Reviewable & {
 };
 
 export type Mode = 'edit' | 'read';
+
+export type PatientCondition = {
+  id: string;
+  condition: string;
+  notes: string;
+  category: string;
+  hasCondition: boolean;
+};
+
+export type AnamneseActivityType = 'EDIT_NOTES' | 'EDIT_CONDITIONS';
+
+export type AnamneseActivity = {
+  id: number;
+  type: AnamneseActivityType;
+  actor: User;
+  description: string;
+  metadata?: Record<string, unknown>;
+  createdAt: Date;
+};
+
+export type Anamnese = {
+  patientId: string;
+  notes: string;
+  history: AnamneseActivity[];
+  conditions: PatientCondition[];
+};

@@ -1,0 +1,8 @@
+.container {
+  overflow-y: hidden;
+  flex: 1;
+}
+
+.side {
+  flex-basis: 25%;
+}
