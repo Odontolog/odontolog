@@ -27,12 +27,17 @@ export async function createPatientRecord(
   patient: PatientRecordForm,
 ): Promise<Patient> {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  const newPatient: Patient = {
-    ...patient,
-    id: '6',
-  };
+  console.log('creating a new patient record, ', patient);
 
-  console.log('creating a new patient record, ', newPatient);
+  return patient as Patient;
+}
 
-  return newPatient;
+export async function editPatientRecord(
+  patient: PatientRecordForm,
+): Promise<Patient> {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  console.log('editing a patient record, ', patient);
+
+  return patient as Patient;
 }

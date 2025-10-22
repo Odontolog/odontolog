@@ -1,4 +1,5 @@
 export type PatientRecordForm = {
+  id?: string;
   name: string;
   birthDate: Date;
   phoneNumber: string;

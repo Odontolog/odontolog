@@ -20,11 +20,12 @@ import { ethnicity, maritalStatus, sex } from '@/shared/data';
 import { Patient } from '@/shared/models';
 import { PatientRecordForm } from './models';
 import { notifications } from '@mantine/notifications';
-import { createPatientRecord } from './requests';
+import { createPatientRecord, editPatientRecord } from './requests';
 
 interface recordModalProps {
   opened: boolean;
   onClose: () => void;
+  patient?: Patient;
 }
 
 function parseDateDDMMYYYY(input: string): Date {
@@ -32,7 +33,11 @@ function parseDateDDMMYYYY(input: string): Date {
   return new Date(year, month - 1, day);
 }
 
-export default function RecordModal({ opened, onClose }: recordModalProps) {
+export default function RecordModal({
+  opened,
+  onClose,
+  patient,
+}: recordModalProps) {
   return (
     <Modal.Root opened={opened} onClose={onClose} size="xl">
       <Modal.Overlay />
@@ -40,45 +45,103 @@ export default function RecordModal({ opened, onClose }: recordModalProps) {
         <Modal.Header>
           <Stack gap="0" style={{ flex: 1 }}>
             <Group>
-              <Modal.Title fw="600">Criação de prontuário</Modal.Title>
+              <Modal.Title fw="600">
+                {patient === undefined ? 'Criação' : 'Edição'} de prontuário
+              </Modal.Title>
               <Modal.CloseButton />
             </Group>
-            <Text size="sm" c="dimmed">
-              Para criar um novo prontuário, insira os dados pessoais do
-              paciente.
-            </Text>
+            {patient === undefined ? (
+              <Text size="sm" c="dimmed">
+                Para criar um novo prontuário, insira os dados pessoais do
+                paciente.
+              </Text>
+            ) : (
+              <Text size="sm" c="dimmed">
+                Adicione as novas informações do paciente.
+              </Text>
+            )}
           </Stack>
         </Modal.Header>
 
         <Modal.Body>
-          <RecordForm onClose={onClose} />
+          <RecordForm onClose={onClose} patient={patient} />
         </Modal.Body>
       </Modal.Content>
     </Modal.Root>
   );
 }
 
-function RecordForm({ onClose }: { onClose: () => void }) {
+function RecordForm({
+  onClose,
+  patient,
+}: {
+  onClose: () => void;
+  patient?: Patient;
+}) {
   const router = useRouter();
+
+  const initialValues = {
+    name: '',
+    birthDate: new Date(),
+    phoneNumber: '',
+    cpf: '',
+    rg: '',
+    ssp: '',
+    maritalStatus: '',
+    sex: '',
+    ethnicity: '',
+    address: '',
+    city: '',
+    state: '',
+    occupation: '',
+  };
+
+  let mutationFn = createPatientRecord;
+
+  if (patient !== undefined) {
+    initialValues.name = patient.name;
+    initialValues.birthDate = patient.birthDate;
+    initialValues.phoneNumber = patient.phoneNumber;
+    initialValues.cpf = patient.cpf;
+    initialValues.rg = patient.rg;
+    initialValues.ssp = patient.ssp;
+    initialValues.maritalStatus = patient.maritalStatus;
+    initialValues.sex = patient.sex;
+    initialValues.ethnicity = patient.ethnicity;
+    initialValues.address = patient.address;
+    initialValues.city = patient.city;
+    initialValues.state = patient.state;
+    initialValues.occupation = patient.occupation;
+
+    mutationFn = editPatientRecord;
+  }
+
+  const mutation = useMutation({
+    mutationFn: (patient: PatientRecordForm) => mutationFn(patient),
+    onSuccess: (patient: Patient) => {
+      form.reset();
+      onClose();
+      notifications.show({
+        title: 'Prontuário criado',
+        message: `Prontuário de ${patient.name} criado com sucesso.`,
+        color: 'green',
+        autoClose: 5000,
+      });
+      router.push(`/patients/${patient.id}`);
+    },
+    onError: () => {
+      onClose();
+      notifications.show({
+        message: 'Erro ao criar prontuário',
+        color: 'red',
+        autoClose: 5000,
+      });
+    },
+  });
 
   const form = useForm({
     mode: 'uncontrolled',
-    initialValues: {
-      name: '',
-      birthDate: new Date(),
-      phoneNumber: '',
-      cpf: '',
-      rg: '',
-      ssp: '',
-      maritalStatus: '',
-      sex: '',
-      ethnicity: '',
-      address: '',
-      city: '',
-      state: '',
-      occupation: '',
-    },
-
+    initialValues,
     validate: {
       phoneNumber: (v: string) =>
         /^\(\d{2}\)\s\d{4,5}-\d{4}$/.test(v) ? null : 'Telefone inválido',
@@ -108,33 +171,17 @@ function RecordForm({ onClose }: { onClose: () => void }) {
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: (patient: PatientRecordForm) => createPatientRecord(patient),
-    onSuccess: (patient: Patient) => {
-      form.reset();
-      onClose();
-      notifications.show({
-        title: 'Prontuário criado',
-        message: `Prontuário de ${patient.name} criado com sucesso.`,
-        color: 'green',
-        autoClose: 5000,
-      });
-      router.push(`/patients/${patient.id}`);
-    },
-    onError: () => {
-      onClose();
-      notifications.show({
-        message: 'Erro ao criar prontuário',
-        color: 'red',
-        autoClose: 5000,
-      });
-    },
-  });
+  function handleSubmit(values: PatientRecordForm) {
+    if (patient) {
+      values.id = patient.id;
+    }
+    mutation.mutate(values);
+  }
 
   return (
     <form
       onSubmit={form.onSubmit((values) =>
-        mutation.mutate(values as PatientRecordForm),
+        handleSubmit(values as PatientRecordForm),
       )}
     >
       <Stack gap={0}>
