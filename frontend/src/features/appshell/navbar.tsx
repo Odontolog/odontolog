@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 
 import styles from './navbar.module.css';
 import SearchTrigger from './search-trigger';
-import RecordModal from '../patient/recordModal';
+import RecordModal from '../patient/record-modal';
 import { useState } from 'react';
 
 export default function Navbar() {

@@ -29,7 +29,7 @@ import { useState } from 'react';
 
 import classes from './navbar-mobile.module.css';
 import SearchTrigger from './search-trigger';
-import RecordModal from '../patient/recordModal';
+import RecordModal from '../patient/record-modal';
 
 export default function NavbarMobile() {
   const [opened, { open, close }] = useDisclosure(false);

@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { getAllPatients } from './requests';
-import RecordModal from '../patient/recordModal';
+import RecordModal from '../patient/record-modal';
 
 export default function SearchProvider({
   children,
