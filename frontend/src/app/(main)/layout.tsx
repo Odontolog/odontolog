@@ -3,6 +3,7 @@ import { Flex, ScrollArea } from '@mantine/core';
 import Navbar from '@/features/appshell/navbar';
 import { Sidebar } from '@/features/appshell/sidebar';
 import NavbarMobile from '@/features/appshell/navbar-mobile';
+import SearchProvider from '@/features/appshell/search-provider';
 
 export default function RootLayout({
   children,
@@ -10,7 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <SearchProvider>
       {/* Versão Desktop */}
       <Flex direction="row" visibleFrom="md" h="100vh">
         <Sidebar />
@@ -59,6 +60,6 @@ export default function RootLayout({
           <ScrollArea style={{ flex: 1, minHeight: 0 }}>{children}</ScrollArea>
         </div>
       </Flex>
-    </>
+    </SearchProvider>
   );
 }
