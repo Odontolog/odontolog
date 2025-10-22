@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.controllers;
 
+import br.ufal.ic.odontolog.api.PreProcedureApi;
 import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.services.PreProcedureService;
 import jakarta.validation.Valid;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-public class PreProcedureController {
+public class PreProcedureController implements PreProcedureApi {
 
   private final PreProcedureService preProcedureService;
 

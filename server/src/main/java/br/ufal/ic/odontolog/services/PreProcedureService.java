@@ -13,6 +13,7 @@ import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.PreProcedureRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class PreProcedureService {
             .name(dto.getName())
             .patient(patient)
             .author(currentUser)
+            .performedAt(Instant.now())
             .type(ReviewableType.PROCEDURE)
             .status(ProcedureStatus.IN_PROGRESS)
             .build();
