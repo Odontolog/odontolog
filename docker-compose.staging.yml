@@ -71,8 +71,8 @@ services:
     image: nginx:1.29-alpine
     volumes:
       - ./nginx/staging.conf:/etc/nginx/conf.d/default.conf
-      - /etc/letsencrypt/live/staging.odontolog.tech:/etc/letsencrypt/live/odontolog.tech:ro
-      - /etc/letsencrypt/archive/staging.odontolog.tech:/etc/letsencrypt/archive/odontolog.tech:ro
+      - /etc/letsencrypt/live/staging.odontolog.tech:/etc/letsencrypt/live/staging.odontolog.tech:ro
+      - /etc/letsencrypt/archive/staging.odontolog.tech:/etc/letsencrypt/archive/staging.odontolog.tech:ro
     ports:
       - "80:80"
       - "443:443"
