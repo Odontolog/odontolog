@@ -15,6 +15,22 @@ export default function AttachmentsModal({
   if (!attachment) {
     return null;
   }
+  async function handleDownload(att: Attachments) {
+    try {
+      const response = await fetch(att.location);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = att.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      throw new Error('Falha ao baixar o arquivo.');
+    }
+  }
 
   const isImage = attachment.filename.match(
     /\.(jpg|jpeg|png|gif|webp|svg|pdf)$/i,
@@ -31,7 +47,7 @@ export default function AttachmentsModal({
           <Stack gap="md">
             {isImage ? (
               <Image
-                src={`/api/attachments/${attachment.id}`}
+                src={attachment.location}
                 alt={attachment.filename}
                 fit="contain"
                 mah={400}
@@ -50,10 +66,10 @@ export default function AttachmentsModal({
 
             <Group justify="flex-end" mt="sm">
               <Button
-                component="a"
-                href={`/api/attachments/${attachment.id}/download`}
-                download={attachment.filename}
                 variant="outline"
+                onClick={() => {
+                  void handleDownload(attachment);
+                }}
               >
                 Download
               </Button>
