@@ -2,34 +2,43 @@ package br.ufal.ic.odontolog.services;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import br.ufal.ic.odontolog.config.S3Properties;
 import br.ufal.ic.odontolog.dtos.AppointmentDTO;
 import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
+import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
+import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
+import io.awspring.cloud.s3.S3Template;
+import lombok.RequiredArgsConstructor;
+
+import java.net.URL;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@RequiredArgsConstructor
 public class PatientService {
 
   private final PatientRepository patientRepository;
   private final PatientMapper patientMapper;
-
-  public PatientService(PatientRepository patientRepository, PatientMapper patientMapper) {
-    this.patientRepository = patientRepository;
-    this.patientMapper = patientMapper;
-  }
+  private final S3Template s3Template;
+  private final S3Properties s3Properties;
 
   public List<PatientDTO> getPatients() {
     List<Patient> patients = patientRepository.findAll();
@@ -97,5 +106,25 @@ public class PatientService {
     newAppointmentDTO.setAppointmentDate(patient.getAppointmentDate());
 
     return newAppointmentDTO;
+  }
+
+  public UploadAttachmentInitResponseDTO initUploadAttachment(Long patientId) {
+    Patient patient = patientRepository
+        .findById(patientId)
+        .orElseThrow(() -> new UnprocessableRequestException("Patient not found"));
+
+    String attachmentId = UUID.randomUUID().toString();
+
+    String key = String.format("patients/%d/attachments/%s", patient.getId(), attachmentId);
+    String privateBucket = s3Properties.getBuckets().getPrivateBucket();
+    Duration timeout = s3Properties.getSignedUrlTimeout();
+
+    URL s3Url = s3Template.createSignedPutURL(privateBucket, key, timeout);
+
+    var dto = new UploadAttachmentInitResponseDTO();
+    dto.setAttachmentId(attachmentId);
+    dto.setUploadUrl(s3Url);
+
+    return dto;
   }
 }

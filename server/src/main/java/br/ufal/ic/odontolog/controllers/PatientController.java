@@ -3,6 +3,7 @@ package br.ufal.ic.odontolog.controllers;
 import br.ufal.ic.odontolog.dtos.AppointmentDTO;
 import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
+import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.services.PatientService;
 import jakarta.validation.Valid;
@@ -51,5 +52,11 @@ public class PatientController {
 
     var nextAppointmentDTO = patientService.updateNextAppointment(id, appointmentDTO);
     return ResponseEntity.ok(nextAppointmentDTO);
+  }
+
+  @PostMapping("/{id}/attachments/init-upload")
+  public ResponseEntity<UploadAttachmentInitResponseDTO> initUploadAttachment(@PathVariable Long id) {
+    var response = patientService.initUploadAttachment(id);
+    return ResponseEntity.ok().body(response);
   }
 }
