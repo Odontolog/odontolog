@@ -20,17 +20,17 @@ import {
 } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { getNextConsultationDate, saveNextConsultation } from '../requests';
+import { getNextAppointmentOptions, saveNextAppointment } from '../requests';
 
 const MENU_WIDTH = 260;
 
-interface NextConsultationMenuProps {
+interface NextAppointmentMenuProps {
   patientId: string;
   queryOptions: UseQueryOptions<Error, Date>;
   onSave?: (date: Date) => void;
 }
 
-export default function NextConsultationMenu(props: NextConsultationMenuProps) {
+export default function NextAppointmentMenu(props: NextAppointmentMenuProps) {
   const [menuOpened, setMenuOpened] = useState<boolean>(false);
   return (
     <Menu
@@ -46,37 +46,37 @@ export default function NextConsultationMenu(props: NextConsultationMenuProps) {
         </ActionIcon>
       </Menu.Target>
       <Menu.Dropdown>
-        <NextConsultationMenuContent {...props} setMenuOpened={setMenuOpened} />
+        <NextAppointmentMenuContent {...props} setMenuOpened={setMenuOpened} />
       </Menu.Dropdown>
     </Menu>
   );
 }
 
-interface NextConsultationMenuContentProps extends NextConsultationMenuProps {
+interface NextAppointmentMenuContentProps extends NextAppointmentMenuProps {
   setMenuOpened: (value: boolean) => void;
 }
 
-function NextConsultationMenuContent({
+function NextAppointmentMenuContent({
   patientId,
   queryOptions,
   setMenuOpened,
   onSave,
-}: NextConsultationMenuContentProps) {
+}: NextAppointmentMenuContentProps) {
   const [date, setDate] = useState<Date>();
   const queryClient = useQueryClient();
 
   const {
-    data: nextConsultation,
+    data: nextAppointment,
     isLoading,
     isError,
   } = useQuery({
     queryKey: queryOptions.queryKey,
-    queryFn: () => getNextConsultationDate(patientId),
+    queryFn: () => getNextAppointmentOptions(patientId),
   });
 
   const mutation = useMutation({
-    mutationFn: (nextConsultation: Date | undefined) =>
-      saveNextConsultation(nextConsultation, patientId),
+    mutationFn: (nextAppointment: Date | undefined) =>
+      saveNextAppointment(nextAppointment, patientId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       setMenuOpened(false);
@@ -118,7 +118,7 @@ function NextConsultationMenuContent({
     );
   }
 
-  if (!nextConsultation) {
+  if (!nextAppointment) {
     return null;
   }
 

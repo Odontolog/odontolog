@@ -4,6 +4,7 @@ import { queryOptions } from '@tanstack/react-query';
 import { Procedure, ProcedureShort } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 import { mapToProcedureShort, ProcedureShortDto } from './mappers';
+import { Appointment } from './models';
 
 export function getPatientProcedureOptions(patientId: string) {
   return queryOptions({
@@ -95,29 +96,56 @@ export async function createPreprocedure(
   return data.id;
 }
 
-export function getNextConsultationDate(patientId: string) {
+export function getNextAppointmentOptions(patientId: string) {
   return queryOptions({
-    queryKey: ['nextConsultationDate', patientId],
-    queryFn: () => getNextConsultation(patientId),
+    queryKey: ['nextAppointmentDate', patientId],
+    queryFn: () => getNextAppointment(patientId),
   });
 }
 
-export async function getNextConsultation(patientId: string) {
-  console.log(
-    `Fetching data for patient's id ${patientId} next consultation date.`,
+export async function getNextAppointment(patientId: string): Promise<string> {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/next-appointment`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
   );
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return { success: true };
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro ao pegar os dados da próxima consulta.`,
+    );
+  }
+
+  const data = (await res.json()) as Appointment;
+  return data.appointmentDate;
 }
 
-export async function saveNextConsultation(
+export async function saveNextAppointment(
   date: Date | undefined,
   patientId: string,
 ) {
-  console.log(JSON.stringify({ date }));
-  console.log(
-    `Next consultation on date ${date ? date.toISOString() : 'undefined'} saved for patient ${patientId}`,
+  const token = getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/next-appointment`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ appointmentDate: date }),
+    },
   );
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return { success: true };
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro ao salvar a data da próxima consulta.`,
+    );
+  }
 }
