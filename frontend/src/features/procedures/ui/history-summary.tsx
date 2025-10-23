@@ -47,7 +47,7 @@ export default function HistorySummary({
           ) : (
             <Text fw={600}>
               {nextAppointment
-                ? new Date(nextAppointment).toLocaleDateString('pt-BR')
+                ?nextAppointment.toLocaleDateString('pt-BR')
                 : 'Não agendada'}
             </Text>
           )}

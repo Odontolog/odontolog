@@ -103,7 +103,7 @@ export function getNextAppointmentOptions(patientId: string) {
   });
 }
 
-export async function getNextAppointment(patientId: string): Promise<string> {
+export async function getNextAppointment(patientId: string): Promise<Date> {
   const token = await getAuthToken();
 
   const res = await fetch(
@@ -122,7 +122,7 @@ export async function getNextAppointment(patientId: string): Promise<string> {
   }
 
   const data = (await res.json()) as Appointment;
-  return data.appointmentDate;
+  return new Date(`${data.appointmentDate}T00:00:00`);
 }
 
 export async function saveNextAppointment(
