@@ -132,7 +132,7 @@ function AttSectionContent({
         id: crypto.randomUUID(),
         createdAt: new Date(),
         filename: file.name,
-        location: file.path,
+        location: file.path ?? file.name,
         type: file.type,
         size: file.size,
         uploader: user,
