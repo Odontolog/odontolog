@@ -22,18 +22,20 @@ import {
   IconClipboardHeart,
   IconDental,
   IconEdit,
-  IconGenderAgender,
-  IconGenderFemale,
-  IconGenderMale,
   IconMapPin,
-  // IconMicroscope,
-  // IconReportSearch,
-  // IconSettings2,
+  IconMicroscope,
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { JSX } from 'react';
+import { useState } from 'react';
 
 import { Patient } from '@/shared/models';
+import {
+  formatPhoneNumber,
+  getEthnicityDisplay,
+  getGenderDisplay,
+  getMaritalStatusDisplay,
+} from '../mappers';
+import RecordModal from '../record-modal';
 import classes from './header.module.css';
 
 const tabs = [
@@ -47,11 +49,11 @@ const tabs = [
     icon: <IconClipboardHeart size={14} />,
     label: 'Anamnese',
   },
-  // {
-  //   value: 'preprocedures',
-  //   icon: <IconMicroscope size={14} />,
-  //   label: 'Pré-Procedimentos',
-  // },
+  {
+    value: 'preprocedures',
+    icon: <IconMicroscope size={14} />,
+    label: 'Pré-Procedimentos',
+  },
   {
     value: 'treatments',
     icon: <IconCheckupList size={14} />,
@@ -74,6 +76,7 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
   const pathname = usePathname();
   const activeSubpage =
     pathname.split('/').filter(Boolean).pop() ?? 'procedure';
+  const [opened, setOpen] = useState<boolean>(false);
 
   return (
     <>
@@ -82,7 +85,7 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
         <Stack pt="xs" m="md">
           <Group justify="space-between">
             <LeftContent patient={patient} />
-            <RightContent patient={patient} />
+            <RightContent patient={patient} onEdit={() => setOpen(true)} />
           </Group>
         </Stack>
         <Tabs
@@ -112,37 +115,21 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
 
       {/* Versão Mobile */}
       <Box hiddenFrom="md">
-        <PatientHeaderMobile patient={patient} />
+        <PatientHeaderMobile patient={patient} onEdit={() => setOpen(true)} />
       </Box>
+
+      <RecordModal
+        opened={opened}
+        onClose={() => setOpen(false)}
+        patient={patient}
+      />
     </>
   );
 }
 
-const genderMap: Record<string, { icon: JSX.Element; label: string }> = {
-  MALE: { icon: <IconGenderMale size={16} />, label: 'Masculino' },
-  FEMALE: { icon: <IconGenderFemale size={16} />, label: 'Feminino' },
-  OTHER: { icon: <IconGenderAgender size={16} />, label: 'Outro' },
-};
-
-const ethnicityMap: Record<string, string> = {
-  WHITE: 'Branca',
-  BLACK: 'Preta',
-  BROWN: 'Parda',
-  YELLOW: 'Amarela',
-  INDIGENOUS: 'Indígena',
-  OTHER: 'Outra',
-};
-
-const maritalStatusMap: Record<string, string> = {
-  SINGLE: 'Solteiro',
-  MARRIED: 'Casado',
-  DIVORCED: 'Divorciado',
-  WIDOWED: 'Viúvo',
-  CIVIL_UNION: 'União Estável',
-  OTHER: 'Outra',
-};
-
 function LeftContent({ patient }: { patient: Patient }) {
+  const genderDisplay = getGenderDisplay(patient.sex);
+
   return (
     <Group>
       <Avatar
@@ -160,8 +147,8 @@ function LeftContent({ patient }: { patient: Patient }) {
             <Text>{patient.birthDate.toLocaleDateString('pt-BR')}</Text>
           </Group>
           <Group gap={4}>
-            {genderMap[patient.sex].icon}
-            <Text>{genderMap[patient.sex].label}</Text>
+            {genderDisplay.icon}
+            <Text>{genderDisplay.label}</Text>
           </Group>
         </Group>
         <Group gap={4}>
@@ -173,7 +160,13 @@ function LeftContent({ patient }: { patient: Patient }) {
   );
 }
 
-function RightContent({ patient }: { patient: Patient }) {
+function RightContent({
+  patient,
+  onEdit,
+}: {
+  patient: Patient;
+  onEdit: () => void;
+}) {
   return (
     <Group align="start" gap={32}>
       <SimpleGrid cols={2} spacing="xs">
@@ -181,14 +174,13 @@ function RightContent({ patient }: { patient: Patient }) {
           <b>CPF:</b> {patient.cpf}
         </Text>
         <Text>
-          <b>Telefone:</b>{' '}
-          {patient.phoneNumber.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')}
+          <b>Telefone:</b> {formatPhoneNumber(patient.phoneNumber)}
         </Text>
         <Text>
           <b>Cidade:</b> {patient.city}
         </Text>
         <Text>
-          <b>Cor:</b> {ethnicityMap[patient.ethnicity]}
+          <b>Cor:</b> {getEthnicityDisplay(patient.ethnicity)}
         </Text>
 
         <Text>
@@ -201,13 +193,13 @@ function RightContent({ patient }: { patient: Patient }) {
           <b>Estado:</b> {patient.state}
         </Text>
         <Text>
-          <b>Estado Cívil:</b> {maritalStatusMap[patient.maritalStatus]}
+          <b>Estado Cívil:</b> {getMaritalStatusDisplay(patient.maritalStatus)}
         </Text>
       </SimpleGrid>
 
       <ActionIcon
         aria-label="Editar paciente"
-        onClick={() => console.log('Editar infos do paciente em um prontuário')}
+        onClick={onEdit}
         variant="subtle"
       >
         <IconEdit size={24} />
@@ -227,12 +219,20 @@ function DetailItem({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function PatientHeaderMobile({ patient }: { patient: Patient }) {
+export function PatientHeaderMobile({
+  patient,
+  onEdit,
+}: {
+  patient: Patient;
+  onEdit: () => void;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const activeSubpage =
     pathname.split('/').filter(Boolean).pop() ?? 'procedure';
   const [detailsOpened, { toggle: toggleDetails }] = useDisclosure(false);
+
+  const genderDisplay = getGenderDisplay(patient.sex);
 
   return (
     <Paper>
@@ -250,14 +250,12 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
               <Title order={2}>{patient.name}</Title>
               <Text size="sm" c="dimmed">
                 {patient.birthDate.toLocaleDateString('pt-BR')} •{' '}
-                {genderMap[patient.sex].label}
+                {genderDisplay.label}
               </Text>
             </Stack>
           </Group>
           <ActionIcon
-            onClick={() =>
-              console.log('Editar infos do paciente em um prontuário')
-            }
+            onClick={onEdit}
             variant="default"
             aria-label="Editar paciente"
           >
@@ -288,18 +286,18 @@ export function PatientHeaderMobile({ patient }: { patient: Patient }) {
             <DetailItem label="RG" value={`${patient.rg} ${patient.ssp}`} />
             <DetailItem
               label="Contato"
-              value={patient.phoneNumber.replace(
-                /^(\d{2})(\d{5})(\d{4})$/,
-                '($1) $2-$3',
-              )}
+              value={formatPhoneNumber(patient.phoneNumber)}
             />
             <DetailItem label="Profissão" value={patient.occupation} />
             <DetailItem label="Cidade" value={patient.city} />
             <DetailItem label="Estado" value={patient.state} />
-            <DetailItem label="Cor" value={ethnicityMap[patient.ethnicity]} />
+            <DetailItem
+              label="Cor"
+              value={getEthnicityDisplay(patient.ethnicity)}
+            />
             <DetailItem
               label="Estado Civil"
-              value={maritalStatusMap[patient.maritalStatus]}
+              value={getMaritalStatusDisplay(patient.maritalStatus)}
             />
           </SimpleGrid>
         </Collapse>

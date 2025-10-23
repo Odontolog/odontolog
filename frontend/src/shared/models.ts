@@ -1,6 +1,6 @@
 export type PatientShort = {
   id: string;
-  avatarUrl: string;
+  avatarUrl?: string;
   name: string;
 };
 

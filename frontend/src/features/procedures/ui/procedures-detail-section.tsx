@@ -23,9 +23,9 @@ import { useSearchParams } from 'next/navigation';
 
 import CardInfo from '@/shared/components/card-info';
 import { StatusBadge } from '@/shared/components/status';
-import { getProcedureOptions } from '../procedure/requests';
-import DetailSection from '../procedure/ui/detail-section';
-import AttachmentsSection from '../procedure/ui/attachements/atts-section';
+import { getProcedureOptions } from '@/features/procedure/requests';
+import AttachmentsSection from '@/features/procedure/ui/attachements/atts-section';
+import DetailSection from '@/features/procedure/ui/detail-section';
 
 export default function ProcedureDetailSection({
   scrollAreaHeight,

@@ -5,10 +5,13 @@ import { IconPlus } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 
 import styles from './navbar.module.css';
-import Search from './search';
+import SearchTrigger from './search-trigger';
+import RecordModal from '../patient/record-modal';
+import { useState } from 'react';
 
 export default function Navbar() {
   const { data } = useSession();
+  const [opened, setOpen] = useState<boolean>(false);
 
   const user = data?.user;
 
@@ -16,16 +19,17 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <Group justify="space-between" h="100%">
         <div className={styles.search}>
-          <Search />
+          <SearchTrigger variant="desktop" />
         </div>
         <Group>
-          <ActionIcon
-            variant="default"
-            color="black"
-            onClick={() => console.log('Criar novo prontuário')}
-          >
-            <IconPlus />
-          </ActionIcon>
+          {user?.role !== 'STUDENT' && (
+            <>
+              <ActionIcon variant="default" onClick={() => setOpen(true)}>
+                <IconPlus size={14} />
+              </ActionIcon>
+              <RecordModal opened={opened} onClose={() => setOpen(false)} />
+            </>
+          )}
           <Avatar
             component="a"
             href={`/students/${user?.id}`}
