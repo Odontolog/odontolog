@@ -1,3 +1,7 @@
+import {
+  AnamneseFormValues,
+  ConditionFormValue,
+} from '@/features/anamnese/models';
 import { Anamnese } from '@/shared/models';
 
 export const mockAnamnese: Anamnese = {
@@ -184,4 +188,18 @@ export const mockAnamnese: Anamnese = {
 
 export function updateMockAnamneseNotes(value: string) {
   mockAnamnese.notes = value;
+}
+
+export function updateMockAnamnese(anamnese: AnamneseFormValues) {
+  const incomingConditions = anamnese.conditions;
+  if (!Array.isArray(incomingConditions)) {
+    return;
+  }
+
+  incomingConditions.forEach((cond: ConditionFormValue, idx: number) => {
+    const target = mockAnamnese.conditions[idx];
+
+    target.hasCondition = Boolean(cond.hasCondition);
+    target.notes = cond.notes;
+  });
 }

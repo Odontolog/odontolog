@@ -14,12 +14,20 @@ import {
   ThemeIcon,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import { useState } from 'react';
 
 import PatientConditionCard from '@/features/anamnese/ui/condition-card';
 import { Anamnese, PatientCondition } from '@/shared/models';
+import { AnamneseFormValues } from '../models';
+import { saveAnamnese } from '../requests';
 
 interface AnamneseSectionProps {
   patientId: string;
@@ -37,7 +45,7 @@ export default function AnamneseSection(props: AnamneseSectionProps) {
   } = useQuery({
     ...queryOptions,
     select: (data) => data.conditions,
-    enabled: false,
+    enabled: true,
   });
 
   return (
@@ -92,27 +100,48 @@ interface AnamneseSectionContent extends AnamneseSectionProps {
   setEditing: (value: boolean) => void;
 }
 
-type ConditionFormValue = {
-  notes: string;
-  hasCondition: boolean;
-};
-
-export type AnamneseFormValues = {
-  conditions: ConditionFormValue[];
-};
-
 function AnamneseSectionContent(props: AnamneseSectionContent) {
-  const { conditions, isError, isLoading, editing, setEditing } = props;
+  const {
+    patientId,
+    conditions,
+    isError,
+    isLoading,
+    editing,
+    setEditing,
+    queryOptions,
+  } = props;
 
   const initialConditions: AnamneseFormValues = {
-    conditions:
-      conditions === undefined
-        ? []
-        : conditions.map((condition) => ({
-            notes: condition.notes,
-            hasCondition: condition.hasCondition,
-          })),
+    conditions: [],
   };
+
+  if (conditions) {
+    initialConditions.conditions = conditions.map((condition) => ({
+      notes: condition.notes,
+      hasCondition: condition.hasCondition,
+    }));
+  }
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (anamnese: AnamneseFormValues) =>
+      saveAnamnese(patientId, anamnese),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: queryOptions.queryKey,
+      });
+      setEditing(false);
+    },
+    onError: (error) => {
+      notifications.show({
+        title: 'Não foi possível salvar os dados',
+        message: `Um erro inesperado aconteceu e não foi possível salvar suas alterações . Tente novamente mais tarde. ${error}`,
+        color: 'red',
+        icon: <IconExclamationCircle />,
+        autoClose: 5000,
+      });
+    },
+  });
 
   const form = useForm<AnamneseFormValues>({
     mode: 'uncontrolled',
@@ -143,7 +172,11 @@ function AnamneseSectionContent(props: AnamneseSectionContent) {
   function handleCancel() {
     setEditing(false);
     form.reset();
-    // mutation.reset();
+    mutation.reset();
+  }
+
+  function handleSubmit(values: AnamneseFormValues) {
+    mutation.mutate(values);
   }
 
   const fields = form.getValues().conditions.map((_, index) => (
@@ -158,7 +191,7 @@ function AnamneseSectionContent(props: AnamneseSectionContent) {
   ));
 
   return (
-    <>
+    <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
       <Grid gutter="xs">{fields}</Grid>
       {editing && (
         <Flex
@@ -171,15 +204,12 @@ function AnamneseSectionContent(props: AnamneseSectionContent) {
             <Button variant="default" fw="normal" onClick={handleCancel}>
               Cancelar
             </Button>
-            <Button
-            // onClick={() => mutation.mutate(displayValue)}
-            // loading={mutation.isPending}
-            >
+            <Button type="submit" loading={mutation.isPending}>
               Salvar
             </Button>
           </Group>
         </Flex>
       )}
-    </>
+    </form>
   );
 }

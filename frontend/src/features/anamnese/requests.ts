@@ -1,5 +1,11 @@
-import { mockAnamnese, updateMockAnamneseNotes } from '@/mocks/anamnese';
 import { queryOptions } from '@tanstack/react-query';
+
+import {
+  mockAnamnese,
+  updateMockAnamnese,
+  updateMockAnamneseNotes,
+} from '@/mocks/anamnese';
+import { AnamneseFormValues } from './models';
 
 export function getAnamneseOptions(patientId: string) {
   return queryOptions({
@@ -19,4 +25,13 @@ export async function saveAnamneseNotes(patientId: string, value: string) {
   await new Promise((resolve) => setTimeout(resolve, 300));
   console.log(value);
   updateMockAnamneseNotes(value);
+}
+
+export async function saveAnamnese(
+  patientId: string,
+  anamnese: AnamneseFormValues,
+) {
+  console.log(`Saving notes for patient ${patientId} anamnese.`);
+  await new Promise((resolve) => setTimeout(resolve, 300));
+  updateMockAnamnese(anamnese);
 }
