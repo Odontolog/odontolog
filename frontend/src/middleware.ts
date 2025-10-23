@@ -4,8 +4,8 @@ import { auth } from '@/shared/auth';
 import {
   AUTH_ROUTES,
   DEFAULT_REDIRECT,
-  SUPERVISOR_ROUTES,
   NOT_FOUND,
+  SUPERVISOR_ROUTES,
 } from '@/shared/routes';
 
 export async function middleware(request: NextRequest) {
@@ -13,14 +13,22 @@ export async function middleware(request: NextRequest) {
 
   const isAuthenticated = !!session;
   const isAuthRoute = AUTH_ROUTES.includes(request.nextUrl.pathname);
+  const isChangePasswordPage = request.nextUrl.pathname === '/change-password';
+  const isFirstAccess = session?.user?.firstAccess === true;
 
-  if (!isAuthenticated && !isAuthRoute) {
+  if (
+    !isAuthenticated && !isAuthRoute
+  ) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('next', request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isAuthenticated && isAuthRoute) {
+  if (isAuthenticated && isFirstAccess && !isChangePasswordPage) {
+    return NextResponse.redirect(new URL('/change-password', request.url));
+  }
+
+  if (isAuthenticated && isAuthRoute && !isFirstAccess) {
     return NextResponse.redirect(new URL(DEFAULT_REDIRECT, request.url));
   }
 

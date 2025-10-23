@@ -1,19 +1,21 @@
 'use client';
 
 import {
-    BackgroundImage,
-    Box,
-    Button,
-    Card,
-    Flex,
-    Image,
-    PasswordInput,
-    Stack,
-    Text,
+  BackgroundImage,
+  Box,
+  Button,
+  Card,
+  Flex,
+  Image,
+  PasswordInput,
+  Stack,
+  Text,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconLock } from '@tabler/icons-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 
 import { DEFAULT_REDIRECT } from '@/shared/routes';
 
@@ -26,6 +28,10 @@ export default function ChangePasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get('next') ?? DEFAULT_REDIRECT;
+  const { data: session, update } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const isFirstAccess = session?.user?.firstAccess === true;
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -39,7 +45,7 @@ export default function ChangePasswordForm() {
     },
   });
 
-  function handleChangePassword(credentials: ChangePassword) {
+  async function handleChangePassword(credentials: ChangePassword) {
     if (!credentials.password) {
       form.setErrors({ password: 'Este campo deve ser informado.' });
       return;
@@ -49,11 +55,28 @@ export default function ChangePasswordForm() {
       return;
     }
 
-    // chamada da API
-    console.log(credentials);
-    
+    setIsLoading(true);
 
-    router.push(nextPath);
+    try {
+      // TODO: Implementar chamada da API para trocar senha
+
+      // Se for primeiro acesso, atualizar o status na sessão
+      if (isFirstAccess) {
+        await update({
+          ...session,
+          user: {
+            ...session.user,
+            firstAccess: false,
+          },
+        });
+      }
+
+      router.push(isFirstAccess ? DEFAULT_REDIRECT : nextPath);
+    } catch (error) {
+      form.setErrors({ password: 'Erro ao alterar senha. Tente novamente.' });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -84,7 +107,9 @@ export default function ChangePasswordForm() {
                     alt="Odontolog logo brand"
                   />
                   <Text size="xs" c="dimmed">
-                    Crie uma nova senha segura para sua conta.
+                    {isFirstAccess
+                      ? 'Bem-vindo! Para sua segurança, crie uma nova senha antes de continuar.'
+                      : 'Crie uma nova senha segura para sua conta.'}
                   </Text>
                 </Stack>
               </Card.Section>
@@ -105,8 +130,15 @@ export default function ChangePasswordForm() {
                   key={form.key('confirmPassword')}
                   {...form.getInputProps('confirmPassword')}
                 />
-                <Button fullWidth mt="xl" size="md" radius="md" type="submit">
-                  Criar nova senha
+                <Button
+                  fullWidth
+                  mt="xl"
+                  size="md"
+                  radius="md"
+                  type="submit"
+                  loading={isLoading}
+                >
+                  {isFirstAccess ? 'Confirmar e continuar' : 'Criar nova senha'}
                 </Button>
               </Card.Section>
             </Card>
