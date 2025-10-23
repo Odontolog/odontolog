@@ -1,19 +1,13 @@
-import { getPatientById } from '@/features/patient/requests';
-import { ProcedureDropzone } from '@/features/procedure/ui/attachements/dropzone';
-import { patient } from '@/mocks/treatment-plan';
-import { Attachments } from '@/shared/models';
-import { Modal, Text, Stack, Group, Button } from '@mantine/core';
-import { FileWithPath } from '@mantine/dropzone';
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { useState } from 'react';
-import { saveAttachmentOnPatient } from '../requests';
-import { error } from 'console';
+import { Button, Group, Modal, Stack, Textarea } from '@mantine/core';
+import { type FileWithPath } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import { IconExclamationCircle } from '@tabler/icons-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+
+import { ProcedureDropzone } from '@/features/procedure/ui/attachements/dropzone';
+import { newAttachment } from '../models';
+import { saveAttachmentOnPatient } from '../requests';
 
 interface DocumentUploadModalProps {
   patientId: string;
@@ -22,20 +16,31 @@ interface DocumentUploadModalProps {
 }
 
 export default function DocumentUploadModal({
+  patientId,
   opened,
   onClose,
 }: DocumentUploadModalProps) {
   const [files, setFiles] = useState<FileWithPath[]>([]);
 
+  const handleClosing = () => {
+    onClose();
+    setFiles([]);
+  };
+
   return (
-    <Modal.Root opened={opened} onClose={onClose} size="lg" centered>
+    <Modal.Root opened={opened} onClose={handleClosing} size="lg" centered>
       <Modal.Content>
         <Modal.Header>
           <Modal.Title fw={600}>Upload de arquivos</Modal.Title>
           <Modal.CloseButton />
         </Modal.Header>
         <Modal.Body>
-          <UploadModalContent />
+          <UploadModalContent
+            patientId={patientId}
+            onClose={handleClosing}
+            files={files}
+            onFilesChange={setFiles}
+          />
         </Modal.Body>
       </Modal.Content>
     </Modal.Root>
@@ -44,42 +49,41 @@ export default function DocumentUploadModal({
 
 interface UploadModalContentProps {
   patientId: string;
+  onClose: () => void;
   files: FileWithPath[];
   onFilesChange: (files: FileWithPath[]) => void;
 }
 
 function UploadModalContent({
   patientId,
+  onClose,
   files,
   onFilesChange,
 }: UploadModalContentProps) {
   const queryClient = useQueryClient();
-  const patient = getPatientById(patientId)
+  const [description, setDescription] = useState('');
 
-  const newAtts: Attachments[] = [];
-  if (patientId !== null) {
-    files.forEach((file) => {
-      newAtts.push({
-        id: crypto.randomUUID(),
-        createdAt: new Date(),
-        filename: file.name,
-        location: file.path,
-        type: file.type,
-        size: file.size,
-        uploader: patient
-      });
+  const newAtts: newAttachment[] = [];
+
+  files.forEach((file) => {
+    newAtts.push({
+      file,
+      description,
     });
-  }
+  });
 
-  const UploadMutation = useMutation({
-    mutationFn: (newAtts: Attachments[]) =>
+  const uploadMutation = useMutation({
+    mutationFn: (newAtts: newAttachment[]) =>
       saveAttachmentOnPatient(patientId, newAtts),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['patient', patientId],
+        queryKey: ['newPatientAttachment', patientId],
       });
 
       onFilesChange([]);
+      console.log('New atts e descrição ae ###############################');
+      console.log(newAtts);
+      console.log('#######################################################');
     },
     onError: (error) => {
       notifications.show({
@@ -91,4 +95,30 @@ function UploadModalContent({
       });
     },
   });
+
+  return (
+    <Stack>
+      <ProcedureDropzone
+        files={files}
+        onFilesChange={onFilesChange}
+        multiple={false}
+      />
+      <Textarea
+        rows={3}
+        placeholder="Insira uma descrição para o documento"
+        onChange={(event) => setDescription(event.currentTarget.value)}
+      />
+      <Group justify="flex-end">
+        <Button variant="default" fw="normal" onClick={onClose}>
+          Cancelar
+        </Button>
+        <Button
+          onClick={() => uploadMutation.mutate(newAtts)}
+          loading={uploadMutation.isPending}
+        >
+          Salvar
+        </Button>
+      </Group>
+    </Stack>
+  );
 }

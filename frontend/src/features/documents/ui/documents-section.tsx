@@ -1,8 +1,5 @@
 'use client';
 
-import DocumentPreviewCard from '@/features/documents/ui/document-preview-card';
-import { getPatientDocumentsOptions } from '../requests';
-import { useQuery } from '@tanstack/react-query';
 import {
   Button,
   Card,
@@ -15,9 +12,14 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { Attachments } from '@/shared/models';
-import AttachmentsModal from '@/features/procedure/ui/attachements/att-modal';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+
+import DocumentPreviewCard from '@/features/documents/ui/document-preview-card';
+import AttachmentsModal from '@/features/procedure/ui/attachements/att-modal';
+import { Attachments } from '@/shared/models';
+import { getPatientDocumentsOptions } from '../requests';
+import DocumentUploadModal from './document-upload-modal';
 
 interface DocsSectionProps {
   patientId: string;
@@ -25,13 +27,18 @@ interface DocsSectionProps {
 
 export default function DocsSection({ patientId }: DocsSectionProps) {
   const docs = getPatientDocumentsOptions(patientId);
+  const [modalOpened, setModalOpened] = useState(false);
+
+  function closeModal() {
+    setModalOpened(false);
+  }
 
   const { data, isLoading, isError } = useQuery({
     ...docs,
   });
 
   function handleUpload() {
-    console.log('yay!');
+    setModalOpened(true);
   }
 
   return (
@@ -46,6 +53,12 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
           </Button>
         </Group>
       </Card.Section>
+
+      <DocumentUploadModal
+        patientId={patientId}
+        opened={modalOpened}
+        onClose={closeModal}
+      />
 
       <Divider my="none" />
 

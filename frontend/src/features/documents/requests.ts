@@ -1,6 +1,7 @@
 import { attachments } from '@/mocks/treatment-plan';
 import { Attachments } from '@/shared/models';
 import { queryOptions } from '@tanstack/react-query';
+import { newAttachment } from './models';
 
 export function getPatientDocumentsOptions(patientId: string) {
   return queryOptions({
@@ -16,13 +17,16 @@ async function getPatientDocuments(): Promise<Attachments[]> {
 
 export async function saveAttachmentOnPatient(
   patientId: string,
-  atts: Attachments[],
+  atts: newAttachment[],
 ) {
   console.log('saving the new attachment on the patient: ', patientId);
 
   await new Promise((resolve) => setTimeout(resolve, 600));
 
-  attachments.push(...atts);
+  if (atts === null) {
+    console.log('Banana');
+    return;
+  }
 
   return { success: true };
 }
