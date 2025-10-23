@@ -43,6 +43,7 @@ public class PreProcedureService {
             .name(dto.getName())
             .patient(patient)
             .author(currentUser)
+            .assignee(currentUser)
             .performedAt(Instant.now())
             .type(ReviewableType.PROCEDURE)
             .status(ProcedureStatus.IN_PROGRESS)
