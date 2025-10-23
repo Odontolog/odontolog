@@ -24,7 +24,7 @@ import { useState } from 'react';
 import ProcedureCard from '@/shared/components/procedure-card';
 import { ProcedureShort } from '@/shared/models';
 import { preproceduresValues } from '../../data';
-import { createPreprocedure, getPatientProcedureOptions } from '../../requests';
+import { createPreprocedure, getPatientPreprocedureOptions } from '../../requests';
 
 interface ProcedureHistorySectionProps {
   patientId: string;
@@ -41,9 +41,9 @@ export default function PreprocedureHistorySection({
     string | null
   >(null);
 
-  const procedures = getPatientProcedureOptions(patientId);
+  const preprocedures = getPatientPreprocedureOptions(patientId);
   const { data, isLoading } = useQuery({
-    ...procedures,
+    ...preprocedures,
   });
 
   async function handleConfirm(
