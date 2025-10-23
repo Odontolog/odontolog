@@ -21,17 +21,17 @@ import {
 import { useState } from 'react';
 
 import { getNextAppointmentOptions, saveNextAppointment } from '../requests';
+import { notifications } from '@mantine/notifications';
 
 const MENU_WIDTH = 260;
 
-interface NextAppointmentMenuProps {
+export default function NextAppointmentMenu({
+  patientId,
+}: {
   patientId: string;
-  queryOptions: UseQueryOptions<Error, Date>;
-  onSave?: (date: Date) => void;
-}
-
-export default function NextAppointmentMenu(props: NextAppointmentMenuProps) {
+}) {
   const [menuOpened, setMenuOpened] = useState<boolean>(false);
+
   return (
     <Menu
       withinPortal
@@ -46,43 +46,45 @@ export default function NextAppointmentMenu(props: NextAppointmentMenuProps) {
         </ActionIcon>
       </Menu.Target>
       <Menu.Dropdown>
-        <NextAppointmentMenuContent {...props} setMenuOpened={setMenuOpened} />
+        <NextAppointmentMenuContent
+          patientId={patientId}
+          setMenuOpened={setMenuOpened}
+        />
       </Menu.Dropdown>
     </Menu>
   );
 }
 
-interface NextAppointmentMenuContentProps extends NextAppointmentMenuProps {
+interface NextAppointmentMenuContentProps {
+  patientId: string;
   setMenuOpened: (value: boolean) => void;
 }
 
 function NextAppointmentMenuContent({
   patientId,
-  queryOptions,
   setMenuOpened,
-  onSave,
 }: NextAppointmentMenuContentProps) {
   const [date, setDate] = useState<Date>();
   const queryClient = useQueryClient();
-
-  const {
-    data: nextAppointment,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: queryOptions.queryKey,
-    queryFn: () => getNextAppointmentOptions(patientId),
-  });
+  const options = getNextAppointmentOptions(patientId);
 
   const mutation = useMutation({
     mutationFn: (nextAppointment: Date | undefined) =>
       saveNextAppointment(nextAppointment, patientId),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
+      await queryClient.invalidateQueries({
+        queryKey: options.queryKey,
+      });
       setMenuOpened(false);
-      if (onSave && date) {
-        onSave(date);
-      }
+    },
+    onError(error) {
+      notifications.show({
+        title: 'Não foi possível salvar!',
+        message: `Um erro inesperado aconteceu e não foi possível salvar a nova data de consulta. Tente novamente mais tarde. ${error}`,
+        color: 'red',
+        icon: <IconExclamationCircle />,
+        autoClose: 5000,
+      });
     },
   });
 
@@ -92,35 +94,6 @@ function NextAppointmentMenuContent({
     }
     setDate(value !== null ? new Date(`${value}T00:00:00.000`) : undefined);
   };
-
-  if (isLoading) {
-    return (
-      <Center w={MENU_WIDTH} h={100}>
-        <Stack p="xs" gap="sm" w={180} align="center">
-          <Loader size="sm" />
-        </Stack>
-      </Center>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Center w={MENU_WIDTH} h={100}>
-        <Stack align="center" gap="0">
-          <ThemeIcon variant="white" color="red">
-            <IconExclamationCircle size={24} />
-          </ThemeIcon>
-          <Text size="sm" c="red" py="none" ta="center">
-            Erro ao carregar a data
-          </Text>
-        </Stack>
-      </Center>
-    );
-  }
-
-  if (!nextAppointment) {
-    return null;
-  }
 
   return (
     <>

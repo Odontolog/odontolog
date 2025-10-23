@@ -129,7 +129,7 @@ export async function saveNextAppointment(
   date: Date | undefined,
   patientId: string,
 ) {
-  const token = getAuthToken();
+  const token = await getAuthToken();
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/next-appointment`,

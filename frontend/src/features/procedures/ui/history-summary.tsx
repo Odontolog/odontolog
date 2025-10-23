@@ -40,11 +40,7 @@ export default function HistorySummary({
         <Stack gap="4" h="100%" justify="center">
           <Group justify="space-between">
             <Text size="sm">Próxima consulta</Text>
-            {/* <NextAppointmentMenu
-              patientId={patientId}
-              queryOptions={nextAppointmentQueryOptions}
-              onSave={handleSaveNextAppointment}
-            /> */}
+            <NextAppointmentMenu patientId={patientId} />
           </Group>
           {isAppointmentLoading ? (
             <Skeleton height={24} radius="none" />
