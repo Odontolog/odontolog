@@ -11,6 +11,7 @@ import br.ufal.ic.odontolog.enums.Sex;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
+import io.awspring.cloud.s3.S3Template;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ public class DevDataLoader implements CommandLineRunner {
   private final PatientRepository patientRepository;
   private final TreatmentPlanProcedureRepository treatmentPlanProcedureRepository;
   private final PasswordEncoder passwordEncoder;
+  private final S3Template s3Template;
 
   @Override
   public void run(String... args) throws Exception {
