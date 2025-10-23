@@ -9,6 +9,7 @@ import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.mappers.PreProcedureMapper;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.PreProcedure;
+import br.ufal.ic.odontolog.models.ProcedureDetail;
 import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.PreProcedureRepository;
@@ -46,7 +47,8 @@ public class PreProcedureService {
             .assignee(currentUser)
             .performedAt(Instant.now())
             .type(ReviewableType.PROCEDURE)
-            .status(ProcedureStatus.IN_PROGRESS)
+            .status(ProcedureStatus.NOT_STARTED)
+            .procedureDetail(new ProcedureDetail(""))
             .build();
 
     preProcedureRepository.save(preProcedure);
