@@ -7,18 +7,16 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-@SuperBuilder
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "activities")
-public class Activity implements GenericActivity {
+@Table(name = "anamnese_activities")
+public class AnamneseActivity implements GenericActivity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -31,8 +29,8 @@ public class Activity implements GenericActivity {
   private User actor;
 
   @ManyToOne
-  @JoinColumn(name = "reviewable_id")
-  private Reviewable reviewable;
+  @JoinColumn(name = "anamnese_id")
+  private Anamnese anamnese;
 
   private String description;
 
