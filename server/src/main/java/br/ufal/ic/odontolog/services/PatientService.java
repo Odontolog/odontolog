@@ -37,18 +37,16 @@ public class PatientService {
   }
 
   public PatientDTO getPatientById(Long id) {
-    Patient patient =
-        patientRepository
-            .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+    Patient patient = patientRepository
+        .findById(id)
+        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
     return patientMapper.toDTO(patient);
   }
 
   public List<PatientAndTreatmentPlanDTO> searchForPatients(Optional<String> searchTerm) {
-    List<Patient> patients =
-        patientRepository
-            .searchPatients(searchTerm.orElse(null), PageRequest.of(0, 10))
-            .getContent();
+    List<Patient> patients = patientRepository
+        .searchPatients(searchTerm.orElse(null), PageRequest.of(0, 10))
+        .getContent();
 
     if (patients.isEmpty()) {
       return Collections.emptyList();
@@ -58,9 +56,8 @@ public class PatientService {
 
     List<TreatmentPlan> lastPlans = patientRepository.findLastTreatmentPlans(patientIds);
 
-    Map<Long, TreatmentPlan> lastPlanByPatientId =
-        lastPlans.stream()
-            .collect(Collectors.toMap(tp -> tp.getPatient().getId(), Function.identity()));
+    Map<Long, TreatmentPlan> lastPlanByPatientId = lastPlans.stream()
+        .collect(Collectors.toMap(tp -> tp.getPatient().getId(), Function.identity()));
 
     return patients.stream()
         .map(
@@ -79,10 +76,9 @@ public class PatientService {
   }
 
   public AppointmentDTO getNextAppointment(Long id) {
-    Patient patient =
-        patientRepository
-            .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+    Patient patient = patientRepository
+        .findById(id)
+        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
 
     AppointmentDTO appointmentDTO = new AppointmentDTO();
     appointmentDTO.setAppointmentDate(patient.getAppointmentDate());
@@ -90,13 +86,16 @@ public class PatientService {
   }
 
   @Transactional
-  public Patient updateNextAppointment(Long id, AppointmentDTO dto) {
-    Patient patient =
-        patientRepository
-            .findById(id)
-            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+  public AppointmentDTO updateNextAppointment(Long id, AppointmentDTO dto) {
+    Patient patient = patientRepository
+        .findById(id)
+        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
 
     patient.setAppointmentDate(dto.getAppointmentDate());
-    return patient;
+
+    var newAppointmentDTO = new AppointmentDTO();
+    newAppointmentDTO.setAppointmentDate(patient.getAppointmentDate());
+
+    return newAppointmentDTO;
   }
 }

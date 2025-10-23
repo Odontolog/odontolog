@@ -6,6 +6,9 @@ import br.ufal.ic.odontolog.dtos.PatientDTO;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.services.PatientService;
 import jakarta.validation.Valid;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("isAuthenticated()")
 @RestController
 @RequestMapping("/api/patients")
+@RequiredArgsConstructor
 public class PatientController {
   private final PatientService patientService;
-  private final PatientMapper patientMapper;
-
-  public PatientController(PatientService patientService, PatientMapper patientMapper) {
-    this.patientService = patientService;
-    this.patientMapper = patientMapper;
-  }
 
   @GetMapping
   public ResponseEntity<List<PatientDTO>> getAllPatients() {
@@ -51,8 +49,7 @@ public class PatientController {
   public ResponseEntity<AppointmentDTO> updateNextAppointment(
       @PathVariable Long id, @RequestBody @Valid AppointmentDTO appointmentDTO) {
 
-    patientService.updateNextAppointment(id, appointmentDTO);
-    AppointmentDTO updatedAppointment = patientService.getNextAppointment(id);
-    return ResponseEntity.ok(updatedAppointment);
+    var nextAppointmentDTO = patientService.updateNextAppointment(id, appointmentDTO);
+    return ResponseEntity.ok(nextAppointmentDTO);
   }
 }
