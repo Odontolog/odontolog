@@ -13,3 +13,16 @@ async function getPatientDocuments(): Promise<Attachments[]> {
   await Promise.resolve();
   return attachments;
 }
+
+export async function saveAttachmentOnPatient(
+  patientId: string,
+  atts: Attachments[],
+) {
+  console.log('saving the new attachment on the patient: ', patientId);
+
+  await new Promise((resolve) => setTimeout(resolve, 600));
+
+  attachments.push(...atts);
+
+  return { success: true };
+}

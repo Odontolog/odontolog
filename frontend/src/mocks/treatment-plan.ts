@@ -163,6 +163,7 @@ export const attachments: Attachments[] = [
     id: '2',
     createdAt: new Date('2025-02-16T11:00:00Z'),
     type: 'image/jpg',
+    location: 'fotogragia-clinica-anterior.jpg',
     filename: 'fotografia-clinica-anterior.jpg',
     uploader: student,
     size: 1887437,
