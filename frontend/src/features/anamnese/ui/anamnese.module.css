@@ -8,6 +8,7 @@
 
 .side {
   flex-basis: 30%;
+  min-width: 340px;
 }
 
 @media (max-width: 62em) {

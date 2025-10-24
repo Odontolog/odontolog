@@ -1,8 +1,8 @@
 import {
+  Anamnese,
   AnamneseFormValues,
   ConditionFormValue,
 } from '@/features/anamnese/models';
-import { Anamnese } from '@/shared/models';
 
 export const mockAnamnese: Anamnese = {
   patientId: '123',
@@ -116,16 +116,20 @@ export const mockAnamnese: Anamnese = {
       type: 'EDIT_CONDITIONS',
       actor: {
         id: '11',
-        name: 'Aluno João Pereira',
+        name: 'João Pereira',
         email: 'joao.pereira@clinic.edu',
         role: 'STUDENT',
       },
       description:
-        'Marcada condição BLOOD_PRESSURE como verdadeira e adicionada observação.',
+        'Histórica clínica atualiza por João Pereira (joao.pereira@clinic.edu)',
       metadata: {
-        condition: 'BLOOD_PRESSURE',
-        oldValue: false,
-        newValue: true,
+        updatedFields: [
+          {
+            condition: 'BLOOD_PRESSURE',
+            hasCondition: false,
+            notes: 'Hipertenção controlado com losartana 50mg/dia.',
+          },
+        ],
       },
       createdAt: new Date('2025-10-20T09:15:00Z'),
     },
@@ -134,16 +138,20 @@ export const mockAnamnese: Anamnese = {
       type: 'EDIT_CONDITIONS',
       actor: {
         id: '11',
-        name: 'Aluno João Pereira',
+        name: 'João Pereira',
         email: 'joao.pereira@clinic.edu',
         role: 'STUDENT',
       },
       description:
-        'Marcada condição ENDOCRINE como verdadeira (diabetes tipo 2).',
+        'Histórica clínica atualiza por João Pereira (joao.pereira@clinic.edu)',
       metadata: {
-        condition: 'ENDOCRINE',
-        oldValue: false,
-        newValue: true,
+        updatedFields: [
+          {
+            condition: 'BLOOD_PRESSURE',
+            hasCondition: true,
+            notes: 'Hipertenção controlado com losartana 50mg/dia.',
+          },
+        ],
       },
       createdAt: new Date('2025-10-20T09:20:00Z'),
     },
@@ -152,16 +160,14 @@ export const mockAnamnese: Anamnese = {
       type: 'EDIT_NOTES',
       actor: {
         id: '11',
-        name: 'Aluno João Pereira',
+        name: 'João Pereira',
         email: 'joao.pereira@clinic.edu',
         role: 'STUDENT',
       },
-      description: 'Adicionadas observações gerais do paciente.',
+      description:
+        'Notas de anamnese atualizadas por João Pereira (joao.pereira@clinic.edu)',
       metadata: {
-        field: 'notes',
-        oldValue: '',
-        newValue:
-          'Paciente relata boa higiene oral e visitas regulares ao dentista.',
+        data: 'Paciente trouxe exame de sangue atualizado na última consulta.',
       },
       createdAt: new Date('2025-10-20T09:25:00Z'),
     },
@@ -170,16 +176,26 @@ export const mockAnamnese: Anamnese = {
       type: 'EDIT_CONDITIONS',
       actor: {
         id: '21',
-        name: 'Supervisora Dra. Helena Costa',
+        name: 'Dra. Helena Costa',
         email: 'helena.costa@clinic.edu',
         role: 'SUPERVISOR',
       },
       description:
-        'Revisada condição MEDICATIONS. Adicionada observação sobre uso de metformina.',
+        'Histórica clínica atualizada por Dra. Helena Costa (helena.costa@clinic.edu)',
       metadata: {
-        condition: 'MEDICATIONS',
-        oldValue: null,
-        newValue: 'Usa metformina 850mg/dia',
+        updatedFields: [
+          {
+            condition: 'BLOOD_PRESSURE',
+            hasCondition: true,
+            notes:
+              'Hipertenção controlado com losartana 50mg/dia.\n\nAtualização 20/09: Paciente trouxe exame.',
+          },
+          {
+            condition: 'ENDOCRINE',
+            hasCondition: true,
+            notes: 'Diabetes tipo 2 diagnosticada há 5 anos.',
+          },
+        ],
       },
       createdAt: new Date('2025-10-21T10:10:00Z'),
     },

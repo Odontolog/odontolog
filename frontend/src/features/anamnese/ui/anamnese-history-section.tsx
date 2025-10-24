@@ -2,34 +2,36 @@
 
 import {
   Card,
-  // Center,
+  Center,
   Divider,
   Group,
-  // Loader,
-  // Stack,
+  Loader,
+  Stack,
   Text,
-  // ThemeIcon,
-  // Timeline,
+  ThemeIcon,
+  Timeline,
 } from '@mantine/core';
-// import { IconExclamationCircle } from '@tabler/icons-react';
-import { UseQueryOptions } from '@tanstack/react-query';
+import { IconExclamationCircle } from '@tabler/icons-react';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 
-// import { Activity, Anamnese, Reviewable } from '@/shared/models';
-import { Anamnese } from '@/shared/models';
-// import { getActivityTitleFn } from '../utils';
-// import ActivityItem from './activity-item';
+import { Anamnese, AnamneseActivity } from '../models';
+import AnamneseActivityItem from './anamnese-activity-item';
 
 export interface AnamneseHistorySectionProps {
   queryOptions: UseQueryOptions<Anamnese, Error, Anamnese, string[]>;
 }
 
-export default function AnamneseHistorySection() {
-  // const { data, isLoading, isError } = useQuery({
-  //   ...queryOptions,
-  //   select: (data) => ({
-  //     history: data.history,
-  //   }),
-  // });
+export default function AnamneseHistorySection({
+  queryOptions,
+}: AnamneseHistorySectionProps) {
+  const {
+    data: history,
+    isLoading,
+    isError,
+  } = useQuery({
+    ...queryOptions,
+    select: (data) => data.history,
+  });
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm">
@@ -44,74 +46,67 @@ export default function AnamneseHistorySection() {
       <Divider my="none" />
 
       <Card.Section inheritPadding p="md">
-        <div>opa</div>
-        {/* <HistorySectionContent
-          history={data?.history}
-          type={data?.type}
+        <AnamneseHistorySectionContent
+          history={history}
           isLoading={isLoading}
           isError={isError}
-        /> */}
+        />
       </Card.Section>
     </Card>
   );
 }
 
-// interface HistorySectionContentProps {
-//   history?: Activity[];
-//   type?: Reviewable['type'];
-//   isLoading: boolean;
-//   isError: boolean;
-// }
+interface AnamneseHistorySectionContentProps {
+  history?: AnamneseActivity[];
+  isLoading: boolean;
+  isError: boolean;
+}
 
-// function HistorySectionContent(props: HistorySectionContentProps) {
-//   const { history, isLoading, isError, type } = props;
+function AnamneseHistorySectionContent(
+  props: AnamneseHistorySectionContentProps,
+) {
+  const { history, isLoading, isError } = props;
 
-//   if (isLoading) {
-//     return (
-//       <Center py="md">
-//         <Loader size="sm" />
-//       </Center>
-//     );
-//   }
+  if (isLoading) {
+    return (
+      <Center py="md">
+        <Loader size="sm" />
+      </Center>
+    );
+  }
 
-//   if (isError) {
-//     return (
-//       <Stack align="center" gap="xs">
-//         <ThemeIcon variant="white" color="red">
-//           <IconExclamationCircle size={24} />
-//         </ThemeIcon>
-//         <Text size="sm" c="red" py="none">
-//           Erro ao carregar histórico
-//         </Text>
-//       </Stack>
-//     );
-//   }
+  if (isError) {
+    return (
+      <Stack align="center" gap="xs">
+        <ThemeIcon variant="white" color="red">
+          <IconExclamationCircle size={24} />
+        </ThemeIcon>
+        <Text size="sm" c="red" py="none">
+          Erro ao carregar histórico
+        </Text>
+      </Stack>
+    );
+  }
 
-//   if (history === undefined || type === undefined) {
-//     return null;
-//   }
+  if (history === undefined) {
+    return null;
+  }
 
-//   if (history.length === 0) {
-//     return (
-//       <Text size="sm" c="dimmed" ta="center">
-//         Nenhuma atividade realizada.
-//       </Text>
-//     );
-//   }
+  if (history.length === 0) {
+    return (
+      <Text size="sm" c="dimmed" ta="center">
+        Nenhuma modificação realizada.
+      </Text>
+    );
+  }
 
-//   const activityTitleFn = getActivityTitleFn(type);
-
-//   return (
-//     <Timeline bulletSize={24} lineWidth={3}>
-//       {history
-//         .sort((a, b) => +a.createdAt - +b.createdAt)
-//         .map((activity) => (
-//           <ActivityItem
-//             key={activity.id}
-//             activity={activity}
-//             getActivityTitle={activityTitleFn}
-//           />
-//         ))}
-//     </Timeline>
-//   );
-// }
+  return (
+    <Timeline bulletSize={24} lineWidth={3}>
+      {history
+        .sort((a, b) => +a.createdAt - +b.createdAt)
+        .map((activity) => (
+          <AnamneseActivityItem key={activity.id} activity={activity} />
+        ))}
+    </Timeline>
+  );
+}

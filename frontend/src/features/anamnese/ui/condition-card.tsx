@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 import { type UseFormReturnType } from '@mantine/form';
 
-import { AnamneseFormValues } from '@/features/anamnese/ui/anamnese-section';
+import { AnamneseFormValues } from '@/features/anamnese/models';
 
 interface PatientConditionCardProps {
   index: number;

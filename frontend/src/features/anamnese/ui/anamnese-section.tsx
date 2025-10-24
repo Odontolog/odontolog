@@ -25,8 +25,7 @@ import {
 import { useState } from 'react';
 
 import PatientConditionCard from '@/features/anamnese/ui/condition-card';
-import { Anamnese, PatientCondition } from '@/shared/models';
-import { AnamneseFormValues } from '../models';
+import { Anamnese, AnamneseFormValues, PatientCondition } from '../models';
 import { saveAnamnese } from '../requests';
 
 interface AnamneseSectionProps {

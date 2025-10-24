@@ -32,7 +32,7 @@ export default function Anamnese({ patientId }: AnamneseProps) {
           <AnamneseSection patientId={patientId} queryOptions={options} />
         </Stack>
         <Box className={styles.side}>
-          <AnamneseHistorySection />
+          <AnamneseHistorySection queryOptions={options} />
         </Box>
       </Group>
     </ScrollArea>
