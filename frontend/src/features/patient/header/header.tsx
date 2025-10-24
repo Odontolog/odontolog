@@ -19,6 +19,7 @@ import {
   IconCalendar,
   IconCheckupList,
   IconChevronDown,
+  IconClipboardHeart,
   IconDental,
   IconEdit,
   IconMapPin,
@@ -42,6 +43,11 @@ const tabs = [
     value: 'procedures',
     icon: <IconDental size={14} />,
     label: 'Histórico Geral',
+  },
+  {
+    value: 'anamnese',
+    icon: <IconClipboardHeart size={14} />,
+    label: 'Anamnese',
   },
   {
     value: 'preprocedures',
