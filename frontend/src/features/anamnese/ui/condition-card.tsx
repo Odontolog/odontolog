@@ -11,6 +11,7 @@ import {
 import { type UseFormReturnType } from '@mantine/form';
 
 import { AnamneseFormValues } from '@/features/anamnese/models';
+import styles from './condition-card.module.css';
 
 interface PatientConditionCardProps {
   index: number;
@@ -51,6 +52,7 @@ export default function PatientConditionCard({
               {...form.getInputProps(`conditions.${index}.hasCondition`, {
                 type: 'checkbox',
               })}
+              classNames={styles}
             />
           </Group>
         </Group>
