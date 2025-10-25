@@ -5,6 +5,20 @@ import { getAuthToken } from '@/shared/utils';
 import { mapToPatient, PatientDTO } from './mappers';
 import { PatientRecordForm } from './models';
 
+export async function checkPermission(
+  patientId: string,
+  userId: string,
+): Promise<boolean> {
+  console.log(
+    `Checking if user(${userId}) has permission to access patient(${patientId})...`,
+  );
+  await new Promise((resolve) => setTimeout(resolve, 2500));
+  if (patientId === '1') {
+    return true;
+  }
+  return false;
+}
+
 export async function getPatientById(patientId: string): Promise<Patient> {
   const token = await getAuthToken();
 
