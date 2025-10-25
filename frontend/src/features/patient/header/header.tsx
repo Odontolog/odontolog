@@ -23,7 +23,9 @@ import {
   IconEdit,
   IconMapPin,
   IconMicroscope,
+  IconSettings2,
 } from '@tabler/icons-react';
+import { type User } from 'next-auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -37,35 +39,51 @@ import {
 import RecordModal from '../record-modal';
 import classes from './header.module.css';
 
-const tabs = [
-  {
-    value: 'procedures',
-    icon: <IconDental size={14} />,
-    label: 'Histórico Geral',
-  },
-  {
-    value: 'preprocedures',
-    icon: <IconMicroscope size={14} />,
-    label: 'Pré-Procedimentos',
-  },
-  {
-    value: 'treatments',
-    icon: <IconCheckupList size={14} />,
-    label: 'Tratamentos',
-  },
-  // {
-  //   value: 'documents',
-  //   icon: <IconReportSearch size={14} />,
-  //   label: 'Documentos',
-  // },
-  // {
-  //   value: 'settings',
-  //   icon: <IconSettings2 size={14} />,
-  //   label: 'Configurações',
-  // },
-];
+function getTabs(user: User) {
+  const commonTabs = [
+    {
+      value: 'procedures',
+      icon: <IconDental size={14} />,
+      label: 'Histórico Geral',
+    },
+    {
+      value: 'preprocedures',
+      icon: <IconMicroscope size={14} />,
+      label: 'Pré-Procedimentos',
+    },
+    {
+      value: 'treatments',
+      icon: <IconCheckupList size={14} />,
+      label: 'Tratamentos',
+    },
+    // {
+    //   value: 'documents',
+    //   icon: <IconReportSearch size={14} />,
+    //   label: 'Documentos',
+    // },
+  ];
 
-export default function PatientHeader({ patient }: { patient: Patient }) {
+  const supervisorTabs = [
+    {
+      value: 'settings',
+      icon: <IconSettings2 size={14} />,
+      label: 'Configurações',
+    },
+  ];
+
+  if (user.role !== 'STUDENT') {
+    return commonTabs.concat(supervisorTabs);
+  }
+
+  return commonTabs;
+}
+
+interface PatientHeaderProps {
+  patient: Patient;
+  user: User;
+}
+
+export default function PatientHeader({ patient, user }: PatientHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const activeSubpage =
@@ -94,7 +112,7 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
         >
           <Tabs.List>
             <Box w="16px"> </Box>
-            {tabs.map((tab) => (
+            {getTabs(user).map((tab) => (
               <Tabs.Tab
                 key={tab.value}
                 value={tab.value}
@@ -109,7 +127,11 @@ export default function PatientHeader({ patient }: { patient: Patient }) {
 
       {/* Versão Mobile */}
       <Box hiddenFrom="md">
-        <PatientHeaderMobile patient={patient} onEdit={() => setOpen(true)} />
+        <PatientHeaderMobile
+          patient={patient}
+          onEdit={() => setOpen(true)}
+          user={user}
+        />
       </Box>
 
       <RecordModal
@@ -216,9 +238,11 @@ function DetailItem({ label, value }: { label: string; value: string }) {
 export function PatientHeaderMobile({
   patient,
   onEdit,
+  user,
 }: {
   patient: Patient;
   onEdit: () => void;
+  user: User;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -309,7 +333,7 @@ export function PatientHeaderMobile({
       >
         <Tabs.List>
           <Box w="16px"> </Box>
-          {tabs.map((tab) => (
+          {getTabs(user).map((tab) => (
             <Tabs.Tab
               key={tab.value}
               value={tab.value}
