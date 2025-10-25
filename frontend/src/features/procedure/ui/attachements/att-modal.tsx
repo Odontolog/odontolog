@@ -1,5 +1,8 @@
 import { Modal, Text, Image, Stack, Group, Button } from '@mantine/core';
 import { Attachments } from '@/shared/models';
+import DeletionConfirmModal from '@/features/documents/ui/deletion-confirm-modal';
+import { useState } from 'react';
+import { deleteAttachment } from '../../requests';
 
 interface AttachmentsModalProps {
   opened: boolean;
@@ -12,6 +15,8 @@ export default function AttachmentsModal({
   onClose,
   attachment,
 }: AttachmentsModalProps) {
+  const [confirmOpened, setModalOpened] = useState(false);
+
   if (!attachment) {
     return null;
   }
@@ -30,6 +35,18 @@ export default function AttachmentsModal({
     } catch (err) {
       throw new Error('Falha ao baixar o arquivo.');
     }
+  }
+
+  function handleDocumentDeletion(attachment: Attachments) {
+    void deleteAttachment('1', attachment);
+  }
+
+  function closeConfirmModal() {
+    setModalOpened(false);
+  }
+
+  function openConfirmModal() {
+    setModalOpened(true);
   }
 
   const isImage = attachment.filename.match(
@@ -65,12 +82,21 @@ export default function AttachmentsModal({
             )}
 
             <Group justify="flex-end" mt="sm">
+              <Button color="red" onClick={openConfirmModal}>
+                Deletar
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => void handleDownload(attachment)}
               >
                 Download
               </Button>
+
+              <DeletionConfirmModal
+                opened={confirmOpened}
+                onClose={closeConfirmModal}
+                onConfirm={() => handleDocumentDeletion(attachment)}
+              />
             </Group>
           </Stack>
         </Modal.Body>
