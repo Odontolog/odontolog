@@ -23,10 +23,10 @@ export default function DeletionConfirmModal({
           <Stack>
             <Text>Tem certeza que deseja deletar o arquivo?</Text>
             <Group justify="flex-end" mt="sm">
-              <Button color="red" onClick={onClose}>
+              <Button variant="outline" onClick={onClose}>
                 Cancelar
               </Button>
-              <Button variant="outline" onClick={() => onConfirm}>
+              <Button color="red" onClick={() => onConfirm}>
                 Confirmar
               </Button>
             </Group>
