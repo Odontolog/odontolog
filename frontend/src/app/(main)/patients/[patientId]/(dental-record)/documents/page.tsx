@@ -1,12 +1,16 @@
-'use client';
-
-import DocsSection from '@/features/documents/ui/documents-section';
 import { Box } from '@mantine/core';
 
-export default function PatientDocumentsPage() {
+import DocsSection from '@/features/documents/ui/documents-section';
+
+export default async function PatientDocumentsPage({
+  params,
+}: {
+  params: { patientId: string };
+}) {
+  const { patientId } = await params;
   return (
     <Box p="md" flex="1" h="100%">
-      <DocsSection patientId="patientId" />
+      <DocsSection patientId={patientId} />
     </Box>
   );
 }

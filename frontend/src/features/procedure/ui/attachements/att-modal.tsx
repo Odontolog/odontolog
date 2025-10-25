@@ -67,9 +67,7 @@ export default function AttachmentsModal({
             <Group justify="flex-end" mt="sm">
               <Button
                 variant="outline"
-                onClick={() => {
-                  void handleDownload(attachment);
-                }}
+                onClick={() => void handleDownload(attachment)}
               >
                 Download
               </Button>

@@ -31,7 +31,7 @@ export default function DocumentUploadModal({
     <Modal.Root opened={opened} onClose={handleClosing} size="lg" centered>
       <Modal.Content>
         <Modal.Header>
-          <Modal.Title fw={600}>Upload de arquivos</Modal.Title>
+          <Modal.Title fw={600}>Envio de arquivos</Modal.Title>
           <Modal.CloseButton />
         </Modal.Header>
         <Modal.Body>
@@ -81,9 +81,6 @@ function UploadModalContent({
       });
 
       onFilesChange([]);
-      console.log('New atts e descrição ae ###############################');
-      console.log(newAtts);
-      console.log('#######################################################');
     },
     onError: (error) => {
       notifications.show({

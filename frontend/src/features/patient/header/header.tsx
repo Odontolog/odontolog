@@ -25,6 +25,7 @@ import {
   IconGenderFemale,
   IconGenderMale,
   IconMapPin,
+  IconReportSearch,
   // IconMicroscope,
   // IconReportSearch,
   // IconSettings2,
@@ -51,11 +52,11 @@ const tabs = [
     icon: <IconCheckupList size={14} />,
     label: 'Tratamentos',
   },
-  // {
-  //   value: 'documents',
-  //   icon: <IconReportSearch size={14} />,
-  //   label: 'Documentos',
-  // },
+  {
+    value: 'documents',
+    icon: <IconReportSearch size={14} />,
+    label: 'Documentos',
+  },
   // {
   //   value: 'settings',
   //   icon: <IconSettings2 size={14} />,

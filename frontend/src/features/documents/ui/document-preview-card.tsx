@@ -1,10 +1,11 @@
 'use client';
 
-import { Card, Text, Image, Group, Badge, Stack, Tooltip } from '@mantine/core';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Attachments } from '../../../shared/models';
-import { formatFileSize } from '../../../shared/utils';
+import { Attachments } from '@/shared/models';
+import { formatFileSize } from '@/shared/utils';
+
+import { Card, Text, Image, Group, Badge, Stack, Tooltip } from '@mantine/core';
 
 interface DocumentPreviewCardProps {
   attachment: Attachments;
@@ -32,7 +33,7 @@ export default function DocumentPreviewCard({
         <Image
           src={attachment.location}
           height={180}
-          alt="Norway"
+          alt={`imagem de ${attachment.filename}`}
           fallbackSrc="https://placehold.co/600x400?text=Placeholder"
         />
       </Card.Section>

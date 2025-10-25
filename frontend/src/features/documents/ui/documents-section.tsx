@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  Button,
+  ActionIcon,
   Card,
   Center,
   Divider,
@@ -11,7 +11,9 @@ import {
   ScrollArea,
   Stack,
   Text,
+  Tooltip,
 } from '@mantine/core';
+import { IconUpload } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -26,7 +28,7 @@ interface DocsSectionProps {
 }
 
 export default function DocsSection({ patientId }: DocsSectionProps) {
-  const docs = getPatientDocumentsOptions(patientId);
+  const options = getPatientDocumentsOptions(patientId);
   const [modalOpened, setModalOpened] = useState(false);
 
   function closeModal() {
@@ -34,7 +36,7 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
   }
 
   const { data, isLoading, isError } = useQuery({
-    ...docs,
+    ...options,
   });
 
   function handleUpload() {
@@ -48,9 +50,11 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
           <Text fw={600} size="lg">
             Documentos e exames
           </Text>
-          <Button variant="outline" onClick={handleUpload}>
-            Upload
-          </Button>
+          <Tooltip label="Envio de arquivos">
+            <ActionIcon variant="subtle" color="grey" size="sm">
+              <IconUpload onClick={handleUpload} />
+            </ActionIcon>
+          </Tooltip>
         </Group>
       </Card.Section>
 
@@ -144,7 +148,7 @@ function DocsSectionContent({
     >
       <Grid p="md">
         {data.map((document) => (
-          <Grid.Col span={3} key={document.id}>
+          <Grid.Col span={{ sm: 12, md: 6, lg: 4, xl: 3 }} key={document.id}>
             <DocumentPreviewCard
               attachment={document}
               onClick={handleViewAttachment}
