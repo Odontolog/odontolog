@@ -1,4 +1,4 @@
-import { User } from '@/shared/models';
+import { Student, User } from '@/shared/models';
 
 export const students: User[] = [
   {
@@ -52,3 +52,26 @@ export const loggedUser: User = {
   email: 'pedro.sebastiao@foufal.ufal.br',
   avatarUrl: '',
 };
+
+export const allowedStudents: Student[] = [
+  {
+    id: '1',
+    role: 'STUDENT',
+    name: 'Argel',
+    email: 'abc@def.ufal.br',
+    avatarUrl: '',
+    clinic: 5,
+    enrollment: 1321432,
+    semester: 8,
+  },
+  {
+    id: '2',
+    role: 'STUDENT',
+    name: 'José',
+    email: 'abc@def.ufal.br',
+    avatarUrl: '',
+    clinic: 1,
+    enrollment: 1321477,
+    semester: 5,
+  },
+];
