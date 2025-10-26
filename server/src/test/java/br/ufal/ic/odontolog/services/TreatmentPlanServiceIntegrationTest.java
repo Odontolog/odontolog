@@ -15,6 +15,7 @@ import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
+import io.awspring.cloud.s3.S3Template;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -30,10 +32,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class TreatmentPlanServiceIntegrationTest {
 
-  @Autowired private TreatmentPlanService treatmentPlanService;
-  @Autowired private PatientRepository patientRepository;
-  @Autowired private TreatmentPlanRepository treatmentPlanRepository;
-  @Autowired private SupervisorRepository supervisorRepository;
+  @Autowired
+  private TreatmentPlanService treatmentPlanService;
+  @Autowired
+  private PatientRepository patientRepository;
+  @Autowired
+  private TreatmentPlanRepository treatmentPlanRepository;
+  @Autowired
+  private SupervisorRepository supervisorRepository;
+  @MockitoBean
+  private S3Template s3Template;
 
   private Patient patient;
 
@@ -45,15 +53,12 @@ class TreatmentPlanServiceIntegrationTest {
     supervisorRepository
         .findByEmail("supervisor@test.com")
         .orElseGet(
-            () ->
-                supervisorRepository.save(
-                    Supervisor.builder().email("supervisor@test.com").build()));
+            () -> supervisorRepository.save(
+                Supervisor.builder().email("supervisor@test.com").build()));
   }
 
   @Test
-  @WithMockUser(
-      username = "supervisor@test.com",
-      roles = {"SUPERVISOR"})
+  @WithMockUser(username = "supervisor@test.com", roles = { "SUPERVISOR" })
   void createTreatmentPlan_success() {
     CreateTreatmentPlanDTO dto = new CreateTreatmentPlanDTO();
     dto.setPatientId(patient.getId());
@@ -89,12 +94,10 @@ class TreatmentPlanServiceIntegrationTest {
 
   @Test
   void getTreatmentPlansByPatientId_returnsPlansForPatient() {
-    TreatmentPlan plan =
-        TreatmentPlan.builder().patient(patient).status(TreatmentPlanStatus.DRAFT).build();
+    TreatmentPlan plan = TreatmentPlan.builder().patient(patient).status(TreatmentPlanStatus.DRAFT).build();
     plan = treatmentPlanRepository.save(plan);
 
-    List<TreatmentPlanShortDTO> result =
-        treatmentPlanService.getTreatmentPlansByPatientId(patient.getId());
+    List<TreatmentPlanShortDTO> result = treatmentPlanService.getTreatmentPlansByPatientId(patient.getId());
 
     assertThat(result).isNotEmpty();
     assertThat(result.get(0).getId()).isEqualTo(plan.getId());
