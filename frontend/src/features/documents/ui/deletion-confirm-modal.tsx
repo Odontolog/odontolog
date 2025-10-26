@@ -1,10 +1,9 @@
-import { Attachments } from '@/shared/models';
 import { Modal, Text, Group, Button, Stack } from '@mantine/core';
 
 interface DeletionConfirmModalProps {
   opened: boolean;
   onClose: () => void;
-  onConfirm: (attachment: Attachments) => void;
+  onConfirm: () => void;
 }
 
 export default function DeletionConfirmModal({
@@ -26,7 +25,7 @@ export default function DeletionConfirmModal({
               <Button variant="outline" onClick={onClose}>
                 Cancelar
               </Button>
-              <Button color="red" onClick={() => onConfirm}>
+              <Button color="red" onClick={onConfirm}>
                 Confirmar
               </Button>
             </Group>

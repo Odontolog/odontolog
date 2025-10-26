@@ -1,8 +1,9 @@
-import { Modal, Text, Image, Stack, Group, Button } from '@mantine/core';
 import { Attachments } from '@/shared/models';
-import DeletionConfirmModal from '@/features/documents/ui/deletion-confirm-modal';
+import { Button, Group, Image, Modal, Stack, Text } from '@mantine/core';
 import { useState } from 'react';
-import { deleteAttachment } from '../../requests';
+
+import DeletionConfirmModal from '@/features/documents/ui/deletion-confirm-modal';
+import { deleteAttachment } from '@/features/procedure/requests';
 
 interface AttachmentsModalProps {
   opened: boolean;
@@ -39,10 +40,12 @@ export default function AttachmentsModal({
 
   function handleDocumentDeletion(attachment: Attachments) {
     void deleteAttachment('1', attachment);
+    setModalOpened(false);
   }
 
-  function closeConfirmModal() {
+  function handleClosing() {
     setModalOpened(false);
+    onClose();
   }
 
   function openConfirmModal() {
@@ -54,7 +57,8 @@ export default function AttachmentsModal({
   );
 
   return (
-    <Modal.Root opened={opened} onClose={onClose} size="lg" centered>
+    <Modal.Root opened={opened} onClose={handleClosing} size="lg" centered>
+      <Modal.Overlay />
       <Modal.Content>
         <Modal.Header>
           <Modal.Title fw={600}>{attachment.filename}</Modal.Title>
@@ -94,7 +98,7 @@ export default function AttachmentsModal({
 
               <DeletionConfirmModal
                 opened={confirmOpened}
-                onClose={closeConfirmModal}
+                onClose={() => setModalOpened(false)}
                 onConfirm={() => handleDocumentDeletion(attachment)}
               />
             </Group>

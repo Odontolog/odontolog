@@ -83,11 +83,11 @@ export function ProcedureDropzone({
           </Dropzone.Idle>
 
           <div>
-            <Text size="xl" inline>
+            <Text size="xl" inline ta="center">
               Arraste imagens, PDFs ou vídeos aqui ou clique para selecionar
               arquivos
             </Text>
-            <Text size="sm" c="dimmed" inline mt={7}>
+            <Text size="sm" c="dimmed" inline mt={7} ta="center">
               Anexe quantos arquivos desejar, cada arquivo não deve exceder 10MB
             </Text>
           </div>
