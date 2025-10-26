@@ -36,6 +36,7 @@ public class PatientController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<PatientDTO> getPatientById(@PathVariable Long id) {
     return ResponseEntity.ok(patientService.getPatientById(id));
   }
