@@ -42,6 +42,7 @@ public class PatientController {
   }
 
   @GetMapping("/{id}/next-appointment")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<AppointmentDTO> getNextAppointment(@PathVariable Long id) {
     AppointmentDTO appointmentDTO = patientService.getNextAppointment(id);
     return ResponseEntity.ok(appointmentDTO);

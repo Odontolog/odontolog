@@ -11,11 +11,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
@@ -30,26 +25,26 @@ public class TreatmentPlanController implements TreatmentPlanApi {
   }
 
   @GetMapping("/treatment-plan/{treatmentId}")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#treatmentId, 'TreatmentPlan', 'edit')")
   public TreatmentPlanDTO getTreatmentPlan(@PathVariable Long treatmentId) {
     return treatmentPlanService.getTreatmentPlanById(treatmentId);
   }
 
   @GetMapping("/patients/{patientId}/treatment-plan")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#patiendId, 'Patient', 'edit')")
   public List<TreatmentPlanShortDTO> getTreatmentPlansByPatient(@PathVariable Long patientId) {
     return treatmentPlanService.getTreatmentPlansByPatientId(patientId);
   }
 
   @PostMapping("/treatment-plan/{treatmentId}/procedures")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#treatmentId, 'TreatmentPlan', 'edit')")
   public TreatmentPlanDTO addProcedure(
       @PathVariable Long treatmentId, @Valid @RequestBody ProcedureUpsertDTO dto) {
     return treatmentPlanService.addProcedureToTreatmentPlan(treatmentId, dto);
   }
 
   @PutMapping("/treatment-plan/{treatmentId}/procedures/{procedureId}")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#treatmentId, 'TreatmentPlan', 'edit')")
   public TreatmentPlanDTO updateProcedure(
       @PathVariable Long treatmentId,
       @PathVariable Long procedureId,
@@ -58,7 +53,7 @@ public class TreatmentPlanController implements TreatmentPlanApi {
   }
 
   @DeleteMapping("/treatment-plan/{treatmentId}/procedures/{procedureId}")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#treatmentId, 'TreatmentPlan', 'edit')")
   public void removeProcedure(@PathVariable Long treatmentId, @PathVariable Long procedureId) {
     treatmentPlanService.removeProcedureFromTreatmentPlan(treatmentId, procedureId);
   }

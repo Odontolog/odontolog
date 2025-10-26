@@ -1,5 +1,9 @@
 package br.ufal.ic.odontolog.config;
 
+import br.ufal.ic.odontolog.models.Procedure;
+import br.ufal.ic.odontolog.models.TreatmentPlan;
+import br.ufal.ic.odontolog.repositories.ProcedureRepository;
+import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.services.PatientPermissionService;
 import java.io.Serializable;
@@ -16,6 +20,8 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
   private final PatientPermissionService patientPermissionService;
   private final UserRepository userRepository;
+  private final TreatmentPlanRepository treatmentPlanRepository;
+  private final ProcedureRepository procedureRepository;
 
   @Override
   public boolean hasPermission(
@@ -26,7 +32,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   @Override
   public boolean hasPermission(
       Authentication authentication, Serializable targetId, String targetType, Object permission) {
-    if (!(targetId instanceof Long patientId)) {
+    if (!(targetId instanceof Long id)) {
       return false;
     }
 
@@ -49,10 +55,31 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
     boolean isStudent = authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT"));
     if (isStudent) {
-      return patientPermissionService.hasPermission(userId, patientId);
+      switch (targetType) {
+        case "Patient":
+          return hasPatientPermission(id, userId);
+        case "TreatmentPlan":
+          return hasTreatmentPlanPermission(id, userId);
+        case "Procedure":
+          return hasProcedurePermission(id, userId);
+      }
     }
 
     return false;
+  }
+
+  private boolean hasTreatmentPlanPermission(Long treatmentPlanId, UUID userId) {
+    TreatmentPlan treatmentPlan = treatmentPlanRepository.findById(treatmentPlanId).orElseThrow();
+    return patientPermissionService.hasPermission(userId, treatmentPlan.getPatient().getId());
+  }
+
+  private boolean hasProcedurePermission(Long procedureId, UUID userId) {
+    Procedure procedure = procedureRepository.findById(procedureId).orElseThrow();
+    return patientPermissionService.hasPermission(userId, procedure.getPatient().getId());
+  }
+
+  private boolean hasPatientPermission(Long patientId, UUID userId) {
+    return patientPermissionService.hasPermission(userId, patientId);
   }
 
   private UUID getUserId(Authentication authentication) {
