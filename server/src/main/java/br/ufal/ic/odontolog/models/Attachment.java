@@ -1,7 +1,5 @@
 package br.ufal.ic.odontolog.models;
 
-import java.net.URL;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

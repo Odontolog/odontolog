@@ -6,15 +6,11 @@ import lombok.Data;
 
 @Data
 public class CreateAttachmentRequestDTO {
-    @NotBlank
-    private String filename;
+  @NotBlank private String filename;
 
-    @NotBlank
-    private String filetype;
+  @NotBlank private String filetype;
 
-    @NotBlank
-    private String objectKey;
+  @NotBlank private String objectKey;
 
-    @NotNull
-    private Integer size;
+  @NotNull private Integer size;
 }
