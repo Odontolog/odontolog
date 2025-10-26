@@ -31,7 +31,7 @@ public class TreatmentPlanController implements TreatmentPlanApi {
   }
 
   @GetMapping("/patients/{patientId}/treatment-plan")
-  @PreAuthorize("hasPermission(#patiendId, 'Patient', 'edit')")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public List<TreatmentPlanShortDTO> getTreatmentPlansByPatient(@PathVariable Long patientId) {
     return treatmentPlanService.getTreatmentPlansByPatientId(patientId);
   }

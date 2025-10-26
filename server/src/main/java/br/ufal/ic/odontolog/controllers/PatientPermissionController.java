@@ -1,12 +1,15 @@
 package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.dtos.StudentDTO;
+import br.ufal.ic.odontolog.enums.Role;
+import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.services.PatientPermissionService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @PreAuthorize("isAuthenticated()")
@@ -39,11 +42,15 @@ public class PatientPermissionController {
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/{studentId}/check")
+  @GetMapping("/check")
   @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'STUDENT')")
   public ResponseEntity<Boolean> hasPermission(
-      @PathVariable Long patientId, @PathVariable UUID studentId) {
-    boolean hasPermission = patientPermissionService.hasPermission(studentId, patientId);
-    return ResponseEntity.ok(hasPermission);
+      @AuthenticationPrincipal User user, @PathVariable Long patientId) {
+    if (user.getRole() == Role.STUDENT) {
+      boolean hasPermission = patientPermissionService.hasPermission(user.getId(), patientId);
+      return ResponseEntity.ok(hasPermission);
+    }
+
+    return ResponseEntity.ok(true);
   }
 }
