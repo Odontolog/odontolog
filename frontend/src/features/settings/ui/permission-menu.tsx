@@ -6,7 +6,7 @@ import {
   Center,
   Loader,
   Menu,
-  MultiSelect,
+  Select,
   Stack,
   Text,
   ThemeIcon,
@@ -22,7 +22,7 @@ import { useState } from 'react';
 
 import { Student } from '@/shared/models';
 import { getAvailableUsers } from '@/shared/reviewable/requests';
-import { saveAllowedStudents } from '../requests';
+import { grantPermission } from '../requests';
 
 const MENU_WIDTH = 400;
 
@@ -95,11 +95,10 @@ function StudySectorMenuContent({
     (student) => !currentAllowedStudentIds.includes(student.value),
   );
 
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (allowedStudentIds: string[]) =>
-      saveAllowedStudents(patientId, allowedStudentIds),
+    mutationFn: (studentId: string) => grantPermission(patientId, studentId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey });
       setMenuOpened(false);
@@ -139,7 +138,7 @@ function StudySectorMenuContent({
         </Text>
       </Menu.Label>
       <Stack p="xs" gap="sm" w={400}>
-        <MultiSelect
+        <Select
           label="Selecione um aluno"
           placeholder="Selecione uma opção"
           data={studentDataFiltered}
@@ -152,8 +151,9 @@ function StudySectorMenuContent({
 
         <Button
           size="xs"
-          onClick={() => mutation.mutate(selected)}
+          onClick={() => selected !== null && mutation.mutate(selected)}
           loading={mutation.isPending}
+          disabled={mutation.isPending || selected === null}
         >
           Salvar
         </Button>

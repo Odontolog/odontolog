@@ -17,7 +17,7 @@ export default async function PatientLayout({
   if (user.role === 'STUDENT') {
     return (
       <Suspense fallback={<Loading message="Carregando prontuário" />}>
-        <PatientPermissionGuard patientId={patientId} user={user}>
+        <PatientPermissionGuard patientId={patientId}>
           {children}
         </PatientPermissionGuard>
       </Suspense>
