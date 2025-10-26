@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class UploadAttachmentInitResponseDTO {
     private URL uploadUrl;
-    private String attachmentId;
+    private String objectKey;
 }

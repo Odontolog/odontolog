@@ -3,6 +3,7 @@ package br.ufal.ic.odontolog.models;
 import br.ufal.ic.odontolog.enums.Ethnicity;
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -69,4 +70,12 @@ public class Patient {
   private final Set<Procedure> procedures = new HashSet<>();
 
   private LocalDate appointmentDate;
+
+  @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+  private final Set<Attachment> attachments = new HashSet<>();
+
+  public void addAttachment(Attachment attachment) {
+    attachment.setPatient(this);
+    this.attachments.add(attachment);
+  }
 }

@@ -1,5 +1,7 @@
 package br.ufal.ic.odontolog.models;
 
+import java.net.URL;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +20,9 @@ public class Attachment {
   private Long id;
 
   private String filename;
-
-  // TODO: Probably we must use a URL instead of a String
-  // using String for now.
+  private String filetype;
   private String location;
+  private String objectKey;
 
   @ManyToOne
   @JoinColumn(name = "uploader_id")
@@ -29,4 +30,8 @@ public class Attachment {
 
   // Size in bytes
   private Integer size;
+
+  @ManyToOne
+  @JoinColumn(name = "patient_id")
+  private Patient patient;
 }
