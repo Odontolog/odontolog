@@ -12,6 +12,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Build Docker image
+        working-directory: frontend
+        run: docker build -t myapp-frontend:latest --build-arg NEXT_PUBLIC_BACKEND_URL=${{secrets.NEXT_PUBLIC_BACKEND_URL}} .
+
+      - name: Save Docker image
+        run: docker save myapp-frontend:latest | gzip > myapp-frontend.tar.gz
+
       - name: Copy project files to Droplet
         uses: appleboy/scp-action@v1
         with:
@@ -32,8 +39,14 @@ jobs:
           script: |
             set -e
             cd odontolog
+
+            docker load < myapp-frontend.tar.gz
+
             echo "Parando containers atuais de forma graciosa..."
             docker compose -f docker-compose.prod.yml stop --timeout 30
+
+            echo "Recriando containers..."
+            docker compose -f docker-compose.prod.yml pull || true
 
             echo "Building and starting containers..."
             docker compose -f docker-compose.prod.yml up -d --build

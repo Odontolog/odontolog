@@ -31,11 +31,7 @@ services:
       - app-network
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
+    image: myapp-frontend:latest
     ports:
       - "3000:3000"
     environment:
@@ -74,9 +70,12 @@ services:
   nginx:
     image: nginx:1.29-alpine
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/prod.conf:/etc/nginx/conf.d/default.conf
+      - /etc/letsencrypt/live/odontolog.tech:/etc/letsencrypt/live/odontolog.tech:ro
+      - /etc/letsencrypt/archive/odontolog.tech:/etc/letsencrypt/archive/odontolog.tech:ro
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - server
       - frontend

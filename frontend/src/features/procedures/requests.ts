@@ -35,8 +35,13 @@ async function getPatientProcedures(
   return data.map((p) => mapToProcedureShort(p));
 }
 
-export async function createPreprocedure(patientId: string): Promise<string> {
-  console.log(`Creating preprocedure for patient's id ${patientId}`);
+export async function createPreprocedure(
+  patientId: string,
+  selectedPreprocedure: string,
+): Promise<string> {
+  console.log(
+    `Creating preprocedure ${selectedPreprocedure} for patient's id ${patientId}`,
+  );
   await new Promise((resolve) => setTimeout(resolve, 300));
   return '4';
 }

@@ -55,3 +55,26 @@ export const teeth = [
   '47',
   '48',
 ];
+
+export const maritalStatus = [
+  { value: 'SINGLE', label: 'Solteiro' },
+  { value: 'MARRIED', label: 'Casado' },
+  { value: 'DIVORCED', label: 'Divorciado' },
+  { value: 'WIDOWED', label: 'Viúvo' },
+  { value: 'CIVIL_UNION', label: 'União Estável' },
+];
+
+export const sex = [
+  { value: 'FEMALE', label: 'Feminino' },
+  { value: 'MALE', label: 'Masculino' },
+  { value: 'OTHER', label: 'Outro' },
+];
+
+export const ethnicity = [
+  { value: 'WHITE', label: 'Branco' },
+  { value: 'BLACK', label: 'Preto' },
+  { value: 'BROWN', label: 'Pardo' },
+  { value: 'YELLOW', label: 'Amarelo' },
+  { value: 'INDIGENOUS', label: 'Indígena' },
+  { value: 'OTHER', label: 'Outro' },
+];
