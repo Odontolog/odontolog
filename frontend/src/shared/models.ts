@@ -160,3 +160,9 @@ export type Procedure = Reviewable & {
 };
 
 export type Mode = 'edit' | 'read';
+
+export type PatientAndTreatmentPlan = PatientShort & {
+  lastTreatmentPlanId: string | null;
+  lastTreatmentPlanStatus: TreatmentPlanStatus | null;
+  lastTreatmentPlanUpdatedAt: Date | null;
+};

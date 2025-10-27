@@ -1,17 +1,11 @@
 import { notFound } from 'next/navigation';
 
-import { PatientShort, TreatmentPlanStatus } from '@/shared/models';
+import { PatientAndTreatmentPlan } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 import {
   mapToPatientandTreatmentPlan,
   PatientAndTreatmentPlanDTO,
 } from './mappers';
-
-export type PatientAndTreatmentPlan = PatientShort & {
-  lastTreatmentPlanId: string;
-  lastTreatmentPlanStatus: TreatmentPlanStatus;
-  lastTreatmentPlanUpdatedAt: Date;
-};
 
 export async function getAllPatients(
   search?: string,
