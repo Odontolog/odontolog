@@ -91,6 +91,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           email: token.email,
           role: token.role,
           accessToken: token.accessToken,
+          firstAccess: token.firstAccess,
         },
       };
     },

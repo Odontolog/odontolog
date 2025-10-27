@@ -39,7 +39,7 @@ public class User implements UserDetails {
   @Column(nullable = false, columnDefinition = "boolean default false")
   boolean deleted = false;
 
-  @Column(nullable = false, columnDefinition = "boolean default true")
+  @Column(name = "first_access", nullable = false, columnDefinition = "boolean default true")
   boolean firstAccess = true;
 
   @Override
