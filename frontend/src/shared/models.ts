@@ -136,6 +136,7 @@ export type Attachments = {
   uploader: User;
   size: number;
   type: string;
+  description?: string;
 };
 
 export type ProcedureDetail = {

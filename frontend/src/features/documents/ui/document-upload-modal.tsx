@@ -110,7 +110,11 @@ function UploadModalContent({
           Cancelar
         </Button>
         <Button
-          onClick={() => uploadMutation.mutate(newAtts)}
+          onClick={() => {
+            uploadMutation.mutate(newAtts);
+            setDescription('');
+            onClose();
+          }}
           loading={uploadMutation.isPending}
         >
           Salvar

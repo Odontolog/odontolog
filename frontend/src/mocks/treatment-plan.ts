@@ -158,6 +158,7 @@ export const attachments: Attachments[] = [
     type: 'image/jpg',
     uploader: student,
     size: 2411724,
+    description: 'Mostra lesão periapical e proximidade com a polpa.',
   },
   {
     id: '2',
@@ -176,6 +177,8 @@ export const attachments: Attachments[] = [
     filename: 'radiografia-panoramica.jpg',
     uploader: supervisor,
     size: 4294967,
+    description:
+      'Mostra arcadas dentárias, terceiros molares e relação óssea geral.',
   },
   {
     id: '4',
@@ -194,6 +197,8 @@ export const attachments: Attachments[] = [
     filename: 'tomografia-cone-beam.mp4',
     uploader: supervisor2,
     size: 13314662,
+    description:
+      'Vídeo da reconstrução CBCT (Cone Beam) apresentando cortes axiais e visualização 3D das estruturas maxilofaciais.',
   },
 ];
 

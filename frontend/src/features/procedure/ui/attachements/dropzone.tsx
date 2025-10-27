@@ -84,12 +84,19 @@ export function ProcedureDropzone({
 
           <div>
             <Text size="xl" inline ta="center">
-              Arraste imagens, PDFs ou vídeos aqui ou clique para selecionar
+              Arraste imagem, PDF ou vídeo aqui ou clique para selecionar
               arquivos
             </Text>
-            <Text size="sm" c="dimmed" inline mt={7} ta="center">
-              Anexe quantos arquivos desejar, cada arquivo não deve exceder 10MB
-            </Text>
+            {props.multiple === true ? (
+              <Text size="sm" c="dimmed" inline mt={7} ta="center">
+                Anexe quantos arquivos desejar, cada arquivo não deve exceder
+                10MB
+              </Text>
+            ) : (
+              <Text size="sm" c="dimmed" inline mt={7} ta="center">
+                Anexe o arquivo desejar, o arquivo não deve exceder 10MB
+              </Text>
+            )}
           </div>
         </Group>
       </Dropzone>
@@ -102,10 +109,11 @@ export function ProcedureDropzone({
         </Group>
         {previews.length > 0 && (
           <SimpleGrid
-            cols={{ base: 1, md: 6 }}
+            cols={{ base: 1, sm: 3, md: 6 }}
             spacing="xs"
             verticalSpacing="xs"
             px={4}
+            type="container"
           >
             {previews}
           </SimpleGrid>

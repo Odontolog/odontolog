@@ -84,6 +84,18 @@ export default function AttachmentsModal({
                 </Text>
               </Stack>
             )}
+            <Text>
+              <Text span fw="bold">
+                Anotações:
+              </Text>{' '}
+              {attachment.description !== undefined ? (
+                attachment.description
+              ) : (
+                <Text span c="dimmed">
+                  Não há anotações
+                </Text>
+              )}
+            </Text>
 
             <Group justify="flex-end" mt="sm">
               <Button color="red" onClick={openConfirmModal}>
