@@ -111,7 +111,7 @@ public class ProcedureService {
             .findById(procedureId)
             .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
 
-    String oldStudySector = new String(procedure.getStudySector());
+    String oldStudySector = new String(procedure.getStudySector() != null ? procedure.getStudySector() : "");
     procedure.setStudySector(studySector);
 
     HashMap<String, Object> metadata = new HashMap<>();
