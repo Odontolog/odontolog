@@ -1,5 +1,9 @@
-import { Modal, Text, Image, Stack, Group, Button } from '@mantine/core';
 import { Attachments } from '@/shared/models';
+import { Button, Group, Image, Modal, Stack, Text } from '@mantine/core';
+import { useState } from 'react';
+
+import DeletionConfirmModal from '@/features/documents/ui/deletion-confirm-modal';
+import { deleteAttachment } from '@/features/procedure/requests';
 
 interface AttachmentsModalProps {
   opened: boolean;
@@ -12,8 +16,40 @@ export default function AttachmentsModal({
   onClose,
   attachment,
 }: AttachmentsModalProps) {
+  const [confirmOpened, setModalOpened] = useState(false);
+
   if (!attachment) {
     return null;
+  }
+  async function handleDownload(att: Attachments) {
+    try {
+      const response = await fetch(att.location);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = att.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      throw new Error('Falha ao baixar o arquivo.');
+    }
+  }
+
+  function handleDocumentDeletion(attachment: Attachments) {
+    void deleteAttachment('1', attachment);
+    setModalOpened(false);
+  }
+
+  function handleClosing() {
+    setModalOpened(false);
+    onClose();
+  }
+
+  function openConfirmModal() {
+    setModalOpened(true);
   }
 
   const isImage = attachment.filename.match(
@@ -21,7 +57,8 @@ export default function AttachmentsModal({
   );
 
   return (
-    <Modal.Root opened={opened} onClose={onClose} size="lg" centered>
+    <Modal.Root opened={opened} onClose={handleClosing} size="lg" centered>
+      <Modal.Overlay />
       <Modal.Content>
         <Modal.Header>
           <Modal.Title fw={600}>{attachment.filename}</Modal.Title>
@@ -31,7 +68,7 @@ export default function AttachmentsModal({
           <Stack gap="md">
             {isImage ? (
               <Image
-                src={`/api/attachments/${attachment.id}`}
+                src={attachment.location}
                 alt={attachment.filename}
                 fit="contain"
                 mah={400}
@@ -47,16 +84,35 @@ export default function AttachmentsModal({
                 </Text>
               </Stack>
             )}
+            <Text>
+              <Text span fw="bold">
+                Anotações:
+              </Text>{' '}
+              {attachment.description !== undefined ? (
+                attachment.description
+              ) : (
+                <Text span c="dimmed">
+                  Não há anotações
+                </Text>
+              )}
+            </Text>
 
             <Group justify="flex-end" mt="sm">
+              <Button color="red" onClick={openConfirmModal}>
+                Deletar
+              </Button>
               <Button
-                component="a"
-                href={`/api/attachments/${attachment.id}/download`}
-                download={attachment.filename}
                 variant="outline"
+                onClick={() => void handleDownload(attachment)}
               >
                 Download
               </Button>
+
+              <DeletionConfirmModal
+                opened={confirmOpened}
+                onClose={() => setModalOpened(false)}
+                onConfirm={() => handleDocumentDeletion(attachment)}
+              />
             </Group>
           </Stack>
         </Modal.Body>
