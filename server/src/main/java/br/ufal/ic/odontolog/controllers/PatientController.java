@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.controllers;
 
+import br.ufal.ic.odontolog.api.PatientApi;
 import br.ufal.ic.odontolog.dtos.AppointmentDTO;
 import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/patients")
-public class PatientController {
+public class PatientController implements PatientApi {
   private final PatientService patientService;
 
   @GetMapping
