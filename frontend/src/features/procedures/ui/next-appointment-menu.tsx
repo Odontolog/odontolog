@@ -1,18 +1,9 @@
 'use client';
 
-import {
-  ActionIcon,
-  Button,
-  Menu,
-  Stack,
-  Text,
-} from '@mantine/core';
+import { ActionIcon, Button, Menu, Stack, Text } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
-import {
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { getNextAppointmentOptions, saveNextAppointment } from '../requests';
