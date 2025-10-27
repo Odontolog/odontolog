@@ -3,27 +3,20 @@
 import {
   ActionIcon,
   Button,
-  Center,
-  Loader,
   Menu,
   Stack,
   Text,
-  ThemeIcon,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 import {
   useMutation,
-  useQuery,
   useQueryClient,
-  UseQueryOptions,
 } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { getNextAppointmentOptions, saveNextAppointment } from '../requests';
 import { notifications } from '@mantine/notifications';
-
-const MENU_WIDTH = 260;
 
 export default function NextAppointmentMenu({
   patientId,

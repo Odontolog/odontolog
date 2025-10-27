@@ -216,7 +216,7 @@ function AttSectionContent({
   if (editing === false && atts.length === 0) {
     return (
       <Text size="sm" c="dimmed" ta="center">
-        Não há documentos ou arquivos anexados a ese procedimento.
+        Não há documentos ou arquivos anexados a esse procedimento.
       </Text>
     );
   }

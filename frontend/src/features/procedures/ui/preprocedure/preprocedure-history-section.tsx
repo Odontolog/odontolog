@@ -24,7 +24,10 @@ import { useState } from 'react';
 import ProcedureCard from '@/shared/components/procedure-card';
 import { ProcedureShort } from '@/shared/models';
 import { preproceduresValues } from '../../data';
-import { createPreprocedure, getPatientPreprocedureOptions } from '../../requests';
+import {
+  createPreprocedure,
+  getPatientPreprocedureOptions,
+} from '../../requests';
 
 interface ProcedureHistorySectionProps {
   patientId: string;

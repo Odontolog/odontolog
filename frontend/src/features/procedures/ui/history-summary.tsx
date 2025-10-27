@@ -1,5 +1,4 @@
 import { Card, Flex, Group, Skeleton, Stack, Text } from '@mantine/core';
-import { useState } from 'react';
 
 import NextAppointmentMenu from './next-appointment-menu';
 import { getNextAppointmentOptions } from '../requests';
@@ -47,7 +46,7 @@ export default function HistorySummary({
           ) : (
             <Text fw={600}>
               {nextAppointment
-                ?nextAppointment.toLocaleDateString('pt-BR')
+                ? nextAppointment.toLocaleDateString('pt-BR')
                 : 'Não agendada'}
             </Text>
           )}
