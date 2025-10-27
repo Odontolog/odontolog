@@ -2,7 +2,6 @@
 
 import {
   Avatar,
-  Badge,
   Center,
   Group,
   Loader,
@@ -20,6 +19,7 @@ import {
   getBadgeProps,
   getPatientSubtitle,
 } from '@/shared/components/patient-card';
+import { StatusBadge } from '@/shared/components/status';
 import RecordModal from '../patient/record-modal';
 import { getAllPatients } from './requests';
 
@@ -108,9 +108,9 @@ function SearchContent({
           </div>
 
           {patient.lastTreatmentPlanStatus && (
-            <Badge
-              variant="light"
-              {...getBadgeProps(patient.lastTreatmentPlanStatus)}
+            <StatusBadge
+              status={patient.lastTreatmentPlanStatus}
+              getProps={getBadgeProps}
             />
           )}
         </Group>
