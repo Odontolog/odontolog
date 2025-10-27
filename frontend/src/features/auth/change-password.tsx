@@ -14,7 +14,7 @@ import {
 import { useForm } from '@mantine/form';
 import { IconLock } from '@tabler/icons-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useState } from 'react';
 
 import { DEFAULT_REDIRECT } from '@/shared/routes';
@@ -28,7 +28,7 @@ export default function ChangePasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get('next') ?? DEFAULT_REDIRECT;
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
 
   const isFirstAccess = session?.user?.firstAccess === true;
@@ -58,20 +58,41 @@ export default function ChangePasswordForm() {
     setIsLoading(true);
 
     try {
-      // TODO: Implementar chamada da API para trocar senha
-
-      // Se for primeiro acesso, atualizar o status na sessão
-      if (isFirstAccess) {
-        await update({
-          ...session,
-          user: {
-            ...session.user,
-            firstAccess: false,
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/change-password`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session?.user.accessToken}`,
           },
-        });
+          body: JSON.stringify({
+            newPassword: credentials.password,
+            confirmPassword: credentials.confirmPassword,
+          }),
+        },
+      );
+
+      if (!res.ok) {
+        throw new Error(
+          `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+        );
       }
 
-      router.push(isFirstAccess ? DEFAULT_REDIRECT : nextPath);
+      // Se for primeiro acesso, força um novo login para garantir sessão atualizada
+      if (isFirstAccess) {
+        // Aguarda um pouco para garantir que o backend processou a mudança
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Força logout e redireciona para login com mensagem de sucesso
+        await signOut({
+          callbackUrl: '/login?message=password-changed',
+          redirect: true,
+        });
+        return;
+      }
+
+      router.push(nextPath);
     } catch (error) {
       form.setErrors({ password: 'Erro ao alterar senha. Tente novamente.' });
     } finally {
@@ -106,7 +127,7 @@ export default function ChangePasswordForm() {
                     src="/assets/odontolog-logo.svg"
                     alt="Odontolog logo brand"
                   />
-                  <Text size="xs" c="dimmed">
+                  <Text size="xs" c="dimmed" ta="center">
                     {isFirstAccess
                       ? 'Bem-vindo! Para sua segurança, crie uma nova senha antes de continuar.'
                       : 'Crie uma nova senha segura para sua conta.'}

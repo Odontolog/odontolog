@@ -16,9 +16,7 @@ export async function middleware(request: NextRequest) {
   const isChangePasswordPage = request.nextUrl.pathname === '/change-password';
   const isFirstAccess = session?.user?.firstAccess === true;
 
-  if (
-    !isAuthenticated && !isAuthRoute
-  ) {
+  if (!isAuthenticated && !isAuthRoute) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('next', request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
