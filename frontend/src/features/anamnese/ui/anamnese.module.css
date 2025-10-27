@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  align-items: stretch;
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+  gap: var(--mantine-spacing-lg);
+  min-width: 360px;
+}
+
+.side {
+  flex-basis: 30%;
+  min-width: 340px;
+}
+
+@media (max-width: 62em) {
+  .side {
+    flex: 1;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-xs);
+  }
+}
