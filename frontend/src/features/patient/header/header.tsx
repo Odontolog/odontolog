@@ -22,7 +22,10 @@ import {
   IconDental,
   IconEdit,
   IconMapPin,
+  IconReportSearch,
   IconMicroscope,
+  // IconReportSearch,
+  // IconSettings2,
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -53,11 +56,11 @@ const tabs = [
     icon: <IconCheckupList size={14} />,
     label: 'Tratamentos',
   },
-  // {
-  //   value: 'documents',
-  //   icon: <IconReportSearch size={14} />,
-  //   label: 'Documentos',
-  // },
+  {
+    value: 'documents',
+    icon: <IconReportSearch size={14} />,
+    label: 'Documentos',
+  },
   // {
   //   value: 'settings',
   //   icon: <IconSettings2 size={14} />,
