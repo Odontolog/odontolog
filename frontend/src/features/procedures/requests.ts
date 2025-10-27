@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
 import { queryOptions } from '@tanstack/react-query';
 
-import { ProcedureShort } from '@/shared/models';
+import { Procedure, ProcedureShort } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 import { mapToProcedureShort, ProcedureShortDto } from './mappers';
+import { Appointment } from './models';
 
 export function getPatientProcedureOptions(patientId: string) {
   return queryOptions({
@@ -35,40 +36,116 @@ async function getPatientProcedures(
   return data.map((p) => mapToProcedureShort(p));
 }
 
+export function getPatientPreprocedureOptions(patientId: string) {
+  return queryOptions({
+    queryKey: ['patientPreprocedureList', patientId],
+    queryFn: () => getPatientPreprocedures(patientId),
+  });
+}
+
+async function getPatientPreprocedures(
+  patientId: string,
+): Promise<ProcedureShort[]> {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/pre-procedures`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (res.status >= 500) {
+    throw new Error(`Erro ao buscar plano: ${res.status}`);
+  } else if (res.status >= 400) {
+    notFound();
+  }
+
+  const data = (await res.json()) as ProcedureShortDto[];
+  return data.map((p) => mapToProcedureShort(p));
+}
+
 export async function createPreprocedure(
   patientId: string,
   selectedPreprocedure: string,
 ): Promise<string> {
-  console.log(
-    `Creating preprocedure ${selectedPreprocedure} for patient's id ${patientId}`,
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/pre-procedures`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name: selectedPreprocedure }),
+    },
   );
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return '4';
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro criar procedimento para o plano de tratamento.`,
+    );
+  }
+
+  const data = (await res.json()) as Procedure;
+
+  return data.id;
 }
 
-export function getNextConsultationDate(patientId: string) {
+export function getNextAppointmentOptions(patientId: string) {
   return queryOptions({
-    queryKey: ['nextConsultationDate', patientId],
-    queryFn: () => getNextConsultation(patientId),
+    queryKey: ['nextAppointmentDate', patientId],
+    queryFn: () => getNextAppointment(patientId),
   });
 }
 
-export async function getNextConsultation(patientId: string) {
-  console.log(
-    `Fetching data for patient's id ${patientId} next consultation date.`,
+export async function getNextAppointment(patientId: string): Promise<Date> {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/next-appointment`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
   );
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return { success: true };
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro ao pegar os dados da próxima consulta.`,
+    );
+  }
+
+  const data = (await res.json()) as Appointment;
+  return new Date(`${data.appointmentDate}T00:00:00`);
 }
 
-export async function saveNextConsultation(
+export async function saveNextAppointment(
   date: Date | undefined,
   patientId: string,
 ) {
-  console.log(JSON.stringify({ date }));
-  console.log(
-    `Next consultation on date ${date ? date.toISOString() : 'undefined'} saved for patient ${patientId}`,
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/next-appointment`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ appointmentDate: date }),
+    },
   );
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return { success: true };
+
+  if (!res.ok) {
+    throw new Error(
+      `[${res.status}] Erro ao salvar a data da próxima consulta.`,
+    );
+  }
 }

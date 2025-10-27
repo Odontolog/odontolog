@@ -47,7 +47,7 @@ public class PatientController {
   }
 
   @PutMapping("/{id}/next-appointment")
-  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'STUDENT')")
   public ResponseEntity<AppointmentDTO> updateNextAppointment(
       @PathVariable Long id, @RequestBody @Valid AppointmentDTO appointmentDTO) {
 
