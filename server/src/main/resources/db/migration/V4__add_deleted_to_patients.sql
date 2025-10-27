@@ -1,0 +1,5 @@
+ALTER TABLE patients
+    ADD deleted BOOLEAN DEFAULT TRUE;
+
+ALTER TABLE patients
+    ALTER COLUMN deleted SET NOT NULL;

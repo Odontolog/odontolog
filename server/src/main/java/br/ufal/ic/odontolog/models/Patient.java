@@ -4,7 +4,6 @@ import br.ufal.ic.odontolog.enums.Ethnicity;
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;

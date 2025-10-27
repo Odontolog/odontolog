@@ -3,41 +3,36 @@ package br.ufal.ic.odontolog.dtos;
 import br.ufal.ic.odontolog.enums.Ethnicity;
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
-import java.time.LocalDate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import lombok.Data;
 
 @Data
 public class PatientUpsertDTO {
 
-    @NotBlank
-    private String name;
+  @NotBlank private String name;
 
-    private String address;
+  private String address;
 
-    private String avatarUrl;
+  private String avatarUrl;
 
-    @NotBlank
-    private String CPF;
+  @NotBlank private String CPF;
 
-    private String phoneNumber;
+  private String phoneNumber;
 
-    private String RG;
+  private String RG;
 
-    private String city;
-    private String state;
+  private String city;
+  private String state;
 
-    @NotNull
-    private Ethnicity ethnicity;
+  @NotNull private Ethnicity ethnicity;
 
-    @NotNull
-    private Sex sex;
+  @NotNull private Sex sex;
 
-    @NotNull
-    private LocalDate birthDate;
+  @NotNull private LocalDate birthDate;
 
-    private MaritalStatus maritalStatus;
+  private MaritalStatus maritalStatus;
 
-    private String occupation;
+  private String occupation;
 }

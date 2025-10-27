@@ -4,12 +4,10 @@ import br.ufal.ic.odontolog.dtos.AppointmentDTO;
 import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
 import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
-import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.services.PatientService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,7 +62,7 @@ public class PatientController {
   @PutMapping("/{id}")
   @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
   public ResponseEntity<PatientDTO> updatePatient(
-          @PathVariable Long id, @RequestBody @Valid PatientUpsertDTO dto) {
+      @PathVariable Long id, @RequestBody @Valid PatientUpsertDTO dto) {
     PatientDTO updated = patientService.updatePatient(id, dto);
     return ResponseEntity.ok(updated);
   }
@@ -72,8 +70,7 @@ public class PatientController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
   public ResponseEntity<Void> deletePatient(
-          @PathVariable Long id,
-          @RequestParam(defaultValue = "true") boolean soft) {
+      @PathVariable Long id, @RequestParam(defaultValue = "true") boolean soft) {
 
     patientService.deletePatient(id, soft);
     return ResponseEntity.noContent().build();

@@ -33,7 +33,7 @@ public class PatientService {
   }
 
   public List<PatientDTO> getPatients() {
-    List<Patient> patients = patientRepository.findAll();
+    List<Patient> patients = patientRepository.findAllActive();
     return patientMapper.toDTOList(patients);
   }
 
@@ -55,9 +55,9 @@ public class PatientService {
   @Transactional
   public PatientDTO updatePatient(Long id, PatientUpsertDTO dto) {
     Patient patient =
-            patientRepository
-                    .findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
 
     patientMapper.updateEntityFromDto(dto, patient);
     patientRepository.save(patient);
@@ -68,8 +68,9 @@ public class PatientService {
   @Transactional
   public void deletePatient(Long id, boolean soft) {
     Patient patient =
-            patientRepository.findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
 
     if (soft) {
       patient.softDelete();
@@ -82,8 +83,9 @@ public class PatientService {
   @Transactional
   public void restorePatient(Long id) {
     Patient patient =
-            patientRepository.findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
     patient.setDeleted(false);
     patientRepository.save(patient);
   }
