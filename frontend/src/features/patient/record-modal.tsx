@@ -251,15 +251,6 @@ function RecordForm({
               {...form.getInputProps('rg')}
             />
           </Stack>
-          <Stack gap={0} style={{ minHeight: 78 }}>
-            <TextInput
-              label="SSP"
-              required
-              placeholder="SSP/AL"
-              key={form.key('ssp')}
-              {...form.getInputProps('ssp')}
-            />
-          </Stack>
         </Group>
 
         <Group grow align="flex-start">
