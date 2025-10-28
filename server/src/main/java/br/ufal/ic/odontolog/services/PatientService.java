@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import br.ufal.ic.odontolog.dtos.AppointmentDTO;
 import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
+import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
@@ -32,7 +33,7 @@ public class PatientService {
   }
 
   public List<PatientDTO> getPatients() {
-    List<Patient> patients = patientRepository.findAll();
+    List<Patient> patients = patientRepository.findAllActive();
     return patientMapper.toDTOList(patients);
   }
 
@@ -42,6 +43,51 @@ public class PatientService {
             .findById(id)
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
     return patientMapper.toDTO(patient);
+  }
+
+  @Transactional
+  public PatientDTO createPatient(PatientUpsertDTO dto) {
+    Patient patient = patientMapper.toEntity(dto);
+    patientRepository.save(patient);
+    return patientMapper.toDTO(patient);
+  }
+
+  @Transactional
+  public PatientDTO updatePatient(Long id, PatientUpsertDTO dto) {
+    Patient patient =
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+
+    patientMapper.updateEntityFromDto(dto, patient);
+    patientRepository.save(patient);
+
+    return patientMapper.toDTO(patient);
+  }
+
+  @Transactional
+  public void deletePatient(Long id, boolean soft) {
+    Patient patient =
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+
+    if (soft) {
+      patient.softDelete();
+      patientRepository.save(patient);
+    } else {
+      patientRepository.delete(patient);
+    }
+  }
+
+  @Transactional
+  public void restorePatient(Long id) {
+    Patient patient =
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+    patient.setDeleted(false);
+    patientRepository.save(patient);
   }
 
   public List<PatientAndTreatmentPlanDTO> searchForPatients(Optional<String> searchTerm) {

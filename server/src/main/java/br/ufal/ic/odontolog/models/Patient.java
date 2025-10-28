@@ -3,14 +3,7 @@ package br.ufal.ic.odontolog.models;
 import br.ufal.ic.odontolog.enums.Ethnicity;
 import br.ufal.ic.odontolog.enums.MaritalStatus;
 import br.ufal.ic.odontolog.enums.Sex;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -69,4 +62,11 @@ public class Patient {
   private final Set<Procedure> procedures = new HashSet<>();
 
   private LocalDate appointmentDate;
+
+  @Column(nullable = false)
+  private boolean deleted = false;
+
+  public void softDelete() {
+    this.deleted = true;
+  }
 }
