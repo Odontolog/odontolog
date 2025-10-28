@@ -33,7 +33,7 @@ export default function ProcedureHistorySection({
   const { data, isLoading } = useQuery({
     ...procedures,
   });
-  const lastConsultationDate =
+  const lastAppointmentDate =
     data && data.length > 0
       ? new Date(
           Math.max(...data.map((pcd) => new Date(pcd.updatedAt).getTime())),
@@ -43,7 +43,7 @@ export default function ProcedureHistorySection({
   return (
     <Stack>
       <HistorySummary
-        lastConsultation={lastConsultationDate?.toLocaleDateString('pt-BR')}
+        lastAppointment={lastAppointmentDate?.toLocaleDateString('pt-BR')}
         patientId={patientId}
         isLoading={isLoading}
       />

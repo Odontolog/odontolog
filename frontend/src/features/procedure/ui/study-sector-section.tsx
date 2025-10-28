@@ -105,6 +105,14 @@ function StudySectorSectionContent(props: StudySectorSectionContentProps) {
     return null;
   }
 
+  if (studySector === '' || studySector === null) {
+    return (
+      <Text size="sm" c="dimmed" ta="center">
+        Nenhuma área de estudo selecionada
+      </Text>
+    );
+  }
+
   return (
     <Flex gap="xs" wrap="wrap" justify="center">
       <Badge size="lg" variant="light">

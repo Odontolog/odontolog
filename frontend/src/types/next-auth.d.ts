@@ -11,6 +11,7 @@ declare module 'next-auth' {
       email: string;
       photoUrl: string;
       role: UserRole;
+      firstAccess: boolean;
     };
   }
 
@@ -21,6 +22,7 @@ declare module 'next-auth' {
     email: string;
     photoUrl?: string;
     role: UserRole;
+    firstAccess: boolean;
   }
 }
 
@@ -33,5 +35,6 @@ declare module 'next-auth/jwt' {
     email: string;
     name: string;
     role: UserRole;
+    firstAccess: boolean;
   }
 }

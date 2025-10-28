@@ -19,9 +19,11 @@ import {
   IconCalendar,
   IconCheckupList,
   IconChevronDown,
+  IconClipboardHeart,
   IconDental,
   IconEdit,
   IconMapPin,
+  IconReportSearch,
   IconMicroscope,
   IconSettings2,
 } from '@tabler/icons-react';
@@ -47,6 +49,11 @@ function getTabs(user: User) {
       label: 'Histórico Geral',
     },
     {
+      value: 'anamnese',
+      icon: <IconClipboardHeart size={14} />,
+      label: 'Anamnese',
+    },
+    {
       value: 'preprocedures',
       icon: <IconMicroscope size={14} />,
       label: 'Pré-Procedimentos',
@@ -56,11 +63,11 @@ function getTabs(user: User) {
       icon: <IconCheckupList size={14} />,
       label: 'Tratamentos',
     },
-    // {
-    //   value: 'documents',
-    //   icon: <IconReportSearch size={14} />,
-    //   label: 'Documentos',
-    // },
+    {
+      value: 'documents',
+      icon: <IconReportSearch size={14} />,
+      label: 'Documentos',
+    },
   ];
 
   const supervisorTabs = [

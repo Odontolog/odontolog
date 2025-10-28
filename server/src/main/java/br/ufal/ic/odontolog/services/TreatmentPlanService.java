@@ -13,6 +13,7 @@ import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.mappers.TreatmentPlanMapper;
 import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Patient;
+import br.ufal.ic.odontolog.models.ProcedureDetail;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.TreatmentPlanProcedure;
 import br.ufal.ic.odontolog.models.User;
@@ -121,6 +122,7 @@ public class TreatmentPlanService {
             .studySector(dto.getStudySector())
             .patient(treatmentPlan.getPatient())
             .treatmentPlan(treatmentPlan)
+            .procedureDetail(new ProcedureDetail(""))
             .build();
 
     procedure.setPlannedSession(dto.getPlannedSession());

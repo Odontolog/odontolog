@@ -1,28 +1,25 @@
 import { Card, Flex, Group, Skeleton, Stack, Text } from '@mantine/core';
-import { useState } from 'react';
 
-import NextConsultationMenu from './next-consultation-menu';
+import NextAppointmentMenu from './next-appointment-menu';
+import { getNextAppointmentOptions } from '../requests';
+import { useQuery } from '@tanstack/react-query';
 
 interface procedureSummaryProps {
-  lastConsultation?: string | null;
+  lastAppointment?: string | null;
   patientId: string;
   isLoading?: boolean;
 }
 
 export default function HistorySummary({
-  lastConsultation,
+  lastAppointment,
   patientId,
   isLoading,
 }: procedureSummaryProps) {
-  const nextConsultationQueryOptions = {
-    queryKey: ['nextConsultationDate', patientId],
-  };
+  const nextAppointmentQueryOptions = getNextAppointmentOptions(patientId);
 
-  const [nextConsultationDate, setNextConsultationDate] = useState<Date>();
-
-  const handleSaveNextConsultation = (date: Date) => {
-    setNextConsultationDate(date);
-  };
+  const { data: nextAppointment, isLoading: isAppointmentLoading } = useQuery({
+    ...nextAppointmentQueryOptions,
+  });
 
   return (
     <Flex gap="xs">
@@ -31,10 +28,10 @@ export default function HistorySummary({
           <Text size="sm">Última consulta</Text>
           {(isLoading ?? false) ? (
             <Skeleton height={24} radius="none" />
-          ) : lastConsultation == null ? (
+          ) : lastAppointment == null ? (
             <Text fw={600}>Não informado</Text>
           ) : (
-            <Text fw={600}>{lastConsultation}</Text>
+            <Text fw={600}>{lastAppointment}</Text>
           )}
         </Stack>
       </Card>
@@ -42,17 +39,17 @@ export default function HistorySummary({
         <Stack gap="4" h="100%" justify="center">
           <Group justify="space-between">
             <Text size="sm">Próxima consulta</Text>
-            <NextConsultationMenu
-              patientId={patientId}
-              queryOptions={nextConsultationQueryOptions}
-              onSave={handleSaveNextConsultation}
-            />
+            <NextAppointmentMenu patientId={patientId} />
           </Group>
-          <Text fw={600}>
-            {nextConsultationDate
-              ? new Date(nextConsultationDate).toLocaleDateString('pt-BR')
-              : 'Não agendada'}
-          </Text>
+          {isAppointmentLoading ? (
+            <Skeleton height={24} radius="none" />
+          ) : (
+            <Text fw={600}>
+              {nextAppointment
+                ? nextAppointment.toLocaleDateString('pt-BR')
+                : 'Não agendada'}
+            </Text>
+          )}
         </Stack>
       </Card>
     </Flex>

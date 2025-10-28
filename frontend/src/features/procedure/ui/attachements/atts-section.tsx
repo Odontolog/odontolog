@@ -132,7 +132,7 @@ function AttSectionContent({
         id: crypto.randomUUID(),
         createdAt: new Date(),
         filename: file.name,
-        location: file.path,
+        location: file.path ?? file.name,
         type: file.type,
         size: file.size,
         uploader: user,
@@ -213,7 +213,7 @@ function AttSectionContent({
     return null;
   }
 
-  if (atts.length === 0) {
+  if (editing === false && atts.length === 0) {
     return (
       <Text size="sm" c="dimmed" ta="center">
         Não há documentos ou arquivos anexados a esse procedimento.
