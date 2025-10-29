@@ -23,12 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 @ExtendWith(MockitoExtension.class)
 public class PatientServiceUnitTest {
 
-  @Mock
-  private PatientRepository patientRepository;
-  @Mock
-  private PatientMapper patientMapper;
-  @InjectMocks
-  private PatientService patientService;
+  @Mock private PatientRepository patientRepository;
+  @Mock private PatientMapper patientMapper;
+  @InjectMocks private PatientService patientService;
 
   private Patient createPatient(Long id) {
     Patient patient = new Patient();
@@ -90,7 +87,8 @@ public class PatientServiceUnitTest {
   public void givenNonExistentPatient_whenGetPatientById_thenThrowException() {
     when(patientRepository.findById(99L)).thenReturn(Optional.empty());
 
-    ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> patientService.getPatientById(99L));
+    ResponseStatusException ex =
+        assertThrows(ResponseStatusException.class, () -> patientService.getPatientById(99L));
 
     assertThat(ex.getStatusCode()).isEqualTo(NOT_FOUND);
     verify(patientRepository).findById(99L);
