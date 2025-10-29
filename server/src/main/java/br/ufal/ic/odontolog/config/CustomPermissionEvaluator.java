@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.config;
 
+import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.models.Procedure;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.repositories.ProcedureRepository;
@@ -62,6 +63,8 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
           return hasTreatmentPlanPermission(id, userId);
         case "Procedure":
           return hasProcedurePermission(id, userId);
+        case "Reviewable":
+          return hasReviewablePermission(id, userId);
       }
     }
 
@@ -69,17 +72,43 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
   }
 
   private boolean hasTreatmentPlanPermission(Long treatmentPlanId, UUID userId) {
-    TreatmentPlan treatmentPlan = treatmentPlanRepository.findById(treatmentPlanId).orElseThrow();
+    TreatmentPlan treatmentPlan =
+        treatmentPlanRepository
+            .findById(treatmentPlanId)
+            .orElseThrow(() -> new ResourceNotFoundException("Treatment plan not found"));
     return patientPermissionService.hasPermission(userId, treatmentPlan.getPatient().getId());
   }
 
   private boolean hasProcedurePermission(Long procedureId, UUID userId) {
-    Procedure procedure = procedureRepository.findById(procedureId).orElseThrow();
+    Procedure procedure =
+        procedureRepository
+            .findById(procedureId)
+            .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
     return patientPermissionService.hasPermission(userId, procedure.getPatient().getId());
   }
 
   private boolean hasPatientPermission(Long patientId, UUID userId) {
     return patientPermissionService.hasPermission(userId, patientId);
+  }
+
+  private boolean hasReviewablePermission(Long reviewableId, UUID userId) {
+    Long patientId = getReviewablePatientId(reviewableId);
+    return patientPermissionService.hasPermission(userId, patientId);
+  }
+
+  // Gambiarra fubenta
+  private Long getReviewablePatientId(Long reviewableId) {
+    var treatmentOpt = treatmentPlanRepository.findById(reviewableId);
+    if (treatmentOpt.isPresent()) {
+      return treatmentOpt.get().getPatient().getId();
+    }
+
+    var procedureOpt = procedureRepository.findById(reviewableId);
+    if (procedureOpt.isPresent()) {
+      return procedureOpt.get().getPatient().getId();
+    }
+
+    throw new ResourceNotFoundException("Reviewable not found");
   }
 
   private UUID getUserId(Authentication authentication) {
