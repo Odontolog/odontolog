@@ -10,6 +10,7 @@ public class AttachmentDTO {
   private String objectKey;
   private String filename;
   private String filetype;
+  private String description;
   private Integer size;
   private URL presignedUrl;
 }

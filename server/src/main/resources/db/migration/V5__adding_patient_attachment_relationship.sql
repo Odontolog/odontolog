@@ -2,7 +2,10 @@ ALTER TABLE attachments
     ADD filetype VARCHAR(255);
 
 ALTER TABLE attachments
-    ADD objectKey VARCHAR(255);
+    ADD object_key VARCHAR(255);
+
+ALTER TABLE attachments
+    ADD notes VARCHAR(255);
 
 ALTER TABLE attachments
     ADD patient_id BIGINT;
