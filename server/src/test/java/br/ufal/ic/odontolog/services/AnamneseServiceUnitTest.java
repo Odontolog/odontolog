@@ -5,16 +5,14 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import br.ufal.ic.odontolog.dtos.UserResponseDTO;
+import br.ufal.ic.odontolog.dtos.anamnese.AnamneseConditionDTO;
 import br.ufal.ic.odontolog.dtos.anamnese.AnamneseConditionsUpsertDTO;
 import br.ufal.ic.odontolog.dtos.anamnese.AnamneseDTO;
 import br.ufal.ic.odontolog.dtos.anamnese.AnamneseNotesUpsertDTO;
 import br.ufal.ic.odontolog.enums.ClinicalCondition;
 import br.ufal.ic.odontolog.mappers.AnamneseMapper;
 import br.ufal.ic.odontolog.mappers.UserMapper;
-import br.ufal.ic.odontolog.models.Anamnese;
-import br.ufal.ic.odontolog.models.AnamneseActivity;
-import br.ufal.ic.odontolog.models.PatientCondition;
-import br.ufal.ic.odontolog.models.User;
+import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.AnamneseActivityRepository;
 import br.ufal.ic.odontolog.repositories.AnamneseRepository;
 import br.ufal.ic.odontolog.repositories.PatientConditionRepository;
@@ -50,15 +48,16 @@ class AnamneseServiceUnitTest {
             inv -> {
               Anamnese a = inv.getArgument(0);
               AnamneseDTO dto = new AnamneseDTO();
-              dto.setPatientId(a.getId());
+              Patient pp =
+                  Optional.ofNullable(a.getPatient())
+                      .orElse(Patient.builder().id(a.getId()).build());
+              dto.setPatientId(pp.getId());
               dto.setNotes(a.getNotes());
               // map conditions to DTO-like objects we assert on
               if (a.getConditions() != null) {
-                List<br.ufal.ic.odontolog.dtos.anamnese.AnamneseConditionDTO> list =
-                    new java.util.ArrayList<>();
+                List<AnamneseConditionDTO> list = new java.util.ArrayList<>();
                 for (PatientCondition pc : a.getConditions()) {
-                  br.ufal.ic.odontolog.dtos.anamnese.AnamneseConditionDTO c =
-                      new br.ufal.ic.odontolog.dtos.anamnese.AnamneseConditionDTO();
+                  AnamneseConditionDTO c = new AnamneseConditionDTO();
                   c.setId(pc.getId());
                   c.setCondition(pc.getCondition() != null ? pc.getCondition().name() : null);
                   c.setDescription(
@@ -97,7 +96,8 @@ class AnamneseServiceUnitTest {
 
     when(anamneseRepository.findById(patientId)).thenReturn(Optional.empty());
     // Patient exists for one-to-one mapping
-    br.ufal.ic.odontolog.models.Patient p = new br.ufal.ic.odontolog.models.Patient();
+    Patient p = new Patient();
+    p.setId(patientId);
     // set id via reflection since it's @GeneratedValue; but here just ensure repository returns
     // instance
     lenient().when(patientRepository.findById(patientId)).thenReturn(Optional.of(p));
