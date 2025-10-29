@@ -2,8 +2,12 @@ package br.ufal.ic.odontolog.models;
 
 import br.ufal.ic.odontolog.enums.ClinicalCondition;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "patient_conditions")
 public class PatientCondition {
   @Id

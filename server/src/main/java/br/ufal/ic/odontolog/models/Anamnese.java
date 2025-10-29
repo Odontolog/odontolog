@@ -17,6 +17,13 @@ import lombok.experimental.SuperBuilder;
 public class Anamnese {
   @Id private Long id;
 
+  @OneToOne
+  @MapsId
+  @JoinColumn(name = "id")
+  private Patient patient;
+
+  private String notes;
+
   @OneToMany(
       mappedBy = "anamnese",
       cascade = CascadeType.ALL,
