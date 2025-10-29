@@ -46,7 +46,7 @@ public class PatientController implements PatientApi {
   }
 
   @PutMapping("/{id}/next-appointment")
-  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'STUDENT')")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<AppointmentDTO> updateNextAppointment(
       @PathVariable Long id, @RequestBody @Valid AppointmentDTO appointmentDTO) {
 
@@ -63,7 +63,7 @@ public class PatientController implements PatientApi {
   }
 
   @PutMapping("/{id}")
-  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<PatientDTO> updatePatient(
       @PathVariable Long id, @RequestBody @Valid PatientUpsertDTO dto) {
     PatientDTO updated = patientService.updatePatient(id, dto);
