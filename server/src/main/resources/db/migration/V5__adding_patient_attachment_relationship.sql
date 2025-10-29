@@ -5,7 +5,7 @@ ALTER TABLE attachments
     ADD object_key VARCHAR(255);
 
 ALTER TABLE attachments
-    ADD notes VARCHAR(255);
+    ADD description VARCHAR(255);
 
 ALTER TABLE attachments
     ADD patient_id BIGINT;

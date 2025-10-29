@@ -21,7 +21,7 @@ public class Attachment {
   private String filetype;
   private String location;
   private String objectKey;
-  private String notes;
+  private String description;
 
   @ManyToOne
   @JoinColumn(name = "uploader_id")
