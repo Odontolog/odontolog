@@ -1,0 +1,34 @@
+meta {
+  name: Upload File at S3
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://localhost:4566/odontolog-dev-private/patients/1/attachments/097cd2ff-b108-4262-a6f1-db06586529ed?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20251026T000724Z&X-Amz-SignedHeaders=host&X-Amz-Credential=test/20251026/us-east-1/s3/aws4_request&X-Amz-Expires=900&X-Amz-Signature=c54be971fd0c1796e8a22d21f02365d04b95b23f17b2aab3a855b9bb2f87bf97
+  body: file
+  auth: inherit
+}
+
+params:query {
+  X-Amz-Algorithm: AWS4-HMAC-SHA256
+  X-Amz-Date: 20251026T000724Z
+  X-Amz-SignedHeaders: host
+  X-Amz-Credential: test/20251026/us-east-1/s3/aws4_request
+  X-Amz-Expires: 900
+  X-Amz-Signature: c54be971fd0c1796e8a22d21f02365d04b95b23f17b2aab3a855b9bb2f87bf97
+}
+
+headers {
+  Content-Type: image/png
+  Content-Disposition: attachment; filename="thug clown 3.png"
+}
+
+body:file {
+  file: @file(C:\Users\Ricardo\Downloads\thug clown 3.png) @contentType(image/png)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
