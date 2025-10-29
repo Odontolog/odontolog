@@ -12,6 +12,7 @@ import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.AttachmentMapper;
+import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.models.Attachment;
 import br.ufal.ic.odontolog.models.Patient;
@@ -49,7 +50,7 @@ public class PatientService {
   private final AttachmentMapper attachmentMapper;
 
   public List<PatientDTO> getPatients() {
-    List<Patient> patients = patientRepository.findAll();
+    List<Patient> patients = patientRepository.findAllActive();
     return patientMapper.toDTOList(patients);
   }
 
@@ -59,6 +60,51 @@ public class PatientService {
             .findById(id)
             .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
     return patientMapper.toDTO(patient);
+  }
+
+  @Transactional
+  public PatientDTO createPatient(PatientUpsertDTO dto) {
+    Patient patient = patientMapper.toEntity(dto);
+    patientRepository.save(patient);
+    return patientMapper.toDTO(patient);
+  }
+
+  @Transactional
+  public PatientDTO updatePatient(Long id, PatientUpsertDTO dto) {
+    Patient patient =
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+
+    patientMapper.updateEntityFromDto(dto, patient);
+    patientRepository.save(patient);
+
+    return patientMapper.toDTO(patient);
+  }
+
+  @Transactional
+  public void deletePatient(Long id, boolean soft) {
+    Patient patient =
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+
+    if (soft) {
+      patient.softDelete();
+      patientRepository.save(patient);
+    } else {
+      patientRepository.delete(patient);
+    }
+  }
+
+  @Transactional
+  public void restorePatient(Long id) {
+    Patient patient =
+        patientRepository
+            .findById(id)
+            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Patient not found"));
+    patient.setDeleted(false);
+    patientRepository.save(patient);
   }
 
   public List<PatientAndTreatmentPlanDTO> searchForPatients(Optional<String> searchTerm) {

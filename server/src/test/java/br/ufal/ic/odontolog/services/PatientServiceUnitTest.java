@@ -3,19 +3,21 @@ package br.ufal.ic.odontolog.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import br.ufal.ic.odontolog.dtos.PatientDTO;
+import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.models.Patient;
+import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,100 +30,171 @@ public class PatientServiceUnitTest {
   private Patient createPatient(Long id) {
     Patient patient = new Patient();
     patient.setId(id);
-    // TODO: Add more fields to test
+    patient.setName("Patient " + id);
+    patient.setDeleted(false);
+    patient.setAppointmentDate(LocalDate.of(2025, 10, 21));
     return patient;
   }
 
   private PatientDTO createPatientDTO(Long id) {
     PatientDTO dto = new PatientDTO();
     dto.setId(id);
-    // TODO: Add more fields to test
+    dto.setName("Patient " + id);
     return dto;
   }
 
   @Test
   public void givenPatientsExist_whenGetPatients_thenReturnDTOList() {
-    // Arrange
-    Patient patient1 = createPatient(1L);
-    Patient patient2 = createPatient(2L);
-    List<Patient> patientList = List.of(patient1, patient2);
+    List<Patient> patients = List.of(createPatient(1L), createPatient(2L));
+    List<PatientDTO> dtoList = List.of(createPatientDTO(1L), createPatientDTO(2L));
 
-    PatientDTO dto1 = createPatientDTO(1L);
-    PatientDTO dto2 = createPatientDTO(2L);
-    List<PatientDTO> dtoList = List.of(dto1, dto2);
+    when(patientRepository.findAllActive()).thenReturn(patients);
+    when(patientMapper.toDTOList(patients)).thenReturn(dtoList);
 
-    when(patientRepository.findAll()).thenReturn(patientList);
-    when(patientMapper.toDTOList(patientList)).thenReturn(dtoList);
-
-    // Act
     List<PatientDTO> result = patientService.getPatients();
 
-    // Assert
-    assertThat(result).isNotNull();
     assertThat(result).hasSize(2);
-    assertThat(result.get(0).getId()).isEqualTo(1L);
-    assertThat(result.get(1).getId()).isEqualTo(2L);
-
-    verify(patientRepository, times(1)).findAll();
-    verify(patientMapper, times(1)).toDTOList(patientList);
+    verify(patientRepository).findAllActive();
+    verify(patientMapper).toDTOList(patients);
   }
 
   @Test
   public void givenNoPatientsExist_whenGetPatients_thenReturnEmptyList() {
-    // Arrange
-    List<Patient> emptyPatientList = List.of();
-    List<PatientDTO> emptyDTOList = List.of();
+    when(patientRepository.findAllActive()).thenReturn(Collections.emptyList());
+    when(patientMapper.toDTOList(anyList())).thenReturn(Collections.emptyList());
 
-    when(patientRepository.findAll()).thenReturn(emptyPatientList);
-    // Usamos anyList() para o mapper, pois a lista vazia é trivial
-    when(patientMapper.toDTOList(anyList())).thenReturn(emptyDTOList);
-
-    // Act
     List<PatientDTO> result = patientService.getPatients();
 
-    // Assert
-    assertThat(result).isNotNull();
     assertThat(result).isEmpty();
-
-    verify(patientRepository, times(1)).findAll();
-    verify(patientMapper, times(1)).toDTOList(emptyPatientList);
+    verify(patientRepository).findAllActive();
   }
 
   @Test
   public void givenExistingPatient_whenGetPatientById_thenReturnDTO() {
-    // Arrange
     Patient patient = createPatient(1L);
     PatientDTO dto = createPatientDTO(1L);
 
     when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
     when(patientMapper.toDTO(patient)).thenReturn(dto);
 
-    // Act
     PatientDTO result = patientService.getPatientById(1L);
 
-    // Assert
-    assertThat(result).isNotNull();
     assertThat(result.getId()).isEqualTo(1L);
-
-    verify(patientRepository, times(1)).findById(1L);
-    verify(patientMapper, times(1)).toDTO(patient);
+    verify(patientRepository).findById(1L);
   }
 
   @Test
-  public void givenNonExistentPatient_whenGetPatientById_thenThrowNotFoundException() {
-    // Arrange
-    Long nonExistentId = 999L;
-    when(patientRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+  public void givenNonExistentPatient_whenGetPatientById_thenThrowException() {
+    when(patientRepository.findById(99L)).thenReturn(Optional.empty());
 
-    // Act & Assert
-    ResponseStatusException exception =
-        assertThrows(
-            ResponseStatusException.class, () -> patientService.getPatientById(nonExistentId));
+    ResponseStatusException ex =
+        assertThrows(ResponseStatusException.class, () -> patientService.getPatientById(99L));
 
-    // Assert Adicional: Verifica se o status HTTP é NOT_FOUND (404)
-    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(ex.getStatusCode()).isEqualTo(NOT_FOUND);
+    verify(patientRepository).findById(99L);
+  }
 
-    verify(patientRepository, times(1)).findById(nonExistentId);
-    verify(patientMapper, never()).toDTO(any());
+  @Test
+  public void whenCreatePatient_thenReturnDTO() {
+    PatientUpsertDTO dto = new PatientUpsertDTO();
+    Patient patient = createPatient(1L);
+    PatientDTO response = createPatientDTO(1L);
+
+    when(patientMapper.toEntity(dto)).thenReturn(patient);
+    when(patientMapper.toDTO(patient)).thenReturn(response);
+
+    PatientDTO result = patientService.createPatient(dto);
+
+    assertThat(result.getId()).isEqualTo(1L);
+    verify(patientRepository).save(patient);
+  }
+
+  @Test
+  public void givenExistingPatient_whenUpdate_thenSaveUpdated() {
+    PatientUpsertDTO dto = new PatientUpsertDTO();
+    Patient patient = createPatient(1L);
+    PatientDTO response = createPatientDTO(1L);
+
+    when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
+    when(patientMapper.toDTO(patient)).thenReturn(response);
+
+    PatientDTO result = patientService.updatePatient(1L, dto);
+
+    assertThat(result.getId()).isEqualTo(1L);
+    verify(patientMapper).updateEntityFromDto(dto, patient);
+    verify(patientRepository).save(patient);
+  }
+
+  @Test
+  public void givenExistingPatient_whenSoftDelete_thenSetDeletedTrue() {
+    Patient patient = createPatient(1L);
+    when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
+
+    patientService.deletePatient(1L, true);
+
+    assertThat(patient.isDeleted()).isTrue();
+    verify(patientRepository).save(patient);
+  }
+
+  @Test
+  public void givenExistingPatient_whenHardDelete_thenRepositoryDeleteCalled() {
+    Patient patient = createPatient(1L);
+    when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
+
+    patientService.deletePatient(1L, false);
+
+    verify(patientRepository).delete(patient);
+  }
+
+  @Test
+  public void givenSoftDeletedPatient_whenRestore_thenDeletedIsFalse() {
+    Patient patient = createPatient(1L);
+    patient.setDeleted(true);
+    when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
+
+    patientService.restorePatient(1L);
+
+    assertThat(patient.isDeleted()).isFalse();
+    verify(patientRepository).save(patient);
+  }
+
+  @Test
+  public void givenExistingPatient_whenGetNextAppointment_thenReturnAppointmentDTO() {
+    Patient patient = createPatient(1L);
+    when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
+
+    AppointmentDTO result = patientService.getNextAppointment(1L);
+
+    assertThat(result.getAppointmentDate()).isEqualTo(patient.getAppointmentDate());
+  }
+
+  @Test
+  public void givenExistingPatient_whenUpdateNextAppointment_thenDateIsUpdated() {
+    Patient patient = createPatient(1L);
+    AppointmentDTO dto = new AppointmentDTO();
+    dto.setAppointmentDate(LocalDate.of(2025, 10, 22));
+
+    when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
+
+    Patient result = patientService.updateNextAppointment(1L, dto);
+
+    assertThat(result.getAppointmentDate()).isEqualTo(dto.getAppointmentDate());
+  }
+
+  @Test
+  public void whenSearchForPatients_thenReturnCombinedDTOs() {
+    Patient patient = createPatient(1L);
+    TreatmentPlan plan = new TreatmentPlan();
+    plan.setId(10L);
+    plan.setPatient(patient);
+
+    when(patientRepository.searchPatients(any(), any(PageRequest.class)))
+        .thenReturn(new PageImpl<>(List.of(patient)));
+    when(patientRepository.findLastTreatmentPlans(List.of(1L))).thenReturn(List.of(plan));
+
+    List<PatientAndTreatmentPlanDTO> result = patientService.searchForPatients(Optional.of("test"));
+
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getId()).isEqualTo(1L);
   }
 }

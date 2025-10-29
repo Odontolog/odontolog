@@ -1,11 +1,13 @@
 package br.ufal.ic.odontolog.controllers;
 
+import br.ufal.ic.odontolog.api.PatientApi;
 import br.ufal.ic.odontolog.dtos.AppointmentDTO;
 import br.ufal.ic.odontolog.dtos.AttachmentDTO;
 import br.ufal.ic.odontolog.dtos.CreateAttachmentRequestDTO;
 import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
 import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
+import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
 import br.ufal.ic.odontolog.services.PatientService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -19,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @PreAuthorize("isAuthenticated()")
 @RestController
-@RequestMapping("/api/patients")
 @RequiredArgsConstructor
-public class PatientController {
+@RequestMapping("/api/patients")
+public class PatientController implements PatientApi {
   private final PatientService patientService;
 
   @GetMapping
@@ -47,7 +49,7 @@ public class PatientController {
   }
 
   @PutMapping("/{id}/next-appointment")
-  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'STUDENT')")
   public ResponseEntity<AppointmentDTO> updateNextAppointment(
       @PathVariable Long id, @RequestBody @Valid AppointmentDTO appointmentDTO) {
 
@@ -83,5 +85,36 @@ public class PatientController {
   public ResponseEntity<List<AttachmentDTO>> getAttachments(@PathVariable Long patientId) {
     var attachments = patientService.getAttachmentsByPatientId(patientId);
     return ResponseEntity.ok(attachments);
+  }
+
+  @PostMapping
+  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  public ResponseEntity<PatientDTO> createPatient(@RequestBody @Valid PatientUpsertDTO dto) {
+    PatientDTO created = patientService.createPatient(dto);
+    return ResponseEntity.status(201).body(created);
+  }
+
+  @PutMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  public ResponseEntity<PatientDTO> updatePatient(
+      @PathVariable Long id, @RequestBody @Valid PatientUpsertDTO dto) {
+    PatientDTO updated = patientService.updatePatient(id, dto);
+    return ResponseEntity.ok(updated);
+  }
+
+  @DeleteMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  public ResponseEntity<Void> deletePatient(
+      @PathVariable Long id, @RequestParam(defaultValue = "true") boolean soft) {
+
+    patientService.deletePatient(id, soft);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PutMapping("/{id}/restore")
+  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  public ResponseEntity<Void> restorePatient(@PathVariable Long id) {
+    patientService.restorePatient(id);
+    return ResponseEntity.noContent().build();
   }
 }

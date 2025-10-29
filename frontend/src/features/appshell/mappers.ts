@@ -1,5 +1,5 @@
+import { PatientAndTreatmentPlan } from '@/shared/models';
 import { Replace } from '@/shared/utils';
-import { PatientAndTreatmentPlan } from './requests';
 
 export type PatientAndTreatmentPlanDTO = Replace<
   PatientAndTreatmentPlan,
@@ -12,9 +12,14 @@ export type PatientAndTreatmentPlanDTO = Replace<
 export function mapToPatientandTreatmentPlan(
   dto: PatientAndTreatmentPlanDTO,
 ): PatientAndTreatmentPlan {
+  const lastTPUpdatedAt =
+    dto.lastTreatmentPlanUpdatedAt === null
+      ? null
+      : new Date(dto.lastTreatmentPlanUpdatedAt);
+
   return {
     ...dto,
     id: dto.id.toString(),
-    lastTreatmentPlanUpdatedAt: new Date(dto.lastTreatmentPlanUpdatedAt),
+    lastTreatmentPlanUpdatedAt: lastTPUpdatedAt,
   };
 }

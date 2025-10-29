@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.models.Student;
 import br.ufal.ic.odontolog.repositories.StudentRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -52,6 +53,7 @@ class AuthControllerIntegrationTest {
                         .enrollmentYear(2025)
                         .enrollmentSemester(1)
                         .photoUrl("some-url")
+                        .role(Role.STUDENT)
                         .build()));
   }
 
@@ -127,5 +129,76 @@ class AuthControllerIntegrationTest {
         .perform(get("/api/hello").header("Authorization", "Bearer " + token))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.message").value("Hello, authenticated user!"));
+  }
+
+  @Test
+  @DisplayName("Usuário deve conseguir alterar senha e fazer login com a nova senha")
+  void changePasswordAndLoginAgain() throws Exception {
+    // 1. Login inicial para obter o token
+    var loginResp =
+        mockMvc
+            .perform(
+                post("/api/auth/login")
+                    .contentType(APPLICATION_JSON)
+                    .content(
+                        """
+                              {"username":"%s","password":"%s"}
+                        """
+                            .formatted(USERNAME, PASSWORD)))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    var token =
+        objectMapper
+            .readTree(loginResp.getResponse().getContentAsString())
+            .get("accessToken")
+            .asText();
+
+    // 2. Trocar a senha
+    String newPassword = "newPassword123";
+    var changePasswordBody =
+        """
+          {"newPassword":"%s","confirmPassword":"%s"}
+        """
+            .formatted(newPassword, newPassword);
+
+    mockMvc
+        .perform(
+            post("/api/auth/change-password")
+                .contentType(APPLICATION_JSON)
+                .content(changePasswordBody)
+                .header("Authorization", "Bearer " + token))
+        .andExpect(status().isNoContent());
+
+    // 3. Tentar login com senha antiga (deve falhar)
+    mockMvc
+        .perform(
+            post("/api/auth/login")
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                          {"username":"%s","password":"%s"}
+                    """
+                        .formatted(USERNAME, PASSWORD)))
+        .andExpect(status().isForbidden());
+
+    // 4. Login com a nova senha (deve funcionar)
+    mockMvc
+        .perform(
+            post("/api/auth/login")
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                          {"username":"%s","password":"%s"}
+                    """
+                        .formatted(USERNAME, newPassword)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.accessToken").exists());
+
+    // Restaurar a senha original para não afetar outros testes
+    Student student = studentRepository.findByEmail(USERNAME).orElseThrow();
+    student.setPassword(passwordEncoder.encode(PASSWORD));
+    student.setFirstAccess(true);
+    studentRepository.save(student);
   }
 }

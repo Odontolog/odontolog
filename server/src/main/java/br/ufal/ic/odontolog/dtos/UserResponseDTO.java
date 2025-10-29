@@ -12,4 +12,5 @@ public class UserResponseDTO {
   private Role role;
   private String photoUrl;
   private boolean enabled;
+  private boolean firstAccess;
 }

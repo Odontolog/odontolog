@@ -1,0 +1,5 @@
+ALTER TABLE users
+    ADD first_access BOOLEAN DEFAULT TRUE;
+
+ALTER TABLE users
+    ALTER COLUMN first_access SET NOT NULL;

@@ -2,7 +2,6 @@
 
 import {
   Avatar,
-  Badge,
   Center,
   Group,
   Loader,
@@ -16,8 +15,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { getAllPatients } from './requests';
+import {
+  getBadgeProps,
+  getPatientSubtitle,
+} from '@/shared/components/patient-card';
+import { StatusBadge } from '@/shared/components/status';
 import RecordModal from '../patient/record-modal';
+import { getAllPatients } from './requests';
 
 export default function SearchProvider({
   children,
@@ -77,17 +81,6 @@ function SearchContent({
     );
   }
 
-  function getBadgeProps(status: string) {
-    switch (status) {
-      case 'finished':
-        return { color: 'gray', children: 'ENCERRADO' };
-      case 'in_progress':
-        return { color: 'teal', children: 'PLANO ABERTO' };
-      default:
-        return { color: 'indigo', children: 'NÃO INICIADO' };
-    }
-  }
-
   const patients = data
     .filter((patient) =>
       patient.name.toLowerCase().includes(query.toLowerCase().trim()),
@@ -110,23 +103,14 @@ function SearchContent({
             <Text>{patient.name}</Text>
 
             <Text c="dimmed" size="xs">
-              Última modificação{' '}
-              <b>
-                {patient.lastTreatmentPlanUpdatedAt.toLocaleString('pt-BR', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </b>
+              {getPatientSubtitle(patient)}
             </Text>
           </div>
 
           {patient.lastTreatmentPlanStatus && (
-            <Badge
-              variant="light"
-              {...getBadgeProps(patient.lastTreatmentPlanStatus)}
+            <StatusBadge
+              status={patient.lastTreatmentPlanStatus}
+              getProps={getBadgeProps}
             />
           )}
         </Group>

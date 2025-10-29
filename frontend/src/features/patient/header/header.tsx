@@ -19,10 +19,14 @@ import {
   IconCalendar,
   IconCheckupList,
   IconChevronDown,
+  IconClipboardHeart,
   IconDental,
   IconEdit,
   IconMapPin,
+  IconReportSearch,
   IconMicroscope,
+  // IconReportSearch,
+  // IconSettings2,
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -44,6 +48,11 @@ const tabs = [
     label: 'Histórico Geral',
   },
   {
+    value: 'anamnese',
+    icon: <IconClipboardHeart size={14} />,
+    label: 'Anamnese',
+  },
+  {
     value: 'preprocedures',
     icon: <IconMicroscope size={14} />,
     label: 'Pré-Procedimentos',
@@ -53,11 +62,11 @@ const tabs = [
     icon: <IconCheckupList size={14} />,
     label: 'Tratamentos',
   },
-  // {
-  //   value: 'documents',
-  //   icon: <IconReportSearch size={14} />,
-  //   label: 'Documentos',
-  // },
+  {
+    value: 'documents',
+    icon: <IconReportSearch size={14} />,
+    label: 'Documentos',
+  },
   // {
   //   value: 'settings',
   //   icon: <IconSettings2 size={14} />,

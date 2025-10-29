@@ -105,6 +105,14 @@ function TeethSectionContent(props: TeethSectionContentProps) {
     return null;
   }
 
+  if (teeth.length === 0) {
+    return (
+      <Text size="sm" c="dimmed" ta="center">
+        Nenhuma opção selecionada
+      </Text>
+    );
+  }
+
   return (
     <Flex gap="xs" wrap="wrap" justify="center">
       {teeth.map((tooth) => (

@@ -1,11 +1,17 @@
 'use client';
 
 import { Badge, Box, Indicator, Tooltip } from '@mantine/core';
-import { ProcedureStatus, ReviewStatus, TreatmentPlanStatus } from '../models';
+
+import {
+  ProcedureStatus,
+  ReviewStatus,
+  TreatmentPlanStatus,
+} from '@/shared/models';
 
 interface StatusProps {
   status: ReviewStatus | TreatmentPlanStatus | ProcedureStatus;
   className?: string;
+  getProps?: (status: string) => { color: string; text: string };
 }
 
 function getBadgeProps(status: string) {
@@ -31,12 +37,16 @@ function getBadgeProps(status: string) {
     case 'REJECTED':
       return { color: 'red', text: 'REJEITADO' };
     default:
-      return { color: 'white', text: null };
+      return { color: 'white', text: '' };
   }
 }
 
-export function StatusBadge({ status, className }: StatusProps) {
-  const props = getBadgeProps(status);
+export function StatusBadge({
+  status,
+  className,
+  getProps = getBadgeProps,
+}: StatusProps) {
+  const props = getProps(status);
 
   return (
     <Badge className={className} variant="light" color={props.color}>
@@ -45,8 +55,12 @@ export function StatusBadge({ status, className }: StatusProps) {
   );
 }
 
-export function StatusIndicator({ status, className }: StatusProps) {
-  const props = getBadgeProps(status);
+export function StatusIndicator({
+  status,
+  className,
+  getProps = getBadgeProps,
+}: StatusProps) {
+  const props = getProps(status);
 
   return (
     <Tooltip

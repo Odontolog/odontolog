@@ -109,6 +109,10 @@ export type TreatmentPlanShort = {
 
 export type ReviewableShort = TreatmentPlanShort | ProcedureShort;
 
+export type HasNotes = {
+  notes: string;
+};
+
 export type Reviewable = {
   id: string;
   author: User;
@@ -130,12 +134,13 @@ export type TreatmentPlan = Reviewable & {
 
 export type Attachments = {
   id: string;
-  location?: string;
+  location: string;
   createdAt: Date;
   filename: string;
   uploader: User;
   size: number;
   type: string;
+  description?: string;
 };
 
 export type ProcedureDetail = {
@@ -155,3 +160,9 @@ export type Procedure = Reviewable & {
 };
 
 export type Mode = 'edit' | 'read';
+
+export type PatientAndTreatmentPlan = PatientShort & {
+  lastTreatmentPlanId: string | null;
+  lastTreatmentPlanStatus: TreatmentPlanStatus | null;
+  lastTreatmentPlanUpdatedAt: Date | null;
+};
