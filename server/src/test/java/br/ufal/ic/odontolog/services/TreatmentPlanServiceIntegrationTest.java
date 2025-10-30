@@ -15,6 +15,7 @@ import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
+import io.awspring.cloud.s3.S3Template;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -34,6 +36,7 @@ class TreatmentPlanServiceIntegrationTest {
   @Autowired private PatientRepository patientRepository;
   @Autowired private TreatmentPlanRepository treatmentPlanRepository;
   @Autowired private SupervisorRepository supervisorRepository;
+  @MockitoBean private S3Template s3Template;
 
   private Patient patient;
 

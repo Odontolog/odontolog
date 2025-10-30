@@ -17,6 +17,7 @@ import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.awspring.cloud.s3.S3Template;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.*;
@@ -25,6 +26,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,7 @@ class TreatmentPlanControllerIntegrationTest {
   @Autowired private SupervisorRepository supervisorRepository;
   @Autowired ObjectMapper objectMapper;
   @Autowired TreatmentPlanRepository treatmentPlanRepository;
+  @MockitoBean S3Template s3Template;
 
   private Patient patient;
   private Supervisor supervisor;
@@ -62,9 +65,10 @@ class TreatmentPlanControllerIntegrationTest {
   @Test
   @DisplayName("Deve negar acesso sem token")
   void createWithoutToken() throws Exception {
-    var body = """
-        {"patientId":"%s"}
-        """.formatted(patient.getId());
+    var body =
+        """
+                {"patientId":"%s"}
+                """.formatted(patient.getId());
 
     mockMvc
         .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
@@ -76,9 +80,10 @@ class TreatmentPlanControllerIntegrationTest {
       username = "supervisor@test.com",
       roles = {"XALALA"})
   void createWithInvalidRole() throws Exception {
-    var body = """
-        {"patientId":"%s"}
-        """.formatted(patient.getId());
+    var body =
+        """
+                {"patientId":"%s"}
+                """.formatted(patient.getId());
 
     mockMvc
         .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
@@ -90,9 +95,10 @@ class TreatmentPlanControllerIntegrationTest {
       username = "supervisor@test.com",
       roles = {"SUPERVISOR"})
   void createWithSupervisorRole() throws Exception {
-    var body = """
-        {"patientId":"%s"}
-        """.formatted(patient.getId());
+    var body =
+        """
+                {"patientId":"%s"}
+                """.formatted(patient.getId());
 
     mockMvc
         .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
@@ -105,9 +111,10 @@ class TreatmentPlanControllerIntegrationTest {
       username = "supervisor@test.com",
       roles = {"STUDENT"})
   void createWithStudentRole() throws Exception {
-    var body = """
-        {"patientId":"%s"}
-        """.formatted(patient.getId());
+    var body =
+        """
+                {"patientId":"%s"}
+                """.formatted(patient.getId());
 
     mockMvc
         .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
@@ -119,9 +126,10 @@ class TreatmentPlanControllerIntegrationTest {
       username = "supervisor@test.com",
       roles = {"STUDENT"})
   void createWithWrongPatient() throws Exception {
-    var body = """
-        {"patientId":"%s"}
-        """.formatted(UUID.randomUUID());
+    var body =
+        """
+                {"patientId":"%s"}
+                """.formatted(UUID.randomUUID());
 
     mockMvc
         .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
@@ -134,9 +142,10 @@ class TreatmentPlanControllerIntegrationTest {
       roles = {"SUPERVISOR"})
   void createAndGetTreatmentPlan() throws Exception {
     // 1. Cria plano
-    var createBody = """
-        {"patientId":"%s"}
-        """.formatted(patient.getId());
+    var createBody =
+        """
+                {"patientId":"%s"}
+                """.formatted(patient.getId());
 
     var postResult =
         mockMvc

@@ -63,6 +63,14 @@ public class Patient {
 
   private LocalDate appointmentDate;
 
+  @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+  private final Set<Attachment> attachments = new HashSet<>();
+
+  public void addAttachment(Attachment attachment) {
+    attachment.setPatient(this);
+    this.attachments.add(attachment);
+  }
+
   @Column(nullable = false)
   private boolean deleted = false;
 

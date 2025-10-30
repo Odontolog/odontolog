@@ -1,0 +1,16 @@
+meta {
+  name: Init Upload Attachment
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/api/patients/1/attachments/init-upload
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

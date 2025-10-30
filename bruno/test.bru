@@ -1,0 +1,25 @@
+meta {
+  name: test
+  type: http
+  seq: 10
+}
+
+put {
+  url: http://localhost:4566/odontolog-dev-private/patients/1/attachments/1ed61bb3-6bfc-4ed9-8b1d-8e1088284fb0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20251023T025156Z&X-Amz-SignedHeaders=host&X-Amz-Credential=test/20251023/us-east-1/s3/aws4_request&X-Amz-Expires=900&X-Amz-Signature=f5f566028c485730df48e2b12de0acb7a9b3b3010bb621e30b5a6e84592064eb
+  body: none
+  auth: inherit
+}
+
+params:query {
+  X-Amz-Algorithm: AWS4-HMAC-SHA256
+  X-Amz-Date: 20251023T025156Z
+  X-Amz-SignedHeaders: host
+  X-Amz-Credential: test/20251023/us-east-1/s3/aws4_request
+  X-Amz-Expires: 900
+  X-Amz-Signature: f5f566028c485730df48e2b12de0acb7a9b3b3010bb621e30b5a6e84592064eb
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
