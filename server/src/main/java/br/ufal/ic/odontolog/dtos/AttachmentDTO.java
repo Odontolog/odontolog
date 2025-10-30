@@ -12,5 +12,6 @@ public class AttachmentDTO {
   private String filetype;
   private String description;
   private Integer size;
+  private UserResponseDTO uploader;
   private URL presignedUrl;
 }

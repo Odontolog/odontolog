@@ -98,7 +98,7 @@ export default function AttachmentsModal({
             </Text>
 
             <Group justify="flex-end" mt="sm">
-              <Button color="red" onClick={openConfirmModal}>
+              <Button color="red" onClick={openConfirmModal} disabled>
                 Deletar
               </Button>
               <Button

@@ -6,8 +6,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { ProcedureDropzone } from '@/features/procedure/ui/attachements/dropzone';
-import { newAttachment } from '../models';
-import { saveAttachmentOnPatient } from '../requests';
+import { UploadAttachment } from '@/shared/attachments/models';
+import { saveAttachment } from '@/shared/attachments/requests';
 
 interface DocumentUploadModalProps {
   patientId: string;
@@ -63,21 +63,17 @@ function UploadModalContent({
   const queryClient = useQueryClient();
   const [description, setDescription] = useState('');
 
-  const newAtts: newAttachment[] = [];
-
-  files.forEach((file) => {
-    newAtts.push({
-      file,
-      description,
-    });
-  });
-
   const uploadMutation = useMutation({
-    mutationFn: (newAtts: newAttachment[]) =>
-      saveAttachmentOnPatient(patientId, newAtts),
+    mutationFn: (files: FileWithPath[]) => {
+      const newAtt: UploadAttachment = {
+        description,
+        file: files[0],
+      };
+      return saveAttachment(patientId, newAtt);
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['newPatientAttachment', patientId],
+        queryKey: ['patientRelatedDocs', patientId],
       });
 
       onFilesChange([]);
@@ -111,7 +107,7 @@ function UploadModalContent({
         </Button>
         <Button
           onClick={() => {
-            uploadMutation.mutate(newAtts);
+            uploadMutation.mutate(files);
             setDescription('');
             onClose();
           }}
