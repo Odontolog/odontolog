@@ -31,7 +31,7 @@ import AttachmentCard from '@/shared/components/att-card';
 import { Attachments, Mode, Procedure } from '@/shared/models';
 
 interface AttachmentCardProps {
-  patientId: string;
+  patientId?: string;
   procedureId: string;
   queryOptions: UseQueryOptions<Procedure, Error, Procedure, string[]>;
   mode: Mode;
@@ -59,7 +59,7 @@ export default function AttachmentsSection({
           <Text fw={700} size="lg">
             Documentos e arquivos
           </Text>
-          {mode === 'edit' && (
+          {mode === 'edit' && patientId !== undefined && (
             <Tooltip label="Envio de arquivos">
               <AttachmentUploadModal
                 mode={mode}
