@@ -1,10 +1,6 @@
 package br.ufal.ic.odontolog.api;
 
-import br.ufal.ic.odontolog.dtos.AppointmentDTO;
-import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
-import br.ufal.ic.odontolog.dtos.PatientDTO;
-import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
-import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
+import br.ufal.ic.odontolog.dtos.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -131,4 +128,17 @@ public interface PatientApi {
       })
   ResponseEntity<Void> restorePatient(
       @Parameter(description = "ID of the patient") @PathVariable Long id);
+
+  @Operation(
+      summary = "Get patients by student",
+      description = "Retrieves all patients associated with a specific student (by student ID).")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "Patients retrieved successfully"),
+        @ApiResponse(
+            responseCode = "404",
+            description = "No patients found for the specified student")
+      })
+  ResponseEntity<List<PatientShortDTO>> getPatientsByStudent(
+      @Parameter(description = "ID of the student") @PathVariable UUID studentId);
 }

@@ -3,13 +3,7 @@ package br.ufal.ic.odontolog.services;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import br.ufal.ic.odontolog.config.S3Properties;
-import br.ufal.ic.odontolog.dtos.AppointmentDTO;
-import br.ufal.ic.odontolog.dtos.AttachmentDTO;
-import br.ufal.ic.odontolog.dtos.CreateAttachmentRequestDTO;
-import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
-import br.ufal.ic.odontolog.dtos.PatientDTO;
-import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
-import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
+import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.AttachmentMapper;
@@ -52,6 +46,11 @@ public class PatientService {
   public List<PatientDTO> getPatients() {
     List<Patient> patients = patientRepository.findAllActive();
     return patientMapper.toDTOList(patients);
+  }
+
+  public List<PatientShortDTO> getPatientsByStudent(UUID studentId) {
+    List<Patient> patients = patientRepository.findPatientsByStudentId(studentId);
+    return patientMapper.toShortDTOList(patients);
   }
 
   public PatientDTO getPatientById(Long id) {

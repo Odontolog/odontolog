@@ -4,6 +4,8 @@ import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,4 +39,15 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
   @Query("SELECT p FROM Patient p WHERE p.id = :id AND p.deleted = false")
   Optional<Patient> findActiveById(Long id);
+
+  @Query(
+          """
+        SELECT tp.patient
+        FROM TreatmentPlan tp
+        WHERE tp.assignee.id = :studentId
+            AND tp.patient.deleted = false
+        GROUP BY tp.patient
+        ORDER BY MAX(tp.updatedAt) DESC
+    """)
+  List<Patient> findPatientsByStudentId(@Param("studentId") UUID studentId);
 }
