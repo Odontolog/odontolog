@@ -25,7 +25,6 @@ import {
   IconMapPin,
   IconReportSearch,
   IconMicroscope,
-  // IconReportSearch,
   // IconSettings2,
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
