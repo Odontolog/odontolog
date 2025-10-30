@@ -40,7 +40,10 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
             Documentos e exames
           </Text>
           <Tooltip label="Envio de arquivos">
-            <AttachmentUploadModal patientId={patientId} />
+            <AttachmentUploadModal
+              patientId={patientId}
+              queryKey={options.queryKey}
+            />
           </Tooltip>
         </Group>
       </Card.Section>

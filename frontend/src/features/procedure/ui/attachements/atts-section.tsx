@@ -65,6 +65,7 @@ export default function AttachmentsSection({
                 mode={mode}
                 patientId={patientId}
                 procedureId={procedureId}
+                queryKey={queryOptions.queryKey}
               />
             </Tooltip>
           )}

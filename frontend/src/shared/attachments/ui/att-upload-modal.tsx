@@ -9,7 +9,7 @@ import {
 import { type FileWithPath } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import { IconExclamationCircle, IconUpload } from '@tabler/icons-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { QueryKey, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { ProcedureDropzone } from '@/features/procedure/ui/attachements/dropzone';
@@ -21,12 +21,14 @@ import { useDisclosure } from '@mantine/hooks';
 interface AttachmentUploadModalProps {
   patientId: string;
   procedureId?: string;
+  queryKey?: QueryKey;
   mode?: Mode;
 }
 
 export default function AttachmentUploadModal({
   patientId,
   procedureId,
+  queryKey,
   mode,
 }: AttachmentUploadModalProps) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -61,6 +63,7 @@ export default function AttachmentUploadModal({
               onClose={handleClosing}
               files={files}
               onFilesChange={setFiles}
+              queryKey={queryKey}
             />
           </Modal.Body>
         </Modal.Content>
@@ -75,6 +78,7 @@ interface UploadModalContentProps {
   onClose: () => void;
   files: FileWithPath[];
   onFilesChange: (files: FileWithPath[]) => void;
+  queryKey?: QueryKey;
 }
 
 function UploadModalContent({
@@ -83,6 +87,7 @@ function UploadModalContent({
   onClose,
   files,
   onFilesChange,
+  queryKey,
 }: UploadModalContentProps) {
   const queryClient = useQueryClient();
   const [description, setDescription] = useState<string>('');
@@ -91,9 +96,9 @@ function UploadModalContent({
     mutationFn: (newAtt: UploadAttachment) =>
       saveAttachment(patientId, newAtt, procedureId),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['patientRelatedDocs', patientId],
-      });
+      if (queryKey) {
+        await queryClient.invalidateQueries({ queryKey });
+      }
 
       onFilesChange([]);
     },
