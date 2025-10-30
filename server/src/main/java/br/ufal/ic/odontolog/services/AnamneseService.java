@@ -48,7 +48,11 @@ public class AnamneseService {
     activity.setAnamnese(anamnese);
     activity.setActor(currentUserProvider.getCurrentUser());
     activity.setType(ActivityType.EDITED);
-    activity.setDescription("Notas de anamnese atualizadas");
+    activity.setDescription(
+        String.format(
+            "Notas de anamnese atualizadas por %s (%s)",
+            currentUserProvider.getCurrentUser().getName(),
+            currentUserProvider.getCurrentUser().getEmail()));
     Map<String, Object> metadata = new HashMap<>();
     metadata.put("uiType", "EDIT_NOTES");
     metadata.put("data", dto.getNotes());
@@ -101,7 +105,11 @@ public class AnamneseService {
       activity.setAnamnese(anamnese);
       activity.setActor(currentUserProvider.getCurrentUser());
       activity.setType(ActivityType.EDITED);
-      activity.setDescription("História clínica atualizada");
+      activity.setDescription(
+          String.format(
+              "Anamnese atualizada por %s (%s)",
+              currentUserProvider.getCurrentUser().getName(),
+              currentUserProvider.getCurrentUser().getEmail()));
       Map<String, Object> metadata = new HashMap<>();
       metadata.put("uiType", "EDIT_CONDITIONS");
       metadata.put("updatedFields", updatedFields);

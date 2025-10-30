@@ -14,6 +14,7 @@ import br.ufal.ic.odontolog.models.Student;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
@@ -34,6 +36,7 @@ class AnamneseControllerIntegrationTest {
   @Autowired StudentRepository studentRepository;
   @Autowired PatientRepository patientRepository;
   @Autowired PasswordEncoder passwordEncoder;
+  @MockitoBean private S3Template s3Template;
 
   private static final String USERNAME = "student.anamnese@test.com";
   private static final String PASSWORD = "password";
