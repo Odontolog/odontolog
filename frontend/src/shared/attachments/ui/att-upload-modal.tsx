@@ -6,6 +6,7 @@ import {
   Stack,
   Textarea,
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import { type FileWithPath } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import { IconExclamationCircle, IconUpload } from '@tabler/icons-react';
@@ -90,7 +91,18 @@ function UploadModalContent({
   queryKey,
 }: UploadModalContentProps) {
   const queryClient = useQueryClient();
-  const [description, setDescription] = useState<string>('');
+
+  const form = useForm({
+    initialValues: {
+      description: '',
+    },
+    validate: {
+      description: (value) =>
+        value.length > 255
+          ? 'A descrição deve ter no máximo 255 caracteres'
+          : null,
+    },
+  });
 
   const uploadMutation = useMutation({
     mutationFn: (newAtt: UploadAttachment) =>
@@ -113,39 +125,43 @@ function UploadModalContent({
     },
   });
 
+  const handleSubmit = form.onSubmit((values) => {
+    const newAtt: UploadAttachment = {
+      description: values.description,
+      file: files[0],
+    };
+
+    uploadMutation.mutate(newAtt);
+    form.reset();
+    onClose();
+  });
+
   return (
-    <Stack>
-      <ProcedureDropzone
-        files={files}
-        onFilesChange={onFilesChange}
-        multiple={false}
-      />
-      <Textarea
-        rows={3}
-        placeholder="Insira uma descrição para o documento"
-        onChange={(event) => setDescription(event.currentTarget.value)}
-      />
-      <Group justify="flex-end">
-        <Button variant="default" fw="normal" onClick={onClose}>
-          Cancelar
-        </Button>
-        <Button
-          onClick={() => {
-            const newAtt: UploadAttachment = {
-              description,
-              file: files[0],
-            };
-
-            uploadMutation.mutate(newAtt);
-
-            setDescription('');
-            onClose();
-          }}
-          loading={uploadMutation.isPending}
-        >
-          Salvar
-        </Button>
-      </Group>
-    </Stack>
+    <form onSubmit={handleSubmit}>
+      <Stack>
+        <ProcedureDropzone
+          files={files}
+          onFilesChange={onFilesChange}
+          multiple={false}
+        />
+        <Textarea
+          rows={3}
+          placeholder="Insira uma descrição para o documento"
+          {...form.getInputProps('description')}
+        />
+        <Group justify="flex-end" gap="xs">
+          <Button variant="default" fw="normal" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            loading={uploadMutation.isPending}
+            disabled={files.length === 0}
+          >
+            Salvar
+          </Button>
+        </Group>
+      </Stack>
+    </form>
   );
 }
