@@ -5,13 +5,13 @@ import { useQuery } from '@tanstack/react-query';
 import { type User } from 'next-auth';
 import { notFound } from 'next/navigation';
 
+import { getProcedureOptions } from '@/features/procedure/requests';
+import { getProcedurePageMode } from '@/features/procedure/utils';
 import { ServerError } from '@/shared/components/server-error';
 import AssigneeSection from '@/shared/reviewable/assignee-section';
 import HistorySection from '@/shared/reviewable/history/history-section';
 import NotesSection from '@/shared/reviewable/notes-section';
 import SupervisorSection from '@/shared/reviewable/supervisor-section';
-import { getProcedureOptions } from '@/features/procedure/requests';
-import { getProcedurePageMode } from '@/features/procedure/utils';
 import AttachmentsSection from './attachements/atts-section';
 import DiagnosticSection from './diagnostic-section';
 import ProcedureHeader from './header';
@@ -25,7 +25,11 @@ interface ProcedureProps {
   user: User;
 }
 
-export default function Procedure({ procedureId, user }: ProcedureProps) {
+export default function Procedure({
+  patientId,
+  procedureId,
+  user,
+}: ProcedureProps) {
   const options = getProcedureOptions(procedureId);
 
   const {
@@ -90,8 +94,8 @@ export default function Procedure({ procedureId, user }: ProcedureProps) {
               mode={mode}
             />
             <AttachmentsSection
-              user={user}
-              reviewableId={procedureId}
+              patientId={patientId}
+              procedureId={procedureId}
               mode={mode}
               queryOptions={options}
             />
