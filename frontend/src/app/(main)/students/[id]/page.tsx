@@ -1,8 +1,8 @@
-import StudentHeader from '@/features/student/header';
 import { getStudentById } from '@/features/student/requests';
+import StudentPage from '@/features/student/student';
 import { requireAuth } from '@/shared/utils';
 
-export default async function StudentPage({
+export default async function Student({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -13,7 +13,7 @@ export default async function StudentPage({
 
   return (
     <>
-      <StudentHeader student={student} user={user} />
+      <StudentPage student={student} user={user} />
     </>
   );
 }
