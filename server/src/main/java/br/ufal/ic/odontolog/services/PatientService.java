@@ -16,10 +16,12 @@ import br.ufal.ic.odontolog.mappers.AttachmentMapper;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
 import br.ufal.ic.odontolog.models.Attachment;
 import br.ufal.ic.odontolog.models.Patient;
+import br.ufal.ic.odontolog.models.Procedure;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
 import br.ufal.ic.odontolog.repositories.AttachmentRepository;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
+import br.ufal.ic.odontolog.repositories.ProcedureRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
 import io.awspring.cloud.s3.S3Template;
 import java.net.URL;
@@ -43,6 +45,7 @@ public class PatientService {
 
   private final PatientRepository patientRepository;
   private final AttachmentRepository attachmentRepository;
+  private final ProcedureRepository procedureRepository;
   private final PatientMapper patientMapper;
   private final S3Template s3Template;
   private final S3Properties s3Properties;
@@ -216,9 +219,24 @@ public class PatientService {
     attachment.setObjectKey(request.getObjectKey());
     attachment.setSize(request.getSize());
     attachment.setUploader(currentUser);
+    attachment.setDescription(request.getDescription());
 
     patient.addAttachment(attachment);
-    attachmentRepository.save(attachment);
+
+    Long procedureId = request.getProcedureId();
+    if (procedureId != null) {
+      Procedure procedure =
+          procedureRepository
+              .findById(procedureId)
+              .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
+
+      if (procedure.getPatient().getId() != patient.getId()) {
+        throw new UnprocessableRequestException(
+            "Procedure patient does not match provided patient.");
+      }
+
+      procedure.addAttachment(attachment);
+    }
 
     return attachmentMapper.toDTO(attachment);
   }

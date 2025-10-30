@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  ActionIcon,
   Card,
   Center,
   Divider,
@@ -13,15 +12,14 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
-import { IconUpload } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import DocumentPreviewCard from '@/features/documents/ui/document-preview-card';
-import AttachmentsModal from '@/features/procedure/ui/attachements/att-modal';
+import AttachmentsDisplayModal from '@/shared/attachments/ui/att-display-modal';
+import AttachmentUploadModal from '@/shared/attachments/ui/att-upload-modal';
 import { Attachments } from '@/shared/models';
 import { getPatientDocumentsOptions } from '../requests';
-import DocumentUploadModal from './document-upload-modal';
 
 interface DocsSectionProps {
   patientId: string;
@@ -29,19 +27,10 @@ interface DocsSectionProps {
 
 export default function DocsSection({ patientId }: DocsSectionProps) {
   const options = getPatientDocumentsOptions(patientId);
-  const [modalOpened, setModalOpened] = useState(false);
-
-  function closeModal() {
-    setModalOpened(false);
-  }
 
   const { data, isLoading, isError } = useQuery({
     ...options,
   });
-
-  function handleUpload() {
-    setModalOpened(true);
-  }
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
@@ -51,18 +40,10 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
             Documentos e exames
           </Text>
           <Tooltip label="Envio de arquivos">
-            <ActionIcon variant="subtle" color="grey" size="sm">
-              <IconUpload onClick={handleUpload} />
-            </ActionIcon>
+            <AttachmentUploadModal patientId={patientId} />
           </Tooltip>
         </Group>
       </Card.Section>
-
-      <DocumentUploadModal
-        patientId={patientId}
-        opened={modalOpened}
-        onClose={closeModal}
-      />
 
       <Divider my="none" />
 
@@ -156,7 +137,7 @@ function DocsSectionContent({
           </Grid.Col>
         ))}
       </Grid>
-      <AttachmentsModal
+      <AttachmentsDisplayModal
         attachment={selectedAttachment}
         onClose={closeModal}
         opened={modalOpened}

@@ -1,8 +1,6 @@
 'use client';
 
 import {
-  ActionIcon,
-  Button,
   Card,
   Center,
   Divider,
@@ -13,8 +11,11 @@ import {
   Stack,
   Text,
   ThemeIcon,
+  Tooltip,
 } from '@mantine/core';
-import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
+import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import {
   useMutation,
   useQuery,
@@ -23,31 +24,25 @@ import {
 } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { deleteAttachment } from '@/features/procedure/requests';
+import AttachmentsDisplayModal from '@/shared/attachments/ui/att-display-modal';
+import AttachmentUploadModal from '@/shared/attachments/ui/att-upload-modal';
 import AttachmentCard from '@/shared/components/att-card';
-import { Attachments, Mode, Procedure, User } from '@/shared/models';
-import { type FileWithPath } from '@mantine/dropzone';
-import { ProcedureDropzone } from './dropzone';
-import { saveAttachments, deleteAttachment } from '../../requests';
-import { notifications } from '@mantine/notifications';
-import { modals } from '@mantine/modals';
-import AttachmentsModal from './att-modal';
+import { Attachments, Mode, Procedure } from '@/shared/models';
 
 interface AttachmentCardProps {
-  user?: User;
-  reviewableId: string;
+  patientId: string;
+  procedureId: string;
   queryOptions: UseQueryOptions<Procedure, Error, Procedure, string[]>;
   mode: Mode;
 }
 
 export default function AttachmentsSection({
-  user,
-  reviewableId,
+  patientId,
+  procedureId,
   queryOptions,
   mode,
 }: AttachmentCardProps) {
-  const [editing, setEditing] = useState(false);
-  const [files, setFiles] = useState<FileWithPath[]>([]);
-
   const {
     data: atts,
     isLoading,
@@ -55,7 +50,6 @@ export default function AttachmentsSection({
   } = useQuery({
     ...queryOptions,
     select: (data) => data.attachments,
-    enabled: true,
   });
 
   return (
@@ -65,15 +59,14 @@ export default function AttachmentsSection({
           <Text fw={700} size="lg">
             Documentos e arquivos
           </Text>
-          {mode === 'edit' && !editing && (
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              disabled={isLoading}
-              onClick={() => setEditing(true)}
-            >
-              <IconEdit size={16} />
-            </ActionIcon>
+          {mode === 'edit' && (
+            <Tooltip label="Envio de arquivos">
+              <AttachmentUploadModal
+                mode={mode}
+                patientId={patientId}
+                procedureId={procedureId}
+              />
+            </Tooltip>
           )}
         </Group>
       </Card.Section>
@@ -82,15 +75,11 @@ export default function AttachmentsSection({
 
       <Card.Section inheritPadding px="md" py="sm">
         <AttSectionContent
-          user={user}
-          reviewableId={reviewableId}
+          mode={mode}
+          procedureId={procedureId}
           atts={atts}
-          editing={editing}
-          setEditing={setEditing}
           isError={isError}
           isLoading={isLoading}
-          files={files}
-          onFilesChange={setFiles}
         />
       </Card.Section>
     </Card>
@@ -98,76 +87,31 @@ export default function AttachmentsSection({
 }
 
 interface AttachmentsSectionProps {
-  user?: User;
-  reviewableId: string;
+  mode: Mode;
+  procedureId: string;
   atts?: Attachments[];
   isError: boolean;
   isLoading: boolean;
-  editing: boolean;
-  setEditing: (value: boolean) => void;
-  files: FileWithPath[];
-  onFilesChange: (files: FileWithPath[]) => void;
 }
 
 function AttSectionContent({
-  user,
-  reviewableId,
+  mode,
+  procedureId,
   atts,
   isLoading,
   isError,
-  editing,
-  setEditing,
-  files,
-  onFilesChange,
 }: AttachmentsSectionProps) {
   const [selectedAttachment, setSelectedAttachment] =
     useState<Attachments | null>(null);
   const [modalOpened, setModalOpened] = useState(false);
   const queryClient = useQueryClient();
 
-  const newAtts: Attachments[] = [];
-  if (user) {
-    files.forEach((file) => {
-      newAtts.push({
-        id: crypto.randomUUID(),
-        createdAt: new Date(),
-        filename: file.name,
-        location: file.path ?? file.name,
-        type: file.type,
-        size: file.size,
-        uploader: user,
-      });
-    });
-  }
-
-  const uploadMutation = useMutation({
-    mutationFn: (newAtts: Attachments[]) =>
-      saveAttachments(reviewableId, newAtts),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['procedure', reviewableId],
-      });
-
-      onFilesChange([]);
-      setEditing(false);
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Não foi possível salvar os arquivos',
-        message: `Um erro inesperado aconteceu e não foi possível salvar os arquivos. Tente novamente mais tarde. ${error}`,
-        color: 'red',
-        icon: <IconExclamationCircle />,
-        autoClose: 5000,
-      });
-    },
-  });
-
   const deleteMutation = useMutation({
     mutationFn: (attachment: Attachments) =>
-      deleteAttachment(reviewableId, attachment),
+      deleteAttachment(procedureId, attachment),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['procedure', reviewableId],
+        queryKey: ['procedure', procedureId],
       });
 
       notifications.show({
@@ -213,16 +157,12 @@ function AttSectionContent({
     return null;
   }
 
-  if (editing === false && atts.length === 0) {
+  if (atts.length === 0) {
     return (
       <Text size="sm" c="dimmed" ta="center">
         Não há documentos ou arquivos anexados a esse procedimento.
       </Text>
     );
-  }
-
-  function handleCancel() {
-    setEditing(false);
   }
 
   function handleViewAttachment(attachment: Attachments) {
@@ -253,46 +193,23 @@ function AttSectionContent({
 
   return (
     <Stack>
-      {editing && (
-        <ProcedureDropzone files={files} onFilesChange={onFilesChange} />
-      )}
       <SimpleGrid type="container" cols={{ base: 1, '800px': 3, '1000px': 5 }}>
         {atts.map((att) => (
           <AttachmentCard
             key={att.id}
             att={att}
-            mode={editing ? 'edit' : 'read'}
+            mode={mode}
             onView={handleViewAttachment}
             onDelete={handleDeleteAttachment}
           />
         ))}
       </SimpleGrid>
 
-      <AttachmentsModal
+      <AttachmentsDisplayModal
         opened={modalOpened}
         onClose={closeModal}
         attachment={selectedAttachment}
       />
-      {editing && (
-        <Flex
-          justify="space-between"
-          align="center"
-          direction="row-reverse"
-          mt="sm"
-        >
-          <Group gap="xs">
-            <Button variant="default" fw="normal" onClick={handleCancel}>
-              Cancelar
-            </Button>
-            <Button
-              onClick={() => uploadMutation.mutate(newAtts)}
-              loading={uploadMutation.isPending}
-            >
-              Salvar
-            </Button>
-          </Group>
-        </Flex>
-      )}
     </Stack>
   );
 }

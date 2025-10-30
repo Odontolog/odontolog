@@ -1,5 +1,6 @@
 package br.ufal.ic.odontolog.services;
 
+import br.ufal.ic.odontolog.config.S3Properties;
 import br.ufal.ic.odontolog.dtos.ProcedureDTO;
 import br.ufal.ic.odontolog.dtos.ProcedureShortDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
@@ -9,6 +10,8 @@ import br.ufal.ic.odontolog.mappers.ProcedureMapper;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.ProcedureRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import io.awspring.cloud.s3.S3Template;
+import java.net.URL;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +27,8 @@ public class ProcedureService {
   private final ProcedureRepository procedureRepository;
   private final ProcedureMapper procedureMapper;
   private final CurrentUserProvider currentUserProvider;
+  private final S3Template s3Template;
+  private final S3Properties s3Properties;
 
   @Transactional(readOnly = true)
   public List<ProcedureShortDTO> getDonePatientProcedures(long patientId) {
@@ -39,7 +44,22 @@ public class ProcedureService {
             .findById(procedureId)
             .orElseThrow(() -> new ResourceNotFoundException("Procedure not found"));
 
-    return procedureMapper.toDTO(procedure);
+    ProcedureDTO procedureDTO = procedureMapper.toDTO(procedure);
+
+    procedureDTO
+        .getAttachments()
+        .forEach(
+            attachmentDTO -> {
+              URL presignedUrl =
+                  s3Template.createSignedGetURL(
+                      s3Properties.getBuckets().getPrivateBucket(),
+                      attachmentDTO.getObjectKey(),
+                      s3Properties.getSignedUrlTimeout());
+
+              attachmentDTO.setPresignedUrl(presignedUrl);
+            });
+
+    return procedureDTO;
   }
 
   @Transactional

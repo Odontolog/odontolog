@@ -50,6 +50,10 @@ public abstract class Procedure extends Reviewable {
 
   @Embedded private ProcedureDetail procedureDetail;
 
+  public void addAttachment(Attachment att) {
+    attachments.add(att);
+  }
+
   public void addTooth(String tooth) {
     this.teeth.add(tooth);
   }

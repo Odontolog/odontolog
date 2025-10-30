@@ -1,54 +1,77 @@
-import { Button, Group, Modal, Stack, Textarea } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Modal,
+  Stack,
+  Textarea,
+} from '@mantine/core';
 import { type FileWithPath } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
-import { IconExclamationCircle } from '@tabler/icons-react';
+import { IconExclamationCircle, IconUpload } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { ProcedureDropzone } from '@/features/procedure/ui/attachements/dropzone';
 import { UploadAttachment } from '@/shared/attachments/models';
 import { saveAttachment } from '@/shared/attachments/requests';
+import { Mode } from '@/shared/models';
+import { useDisclosure } from '@mantine/hooks';
 
-interface DocumentUploadModalProps {
+interface AttachmentUploadModalProps {
   patientId: string;
-  opened: boolean;
-  onClose: () => void;
+  procedureId?: string;
+  mode?: Mode;
 }
 
-export default function DocumentUploadModal({
+export default function AttachmentUploadModal({
   patientId,
-  opened,
-  onClose,
-}: DocumentUploadModalProps) {
+  procedureId,
+  mode,
+}: AttachmentUploadModalProps) {
+  const [opened, { open, close }] = useDisclosure(false);
   const [files, setFiles] = useState<FileWithPath[]>([]);
 
-  const handleClosing = () => {
-    onClose();
+  function handleClosing() {
     setFiles([]);
-  };
+    close();
+  }
 
   return (
-    <Modal.Root opened={opened} onClose={handleClosing} size="lg" centered>
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.Title fw={600}>Envio de arquivos</Modal.Title>
-          <Modal.CloseButton />
-        </Modal.Header>
-        <Modal.Body>
-          <UploadModalContent
-            patientId={patientId}
-            onClose={handleClosing}
-            files={files}
-            onFilesChange={setFiles}
-          />
-        </Modal.Body>
-      </Modal.Content>
-    </Modal.Root>
+    <>
+      <ActionIcon
+        variant="subtle"
+        color="gray"
+        disabled={mode !== undefined && mode !== 'edit'}
+        onClick={open}
+      >
+        <IconUpload size={16} />
+      </ActionIcon>
+      <Modal.Root opened={opened} onClose={handleClosing} size="lg">
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title fw={600}>Envio de arquivos</Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Body>
+            <UploadModalContent
+              patientId={patientId}
+              procedureId={procedureId}
+              onClose={handleClosing}
+              files={files}
+              onFilesChange={setFiles}
+            />
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+    </>
   );
 }
 
 interface UploadModalContentProps {
   patientId: string;
+  procedureId?: string;
   onClose: () => void;
   files: FileWithPath[];
   onFilesChange: (files: FileWithPath[]) => void;
@@ -56,21 +79,17 @@ interface UploadModalContentProps {
 
 function UploadModalContent({
   patientId,
+  procedureId,
   onClose,
   files,
   onFilesChange,
 }: UploadModalContentProps) {
   const queryClient = useQueryClient();
-  const [description, setDescription] = useState('');
+  const [description, setDescription] = useState<string>('');
 
   const uploadMutation = useMutation({
-    mutationFn: (files: FileWithPath[]) => {
-      const newAtt: UploadAttachment = {
-        description,
-        file: files[0],
-      };
-      return saveAttachment(patientId, newAtt);
-    },
+    mutationFn: (newAtt: UploadAttachment) =>
+      saveAttachment(patientId, newAtt, procedureId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ['patientRelatedDocs', patientId],
@@ -107,7 +126,13 @@ function UploadModalContent({
         </Button>
         <Button
           onClick={() => {
-            uploadMutation.mutate(files);
+            const newAtt: UploadAttachment = {
+              description,
+              file: files[0],
+            };
+
+            uploadMutation.mutate(newAtt);
+
             setDescription('');
             onClose();
           }}

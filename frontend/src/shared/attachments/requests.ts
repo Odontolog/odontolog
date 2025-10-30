@@ -1,7 +1,15 @@
 import { getAuthToken } from '@/shared/utils';
-import { InitUploadResponse, UploadAttachment } from './models';
+import {
+  CreateAttachmentRequest,
+  InitUploadResponse,
+  UploadAttachment,
+} from './models';
 
-export async function saveAttachment(patientId: string, att: UploadAttachment) {
+export async function saveAttachment(
+  patientId: string,
+  att: UploadAttachment,
+  procedureId?: string,
+) {
   const token = await getAuthToken();
 
   const initUploadRes = await fetch(
@@ -37,13 +45,17 @@ export async function saveAttachment(patientId: string, att: UploadAttachment) {
     throw new Error(`Erro no upload do arquivo: ${uploadFileRes.statusText}`);
   }
 
-  const createAttachmentPayload = {
+  const createAttachmentPayload: CreateAttachmentRequest = {
     filename: file.name,
     filetype: file.type,
     objectKey,
     size: file.size,
     description,
   };
+
+  if (procedureId !== undefined) {
+    createAttachmentPayload.procedureId = procedureId;
+  }
 
   const createAttRes = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/attachments`,
