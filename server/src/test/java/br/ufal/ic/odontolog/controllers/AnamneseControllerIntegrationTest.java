@@ -34,6 +34,7 @@ class AnamneseControllerIntegrationTest {
   @Autowired StudentRepository studentRepository;
   @Autowired PatientRepository patientRepository;
   @Autowired PasswordEncoder passwordEncoder;
+  @MockBean private S3Template s3Template;
 
   private static final String USERNAME = "student.anamnese@test.com";
   private static final String PASSWORD = "password";
