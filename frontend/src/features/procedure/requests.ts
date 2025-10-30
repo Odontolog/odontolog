@@ -144,26 +144,6 @@ export async function getAttachmentById(
   return att;
 }
 
-export async function saveAttachments(
-  procedureId: string,
-  atts: Attachments[],
-) {
-  console.log('saving attachments for procedure: ', procedureId);
-
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  const procedure = procedures.find(
-    (procedure) => procedure.id === procedureId,
-  );
-
-  if (!procedure) {
-    throw new Error(`Procedure with id ${procedureId} not found`);
-  }
-  procedure.attachments.push(...atts);
-
-  return procedure;
-}
-
 export async function deleteAttachment(procedureId: string, att: Attachments) {
   console.log('deleting attachment for procedure: ', procedureId);
 

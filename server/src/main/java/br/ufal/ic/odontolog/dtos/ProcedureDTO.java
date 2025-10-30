@@ -2,7 +2,6 @@ package br.ufal.ic.odontolog.dtos;
 
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.enums.ProcedureType;
-import br.ufal.ic.odontolog.models.Attachment;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.time.Instant;
@@ -23,7 +22,7 @@ public class ProcedureDTO extends ReviewableDTO {
   private PatientShortDTO patient;
   private Instant performedAt;
   private String studySector;
-  private Set<Attachment> attachments;
+  private Set<AttachmentDTO> attachments;
   private Set<String> teeth;
   private ProcedureDetailDTO procedureDetail;
   private ProcedureType procedureType;

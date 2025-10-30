@@ -15,4 +15,6 @@ public class CreateAttachmentRequestDTO {
   private String description;
 
   @NotNull private Integer size;
+
+  private Long procedureId;
 }

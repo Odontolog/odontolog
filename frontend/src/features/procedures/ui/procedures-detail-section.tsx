@@ -153,7 +153,7 @@ export function ProcedureDetailContent({
             <AttachmentsSection
               mode="read"
               queryOptions={queryOptions}
-              reviewableId={procedureId}
+              procedureId={procedureId}
             />
           </Stack>
 

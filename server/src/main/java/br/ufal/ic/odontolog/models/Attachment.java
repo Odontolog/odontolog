@@ -1,10 +1,12 @@
 package br.ufal.ic.odontolog.models;
 
 import jakarta.persistence.*;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter
@@ -26,6 +28,8 @@ public class Attachment {
   @ManyToOne
   @JoinColumn(name = "uploader_id")
   private User uploader;
+
+  @CreationTimestamp private Instant createdAt;
 
   // Size in bytes
   private Integer size;

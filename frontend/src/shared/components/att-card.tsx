@@ -65,6 +65,7 @@ export default function AttachmentCard({
             variant="light"
             color="red"
             aria-label="Deletar arquivo"
+            disabled
           >
             <IconTrash size={16} />
           </ActionIcon>
