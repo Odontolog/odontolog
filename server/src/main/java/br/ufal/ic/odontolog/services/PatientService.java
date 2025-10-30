@@ -10,10 +10,12 @@ import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
 import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
 import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
+import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.AttachmentMapper;
 import br.ufal.ic.odontolog.mappers.PatientMapper;
+import br.ufal.ic.odontolog.models.Activity;
 import br.ufal.ic.odontolog.models.Attachment;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.Procedure;
@@ -27,6 +29,7 @@ import io.awspring.cloud.s3.S3Template;
 import java.net.URL;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -236,6 +239,25 @@ public class PatientService {
       }
 
       procedure.addAttachment(attachment);
+
+      HashMap<String, Object> metadata = new HashMap<>();
+      metadata.put("data", attachment.getDescription());
+      metadata.put("uploadedFileName", attachment.getFilename());
+      metadata.put("uploadedFileDescription", attachment.getDescription());
+      metadata.put("uploadedFileObjectKey", attachment.getObjectKey());
+
+      Activity activity =
+          Activity.builder()
+              .actor(currentUser)
+              .type(ActivityType.EDITED)
+              .description(
+                  String.format(
+                      "Documento anexado por %s (%s)",
+                      currentUser.getName(), currentUser.getEmail()))
+              .reviewable(procedure)
+              .metadata(metadata)
+              .build();
+      procedure.getHistory().add(activity);
     }
 
     return attachmentMapper.toDTO(attachment);
