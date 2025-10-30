@@ -260,6 +260,8 @@ public class PatientService {
       procedure.getHistory().add(activity);
     }
 
+    attachmentRepository.save(attachment);
+
     return attachmentMapper.toDTO(attachment);
   }
 
