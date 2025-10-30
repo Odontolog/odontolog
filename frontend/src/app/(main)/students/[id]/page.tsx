@@ -1,5 +1,6 @@
 import StudentHeader from '@/features/student/header';
 import { getStudentById } from '@/features/student/requests';
+import { requireAuth } from '@/shared/utils';
 
 export default async function StudentPage({
   params,
@@ -8,10 +9,11 @@ export default async function StudentPage({
 }) {
   const { id } = await params;
   const student = await getStudentById(id);
+  const user = await requireAuth();
 
   return (
     <>
-      <StudentHeader student={student} />
+      <StudentHeader student={student} user={user} />
     </>
   );
 }

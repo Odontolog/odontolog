@@ -1,25 +1,39 @@
-import { Student } from '@/shared/models';
-import { Avatar, Group, Stack, Title, Text, Box, Divider } from '@mantine/core';
+import CustomBreadcrumbs from '@/shared/components/breadcrumbs';
+import { Student, User } from '@/shared/models';
+import { Avatar, Group, Stack, Title, Text, Divider } from '@mantine/core';
 import {
   IconBuildingHospital,
   IconCalendar,
-  IconIdBadge,
+  IconIdBadge2,
   IconMail,
 } from '@tabler/icons-react';
 
-export default function StudentHeader({ student }: { student: Student }) {
+interface StudentHeaderProps {
+  student: Student;
+  user: User;
+}
+
+export default function StudentHeader({ student, user }: StudentHeaderProps) {
+  const breadcrumbsData = [
+    { title: 'Alunos', href: '/students' },
+    { title: `${student.name}` },
+  ];
+
   return (
     <Stack
       gap={0}
       bg="white"
       style={{ borderBottom: '1px solid var(--mantine-color-gray-3)' }}
     >
-      <Box pt="xs" m="md">
+      <Stack pt="xs" m="md">
+        {user.role !== 'STUDENT' && (
+          <CustomBreadcrumbs data={breadcrumbsData} />
+        )}
         <Group justify="space-between">
           <LeftContent student={student} />
-          <RightContent student={student} />
+          <RightContent />
         </Group>
-      </Box>
+      </Stack>
     </Stack>
   );
 }
@@ -53,7 +67,7 @@ function LeftContent({ student }: { student: Student }) {
               </Text>
             </Group>
             <Group gap={4}>
-              <IconIdBadge size={16} />
+              <IconIdBadge2 size={16} />
               <Text>{student.enrollmentCode}</Text>
             </Group>
           </Group>
@@ -63,7 +77,7 @@ function LeftContent({ student }: { student: Student }) {
   );
 }
 
-function RightContent({ student }: { student: Student }) {
+function RightContent() {
   return (
     <Group>
       <Stack gap={2} align="center">
