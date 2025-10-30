@@ -1,0 +1,22 @@
+meta {
+  name: Update Patient Next Appointment
+  type: http
+  seq: 10
+}
+
+put {
+  url: http://localhost:8080/api/patients/1/next-appointment
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "appointmentDate": "2025-10-22"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

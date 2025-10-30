@@ -1,0 +1,16 @@
+meta {
+  name: Get Attachment by Patient and Id
+  type: http
+  seq: 11
+}
+
+get {
+  url: http://localhost:8080/api/patients/1/attachments/4
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

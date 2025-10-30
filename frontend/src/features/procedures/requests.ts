@@ -103,7 +103,9 @@ export function getNextAppointmentOptions(patientId: string) {
   });
 }
 
-export async function getNextAppointment(patientId: string): Promise<Date> {
+export async function getNextAppointment(
+  patientId: string,
+): Promise<Date | null> {
   const token = await getAuthToken();
 
   const res = await fetch(
@@ -122,6 +124,12 @@ export async function getNextAppointment(patientId: string): Promise<Date> {
   }
 
   const data = (await res.json()) as Appointment;
+
+  // Se appointmentDate for null, retorna null em vez de Invalid Date
+  if (data.appointmentDate === null || data.appointmentDate === undefined) {
+    return null;
+  }
+
   return new Date(`${data.appointmentDate}T00:00:00`);
 }
 

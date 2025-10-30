@@ -10,10 +10,11 @@ import {
   Grid,
   Group,
   Loader,
+  Stack,
   Text,
   ThemeIcon,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { useForm, type UseFormReturnType } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 import {
@@ -25,8 +26,19 @@ import {
 import { useState } from 'react';
 
 import PatientConditionCard from '@/features/anamnese/ui/condition-card';
-import { Anamnese, AnamneseFormValues, PatientCondition } from '../models';
+import {
+  Anamnese,
+  AnamneseFormValues,
+  ConditionFormValue,
+  PatientCondition,
+} from '../models';
 import { saveAnamnese } from '../requests';
+
+const CATEGORY_MAP: { [key: string]: string } = {
+  MEDICAL: 'História Médica',
+  FEMALE: 'Saúde Feminina',
+  HABITS: 'Hábitos',
+};
 
 interface AnamneseSectionProps {
   patientId: string;
@@ -115,9 +127,9 @@ function AnamneseSectionContent(props: AnamneseSectionContent) {
   };
 
   if (conditions) {
-    initialConditions.conditions = conditions.map((condition) => ({
-      notes: condition.notes,
-      hasCondition: condition.hasCondition,
+    initialConditions.conditions = conditions.map((condition, index) => ({
+      formIndex: index,
+      ...condition,
     }));
   }
 
@@ -178,20 +190,26 @@ function AnamneseSectionContent(props: AnamneseSectionContent) {
     mutation.mutate(values);
   }
 
-  const fields = form.getValues().conditions.map((_, index) => (
-    <Grid.Col span={{ md: 12, lg: 6, xl: 4 }} key={conditions[index].id}>
-      <PatientConditionCard
-        index={index}
-        condition={conditions[index].condition}
-        form={form}
-        editing={editing}
-      />
-    </Grid.Col>
-  ));
+  const groupedConditions = Object.groupBy(
+    form.getValues().conditions,
+    (condition) => condition.category,
+  );
+
+  const categories = ['MEDICAL', 'FEMALE', 'HABITS'];
 
   return (
     <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-      <Grid gutter="xs">{fields}</Grid>
+      <Stack mb="md">
+        {categories.map((category, index) => (
+          <AnamneseCategorySection
+            key={index}
+            category={CATEGORY_MAP[category]}
+            conditions={groupedConditions[category]}
+            editing={editing}
+            form={form}
+          />
+        ))}
+      </Stack>
       {editing && (
         <Flex
           justify="space-between"
@@ -210,5 +228,43 @@ function AnamneseSectionContent(props: AnamneseSectionContent) {
         </Flex>
       )}
     </form>
+  );
+}
+
+interface AnamneseCategorySectionProps {
+  category: string;
+  conditions?: ConditionFormValue[];
+  form: UseFormReturnType<AnamneseFormValues>;
+  editing: boolean;
+}
+
+function AnamneseCategorySection(props: AnamneseCategorySectionProps) {
+  return (
+    <Stack w="100%" gap="xs">
+      <Text fw={500}>{props.category}</Text>
+      <Grid gutter="xs">
+        {props.conditions
+          ? props.conditions
+              .sort((a, b) =>
+                a.description
+                  .toLowerCase()
+                  .localeCompare(b.description.toLowerCase()),
+              )
+              .map((condition) => (
+                <Grid.Col
+                  span={{ md: 12, lg: 6, xl: 4 }}
+                  key={condition.formIndex}
+                >
+                  <PatientConditionCard
+                    index={condition.formIndex}
+                    title={condition.description}
+                    form={props.form}
+                    editing={props.editing}
+                  />
+                </Grid.Col>
+              ))
+          : 'Não foi possível carregar esse formulário.'}
+      </Grid>
+    </Stack>
   );
 }

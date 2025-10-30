@@ -1,0 +1,25 @@
+meta {
+  name: Create Attachment for Patient
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8080/api/patients/1/attachments
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "filename": "thug clown 3.png",
+    "filetype": "image/png",
+    "key": "patients/1/attachments/097cd2ff-b108-4262-a6f1-db06586529ed",
+    "size": 123
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

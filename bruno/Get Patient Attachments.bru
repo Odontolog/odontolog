@@ -1,0 +1,15 @@
+meta {
+  name: Get Patient Attachments 
+  type: http
+  seq: 12
+}
+
+get {
+  url: http://localhost:8080/api/patients/1/attachments
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

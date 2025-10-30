@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.dtos.AppointmentDTO;
 import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.PatientDTO;
 import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
+import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -68,6 +69,25 @@ public interface PatientApi {
   ResponseEntity<AppointmentDTO> updateNextAppointment(
       @Parameter(description = "ID of the patient") @PathVariable Long id,
       @RequestBody AppointmentDTO appointmentDTO);
+
+  @Operation(
+      summary = "Initialize attachment upload",
+      description =
+          """
+            Initialize the process for uploading an attachment for a specific patient.
+
+             Preconditions:
+             - The patient with the specified ID must exist in the system.
+             Postconditions:
+             - Returns an upload URL and necessary metadata for uploading the attachment.
+            """)
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "Upload initialization successful."),
+        @ApiResponse(responseCode = "404", description = "Patient not found.")
+      })
+  ResponseEntity<UploadAttachmentInitResponseDTO> initUploadAttachment(
+      @Parameter(description = "ID of the patient") @PathVariable Long id);
 
   @Operation(summary = "Create a new patient", description = "Creates a new patient (prontuário).")
   @ApiResponses(

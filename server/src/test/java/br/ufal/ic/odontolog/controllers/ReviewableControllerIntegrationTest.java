@@ -15,6 +15,7 @@ import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.awspring.cloud.s3.S3Template;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,7 @@ public class ReviewableControllerIntegrationTest {
   @Autowired PatientRepository patientRepository;
   @Autowired private SupervisorRepository supervisorRepository;
   @Autowired ObjectMapper objectMapper;
+  @MockitoBean S3Template s3Template;
 
   private Patient patient;
   private Supervisor supervisor;
@@ -73,8 +76,8 @@ public class ReviewableControllerIntegrationTest {
     TreatmentPlanDTO created = objectMapper.readValue(postJson, TreatmentPlanDTO.class);
 
     var patchBody = """
-        {"notes": "New notes value"}
-        """;
+                {"notes": "New notes value"}
+                """;
     String patchJson =
         mockMvc
             .perform(
@@ -108,8 +111,8 @@ public class ReviewableControllerIntegrationTest {
 
     // New round to ensure oldData is also captured
     patchBody = """
-        {"notes": "New notes value 2"}
-        """;
+                {"notes": "New notes value 2"}
+                """;
     patchJson =
         mockMvc
             .perform(
@@ -158,9 +161,11 @@ public class ReviewableControllerIntegrationTest {
             Supervisor.builder().name("supervisor 2").email("supervisor2@test.com").build());
 
     // Adicionar 2 supervisores
-    var putBody1 = """
-      {"supervisorIds": ["%s"]}
-      """.formatted(supervisor.getId());
+    var putBody1 =
+        """
+                {"supervisorIds": ["%s"]}
+                """
+            .formatted(supervisor.getId());
 
     String putJson1 =
         mockMvc
@@ -183,9 +188,11 @@ public class ReviewableControllerIntegrationTest {
     assertThat(lastActivity1.getDescription()).contains("selecionado").contains("supervisor 1");
 
     // Remover supervisores
-    var putBody2 = """
-      {"supervisorIds": ["%s"]}
-      """.formatted(supervisor2.getId());
+    var putBody2 =
+        """
+                {"supervisorIds": ["%s"]}
+                """
+            .formatted(supervisor2.getId());
 
     String putJson2 =
         mockMvc

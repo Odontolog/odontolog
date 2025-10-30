@@ -44,18 +44,46 @@ export async function getPatientById(patientId: string): Promise<Patient> {
 export async function createPatientRecord(
   patient: PatientRecordForm,
 ): Promise<Patient> {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log('creating a new patient record, ', patient);
+  const token = await getAuthToken();
 
-  return patient as Patient;
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patients`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(patient),
+  });
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao criar paciente.`);
+  }
+
+  const data: Patient = (await res.json()) as Patient;
+  return data;
 }
 
 export async function editPatientRecord(
   patient: PatientRecordForm,
 ): Promise<Patient> {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const token = await getAuthToken();
 
-  console.log('editing a patient record, ', patient);
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patient.id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(patient),
+    },
+  );
 
-  return patient as Patient;
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao editar o paciente.`);
+  }
+
+  const data: Patient = (await res.json()) as Patient;
+  return data;
 }

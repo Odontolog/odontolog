@@ -18,6 +18,7 @@ import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,7 @@ class TreatmentPlanProceduresControllerIntegrationTest {
   @Autowired SupervisorRepository supervisorRepository;
   @Autowired TreatmentPlanRepository treatmentPlanRepository;
   @Autowired ObjectMapper objectMapper;
+  @MockitoBean S3Template s3Template;
 
   private Patient patient;
   private Supervisor supervisor;
@@ -79,13 +82,13 @@ class TreatmentPlanProceduresControllerIntegrationTest {
     // Add procedure
     String addBody =
         """
-        {
-          "name": "Restoration",
-          "teeth": ["11","12"],
-          "plannedSession": 2,
-          "studySector": "Dentística"
-        }
-        """;
+                {
+                  "name": "Restoration",
+                  "teeth": ["11","12"],
+                  "plannedSession": 2,
+                  "studySector": "Dentística"
+                }
+                """;
 
     String addResponse =
         mockMvc
@@ -111,13 +114,13 @@ class TreatmentPlanProceduresControllerIntegrationTest {
     // Update procedure
     String updateBody =
         """
-        {
-          "name": "Restoration Modified",
-          "teeth": ["21"],
-          "plannedSession": 3,
-          "studySector": "Endodontia"
-        }
-        """;
+                {
+                  "name": "Restoration Modified",
+                  "teeth": ["21"],
+                  "plannedSession": 3,
+                  "studySector": "Endodontia"
+                }
+                """;
 
     String updateResponse =
         mockMvc

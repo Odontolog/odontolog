@@ -176,7 +176,7 @@ public class PatientServiceUnitTest {
 
     when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
 
-    Patient result = patientService.updateNextAppointment(1L, dto);
+    AppointmentDTO result = patientService.updateNextAppointment(1L, dto);
 
     assertThat(result.getAppointmentDate()).isEqualTo(dto.getAppointmentDate());
   }

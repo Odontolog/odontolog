@@ -3,6 +3,7 @@ import { User } from '@/shared/models';
 export type PatientCondition = {
   id: string;
   condition: string;
+  description: string;
   notes: string;
   category: string;
   hasCondition: boolean;
@@ -35,8 +36,12 @@ export type Anamnese = {
 };
 
 export type ConditionFormValue = {
+  formIndex: number;
   notes: string;
   hasCondition: boolean;
+  condition: string;
+  category: string;
+  description: string;
 };
 
 export type AnamneseFormValues = {

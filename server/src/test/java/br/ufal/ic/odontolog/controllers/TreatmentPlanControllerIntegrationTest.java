@@ -23,6 +23,7 @@ import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Instant;
+import io.awspring.cloud.s3.S3Template;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.*;
@@ -31,6 +32,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,7 @@ class TreatmentPlanControllerIntegrationTest {
   @Autowired private PatientPermissionRepository patientPermissionRepository;
   @Autowired ObjectMapper objectMapper;
   @Autowired TreatmentPlanRepository treatmentPlanRepository;
+  @MockitoBean S3Template s3Template;
 
   private Patient patient;
   private Supervisor supervisor;
