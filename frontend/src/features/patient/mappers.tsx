@@ -11,6 +11,7 @@ export type PatientDTO = Replace<
   Patient,
   {
     id: number;
+    birthDate: string;
     updatedAt: string;
   }
 >;
@@ -19,7 +20,7 @@ export function mapToPatient(dto: PatientDTO): Patient {
   return {
     ...dto,
     id: dto.id.toString(),
-    birthDate: new Date(dto.birthDate),
+    birthDate: new Date(`${dto.birthDate}T00:00:00.000`),
   };
 }
 

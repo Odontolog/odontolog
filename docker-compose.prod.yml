@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile
     container_name: server
     restart: always
-    ports:
-      - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       JAVA_OPTS: "-Xms128m -Xmx256m -XX:+UseContainerSupport"
@@ -22,10 +20,9 @@ services:
       APP_JWT_EXPIRATION_SECONDS: ${APP_JWT_EXPIRATION_SECONDS}
 
       # S3 Configuration
-      SPRING_CLOUD_AWS_S3_REGION: ${SPRING_CLOUD_AWS_S3_REGION}
-      SPRING_CLOUD_AWS_S3_BUCKET: ${SPRING_CLOUD_AWS_S3_BUCKET}
-      SPRING_CLOUD_AWS_ACCESS_KEY: ${SPRING_CLOUD_AWS_ACCESS_KEY}
-      SPRING_CLOUD_AWS_SECRET_KEY: ${SPRING_CLOUD_AWS_SECRET_KEY}
+      AWS_REGION: ${SPRING_CLOUD_AWS_S3_REGION}
+      AWS_ACCESS_KEY_ID: ${SPRING_CLOUD_AWS_ACCESS_KEY}
+      AWS_SECRET_ACCESS_KEY: ${SPRING_CLOUD_AWS_SECRET_KEY}
       SPRING_CLOUD_AWS_S3_ENDPOINT: ${SPRING_CLOUD_AWS_S3_ENDPOINT}
       APP_S3_PUBLIC_BUCKET: ${APP_S3_PUBLIC_BUCKET}
       APP_S3_PRIVATE_BUCKET: ${APP_S3_PRIVATE_BUCKET}
@@ -43,8 +40,6 @@ services:
 
   frontend:
     image: myapp-frontend:latest
-    ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=${NODE_ENV}
       - AUTH_SECRET=${AUTH_SECRET}
@@ -73,8 +68,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     networks:
       - app-network
 
@@ -102,4 +95,4 @@ networks:
   proxy:
     driver: bridge
   app-network:
-    internal: true
+    driver: bridge
