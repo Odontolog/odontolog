@@ -1,7 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { getAuthToken } from '@/shared/utils';
-import { Anamnese, AnamneseFormValues } from './models';
+import { AnamneseFormValues } from './models';
+import { AnamneseDto, mapToAnamnese } from './mapper';
 
 export function getAnamneseOptions(patientId: string) {
   return queryOptions({
@@ -27,8 +28,8 @@ export async function getAnamnese(patientId: string) {
     throw new Error(`[${res.status}] Erro ao carregar anamnese.`);
   }
 
-  const data = (await res.json()) as Anamnese;
-  return data;
+  const data = (await res.json()) as AnamneseDto;
+  return mapToAnamnese(data);
 }
 
 export async function saveAnamneseNotes(patientId: string, notes: string) {
