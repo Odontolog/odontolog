@@ -88,12 +88,11 @@ export default function AttachmentsDisplayModal({
                 </Text>
               </Stack>
             )}
-
-            {attachment.description !== null ? (
-              <Text c="dimmed">{attachment.description}</Text>
-            ) : (
-              <Text c="dimmed">Não há descrição</Text>
-            )}
+            <Text c="dimmed" style={{ overflowX: 'hidden' }}>
+              {attachment.description !== null
+                ? attachment.description
+                : 'Não há descrição'}
+            </Text>
 
             <Group justify="flex-end" mt="sm">
               <Button color="red" onClick={openConfirmModal} disabled>
