@@ -33,7 +33,7 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
   });
 
   return (
-    <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
+    <Card withBorder shadow="sm" radius="md" px="sm" h="100%" flex="1">
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between">
           <Text fw={600} size="lg">
@@ -50,7 +50,7 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
 
       <Divider my="none" />
 
-      <Card.Section>
+      <Card.Section h="100%">
         <DocsSectionContent
           data={data}
           isLoading={isLoading}
@@ -128,7 +128,7 @@ function DocsSectionContent({
       offsetScrollbars
       scrollbars="y"
       w="100%"
-      h="560px"
+      h="100%"
     >
       <Grid p="md">
         {data

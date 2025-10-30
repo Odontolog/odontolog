@@ -51,7 +51,7 @@ export default function DocumentPreviewCard({
             {extensionExtractor(attachment.type)}
           </Badge>
         </Group>
-        <Text fw={600} size="md" truncate="end">
+        <Text fw={600} size="md" truncate="end" maw="400px">
           {attachment.filename}
         </Text>
         <Group>

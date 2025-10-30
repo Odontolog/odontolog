@@ -55,7 +55,7 @@ export default function AttachmentsDisplayModal({
   }
 
   const isImage = attachment.filename.match(
-    /\.(jpg|jpeg|png|gif|webp|svg|pdf)$/i,
+    /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i,
   );
 
   return (
@@ -63,7 +63,9 @@ export default function AttachmentsDisplayModal({
       <Modal.Overlay />
       <Modal.Content>
         <Modal.Header>
-          <Modal.Title fw={600}>{attachment.filename}</Modal.Title>
+          <Text fw={600} truncate>
+            {attachment.filename}
+          </Text>
           <Modal.CloseButton />
         </Modal.Header>
         <Modal.Body>
