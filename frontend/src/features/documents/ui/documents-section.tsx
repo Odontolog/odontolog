@@ -131,14 +131,16 @@ function DocsSectionContent({
       h="560px"
     >
       <Grid p="md">
-        {data.map((document) => (
-          <Grid.Col span={{ sm: 12, md: 6, lg: 4, xl: 3 }} key={document.id}>
-            <DocumentPreviewCard
-              attachment={document}
-              onClick={handleViewAttachment}
-            />
-          </Grid.Col>
-        ))}
+        {data
+          .sort((a, b) => +b.createdAt - +a.createdAt)
+          .map((document) => (
+            <Grid.Col span={{ sm: 12, md: 6, lg: 4, xl: 3 }} key={document.id}>
+              <DocumentPreviewCard
+                attachment={document}
+                onClick={handleViewAttachment}
+              />
+            </Grid.Col>
+          ))}
       </Grid>
       <AttachmentsDisplayModal
         attachment={selectedAttachment}
