@@ -10,12 +10,19 @@ export default async function PatientPreproceduresPage({
 }) {
   const { patientId } = await params;
   return (
-    <Group align="flex-start" py="md" px="lg" h="100%" wrap="nowrap">
+    <Group
+      align="flex-start"
+      py="md"
+      px="lg"
+      h="100%"
+      wrap="nowrap"
+      style={{ overflowY: 'hidden' }}
+    >
       <Box flex="1" h="100%">
         <PreprocedureHistorySection patientId={patientId} />
       </Box>
       <Box flex="1" h="100%" visibleFrom="md">
-        <ProcedureDetailSection scrollAreaHeight="500px" />
+        <ProcedureDetailSection />
       </Box>
     </Group>
   );

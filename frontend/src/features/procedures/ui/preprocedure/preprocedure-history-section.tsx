@@ -31,12 +31,10 @@ import {
 
 interface ProcedureHistorySectionProps {
   patientId: string;
-  scrollAreaHeight?: string;
 }
 
 export default function PreprocedureHistorySection({
   patientId,
-  scrollAreaHeight = '510px',
 }: ProcedureHistorySectionProps) {
   const router = useRouter();
   const [modalOpened, setModalOpened] = useState(false);
@@ -44,9 +42,9 @@ export default function PreprocedureHistorySection({
     string | null
   >(null);
 
-  const preprocedures = getPatientPreprocedureOptions(patientId);
-  const { data, isLoading } = useQuery({
-    ...preprocedures,
+  const options = getPatientPreprocedureOptions(patientId);
+  const { data, isLoading, isError } = useQuery({
+    ...options,
   });
 
   async function handleConfirm(
@@ -93,25 +91,12 @@ export default function PreprocedureHistorySection({
 
         <Divider my="none" />
 
-        <Card.Section inheritPadding px="md" py="sm" h="100%">
-          {isLoading || data === undefined ? (
-            <Stack h="100%" gap="xs">
-              <Skeleton height={120} radius="none" />
-              <Skeleton height={120} radius="none" />
-              <Skeleton height={120} radius="none" />
-              <Skeleton height={120} radius="none" />
-            </Stack>
-          ) : (
-            <ScrollArea
-              scrollbarSize={6}
-              offsetScrollbars
-              scrollbars="y"
-              w="100%"
-              h={scrollAreaHeight}
-            >
-              <PreproceduresContent data={data} />
-            </ScrollArea>
-          )}
+        <Card.Section p="md" h="100%" style={{ overflowY: 'hidden' }}>
+          <PreproceduresContent
+            data={data}
+            isLoading={isLoading}
+            isError={isError}
+          />
         </Card.Section>
       </Card>
 
@@ -175,18 +160,58 @@ function getLastEmptyDay(proceduresByDate: Map<string, ProcedureShort[]>) {
   return null;
 }
 
-function PreproceduresContent({ data }: { data: ProcedureShort[] }) {
+interface PreprocedureContentProps {
+  data?: ProcedureShort[];
+  isLoading: boolean;
+  isError: boolean;
+}
+
+function PreproceduresContent({
+  data,
+  isLoading,
+  isError,
+}: PreprocedureContentProps) {
   const matches = useMediaQuery('(max-width: 62em)');
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
+  if (isError) {
+    return (
+      <Center py="md" h="100%">
+        <Text fw={600} size="lg" c="dimmed" ta="center">
+          Algo deu errado. <br />
+          Não foi possível carregar o histórico de pré-procedimentos do
+          paciente.
+        </Text>
+      </Center>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Stack h="100%" gap="xs">
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+      </Stack>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+
   if (data.length === 0) {
     return (
       <Center py="md" h="100%" px="lg">
-        <Text fw={600} size="lg" c="dimmed" ta="center">
-          O paciente ainda não tem nenhum pré-procedimento.
-        </Text>
+        <Stack align="center">
+          <Text fw={600} size="lg" c="dimmed" ta="center">
+            O paciente ainda não tem nenhum pré-procedimento.
+            <br />
+          </Text>
+        </Stack>
       </Center>
     );
   }
@@ -223,37 +248,45 @@ function PreproceduresContent({ data }: { data: ProcedureShort[] }) {
   }
 
   return (
-    <Timeline bulletSize={16}>
-      {Array.from(proceduresByDate.entries())
-        .sort(([dateA], [dateB]) => {
-          const [dayA, monthA, yearA] = dateA.split('/').map(Number);
-          const [dayB, monthB, yearB] = dateB.split('/').map(Number);
-          return (
-            new Date(yearB, monthB - 1, dayB).getTime() -
-            new Date(yearA, monthA - 1, dayA).getTime()
-          );
-        })
-        .map(([date, plans]) => (
-          <Timeline.Item key={date} title={date}>
-            <Stack gap="sm" my="xs">
-              {plans
-                .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-                .map((pcd) => (
-                  <ProcedureCard
-                    key={pcd.id}
-                    disableSession
-                    procedure={pcd}
-                    fields={['patient', 'assignee', 'updated']}
-                    selected={pcd.id === active?.toString()}
-                    onSelect={(procedureId: string) =>
-                      onPreprocedureSelect(procedureId, pcd.patient.id)
-                    }
-                  />
-                ))}
-            </Stack>
-          </Timeline.Item>
-        ))}
-      {getLastEmptyDay(proceduresByDate)}
-    </Timeline>
+    <ScrollArea
+      scrollbarSize={6}
+      offsetScrollbars
+      scrollbars="y"
+      w="100%"
+      h="100%"
+    >
+      <Timeline bulletSize={16}>
+        {Array.from(proceduresByDate.entries())
+          .sort(([dateA], [dateB]) => {
+            const [dayA, monthA, yearA] = dateA.split('/').map(Number);
+            const [dayB, monthB, yearB] = dateB.split('/').map(Number);
+            return (
+              new Date(yearB, monthB - 1, dayB).getTime() -
+              new Date(yearA, monthA - 1, dayA).getTime()
+            );
+          })
+          .map(([date, plans]) => (
+            <Timeline.Item key={date} title={date}>
+              <Stack gap="sm" my="xs">
+                {plans
+                  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+                  .map((pcd) => (
+                    <ProcedureCard
+                      key={pcd.id}
+                      disableSession
+                      procedure={pcd}
+                      fields={['patient', 'assignee', 'updated']}
+                      selected={pcd.id === active?.toString()}
+                      onSelect={(procedureId: string) =>
+                        onPreprocedureSelect(procedureId, pcd.patient.id)
+                      }
+                    />
+                  ))}
+              </Stack>
+            </Timeline.Item>
+          ))}
+        {getLastEmptyDay(proceduresByDate)}
+      </Timeline>
+    </ScrollArea>
   );
 }
