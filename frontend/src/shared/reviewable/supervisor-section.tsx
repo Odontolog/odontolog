@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Avatar,
   Card,
   Center,
   Divider,
@@ -14,7 +13,7 @@ import {
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 
-import { StatusIndicator } from '@/shared/components/status';
+import UserMiniCard from '@/shared/components/user-mini-card';
 import { Reviewable } from '@/shared/models';
 import { ReviewableSectionProps, SupervisorReviewStatus } from './models';
 import SupervisorMenu from './supervisor-menu';
@@ -109,13 +108,11 @@ export function SupervisorSectionContent(props: SupervisorSectionContentProps) {
   return (
     <Flex gap="xs" direction="column">
       {supervisors.map((supervisor) => (
-        <Group key={supervisor.id} justify="space-between" gap="xs">
-          <Group gap="xs">
-            <Avatar src={supervisor.avatarUrl} size="sm" variant="filled" />
-            <Text size="sm">{supervisor.name}</Text>
-          </Group>
-          <StatusIndicator status={supervisor.reviewStatus} />
-        </Group>
+        <UserMiniCard
+          key={supervisor.id}
+          user={supervisor}
+          status={supervisor.reviewStatus}
+        />
       ))}
     </Flex>
   );

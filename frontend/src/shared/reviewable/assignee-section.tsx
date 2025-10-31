@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Avatar,
   Card,
   Center,
   Divider,
@@ -15,6 +14,7 @@ import {
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 
+import UserMiniCard from '@/shared/components/user-mini-card';
 import { Reviewable, User } from '@/shared/models';
 import AssigneeMenu from './assignee-menu';
 import { ReviewableSectionProps } from './models';
@@ -102,10 +102,7 @@ function AssigneeSectionContent(props: AssigneeSectionContentProps) {
 
   return (
     <Flex gap="xs" direction="column">
-      <Group key={assignee.id} gap="xs">
-        <Avatar src={assignee.avatarUrl} size="sm" variant="filled" />
-        <Text size="sm">{assignee.name}</Text>
-      </Group>
+      <UserMiniCard user={assignee} />
     </Flex>
   );
 }
