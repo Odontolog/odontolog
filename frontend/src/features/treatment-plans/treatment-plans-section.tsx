@@ -78,7 +78,7 @@ export default function TreatmentPlansSection({
 
       <Divider my="none" />
 
-      <Card.Section inheritPadding px="md" py="sm" h="100%">
+      <Card.Section p="md" h="100%" style={{ overflowY: 'hidden' }}>
         <TreatmentPlansContent
           data={data}
           isLoading={isLoading}
@@ -186,7 +186,7 @@ function TreatmentPlansContent({
       offsetScrollbars
       scrollbars="y"
       w="100%"
-      h="510px"
+      h="100%"
     >
       <Timeline bulletSize={16}>
         {Array.from(treatmentPlansByYear.entries())

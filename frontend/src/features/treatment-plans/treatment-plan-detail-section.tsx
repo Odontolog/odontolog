@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Box,
   Button,
   Card,
   Center,
@@ -31,21 +30,14 @@ import CardInfo from '@/shared/components/card-info';
 import ProcedureCard from '@/shared/components/procedure-card';
 import { StatusBadge } from '@/shared/components/status';
 
-export default function TreatmentPlanDetailSection({
-  scrollAreaHeight,
-}: {
-  scrollAreaHeight?: string;
-}) {
+export default function TreatmentPlanDetailSection() {
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
       {active !== null ? (
-        <TreatmentPlanDetailContent
-          treatmentPlanId={active}
-          scrollAreaHeight={scrollAreaHeight}
-        />
+        <TreatmentPlanDetailContent treatmentPlanId={active} />
       ) : (
         <Center py="md" h="100%">
           <Text fw={600} size="lg" c="dimmed">
@@ -59,12 +51,10 @@ export default function TreatmentPlanDetailSection({
 
 interface TreatmentPlanDetailContentProps {
   treatmentPlanId: string;
-  scrollAreaHeight?: string;
 }
 
 export function TreatmentPlanDetailContent({
   treatmentPlanId,
-  scrollAreaHeight = '610px',
 }: TreatmentPlanDetailContentProps) {
   const {
     data: treatmentPlan,
@@ -83,7 +73,7 @@ export function TreatmentPlanDetailContent({
     );
   }
 
-  if (isError) {
+  if (!treatmentPlan || isError) {
     return (
       <Center py="md">
         <Text fw={500} size="lg" c="red">
@@ -93,18 +83,8 @@ export function TreatmentPlanDetailContent({
     );
   }
 
-  if (!treatmentPlan) {
-    return (
-      <Center py="md">
-        <Text fw={500} size="lg" c="dimmed">
-          Plano não encontrado.
-        </Text>
-      </Center>
-    );
-  }
-
   return (
-    <Box>
+    <>
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between" align="center">
           <Text fw={600} size="lg">
@@ -116,13 +96,13 @@ export function TreatmentPlanDetailContent({
 
       <Divider />
 
-      <Card.Section inheritPadding py="sm" h="100%">
+      <Card.Section p="md" h="100%" style={{ overflowY: 'hidden' }}>
         <ScrollArea
           scrollbarSize={6}
           offsetScrollbars
           scrollbars="y"
           w="100%"
-          h={scrollAreaHeight}
+          h="100%"
         >
           <Stack gap="md">
             <Group gap="md">
@@ -202,6 +182,6 @@ export function TreatmentPlanDetailContent({
           </Flex>
         </ScrollArea>
       </Card.Section>
-    </Box>
+    </>
   );
 }

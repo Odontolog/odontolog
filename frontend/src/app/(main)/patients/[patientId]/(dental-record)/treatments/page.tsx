@@ -15,13 +15,20 @@ export default async function PatientTreatmentPlansPage({
   const { patientId } = await params;
 
   return (
-    <Group align="flex-start" py="md" px="lg" h="100%" wrap="nowrap">
+    <Group
+      align="flex-start"
+      py="md"
+      px="lg"
+      h="100%"
+      wrap="nowrap"
+      style={{ overflowY: 'hidden' }}
+    >
       <Box flex="1" h="100%">
         <TreatmentPlansSection patientId={patientId} />
       </Box>
 
       <Box flex="1" h="100%" visibleFrom="md">
-        <TreatmentPlanDetailSection scrollAreaHeight="500px" />
+        <TreatmentPlanDetailSection />
       </Box>
     </Group>
   );
