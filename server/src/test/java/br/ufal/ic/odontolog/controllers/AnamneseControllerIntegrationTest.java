@@ -8,9 +8,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.Instant;
+
 import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.models.Patient;
+import br.ufal.ic.odontolog.models.PatientPermission;
 import br.ufal.ic.odontolog.models.Student;
+import br.ufal.ic.odontolog.repositories.PatientPermissionRepository;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +39,7 @@ class AnamneseControllerIntegrationTest {
   @Autowired ObjectMapper objectMapper;
   @Autowired StudentRepository studentRepository;
   @Autowired PatientRepository patientRepository;
+  @Autowired PatientPermissionRepository patientPermissionRepository;
   @Autowired PasswordEncoder passwordEncoder;
   @MockitoBean private S3Template s3Template;
 
@@ -46,7 +51,7 @@ class AnamneseControllerIntegrationTest {
   @BeforeEach
   void setup() {
     // Seed a student user for authentication
-    studentRepository
+    Student student = studentRepository
         .findByEmail(USERNAME)
         .orElseGet(
             () ->
@@ -69,6 +74,20 @@ class AnamneseControllerIntegrationTest {
       patient = patientRepository.save(patient);
       patientId = patient.getId();
     }
+
+    patientPermissionRepository
+        .findTopByStudentIdAndPatientIdAndActiveTrueOrderByGrantedAtDesc(
+            student.getId(), patientId)
+        .orElseGet(
+            () -> {
+              PatientPermission permission = new PatientPermission();
+              permission.setGrantedAt(Instant.now());
+              permission.setPatient(patientRepository.findById(patientId).orElseThrow());
+              permission.setStudent(student);
+
+              patientPermissionRepository.save(permission);
+              return permission;
+            });
   }
 
   private String loginAndGetToken() throws Exception {
