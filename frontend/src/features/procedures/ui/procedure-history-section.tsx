@@ -11,28 +11,28 @@ import {
   Text,
   Timeline,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import ProcedureCard from '@/shared/components/procedure-card';
 import { ProcedureShort } from '@/shared/models';
 import { getPatientProcedureOptions } from '../requests';
 import HistorySummary from './history-summary';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useMediaQuery } from '@mantine/hooks';
 
 interface ProcedureHistorySectionProps {
   patientId: string;
-  scrollAreaHeight?: string;
 }
 
 export default function ProcedureHistorySection({
   patientId,
-  scrollAreaHeight = '610px',
 }: ProcedureHistorySectionProps) {
-  const procedures = getPatientProcedureOptions(patientId);
-  const { data, isLoading } = useQuery({
-    ...procedures,
+  const options = getPatientProcedureOptions(patientId);
+
+  const { data, isLoading, isError } = useQuery({
+    ...options,
   });
+
   const lastAppointmentDate =
     data && data.length > 0
       ? new Date(
@@ -41,13 +41,13 @@ export default function ProcedureHistorySection({
       : null;
 
   return (
-    <Stack>
+    <Stack flex="1" h="100%">
       <HistorySummary
         lastAppointment={lastAppointmentDate?.toLocaleDateString('pt-BR')}
         patientId={patientId}
         isLoading={isLoading}
       />
-      <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
+      <Card withBorder shadow="sm" radius="md" px="sm" h="100%" flex="1">
         <Card.Section inheritPadding py="sm">
           <Group justify="space-between">
             <Text fw={600} size="lg">
@@ -58,24 +58,12 @@ export default function ProcedureHistorySection({
 
         <Divider my="none" />
 
-        <Card.Section inheritPadding px="md" py="sm" h="100%">
-          {isLoading || data === undefined ? (
-            <Stack h="100%" gap="xs">
-              <Skeleton height={131} radius="none" />
-              <Skeleton height={131} radius="none" />
-              <Skeleton height={131} radius="none" />
-            </Stack>
-          ) : (
-            <ScrollArea
-              scrollbarSize={6}
-              offsetScrollbars
-              scrollbars="y"
-              w="100%"
-              h={scrollAreaHeight}
-            >
-              <ProceduresContent data={data} />
-            </ScrollArea>
-          )}
+        <Card.Section p="md" h="100%" style={{ overflowY: 'hidden' }}>
+          <ProceduresContent
+            data={data}
+            isError={isError}
+            isLoading={isLoading}
+          />
         </Card.Section>
       </Card>
     </Stack>
@@ -108,11 +96,46 @@ function getLastEmptyDay(proceduresByDate: Map<string, ProcedureShort[]>) {
   return null;
 }
 
-function ProceduresContent({ data }: { data: ProcedureShort[] }) {
+interface ProcedureContentProps {
+  data?: ProcedureShort[];
+  isLoading: boolean;
+  isError: boolean;
+}
+
+function ProceduresContent({
+  data,
+  isLoading,
+  isError,
+}: ProcedureContentProps) {
   const matches = useMediaQuery('(max-width: 62em)');
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
+
+  if (isError) {
+    return (
+      <Center py="md" h="100%">
+        <Text fw={600} size="lg" c="dimmed" ta="center">
+          Algo deu errado. <br />
+          Não foi possível carregar histórico de procedimentos do paciente.
+        </Text>
+      </Center>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Stack h="100%" gap="xs">
+        <Skeleton height={131} radius="none" />
+        <Skeleton height={131} radius="none" />
+        <Skeleton height={131} radius="none" />
+      </Stack>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
 
   if (data.length === 0) {
     return (
@@ -162,37 +185,45 @@ function ProceduresContent({ data }: { data: ProcedureShort[] }) {
   }
 
   return (
-    <Timeline bulletSize={16}>
-      {Array.from(proceduresByDate.entries())
-        .sort(([dateA], [dateB]) => {
-          const [dayA, monthA, yearA] = dateA.split('/').map(Number);
-          const [dayB, monthB, yearB] = dateB.split('/').map(Number);
-          return (
-            new Date(yearB, monthB - 1, dayB).getTime() -
-            new Date(yearA, monthA - 1, dayA).getTime()
-          );
-        })
-        .map(([date, plans]) => (
-          <Timeline.Item key={date} title={date}>
-            <Stack gap="sm" my="xs">
-              {plans
-                .sort((a, b) => getDate(b).getTime() - getDate(a).getTime())
-                .map((pcd) => (
-                  <ProcedureCard
-                    key={pcd.id}
-                    disableSession
-                    procedure={pcd}
-                    fields={['patient', 'assignee', 'teeth', 'updated']}
-                    selected={pcd.id === active?.toString()}
-                    onSelect={(procedureId: string) =>
-                      onProcedureSelect(procedureId, pcd.patient.id)
-                    }
-                  />
-                ))}
-            </Stack>
-          </Timeline.Item>
-        ))}
-      {getLastEmptyDay(proceduresByDate)}
-    </Timeline>
+    <ScrollArea
+      scrollbarSize={6}
+      offsetScrollbars
+      scrollbars="y"
+      w="100%"
+      h="100%"
+    >
+      <Timeline bulletSize={16}>
+        {Array.from(proceduresByDate.entries())
+          .sort(([dateA], [dateB]) => {
+            const [dayA, monthA, yearA] = dateA.split('/').map(Number);
+            const [dayB, monthB, yearB] = dateB.split('/').map(Number);
+            return (
+              new Date(yearB, monthB - 1, dayB).getTime() -
+              new Date(yearA, monthA - 1, dayA).getTime()
+            );
+          })
+          .map(([date, plans]) => (
+            <Timeline.Item key={date} title={date}>
+              <Stack gap="sm" my="xs">
+                {plans
+                  .sort((a, b) => getDate(b).getTime() - getDate(a).getTime())
+                  .map((pcd) => (
+                    <ProcedureCard
+                      key={pcd.id}
+                      disableSession
+                      procedure={pcd}
+                      fields={['patient', 'assignee', 'teeth', 'updated']}
+                      selected={pcd.id === active?.toString()}
+                      onSelect={(procedureId: string) =>
+                        onProcedureSelect(procedureId, pcd.patient.id)
+                      }
+                    />
+                  ))}
+              </Stack>
+            </Timeline.Item>
+          ))}
+        {getLastEmptyDay(proceduresByDate)}
+      </Timeline>
+    </ScrollArea>
   );
 }

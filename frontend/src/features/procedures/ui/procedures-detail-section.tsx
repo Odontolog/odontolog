@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Box,
   Button,
   Card,
   Center,
@@ -21,27 +20,20 @@ import { ptBR } from 'date-fns/locale';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-import CardInfo from '@/shared/components/card-info';
-import { StatusBadge } from '@/shared/components/status';
 import { getProcedureOptions } from '@/features/procedure/requests';
 import AttachmentsSection from '@/features/procedure/ui/attachements/atts-section';
 import DetailSection from '@/features/procedure/ui/detail-section';
+import CardInfo from '@/shared/components/card-info';
+import { StatusBadge } from '@/shared/components/status';
 
-export default function ProcedureDetailSection({
-  scrollAreaHeight,
-}: {
-  scrollAreaHeight?: string;
-}) {
+export default function ProcedureDetailSection() {
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
       {active !== null ? (
-        <ProcedureDetailContent
-          procedureId={active}
-          scrollAreaHeight={scrollAreaHeight}
-        />
+        <ProcedureDetailContent procedureId={active} />
       ) : (
         <Center py="md" h="100%">
           <Text fw={600} size="lg" c="dimmed">
@@ -55,14 +47,11 @@ export default function ProcedureDetailSection({
 
 interface ProcedureContentProps {
   procedureId: string;
-  scrollAreaHeight?: string;
 }
 
-export function ProcedureDetailContent({
-  procedureId,
-  scrollAreaHeight = '610px',
-}: ProcedureContentProps) {
+export function ProcedureDetailContent({ procedureId }: ProcedureContentProps) {
   const queryOptions = getProcedureOptions(procedureId);
+
   const {
     data: procedure,
     isLoading,
@@ -80,7 +69,7 @@ export function ProcedureDetailContent({
     );
   }
 
-  if (isError) {
+  if (!procedure || isError) {
     return (
       <Center py="md">
         <Text fw={500} size="lg" c="red">
@@ -90,18 +79,8 @@ export function ProcedureDetailContent({
     );
   }
 
-  if (!procedure) {
-    return (
-      <Center py="md">
-        <Text fw={500} size="lg" c="dimmed">
-          Procedimento não encontrado.
-        </Text>
-      </Center>
-    );
-  }
-
   return (
-    <Box h="100%">
+    <>
       <Card.Section inheritPadding py="sm">
         <Group justify="space-between" align="center">
           <Text fw={600} size="lg">
@@ -116,13 +95,13 @@ export function ProcedureDetailContent({
 
       <Divider />
 
-      <Card.Section inheritPadding py="sm" h="100%">
+      <Card.Section p="md" h="100%" style={{ overflowY: 'hidden' }}>
         <ScrollArea
           scrollbarSize={6}
           offsetScrollbars
           scrollbars="y"
           w="100%"
-          h={scrollAreaHeight}
+          h="100%"
         >
           <Stack gap="md" flex="1">
             <Group gap="md">
@@ -171,6 +150,6 @@ export function ProcedureDetailContent({
           </Flex>
         </ScrollArea>
       </Card.Section>
-    </Box>
+    </>
   );
 }
