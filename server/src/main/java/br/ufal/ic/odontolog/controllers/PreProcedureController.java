@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +19,7 @@ public class PreProcedureController implements PreProcedureApi {
   private final PreProcedureService preProcedureService;
 
   @PostMapping("/patients/{patientId}/pre-procedures")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<PreProcedureDTO> createPreProcedure(
       @PathVariable Long patientId, @RequestBody @Valid PreProcedureUpsertDTO dto) {
     PreProcedureDTO created = preProcedureService.createPreProcedure(patientId, dto);
@@ -25,6 +27,7 @@ public class PreProcedureController implements PreProcedureApi {
   }
 
   @GetMapping("/patients/{patientId}/pre-procedures/{preProcedureId}")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<PreProcedureDTO> getPreProcedureByPatientAndId(
       @PathVariable Long patientId, @PathVariable Long preProcedureId) {
     PreProcedureDTO dto =
@@ -33,6 +36,7 @@ public class PreProcedureController implements PreProcedureApi {
   }
 
   @GetMapping("/patients/{patientId}/pre-procedures")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<List<PreProcedureShortDTO>> getPreProceduresForPatient(
       @PathVariable Long patientId) {
     List<PreProcedureShortDTO> list = preProcedureService.getPreProceduresForPatient(patientId);

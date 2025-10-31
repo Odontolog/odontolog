@@ -9,15 +9,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.enums.ReviewableType;
+import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.Patient;
+import br.ufal.ic.odontolog.models.PatientPermission;
+import br.ufal.ic.odontolog.models.Student;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
+import br.ufal.ic.odontolog.repositories.PatientPermissionRepository;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
+import br.ufal.ic.odontolog.repositories.StudentRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.TreatmentPlanRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.s3.S3Template;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.*;
@@ -39,15 +45,18 @@ class TreatmentPlanControllerIntegrationTest {
   @Autowired MockMvc mockMvc;
   @Autowired PatientRepository patientRepository;
   @Autowired private SupervisorRepository supervisorRepository;
+  @Autowired private StudentRepository studentRepository;
+  @Autowired private PatientPermissionRepository patientPermissionRepository;
   @Autowired ObjectMapper objectMapper;
   @Autowired TreatmentPlanRepository treatmentPlanRepository;
   @MockitoBean S3Template s3Template;
 
   private Patient patient;
   private Supervisor supervisor;
+  private Student student;
 
   @BeforeEach
-  void setupPatient() {
+  void setupPatientAndStudent() {
     patient = patientRepository.save(Patient.builder().name("Patient_Test_001").build());
 
     supervisor =
@@ -60,19 +69,38 @@ class TreatmentPlanControllerIntegrationTest {
                             .name("supervisor 1")
                             .email("supervisor@test.com")
                             .build()));
+    student =
+        studentRepository
+            .findByEmail("student@test.com")
+            .orElseGet(
+                () ->
+                    studentRepository.save(
+                        Student.builder()
+                            .name("Student 1")
+                            .email("student@test.com")
+                            .role(Role.STUDENT)
+                            .build()));
+
+    patientPermissionRepository
+        .findTopByStudentIdAndPatientIdAndActiveTrueOrderByGrantedAtDesc(
+            student.getId(), patient.getId())
+        .orElseGet(
+            () -> {
+              PatientPermission permission = new PatientPermission();
+              permission.setGrantedAt(Instant.now());
+              permission.setPatient(patient);
+              permission.setStudent(student);
+
+              patientPermissionRepository.save(permission);
+              return permission;
+            });
   }
 
   @Test
   @DisplayName("Deve negar acesso sem token")
   void createWithoutToken() throws Exception {
-    var body =
-        """
-                {"patientId":"%s"}
-                """.formatted(patient.getId());
-
-    mockMvc
-        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
-        .andExpect(status().isForbidden());
+    var url = "/api/patients/%s/treatment-plan".formatted(patient.getId());
+    mockMvc.perform(post(url)).andExpect(status().isForbidden());
   }
 
   @Test
@@ -80,14 +108,8 @@ class TreatmentPlanControllerIntegrationTest {
       username = "supervisor@test.com",
       roles = {"XALALA"})
   void createWithInvalidRole() throws Exception {
-    var body =
-        """
-                {"patientId":"%s"}
-                """.formatted(patient.getId());
-
-    mockMvc
-        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
-        .andExpect(status().isForbidden());
+    var url = "/api/patients/%s/treatment-plan".formatted(patient.getId());
+    mockMvc.perform(post(url)).andExpect(status().isForbidden());
   }
 
   @Test
@@ -95,45 +117,26 @@ class TreatmentPlanControllerIntegrationTest {
       username = "supervisor@test.com",
       roles = {"SUPERVISOR"})
   void createWithSupervisorRole() throws Exception {
-    var body =
-        """
-                {"patientId":"%s"}
-                """.formatted(patient.getId());
-
-    mockMvc
-        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
-        .andExpect(status().isOk())
-        .andReturn();
+    var url = "/api/patients/%s/treatment-plan".formatted(patient.getId());
+    mockMvc.perform(post(url)).andExpect(status().isOk()).andReturn();
   }
 
   @Test
   @WithMockUser(
-      username = "supervisor@test.com",
+      username = "student@test.com",
       roles = {"STUDENT"})
   void createWithStudentRole() throws Exception {
-    var body =
-        """
-                {"patientId":"%s"}
-                """.formatted(patient.getId());
-
-    mockMvc
-        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
-        .andExpect(status().isOk());
+    var url = "/api/patients/%s/treatment-plan".formatted(patient.getId());
+    mockMvc.perform(post(url)).andExpect(status().isOk());
   }
 
   @Test
   @WithMockUser(
-      username = "supervisor@test.com",
+      username = "student@test.com",
       roles = {"STUDENT"})
   void createWithWrongPatient() throws Exception {
-    var body =
-        """
-                {"patientId":"%s"}
-                """.formatted(UUID.randomUUID());
-
-    mockMvc
-        .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(body))
-        .andExpect(status().is4xxClientError());
+    var url = "/api/patients/%s/treatment-plan".formatted(UUID.randomUUID());
+    mockMvc.perform(post(url)).andExpect(status().is4xxClientError());
   }
 
   @Test
@@ -142,16 +145,8 @@ class TreatmentPlanControllerIntegrationTest {
       roles = {"SUPERVISOR"})
   void createAndGetTreatmentPlan() throws Exception {
     // 1. Cria plano
-    var createBody =
-        """
-                {"patientId":"%s"}
-                """.formatted(patient.getId());
-
-    var postResult =
-        mockMvc
-            .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(createBody))
-            .andExpect(status().isOk())
-            .andReturn();
+    var url = "/api/patients/%s/treatment-plan".formatted(patient.getId());
+    var postResult = mockMvc.perform(post(url)).andExpect(status().isOk()).andReturn();
 
     String postJson = postResult.getResponse().getContentAsString();
     TreatmentPlanDTO created = objectMapper.readValue(postJson, TreatmentPlanDTO.class);

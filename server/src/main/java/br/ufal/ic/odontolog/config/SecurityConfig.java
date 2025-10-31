@@ -6,6 +6,8 @@ import br.ufal.ic.odontolog.utils.JwtUtil;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -51,6 +53,14 @@ public class SecurityConfig {
         new JwtAuthenticationFilter(jwtUtil, uds), UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
+  }
+
+  @Bean
+  protected MethodSecurityExpressionHandler methodSecurityExpressionHandler(
+      CustomPermissionEvaluator customPermissionEvaluator) {
+    DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+    handler.setPermissionEvaluator(customPermissionEvaluator);
+    return handler;
   }
 
   @Bean

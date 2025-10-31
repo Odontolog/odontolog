@@ -3,7 +3,6 @@ package br.ufal.ic.odontolog.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
@@ -58,10 +57,7 @@ class TreatmentPlanServiceIntegrationTest {
       username = "supervisor@test.com",
       roles = {"SUPERVISOR"})
   void createTreatmentPlan_success() {
-    CreateTreatmentPlanDTO dto = new CreateTreatmentPlanDTO();
-    dto.setPatientId(patient.getId());
-
-    TreatmentPlanDTO plan = treatmentPlanService.createTreatmentPlan(dto);
+    TreatmentPlanDTO plan = treatmentPlanService.createTreatmentPlan(patient.getId());
 
     assertThat(plan.getId()).isNotNull();
     assertThat(plan.getStatus()).isEqualTo(TreatmentPlanStatus.DRAFT);
@@ -83,11 +79,8 @@ class TreatmentPlanServiceIntegrationTest {
 
   @Test
   void createTreatmentPlan_patientNotFound() {
-    CreateTreatmentPlanDTO dto = new CreateTreatmentPlanDTO();
-    dto.setPatientId(1234L);
-
     assertThrows(
-        EntityNotFoundException.class, () -> treatmentPlanService.createTreatmentPlan(dto));
+        EntityNotFoundException.class, () -> treatmentPlanService.createTreatmentPlan(1234L));
   }
 
   @Test

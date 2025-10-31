@@ -5,6 +5,24 @@ import { getAuthToken } from '@/shared/utils';
 import { mapToPatient, PatientDTO } from './mappers';
 import { PatientRecordForm } from './models';
 
+export async function checkPermission(patientId: string): Promise<boolean> {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/permissions/check`,
+    {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Usuário não tem permissão.`);
+  }
+
+  return true;
+}
+
 export async function getPatientById(patientId: string): Promise<Patient> {
   const token = await getAuthToken();
 

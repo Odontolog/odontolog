@@ -1,7 +1,6 @@
 package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.api.TreatmentPlanApi;
-import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.ProcedureUpsertDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
@@ -11,11 +10,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
@@ -23,33 +17,33 @@ import org.springframework.web.bind.annotation.RestController;
 public class TreatmentPlanController implements TreatmentPlanApi {
   private final TreatmentPlanService treatmentPlanService;
 
-  @PostMapping("/treatment-plan")
-  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
-  public TreatmentPlanDTO createTreatmentPlan(@RequestBody CreateTreatmentPlanDTO request) {
-    return treatmentPlanService.createTreatmentPlan(request);
-  }
-
-  @GetMapping("/treatment-plan/{treatmentId}")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
-  public TreatmentPlanDTO getTreatmentPlan(@PathVariable Long treatmentId) {
-    return treatmentPlanService.getTreatmentPlanById(treatmentId);
+  @PostMapping("/patients/{patientId}/treatment-plan")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
+  public TreatmentPlanDTO createTreatmentPlan(@PathVariable Long patientId) {
+    return treatmentPlanService.createTreatmentPlan(patientId);
   }
 
   @GetMapping("/patients/{patientId}/treatment-plan")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public List<TreatmentPlanShortDTO> getTreatmentPlansByPatient(@PathVariable Long patientId) {
     return treatmentPlanService.getTreatmentPlansByPatientId(patientId);
   }
 
+  @GetMapping("/treatment-plan/{treatmentId}")
+  @PreAuthorize("hasPermission(#treatmentId, 'TreatmentPlan', 'edit')")
+  public TreatmentPlanDTO getTreatmentPlan(@PathVariable Long treatmentId) {
+    return treatmentPlanService.getTreatmentPlanById(treatmentId);
+  }
+
   @PostMapping("/treatment-plan/{treatmentId}/procedures")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#treatmentId, 'TreatmentPlan', 'edit')")
   public TreatmentPlanDTO addProcedure(
       @PathVariable Long treatmentId, @Valid @RequestBody ProcedureUpsertDTO dto) {
     return treatmentPlanService.addProcedureToTreatmentPlan(treatmentId, dto);
   }
 
   @PutMapping("/treatment-plan/{treatmentId}/procedures/{procedureId}")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#treatmentId, 'TreatmentPlan', 'edit')")
   public TreatmentPlanDTO updateProcedure(
       @PathVariable Long treatmentId,
       @PathVariable Long procedureId,
@@ -58,7 +52,7 @@ public class TreatmentPlanController implements TreatmentPlanApi {
   }
 
   @DeleteMapping("/treatment-plan/{treatmentId}/procedures/{procedureId}")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#treatmentId, 'TreatmentPlan', 'edit')")
   public void removeProcedure(@PathVariable Long treatmentId, @PathVariable Long procedureId) {
     treatmentPlanService.removeProcedureFromTreatmentPlan(treatmentId, procedureId);
   }
