@@ -60,6 +60,7 @@ public class PatientController implements PatientApi {
   }
 
   @PostMapping("/{id}/attachments/init-upload")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<UploadAttachmentInitResponseDTO> initUploadAttachment(
       @PathVariable Long id) {
     var response = patientService.initUploadAttachment(id);
@@ -68,6 +69,7 @@ public class PatientController implements PatientApi {
   }
 
   @PostMapping("/{id}/attachments")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<AttachmentDTO> createAttachment(
       @PathVariable Long id, @Valid @RequestBody CreateAttachmentRequestDTO request) {
     var createdAttachment = patientService.createAttachment(id, request);
@@ -76,6 +78,7 @@ public class PatientController implements PatientApi {
   }
 
   @GetMapping("/{patientId}/attachments/{attachmentId}")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<AttachmentDTO> getAttachmentByPatientAndId(
       @PathVariable Long patientId, @PathVariable Long attachmentId) {
     var attachment = patientService.getAttachmentById(patientId, attachmentId);
@@ -84,6 +87,7 @@ public class PatientController implements PatientApi {
   }
 
   @GetMapping("/{patientId}/attachments")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<List<AttachmentDTO>> getAttachments(@PathVariable Long patientId) {
     var attachments = patientService.getAttachmentsByPatientId(patientId);
     return ResponseEntity.ok(attachments);
