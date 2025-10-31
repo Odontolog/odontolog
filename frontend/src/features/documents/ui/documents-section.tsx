@@ -50,7 +50,7 @@ export default function DocsSection({ patientId }: DocsSectionProps) {
 
       <Divider my="none" />
 
-      <Card.Section h="100%">
+      <Card.Section p="md" h="100%" style={{ overflowY: 'hidden' }}>
         <DocsSectionContent
           data={data}
           isLoading={isLoading}
@@ -130,7 +130,7 @@ function DocsSectionContent({
       w="100%"
       h="100%"
     >
-      <Grid p="md">
+      <Grid>
         {data
           .sort((a, b) => +b.createdAt - +a.createdAt)
           .map((document) => (

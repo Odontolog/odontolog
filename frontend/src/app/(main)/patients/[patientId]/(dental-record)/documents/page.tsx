@@ -9,7 +9,13 @@ export default async function PatientDocumentsPage({
 }) {
   const { patientId } = await params;
   return (
-    <Group p="md" flex="1" h="100%" style={{ overflowY: 'hidden' }}>
+    <Group
+      align="flex-start"
+      py="md"
+      px="lg"
+      h="100%"
+      style={{ overflowY: 'hidden' }}
+    >
       <DocsSection patientId={patientId} />
     </Group>
   );
