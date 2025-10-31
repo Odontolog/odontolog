@@ -25,7 +25,7 @@ public interface ProcedureState {
       Procedure procedure,
       Supervisor supervisor,
       String comments,
-      Integer grade,
+      Float grade,
       Boolean approved) {
     throw new UnsupportedOperationException("Operation not allowed in the current state.");
   }

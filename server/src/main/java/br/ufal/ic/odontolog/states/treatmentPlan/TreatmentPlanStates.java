@@ -61,7 +61,7 @@ public class TreatmentPlanStates {
         TreatmentPlan treatmentPlan,
         Supervisor supervisor,
         String comments,
-        Integer grade,
+        Float grade,
         Boolean approved) {
       // TODO: CERTAMENTE eu deveria implementar testes unitários para este método
       // não fiz porque preciso entregar essa funcionalidade logo. ;-;

@@ -7,7 +7,7 @@ import lombok.Data;
 public class ReviewableSubmitSupervisorReviewDTO {
   @NotNull private String comments;
 
-  @NotNull private Integer grade;
+  @NotNull private Float grade;
 
   @NotNull private Boolean approved;
 }

@@ -8,7 +8,7 @@ import lombok.Data;
 public class ReviewDTO {
   private Long id;
   private String comments;
-  private Integer grade;
+  private Float grade;
   private ReviewStatus reviewStatus;
   private Supervisor supervisor;
 }

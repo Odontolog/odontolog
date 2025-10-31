@@ -27,7 +27,7 @@ public class Review {
   private Long id;
 
   private String comments;
-  private Integer grade;
+  private Float grade;
 
   @Enumerated(EnumType.STRING)
   private ReviewStatus reviewStatus;

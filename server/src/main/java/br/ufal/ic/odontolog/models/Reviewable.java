@@ -124,7 +124,7 @@ public abstract class Reviewable {
   public abstract void submitForReview();
 
   public abstract void submitSupervisorReview(
-      Supervisor supervisor, String comments, Integer grade, Boolean approved);
+      Supervisor supervisor, String comments, Float grade, Boolean approved);
 
   public abstract void approve();
 

@@ -90,10 +90,27 @@ function ReviewModalBody<T extends Reviewable>({
       comments: (value) =>
         value.length < 1 ? 'Insira uma explicação para o aluno.' : null,
       grade: (value, values) => {
-        return values.decision === 'Aprovar' &&
-          (value === undefined || isNaN(Number(value)))
-          ? 'Insira uma nota válida.'
-          : null;
+        if (values.decision !== 'Aprovar') {
+          return null;
+        }
+
+        if (
+          value === undefined ||
+          value === null ||
+          String(value).trim() === ''
+        ) {
+          return 'Insira uma nota.';
+        }
+
+        const num = Number(value);
+        if (isNaN(num)) {
+          return 'Insira uma nota válida entre 0.0 e 10.0..';
+        }
+        if (num < 0 || num > 10) {
+          return 'A nota deve estar entre 0.0 e 10.0.';
+        }
+
+        return null;
       },
       decision: (value) => (value.length === 0 ? 'Selecione uma opção.' : null),
     },
