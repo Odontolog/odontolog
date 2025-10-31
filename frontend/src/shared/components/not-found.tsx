@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { Illustration } from './not-found-illustration';
 import classes from './not-found.module.css';
+import { DEFAULT_REDIRECT } from '../routes';
 
 interface NotFoundProps {
   title: string;
@@ -11,7 +12,7 @@ interface NotFoundProps {
 }
 
 export default function NotFound(props: NotFoundProps) {
-  const goBackUrl = props.goBackUrl ?? '/';
+  const goBackUrl = props.goBackUrl ?? DEFAULT_REDIRECT;
 
   return (
     <Container className={classes.root}>
