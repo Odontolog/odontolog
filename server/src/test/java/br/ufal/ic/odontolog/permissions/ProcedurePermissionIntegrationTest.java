@@ -2,8 +2,8 @@ package br.ufal.ic.odontolog.permissions;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import br.ufal.ic.odontolog.enums.ProcedureStatus;
@@ -82,7 +82,7 @@ public class ProcedurePermissionIntegrationTest {
                             .email("student@test.com")
                             .role(Role.STUDENT)
                             .build()));
-    
+
     Procedure proc = new PreProcedure();
     proc.setPatient(patient);
     proc.setAuthor(student);
@@ -109,27 +109,39 @@ public class ProcedurePermissionIntegrationTest {
   // GET /api/patients/{patientId}/procedures
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void listPatientProcedures_asSupervisor_allowed() throws Exception {
     mockMvc
-        .perform(get("/api/patients/{patientId}/procedures", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/procedures", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void listPatientProcedures_studentWithoutPermission_forbidden() throws Exception {
     mockMvc
-        .perform(get("/api/patients/{patientId}/procedures", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/procedures", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void listPatientProcedures_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     mockMvc
-        .perform(get("/api/patients/{patientId}/procedures", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/procedures", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
@@ -137,27 +149,36 @@ public class ProcedurePermissionIntegrationTest {
   // GET /api/procedures/{procedureId}
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void getProcedureById_asSupervisor_allowed() throws Exception {
     mockMvc
-        .perform(get("/api/procedures/{procedureId}", procedure.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/procedures/{procedureId}", procedure.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getProcedureById_studentWithoutPermission_forbidden() throws Exception {
     mockMvc
-        .perform(get("/api/procedures/{procedureId}", procedure.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/procedures/{procedureId}", procedure.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getProcedureById_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     mockMvc
-        .perform(get("/api/procedures/{procedureId}", procedure.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/procedures/{procedureId}", procedure.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
@@ -165,27 +186,39 @@ public class ProcedurePermissionIntegrationTest {
   // POST /api/procedures/{procedureId}/start
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void startProcedure_asSupervisor_allowed() throws Exception {
     mockMvc
-        .perform(post("/api/procedures/{procedureId}/start", procedure.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            post("/api/procedures/{procedureId}/start", procedure.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void startProcedure_studentWithoutPermission_forbidden() throws Exception {
     mockMvc
-        .perform(post("/api/procedures/{procedureId}/start", procedure.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            post("/api/procedures/{procedureId}/start", procedure.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void startProcedure_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     mockMvc
-        .perform(post("/api/procedures/{procedureId}/start", procedure.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            post("/api/procedures/{procedureId}/start", procedure.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
@@ -193,36 +226,45 @@ public class ProcedurePermissionIntegrationTest {
   // PATCH /api/procedures/{procedureId}/teeth
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void updateProcedureTeeth_asSupervisor_allowed() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("teeth", List.of(11, 12)));
     mockMvc
-        .perform(patch("/api/procedures/{procedureId}/teeth", procedure.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/procedures/{procedureId}/teeth", procedure.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void updateProcedureTeeth_studentWithoutPermission_forbidden() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("teeth", List.of(11, 12)));
     mockMvc
-        .perform(patch("/api/procedures/{procedureId}/teeth", procedure.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/procedures/{procedureId}/teeth", procedure.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void updateProcedureTeeth_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     String body = objectMapper.writeValueAsString(Map.of("teeth", List.of(11, 12)));
     mockMvc
-        .perform(patch("/api/procedures/{procedureId}/teeth", procedure.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/procedures/{procedureId}/teeth", procedure.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
@@ -230,36 +272,45 @@ public class ProcedurePermissionIntegrationTest {
   // PATCH /api/procedures/{procedureId}/study-sector
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void updateProcedureStudySector_asSupervisor_allowed() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("studySector", "A1"));
     mockMvc
-        .perform(patch("/api/procedures/{procedureId}/study-sector", procedure.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/procedures/{procedureId}/study-sector", procedure.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void updateProcedureStudySector_studentWithoutPermission_forbidden() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("studySector", "A1"));
     mockMvc
-        .perform(patch("/api/procedures/{procedureId}/study-sector", procedure.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/procedures/{procedureId}/study-sector", procedure.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void updateProcedureStudySector_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     String body = objectMapper.writeValueAsString(Map.of("studySector", "A1"));
     mockMvc
-        .perform(patch("/api/procedures/{procedureId}/study-sector", procedure.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/procedures/{procedureId}/study-sector", procedure.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
@@ -267,36 +318,45 @@ public class ProcedurePermissionIntegrationTest {
   // PATCH /api/procedures/{procedureId}/diagnostic
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void updateProcedureDiagnostic_asSupervisor_allowed() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("diagnostic", "Diagnóstico teste"));
     mockMvc
-        .perform(patch("/api/procedures/{procedureId}/diagnostic", procedure.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/procedures/{procedureId}/diagnostic", procedure.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void updateProcedureDiagnostic_studentWithoutPermission_forbidden() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("diagnostic", "Diagnóstico teste"));
     mockMvc
-        .perform(patch("/api/procedures/{procedureId}/diagnostic", procedure.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/procedures/{procedureId}/diagnostic", procedure.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void updateProcedureDiagnostic_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     String body = objectMapper.writeValueAsString(Map.of("diagnostic", "Diagnóstico teste"));
     mockMvc
-        .perform(patch("/api/procedures/{procedureId}/diagnostic", procedure.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/procedures/{procedureId}/diagnostic", procedure.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 }

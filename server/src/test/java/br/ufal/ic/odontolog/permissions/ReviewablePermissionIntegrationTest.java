@@ -2,9 +2,9 @@ package br.ufal.ic.odontolog.permissions;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import br.ufal.ic.odontolog.enums.Role;
@@ -24,7 +24,6 @@ import io.awspring.cloud.s3.S3Template;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,170 +110,224 @@ public class ReviewablePermissionIntegrationTest {
 
   // PUT /api/reviewables/{reviewableId}/reviewers
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void updateReviewers_asSupervisor_allowed() throws Exception {
-    String body = objectMapper.writeValueAsString(Map.of("supervisorIds", new String[] {supervisor.getId().toString()}));
+    String body =
+        objectMapper.writeValueAsString(
+            Map.of("supervisorIds", new String[] {supervisor.getId().toString()}));
     mockMvc
-        .perform(put("/api/reviewables/{reviewableId}/reviewers", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            put("/api/reviewables/{reviewableId}/reviewers", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void updateReviewers_studentWithoutPermission_forbidden() throws Exception {
-    String body = objectMapper.writeValueAsString(Map.of("supervisorIds", new String[] {supervisor.getId().toString()}));
+    String body =
+        objectMapper.writeValueAsString(
+            Map.of("supervisorIds", new String[] {supervisor.getId().toString()}));
     mockMvc
-        .perform(put("/api/reviewables/{reviewableId}/reviewers", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            put("/api/reviewables/{reviewableId}/reviewers", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void updateReviewers_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
-    String body = objectMapper.writeValueAsString(Map.of("supervisorIds", new String[] {supervisor.getId().toString()}));
+    String body =
+        objectMapper.writeValueAsString(
+            Map.of("supervisorIds", new String[] {supervisor.getId().toString()}));
     mockMvc
-        .perform(put("/api/reviewables/{reviewableId}/reviewers", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            put("/api/reviewables/{reviewableId}/reviewers", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   // PATCH /api/reviewables/{reviewableId}/notes
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void patchNotes_asSupervisor_allowed() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("notes", "Notas de teste"));
     mockMvc
-        .perform(patch("/api/reviewables/{reviewableId}/notes", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/reviewables/{reviewableId}/notes", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void patchNotes_studentWithoutPermission_forbidden() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("notes", "Notas de teste"));
     mockMvc
-        .perform(patch("/api/reviewables/{reviewableId}/notes", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/reviewables/{reviewableId}/notes", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void patchNotes_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     String body = objectMapper.writeValueAsString(Map.of("notes", "Notas de teste"));
     mockMvc
-        .perform(patch("/api/reviewables/{reviewableId}/notes", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            patch("/api/reviewables/{reviewableId}/notes", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   // GET /api/reviewables/{reviewableId}/history
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void getHistory_asSupervisor_allowed() throws Exception {
     mockMvc
-        .perform(get("/api/reviewables/{reviewableId}/history", treatmentPlan.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/reviewables/{reviewableId}/history", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getHistory_studentWithoutPermission_forbidden() throws Exception {
     mockMvc
-        .perform(get("/api/reviewables/{reviewableId}/history", treatmentPlan.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/reviewables/{reviewableId}/history", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getHistory_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     mockMvc
-        .perform(get("/api/reviewables/{reviewableId}/history", treatmentPlan.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/reviewables/{reviewableId}/history", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   // POST /api/reviewables/{reviewableId}/assignee
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void assignUser_asSupervisor_allowed() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("userId", supervisor.getId().toString()));
     mockMvc
-        .perform(post("/api/reviewables/{reviewableId}/assignee", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            post("/api/reviewables/{reviewableId}/assignee", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void assignUser_studentWithoutPermission_forbidden() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("userId", supervisor.getId().toString()));
     mockMvc
-        .perform(post("/api/reviewables/{reviewableId}/assignee", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            post("/api/reviewables/{reviewableId}/assignee", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void assignUser_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     String body = objectMapper.writeValueAsString(Map.of("userId", supervisor.getId().toString()));
     mockMvc
-        .perform(post("/api/reviewables/{reviewableId}/assignee", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            post("/api/reviewables/{reviewableId}/assignee", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   // POST /api/reviewables/{reviewableId}/submit-for-review
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void submitForReview_asSupervisor_allowed() throws Exception {
     addReviewer();
     String body = objectMapper.writeValueAsString(Map.of("comments", "Por favor revisar"));
     mockMvc
-        .perform(post("/api/reviewables/{reviewableId}/submit-for-review", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            post("/api/reviewables/{reviewableId}/submit-for-review", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void submitForReview_studentWithoutPermission_forbidden() throws Exception {
     addReviewer();
     String body = objectMapper.writeValueAsString(Map.of("comments", "Por favor revisar"));
     mockMvc
-        .perform(post("/api/reviewables/{reviewableId}/submit-for-review", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            post("/api/reviewables/{reviewableId}/submit-for-review", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void submitForReview_studentWithPermission_allowed() throws Exception {
     addReviewer();
     grantPermissionToStudent();
     String body = objectMapper.writeValueAsString(Map.of("comments", "Por favor revisar"));
     mockMvc
-        .perform(post("/api/reviewables/{reviewableId}/submit-for-review", treatmentPlan.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            post("/api/reviewables/{reviewableId}/submit-for-review", treatmentPlan.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 }

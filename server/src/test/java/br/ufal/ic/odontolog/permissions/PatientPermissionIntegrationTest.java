@@ -18,12 +18,10 @@ import br.ufal.ic.odontolog.repositories.StudentRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.s3.S3Template;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +32,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -77,7 +74,8 @@ class PatientPermissionIntegrationTest {
                             .email("student@test.com")
                             .role(Role.STUDENT)
                             .build()));
-    // Não conceder permissão aqui; testes individuais chamam grantPermissionToStudent() quando necessário
+    // Não conceder permissão aqui; testes individuais chamam grantPermissionToStudent() quando
+    // necessário
   }
 
   private void grantPermissionToStudent() {
@@ -98,24 +96,33 @@ class PatientPermissionIntegrationTest {
   // GET /api/patients/{id}
   // -------------------------------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void getPatientById_asSupervisor_allowed() throws Exception {
-    mockMvc.perform(get("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON))
+    mockMvc
+        .perform(get("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getPatientById_studentWithoutPermission_forbidden() throws Exception {
-    mockMvc.perform(get("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON))
+    mockMvc
+        .perform(get("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getPatientById_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
-    mockMvc.perform(get("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON))
+    mockMvc
+        .perform(get("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
@@ -123,27 +130,39 @@ class PatientPermissionIntegrationTest {
   // GET /api/patients/{id}/next-appointment
   // -------------------------------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void getNextAppointment_asSupervisor_allowed() throws Exception {
     mockMvc
-        .perform(get("/api/patients/{id}/next-appointment", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{id}/next-appointment", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getNextAppointment_studentWithoutPermission_forbidden() throws Exception {
     mockMvc
-        .perform(get("/api/patients/{id}/next-appointment", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{id}/next-appointment", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getNextAppointment_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     mockMvc
-        .perform(get("/api/patients/{id}/next-appointment", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{id}/next-appointment", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
@@ -151,9 +170,13 @@ class PatientPermissionIntegrationTest {
   // PUT /api/patients/{id}/next-appointment
   // -------------------------------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void putNextAppointment_asSupervisor_allowed() throws Exception {
-    String body = objectMapper.writeValueAsString(java.util.Map.of("appointmentDate", LocalDate.now().plusYears(1).toString()));
+    String body =
+        objectMapper.writeValueAsString(
+            java.util.Map.of("appointmentDate", LocalDate.now().plusYears(1).toString()));
     mockMvc
         .perform(
             put("/api/patients/{id}/next-appointment", patient.getId())
@@ -163,9 +186,13 @@ class PatientPermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void putNextAppointment_studentWithoutPermission_forbidden() throws Exception {
-    String body = objectMapper.writeValueAsString(java.util.Map.of("appointmentDate", LocalDate.now().plusYears(1).toString()));
+    String body =
+        objectMapper.writeValueAsString(
+            java.util.Map.of("appointmentDate", LocalDate.now().plusYears(1).toString()));
     mockMvc
         .perform(
             put("/api/patients/{id}/next-appointment", patient.getId())
@@ -175,10 +202,14 @@ class PatientPermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void putNextAppointment_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
-    String body = objectMapper.writeValueAsString(java.util.Map.of("appointmentDate", LocalDate.now().plusYears(1).toString()));
+    String body =
+        objectMapper.writeValueAsString(
+            java.util.Map.of("appointmentDate", LocalDate.now().plusYears(1).toString()));
     mockMvc
         .perform(
             put("/api/patients/{id}/next-appointment", patient.getId())
@@ -192,48 +223,56 @@ class PatientPermissionIntegrationTest {
   // -------------------------------------------------
   private String getMockPatientUpsertBody() throws Exception {
     Map<String, Object> data = new HashMap<>();
-        data.put("name", "João da Silva");
-        data.put("address", "Rua das Flores, 123");
-        data.put("avatarUrl", "https://example.com/avatars/joao.jpg");
-        data.put("cpf", "123.456.789-00");
-        data.put("phoneNumber", "(11) 98765-4321");
-        data.put("rg", "12.345.678-9");
-        data.put("city", "São Paulo");
-        data.put("state", "SP");
-        data.put("ethnicity", "WHITE");
-        data.put("sex", "MALE");
-        data.put("birthDate", LocalDate.of(1990, 5, 20).toString());
-        data.put("maritalStatus", "SINGLE");
-        data.put("occupation", "Engenheiro de Software");
+    data.put("name", "João da Silva");
+    data.put("address", "Rua das Flores, 123");
+    data.put("avatarUrl", "https://example.com/avatars/joao.jpg");
+    data.put("cpf", "123.456.789-00");
+    data.put("phoneNumber", "(11) 98765-4321");
+    data.put("rg", "12.345.678-9");
+    data.put("city", "São Paulo");
+    data.put("state", "SP");
+    data.put("ethnicity", "WHITE");
+    data.put("sex", "MALE");
+    data.put("birthDate", LocalDate.of(1990, 5, 20).toString());
+    data.put("maritalStatus", "SINGLE");
+    data.put("occupation", "Engenheiro de Software");
     return objectMapper.writeValueAsString(data);
   }
 
-
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void putPatient_asSupervisor_allowed() throws Exception {
     String body = getMockPatientUpsertBody();
     mockMvc
-        .perform(put("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON).content(body))
+        .perform(
+            put("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON).content(body))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void putPatient_studentWithoutPermission_forbidden() throws Exception {
     String body = getMockPatientUpsertBody();
     mockMvc
-        .perform(put("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON).content(body))
+        .perform(
+            put("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON).content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void putPatient_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     String body = getMockPatientUpsertBody();
     mockMvc
-        .perform(put("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON).content(body))
+        .perform(
+            put("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON).content(body))
         .andExpect(status().isOk());
   }
 
@@ -241,7 +280,9 @@ class PatientPermissionIntegrationTest {
   // POST /api/patients  (createPatient) - only ADMIN/SUPERVISOR allowed
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void createPatient_asSupervisor_allowed() throws Exception {
     String body = getMockPatientUpsertBody();
     mockMvc
@@ -250,7 +291,9 @@ class PatientPermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void createPatient_studentForbbiden() throws Exception {
     String body = getMockPatientUpsertBody();
     mockMvc
@@ -262,7 +305,9 @@ class PatientPermissionIntegrationTest {
   // PUT /api/patients/{id}/restore  - only ADMIN/SUPERVISOR allowed
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void restorePatient_asSupervisor_allowed() throws Exception {
     mockMvc
         .perform(put("/api/patients/{id}/restore", patient.getId()).contentType(APPLICATION_JSON))
@@ -270,7 +315,9 @@ class PatientPermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void restorePatient_studentForbidden() throws Exception {
     mockMvc
         .perform(put("/api/patients/{id}/restore", patient.getId()).contentType(APPLICATION_JSON))
@@ -281,7 +328,9 @@ class PatientPermissionIntegrationTest {
   // DELETE /api/patients/{id}  - only ADMIN/SUPERVISOR allowed
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void deletePatient_asSupervisor_allowed() throws Exception {
     mockMvc
         .perform(delete("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON))
@@ -289,11 +338,12 @@ class PatientPermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void deletePatient_studentForbidden() throws Exception {
     mockMvc
         .perform(delete("/api/patients/{id}", patient.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 }
-

@@ -8,8 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.Instant;
-
 import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.models.Patient;
 import br.ufal.ic.odontolog.models.PatientPermission;
@@ -19,6 +17,7 @@ import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.StudentRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.s3.S3Template;
+import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,22 +50,23 @@ class AnamneseControllerIntegrationTest {
   @BeforeEach
   void setup() {
     // Seed a student user for authentication
-    Student student = studentRepository
-        .findByEmail(USERNAME)
-        .orElseGet(
-            () ->
-                studentRepository.save(
-                    Student.builder()
-                        .name("Student_Anamnese")
-                        .email(USERNAME)
-                        .password(passwordEncoder.encode(PASSWORD))
-                        .clinicNumber(1)
-                        .enrollmentCode("20250001")
-                        .enrollmentYear(2025)
-                        .enrollmentSemester(1)
-                        .photoUrl("some-url")
-                        .role(Role.STUDENT)
-                        .build()));
+    Student student =
+        studentRepository
+            .findByEmail(USERNAME)
+            .orElseGet(
+                () ->
+                    studentRepository.save(
+                        Student.builder()
+                            .name("Student_Anamnese")
+                            .email(USERNAME)
+                            .password(passwordEncoder.encode(PASSWORD))
+                            .clinicNumber(1)
+                            .enrollmentCode("20250001")
+                            .enrollmentYear(2025)
+                            .enrollmentSemester(1)
+                            .photoUrl("some-url")
+                            .role(Role.STUDENT)
+                            .build()));
 
     // Create a simple patient for the tests
     if (patientId == null) {
@@ -76,8 +76,7 @@ class AnamneseControllerIntegrationTest {
     }
 
     patientPermissionRepository
-        .findTopByStudentIdAndPatientIdAndActiveTrueOrderByGrantedAtDesc(
-            student.getId(), patientId)
+        .findTopByStudentIdAndPatientIdAndActiveTrueOrderByGrantedAtDesc(student.getId(), patientId)
         .orElseGet(
             () -> {
               PatientPermission permission = new PatientPermission();

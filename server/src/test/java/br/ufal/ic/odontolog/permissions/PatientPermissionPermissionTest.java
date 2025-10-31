@@ -16,7 +16,6 @@ import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.StudentRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import io.awspring.cloud.s3.S3Template;
-
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,64 +87,92 @@ public class PatientPermissionPermissionTest {
 
   // POST /api/patients/{patientId}/permissions/{studentId}
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void grantPermission_asSupervisor_allowed() throws Exception {
     mockMvc
         .perform(
-            post("/api/patients/{patientId}/permissions/{studentId}", patient.getId(), student.getId())
+            post(
+                    "/api/patients/{patientId}/permissions/{studentId}",
+                    patient.getId(),
+                    student.getId())
                 .contentType(APPLICATION_JSON))
         .andExpect(status().isCreated());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void grantPermission_studentForbidden() throws Exception {
     mockMvc
         .perform(
-            post("/api/patients/{patientId}/permissions/{studentId}", patient.getId(), student.getId())
+            post(
+                    "/api/patients/{patientId}/permissions/{studentId}",
+                    patient.getId(),
+                    student.getId())
                 .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   // DELETE /api/patients/{patientId}/permissions/{studentId}
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void revokePermission_asSupervisor_allowed() throws Exception {
     grantPermissionToStudent();
 
     mockMvc
         .perform(
-            delete("/api/patients/{patientId}/permissions/{studentId}", patient.getId(), student.getId())
+            delete(
+                    "/api/patients/{patientId}/permissions/{studentId}",
+                    patient.getId(),
+                    student.getId())
                 .contentType(APPLICATION_JSON))
         .andExpect(status().isNoContent());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void revokePermission_studentForbidden() throws Exception {
     mockMvc
         .perform(
-            delete("/api/patients/{patientId}/permissions/{studentId}", patient.getId(), student.getId())
+            delete(
+                    "/api/patients/{patientId}/permissions/{studentId}",
+                    patient.getId(),
+                    student.getId())
                 .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   // GET /api/patients/{patientId}/permissions
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void listAllowedStudents_asSupervisor_allowed() throws Exception {
     grantPermissionToStudent();
 
     mockMvc
-        .perform(get("/api/patients/{patientId}/permissions", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/permissions", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void listAllowedStudents_studentForbidden() throws Exception {
     mockMvc
-        .perform(get("/api/patients/{patientId}/permissions", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/permissions", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 }

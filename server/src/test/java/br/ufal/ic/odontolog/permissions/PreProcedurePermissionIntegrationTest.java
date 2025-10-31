@@ -96,7 +96,10 @@ public class PreProcedurePermissionIntegrationTest {
                 post("/api/patients/{patientId}/pre-procedures", patient.getId())
                     .contentType(APPLICATION_JSON)
                     .content(body)
-                    .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user("supervisor@test.com").roles("SUPERVISOR")))
+                    .with(
+                        org.springframework.security.test.web.servlet.request
+                            .SecurityMockMvcRequestPostProcessors.user("supervisor@test.com")
+                            .roles("SUPERVISOR")))
             .andExpect(status().isCreated())
             .andReturn()
             .getResponse()
@@ -111,36 +114,45 @@ public class PreProcedurePermissionIntegrationTest {
   // POST /patients/{patientId}/pre-procedures
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void createPreProcedure_asSupervisor_allowed() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("name", "Teste pré-procedimento"));
     mockMvc
-        .perform(post("/api/patients/{patientId}/pre-procedures", patient.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            post("/api/patients/{patientId}/pre-procedures", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isCreated());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void createPreProcedure_studentWithoutPermission_forbidden() throws Exception {
     String body = objectMapper.writeValueAsString(Map.of("name", "Teste pré-procedimento"));
     mockMvc
-        .perform(post("/api/patients/{patientId}/pre-procedures", patient.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            post("/api/patients/{patientId}/pre-procedures", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void createPreProcedure_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     String body = objectMapper.writeValueAsString(Map.of("name", "Teste pré-procedimento"));
     mockMvc
-        .perform(post("/api/patients/{patientId}/pre-procedures", patient.getId())
-            .contentType(APPLICATION_JSON)
-            .content(body))
+        .perform(
+            post("/api/patients/{patientId}/pre-procedures", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isCreated());
   }
 
@@ -148,33 +160,42 @@ public class PreProcedurePermissionIntegrationTest {
   // GET /patients/{patientId}/pre-procedures/{preProcedureId}
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void getPreProcedureById_asSupervisor_allowed() throws Exception {
     Long id = createPreProcedureAsSupervisor();
     mockMvc
-        .perform(get("/api/patients/{patientId}/pre-procedures/{preProcedureId}", patient.getId(), id)
-            .contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/pre-procedures/{preProcedureId}", patient.getId(), id)
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getPreProcedureById_studentWithoutPermission_forbidden() throws Exception {
     Long id = createPreProcedureAsSupervisor();
     mockMvc
-        .perform(get("/api/patients/{patientId}/pre-procedures/{preProcedureId}", patient.getId(), id)
-            .contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/pre-procedures/{preProcedureId}", patient.getId(), id)
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getPreProcedureById_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     Long id = createPreProcedureAsSupervisor();
     mockMvc
-        .perform(get("/api/patients/{patientId}/pre-procedures/{preProcedureId}", patient.getId(), id)
-            .contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/pre-procedures/{preProcedureId}", patient.getId(), id)
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
@@ -182,33 +203,42 @@ public class PreProcedurePermissionIntegrationTest {
   // GET /patients/{patientId}/pre-procedures
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void getPreProceduresForPatient_asSupervisor_allowed() throws Exception {
     createPreProcedureAsSupervisor();
     mockMvc
-        .perform(get("/api/patients/{patientId}/pre-procedures", patient.getId())
-            .contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/pre-procedures", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getPreProceduresForPatient_studentWithoutPermission_forbidden() throws Exception {
     createPreProcedureAsSupervisor();
     mockMvc
-        .perform(get("/api/patients/{patientId}/pre-procedures", patient.getId())
-            .contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/pre-procedures", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getPreProceduresForPatient_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     createPreProcedureAsSupervisor();
     mockMvc
-        .perform(get("/api/patients/{patientId}/pre-procedures", patient.getId())
-            .contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/pre-procedures", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 }

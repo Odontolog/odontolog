@@ -17,9 +17,8 @@ import br.ufal.ic.odontolog.repositories.PatientPermissionRepository;
 import br.ufal.ic.odontolog.repositories.PatientRepository;
 import br.ufal.ic.odontolog.repositories.StudentRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
-import io.awspring.cloud.s3.S3Template;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.awspring.cloud.s3.S3Template;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -79,24 +78,26 @@ class AnamnesePermissionIntegrationTest {
   }
 
   private void grantPermissionToStudent() {
-        patientPermissionRepository
-            .findTopByStudentIdAndPatientIdAndActiveTrueOrderByGrantedAtDesc(
-                student.getId(), patient.getId())
-            .orElseGet(
-                () -> {
-                  PatientPermission p = new PatientPermission();
-                  p.setGrantedAt(Instant.now());
-                  p.setPatient(patient);
-                  p.setStudent(student);
-                  return patientPermissionRepository.save(p);
-                });
+    patientPermissionRepository
+        .findTopByStudentIdAndPatientIdAndActiveTrueOrderByGrantedAtDesc(
+            student.getId(), patient.getId())
+        .orElseGet(
+            () -> {
+              PatientPermission p = new PatientPermission();
+              p.setGrantedAt(Instant.now());
+              p.setPatient(patient);
+              p.setStudent(student);
+              return patientPermissionRepository.save(p);
+            });
   }
 
   // -------------------------
   // GET /api/patients/{patientId}/anamnese
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void getAnamnese_asSupervisor_allowed() throws Exception {
     mockMvc
         .perform(get("/api/patients/{id}/anamnese", patient.getId()).contentType(APPLICATION_JSON))
@@ -104,7 +105,9 @@ class AnamnesePermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getAnamnese_studentWithoutPermission_forbidden() throws Exception {
     mockMvc
         .perform(get("/api/patients/{id}/anamnese", patient.getId()).contentType(APPLICATION_JSON))
@@ -112,7 +115,9 @@ class AnamnesePermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getAnamnese_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     mockMvc
@@ -124,7 +129,9 @@ class AnamnesePermissionIntegrationTest {
   // PATCH /api/patients/{patientId}/anamnese/notes
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void patchNotes_asSupervisor_allowed() throws Exception {
     String body = objectMapper.writeValueAsString(java.util.Map.of("notes", "Teste notas"));
     mockMvc
@@ -136,7 +143,9 @@ class AnamnesePermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void patchNotes_studentWithoutPermission_forbidden() throws Exception {
     String body = objectMapper.writeValueAsString(java.util.Map.of("notes", "Teste notas"));
     mockMvc
@@ -148,7 +157,9 @@ class AnamnesePermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void patchNotes_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     String body = objectMapper.writeValueAsString(java.util.Map.of("notes", "Teste notas"));
@@ -164,20 +175,19 @@ class AnamnesePermissionIntegrationTest {
   // PUT /api/patients/{patientId}/anamnese/conditions
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void putConditions_asSupervisor_allowed() throws Exception {
-    String body = objectMapper.writeValueAsString(
-      java.util.Map.of(
-        "conditions",
-        java.util.List.of(
-          java.util.Map.of(
-            "condition", "INTESTINAL",
-            "hasCondition", true,
-            "notes", "teste"
-          )
-        )
-      )
-    );
+    String body =
+        objectMapper.writeValueAsString(
+            java.util.Map.of(
+                "conditions",
+                java.util.List.of(
+                    java.util.Map.of(
+                        "condition", "INTESTINAL",
+                        "hasCondition", true,
+                        "notes", "teste"))));
     mockMvc
         .perform(
             put("/api/patients/{id}/anamnese/conditions", patient.getId())
@@ -187,20 +197,19 @@ class AnamnesePermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void putConditions_studentWithoutPermission_forbidden() throws Exception {
-    String body = objectMapper.writeValueAsString(
-      java.util.Map.of(
-        "conditions",
-        java.util.List.of(
-          java.util.Map.of(
-            "condition", "INTESTINAL",
-            "hasCondition", true,
-            "notes", "teste"
-          )
-        )
-      )
-    );
+    String body =
+        objectMapper.writeValueAsString(
+            java.util.Map.of(
+                "conditions",
+                java.util.List.of(
+                    java.util.Map.of(
+                        "condition", "INTESTINAL",
+                        "hasCondition", true,
+                        "notes", "teste"))));
     mockMvc
         .perform(
             put("/api/patients/{id}/anamnese/conditions", patient.getId())
@@ -210,21 +219,20 @@ class AnamnesePermissionIntegrationTest {
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void putConditions_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
-    String body = objectMapper.writeValueAsString(
-      java.util.Map.of(
-        "conditions",
-        java.util.List.of(
-          java.util.Map.of(
-            "condition", "INTESTINAL",
-            "hasCondition", true,
-            "notes", "teste"
-          )
-        )
-      )
-    );
+    String body =
+        objectMapper.writeValueAsString(
+            java.util.Map.of(
+                "conditions",
+                java.util.List.of(
+                    java.util.Map.of(
+                        "condition", "INTESTINAL",
+                        "hasCondition", true,
+                        "notes", "teste"))));
     mockMvc
         .perform(
             put("/api/patients/{id}/anamnese/conditions", patient.getId())
@@ -233,5 +241,3 @@ class AnamnesePermissionIntegrationTest {
         .andExpect(status().isOk());
   }
 }
-
-

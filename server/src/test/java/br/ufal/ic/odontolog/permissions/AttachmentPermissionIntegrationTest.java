@@ -20,12 +20,10 @@ import br.ufal.ic.odontolog.repositories.StudentRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.s3.S3Template;
-
 import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Map;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -123,7 +121,8 @@ class AttachmentPermissionIntegrationTest {
                             .email("student@test.com")
                             .role(Role.STUDENT)
                             .build()));
-    // Não conceder permissão aqui; testes individuais chamam grantPermissionToStudent() quando necessário
+    // Não conceder permissão aqui; testes individuais chamam grantPermissionToStudent() quando
+    // necessário
   }
 
   private void grantPermissionToStudent() {
@@ -144,27 +143,36 @@ class AttachmentPermissionIntegrationTest {
   // GET /api/patients/{patientId}/attachments
   // -------------------------------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void getAttachments_asSupervisor_allowed() throws Exception {
     mockMvc
-        .perform(get("/api/patients/{id}/attachments", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{id}/attachments", patient.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getAttachments_studentWithoutPermission_forbidden() throws Exception {
     mockMvc
-        .perform(get("/api/patients/{id}/attachments", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{id}/attachments", patient.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getAttachments_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     mockMvc
-        .perform(get("/api/patients/{id}/attachments", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{id}/attachments", patient.getId()).contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
@@ -172,28 +180,41 @@ class AttachmentPermissionIntegrationTest {
   // POST /api/patients/{id}/attachments/init-upload
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void initUpload_asSupervisor_allowed() throws Exception {
     mockMvc
-        .perform(MockMvcRequestBuilders.multipart("/api/patients/{id}/attachments/init-upload", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            MockMvcRequestBuilders.multipart(
+                    "/api/patients/{id}/attachments/init-upload", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.uploadUrl").isNotEmpty());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void initUpload_studentWithoutPermission_forbidden() throws Exception {
     mockMvc
-        .perform(post("/api/patients/{id}/attachments/init-upload", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            post("/api/patients/{id}/attachments/init-upload", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void initUpload_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     mockMvc
-        .perform(post("/api/patients/{id}/attachments/init-upload", patient.getId()).contentType(APPLICATION_JSON))
+        .perform(
+            post("/api/patients/{id}/attachments/init-upload", patient.getId())
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
@@ -234,42 +255,66 @@ class AttachmentPermissionIntegrationTest {
     assertTrue(response.getStatusCode().is2xxSuccessful());
 
     return objectMapper.writeValueAsString(
-        Map.of("filename", filename, "filetype", "text/plain", "size", fileSize, "objectKey", objectKey));
+        Map.of(
+            "filename",
+            filename,
+            "filetype",
+            "text/plain",
+            "size",
+            fileSize,
+            "objectKey",
+            objectKey));
   }
 
   private String getCreateAttachmentBodyFake() throws Exception {
     return objectMapper.writeValueAsString(
-        Map.of("filename", "text.txt", "filetype", "text/plain", "size", 123, "objectKey", "la-key"));
+        Map.of(
+            "filename", "text.txt", "filetype", "text/plain", "size", 123, "objectKey", "la-key"));
   }
-  
+
   // -------------------------
   // POST /api/patients/{id}/attachments  (createAttachment)
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void createAttachment_asSupervisor_allowed() throws Exception {
     String body = getCreateAttachmentBody();
     mockMvc
-        .perform(post("/api/patients/{id}/attachments", patient.getId()).contentType(APPLICATION_JSON).content(body))
+        .perform(
+            post("/api/patients/{id}/attachments", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void createAttachment_studentWithoutPermission_forbidden() throws Exception {
     String body = getCreateAttachmentBodyFake();
     mockMvc
-        .perform(post("/api/patients/{id}/attachments", patient.getId()).contentType(APPLICATION_JSON).content(body))
+        .perform(
+            post("/api/patients/{id}/attachments", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void createAttachment_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     String body = getCreateAttachmentBody();
     mockMvc
-        .perform(post("/api/patients/{id}/attachments", patient.getId()).contentType(APPLICATION_JSON).content(body))
+        .perform(
+            post("/api/patients/{id}/attachments", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
         .andExpect(status().isOk());
   }
 
@@ -296,32 +341,47 @@ class AttachmentPermissionIntegrationTest {
   // GET /api/patients/{patientId}/attachments/{attachmentId}
   // -------------------------
   @Test
-  @WithMockUser(username = "supervisor@test.com", roles = {"SUPERVISOR"})
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
   void getAttachmentById_asSupervisor_allowed() throws Exception {
     Long attachmentId = createAttachmentAndReturnId();
     mockMvc
-        .perform(get("/api/patients/{patientId}/attachments/{attachmentId}", patient.getId(), attachmentId)
-            .contentType(APPLICATION_JSON))
+        .perform(
+            get(
+                    "/api/patients/{patientId}/attachments/{attachmentId}",
+                    patient.getId(),
+                    attachmentId)
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getAttachmentById_studentWithoutPermission_forbidden() throws Exception {
     mockMvc
-        .perform(get("/api/patients/{patientId}/attachments/{attachmentId}", patient.getId(), 100L)
-            .contentType(APPLICATION_JSON))
+        .perform(
+            get("/api/patients/{patientId}/attachments/{attachmentId}", patient.getId(), 100L)
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isForbidden());
   }
 
   @Test
-  @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
   void getAttachmentById_studentWithPermission_allowed() throws Exception {
     grantPermissionToStudent();
     Long attachmentId = createAttachmentAndReturnId();
     mockMvc
-        .perform(get("/api/patients/{patientId}/attachments/{attachmentId}", patient.getId(), attachmentId)
-            .contentType(APPLICATION_JSON))
+        .perform(
+            get(
+                    "/api/patients/{patientId}/attachments/{attachmentId}",
+                    patient.getId(),
+                    attachmentId)
+                .contentType(APPLICATION_JSON))
         .andExpect(status().isOk());
   }
 
@@ -330,4 +390,3 @@ class AttachmentPermissionIntegrationTest {
     localStack.stop();
   }
 }
-
