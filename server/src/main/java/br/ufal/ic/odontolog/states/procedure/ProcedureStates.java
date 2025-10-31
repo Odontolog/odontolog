@@ -81,7 +81,7 @@ public class ProcedureStates {
         Procedure procedure,
         Supervisor supervisor,
         String comments,
-        Integer grade,
+        Float grade,
         Boolean approved) {
       // TODO: CERTAMENTE eu deveria implementar testes unitários para este método x2
       Review review =

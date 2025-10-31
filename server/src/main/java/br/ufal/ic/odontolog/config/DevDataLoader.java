@@ -319,7 +319,7 @@ public class DevDataLoader implements CommandLineRunner {
           Review.builder()
               .comments("")
               .reviewStatus(ReviewStatus.DRAFT)
-              .grade(8)
+              .grade(8.0f)
               .supervisor(supervisorTest001)
               .build();
       treatmentPlanTest001.addReview(reviewTest001);

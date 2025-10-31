@@ -285,7 +285,7 @@ public class ReviewableServiceUnitTest {
 
     ReviewableSubmitSupervisorReviewDTO requestDTO = new ReviewableSubmitSupervisorReviewDTO();
     requestDTO.setComments("Good job");
-    requestDTO.setGrade(9);
+    requestDTO.setGrade(9.0f);
     requestDTO.setApproved(true);
 
     UserDetails mockUserDetails = mock(UserDetails.class);
@@ -335,7 +335,7 @@ public class ReviewableServiceUnitTest {
     assertThat(activity.getDescription()).isEqualTo(expectedDescription);
 
     verify(reviewableRepository, times(1)).findById(reviewableId);
-    verify(reviewable, times(1)).submitSupervisorReview(supervisor, "Good job", 9, true);
+    verify(reviewable, times(1)).submitSupervisorReview(supervisor, "Good job", 9.0f, true);
     verify(reviewableRepository, times(1)).save(reviewable);
   }
 }

@@ -104,7 +104,7 @@ public abstract class Procedure extends Reviewable {
 
   @Override
   public void submitSupervisorReview(
-      Supervisor supervisor, String comments, Integer grade, Boolean approved) {
+      Supervisor supervisor, String comments, Float grade, Boolean approved) {
     this.getState().submitSupervisorReview(this, supervisor, comments, grade, approved);
   }
 
