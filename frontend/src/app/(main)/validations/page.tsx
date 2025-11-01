@@ -16,7 +16,6 @@ export default function ProcedureValidationPage() {
           <ValidationsSection />
         </Box>
 
-        {/* TODO: Colocar o DetailSection do Procedure */}
         <Box flex="1" h="100%" visibleFrom="md">
           <ValidationDetailSection />
         </Box>
