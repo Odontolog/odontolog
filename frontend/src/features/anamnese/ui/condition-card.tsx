@@ -41,7 +41,7 @@ export default function PatientConditionCard({
     >
       <Stack p="md" gap="sm" flex="1">
         <Group justify="space-between" align="center" wrap="nowrap">
-          <Tooltip label={title}>
+          <Tooltip label={title} openDelay={800}>
             <Text span fw={600} c="gray.9" truncate>
               {title}
             </Text>
