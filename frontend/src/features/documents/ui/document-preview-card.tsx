@@ -51,7 +51,12 @@ export default function DocumentPreviewCard({
             {extensionExtractor(attachment.type)}
           </Badge>
         </Group>
-        <Text fw={600} size="md" truncate="end" maw="400px">
+        <Text
+          fw={600}
+          size="md"
+          truncate="end"
+          maw={{ base: '220px', md: '320px' }}
+        >
           {attachment.filename}
         </Text>
         <Group>
