@@ -2,6 +2,7 @@
 
 import {
   ActionIcon,
+  Anchor,
   Card,
   Flex,
   Group,
@@ -146,7 +147,14 @@ export default function ProcedureCard(props: ProcedureCardProps) {
         <Stack p="md" gap="sm" className={styles.root}>
           <Group justify="space-between" align="center" wrap="nowrap">
             <Group gap="xs" justify="start" align="center">
-              <Text span fw={600} c="gray.9">
+              {/* <Text span fw={600} c="gray.9"> */}
+              <Anchor
+                size="sm"
+                underline="hover"
+                href={`/patients/${procedure.patient.id}/procedures/${procedure.id}`}
+                fw={600}
+                c="gray.9"
+              >
                 {procedure.name}{' '}
                 <Text span c="dimmed" fw={600}>
                   #{procedure.id}
@@ -155,7 +163,8 @@ export default function ProcedureCard(props: ProcedureCardProps) {
                   status={procedure.status}
                   className={styles.indicator}
                 />
-              </Text>
+              </Anchor>
+              {/* </Text> */}
             </Group>
 
             <Group gap="sm" wrap="nowrap" style={{ alignSelf: 'flex-start' }}>

@@ -1,5 +1,4 @@
-import { Group, Text } from '@mantine/core';
-import Link from 'next/link';
+import { Anchor, Group, Text } from '@mantine/core';
 import { ElementType, ReactNode } from 'react';
 
 export interface CardInfoProps {
@@ -26,9 +25,13 @@ export default function CardInfo({
       <Icon size={16} color="gray" />
 
       {href !== undefined ? (
-        <Link href={href} style={{ textDecoration: 'none', cursor: 'pointer' }}>
+        <Anchor
+          underline="hover"
+          href={href}
+          style={{ textDecoration: 'none', cursor: 'pointer' }}
+        >
           {content}
-        </Link>
+        </Anchor>
       ) : (
         content
       )}
