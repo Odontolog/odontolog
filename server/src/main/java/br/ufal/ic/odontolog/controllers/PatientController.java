@@ -27,11 +27,11 @@ public class PatientController implements PatientApi {
   }
 
   @GetMapping("/by-student/{studentId}")
-  public ResponseEntity<List<PatientShortDTO>> getPatientsByStudent(@PathVariable UUID studentId) {
-    List<PatientShortDTO> patients = patientService.getPatientsByStudent(studentId);
-    return ResponseEntity.ok(patients);
-    // return ResponseEntity.ok(patientService.getPatientsByStudent(studentId));
+  public ResponseEntity<List<PatientAndTreatmentPlanDTO>> getPatientsByStudent(
+          @PathVariable UUID studentId) {
+    return ResponseEntity.ok(patientService.getPatientsByStudent(studentId));
   }
+
 
   @GetMapping("/search")
   public ResponseEntity<List<PatientAndTreatmentPlanDTO>> searchPatient(

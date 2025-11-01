@@ -139,6 +139,6 @@ public interface PatientApi {
             responseCode = "404",
             description = "No patients found for the specified student")
       })
-  ResponseEntity<List<PatientShortDTO>> getPatientsByStudent(
+  ResponseEntity<List<PatientAndTreatmentPlanDTO>> getPatientsByStudent(
       @Parameter(description = "ID of the student") @PathVariable UUID studentId);
 }
