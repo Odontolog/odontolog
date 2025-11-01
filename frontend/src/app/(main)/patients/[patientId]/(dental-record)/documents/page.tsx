@@ -1,6 +1,7 @@
 import { Group } from '@mantine/core';
 
 import DocsSection from '@/features/documents/ui/documents-section';
+import styles from '@/features/patient/patient.module.css';
 
 export default async function PatientDocumentsPage({
   params,
@@ -9,13 +10,7 @@ export default async function PatientDocumentsPage({
 }) {
   const { patientId } = await params;
   return (
-    <Group
-      align="flex-start"
-      py="md"
-      px="lg"
-      h="100%"
-      style={{ overflowY: 'hidden' }}
-    >
+    <Group className={styles.subpage}>
       <DocsSection patientId={patientId} />
     </Group>
   );

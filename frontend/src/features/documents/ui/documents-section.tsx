@@ -130,7 +130,7 @@ function DocsSectionContent({
       w="100%"
       h="100%"
     >
-      <Grid>
+      <Grid h="100%" flex="1" style={{ overflow: 'hidden' }}>
         {data
           .sort((a, b) => +b.createdAt - +a.createdAt)
           .map((document) => (

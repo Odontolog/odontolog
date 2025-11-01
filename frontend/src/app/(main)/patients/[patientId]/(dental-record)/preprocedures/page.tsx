@@ -1,7 +1,8 @@
 import { Box, Group } from '@mantine/core';
 
-import ProcedureDetailSection from '@/features/procedures/ui/procedures-detail-section';
+import styles from '@/features/patient/patient.module.css';
 import PreprocedureHistorySection from '@/features/procedures/ui/preprocedure/preprocedure-history-section';
+import ProcedureDetailSection from '@/features/procedures/ui/procedures-detail-section';
 
 export default async function PatientPreproceduresPage({
   params,
@@ -10,14 +11,7 @@ export default async function PatientPreproceduresPage({
 }) {
   const { patientId } = await params;
   return (
-    <Group
-      align="flex-start"
-      py="md"
-      px="lg"
-      h="100%"
-      wrap="nowrap"
-      style={{ overflowY: 'hidden' }}
-    >
+    <Group className={styles.subpage}>
       <Box flex="1" h="100%">
         <PreprocedureHistorySection patientId={patientId} />
       </Box>

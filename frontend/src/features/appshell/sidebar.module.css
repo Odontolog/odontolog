@@ -37,3 +37,9 @@
     }
   }
 }
+
+@media (max-width: 62em) {
+  .navbar {
+    display: none;
+  }
+}

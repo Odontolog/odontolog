@@ -1,6 +1,5 @@
 .navbar {
-  border-bottom: 1px solid var(--mantine-color-default-border);
-  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  display: none;
 }
 
 .user {
@@ -8,4 +7,12 @@
   border-bottom: 1px solid var(--mantine-color-default-border);
   padding: 2.525rem var(--mantine-spacing-md);
   margin-bottom: var(--mantine-spacing-sm);
+}
+
+@media (max-width: 62em) {
+  .navbar {
+    display: block;
+    border-bottom: 1px solid var(--mantine-color-default-border);
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  }
 }

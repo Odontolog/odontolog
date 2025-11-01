@@ -15,3 +15,9 @@
   background-color: var(--mantine-color-gray-0);
   border: 1px solid var(--mantine-color-default-border);
 }
+
+@media (max-width: 62em) {
+  .navbar {
+    display: none;
+  }
+}

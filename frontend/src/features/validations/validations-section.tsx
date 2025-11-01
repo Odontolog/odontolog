@@ -27,7 +27,7 @@ import { getValidationsOptions } from './requests';
 export default function ValidationsSection() {
   const options = getValidationsOptions();
 
-  const { data, isLoading } = useQuery({ ...options });
+  const { data, isLoading, isError } = useQuery({ ...options });
 
   return (
     <Card withBorder shadow="sm" radius="md" px="sm" h="100%" miw="400px">
@@ -48,20 +48,12 @@ export default function ValidationsSection() {
 
       <Divider my="none" />
 
-      <Card.Section inheritPadding px="md" py="sm" h="100%">
-        {isLoading || data === undefined ? (
-          <Stack h="100%" gap="xs">
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-            <Skeleton height={120} radius="none" />
-          </Stack>
-        ) : (
-          <ScrollArea scrollbarSize={6} offsetScrollbars w="100%" h="600px">
-            <ValidationsContent data={data} />
-          </ScrollArea>
-        )}
+      <Card.Section p="md" h="100%" style={{ overflowY: 'hidden' }}>
+        <ValidationsContent
+          data={data}
+          isLoading={isLoading}
+          isError={isError}
+        />
       </Card.Section>
     </Card>
   );
@@ -75,8 +67,18 @@ function isTreatmentPlan(r: ReviewableShort): r is TreatmentPlanShort {
   return r.type === 'TREATMENT_PLAN';
 }
 
-function ValidationsContent({ data }: { data: ReviewableShort[] }) {
-  const matches = useMediaQuery('(min-width: 56.25em)');
+interface ValidationsContentProps {
+  data?: ReviewableShort[];
+  isError: boolean;
+  isLoading: boolean;
+}
+
+function ValidationsContent({
+  data,
+  isLoading,
+  isError,
+}: ValidationsContentProps) {
+  const matches = useMediaQuery('(min-width: 62em)');
   const router = useRouter();
   const searchParams = useSearchParams();
   const active = searchParams.get('active');
@@ -98,13 +100,41 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
     }
   }
 
+  if (isError) {
+    return (
+      <Center py="md" h="100%">
+        <Text fw={600} size="lg" c="dimmed" ta="center">
+          Algo deu errado. <br />
+          Não foi possível carregar procedimentos ou planos de tratamento
+          precisando de sua revisão.
+        </Text>
+      </Center>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Stack h="100%" gap="xs">
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+        <Skeleton height={120} radius="none" />
+      </Stack>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+
   if (data.length === 0) {
     return (
       <Center py="md" h="100%" px="lg">
         <Stack align="center">
           <Text fw={500} size="lg" c="dimmed" ta="center">
             Não há procedimentos ou planos de tratamento precisando de sua
-            revisão
+            revisão.
           </Text>
         </Stack>
       </Center>
@@ -112,35 +142,43 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
   }
 
   return (
-    <Stack>
-      {data.map((rev, index) => {
-        if (isProcedure(rev)) {
-          return (
-            <ProcedureCard
-              key={index}
-              procedure={rev}
-              selected={rev.id === active?.toString()}
-              onSelect={() =>
-                onReviewableSelect(rev.id, rev.patient.id, rev.type)
-              }
-              disableSession
-            />
-          );
-        }
-        if (isTreatmentPlan(rev)) {
-          return (
-            <TreatmentPlanCard
-              key={index}
-              treatmentPlan={rev}
-              selected={rev.id === active?.toString()}
-              onSelect={() =>
-                onReviewableSelect(rev.id, rev.patient.id, rev.type)
-              }
-            />
-          );
-        }
-        return null;
-      })}
-    </Stack>
+    <ScrollArea
+      scrollbarSize={6}
+      offsetScrollbars
+      scrollbars="y"
+      w="100%"
+      h="100%"
+    >
+      <Stack>
+        {data.map((rev, index) => {
+          if (isProcedure(rev)) {
+            return (
+              <ProcedureCard
+                key={index}
+                procedure={rev}
+                selected={rev.id === active?.toString()}
+                onSelect={() =>
+                  onReviewableSelect(rev.id, rev.patient.id, rev.type)
+                }
+                disableSession
+              />
+            );
+          }
+          if (isTreatmentPlan(rev)) {
+            return (
+              <TreatmentPlanCard
+                key={index}
+                treatmentPlan={rev}
+                selected={rev.id === active?.toString()}
+                onSelect={() =>
+                  onReviewableSelect(rev.id, rev.patient.id, rev.type)
+                }
+              />
+            );
+          }
+          return null;
+        })}
+      </Stack>
+    </ScrollArea>
   );
 }

@@ -1,8 +1,9 @@
 import { Box, Group } from '@mantine/core';
 
+import styles from '@/features/patient/patient.module.css';
+import ValidationDetailSection from '@/features/validations/validation-details-section';
 import ValidationsSection from '@/features/validations/validations-section';
 import Header from '@/shared/components/header';
-import ValidationDetailSection from '@/features/validations/validation-details-section';
 
 export default function ProcedureValidationPage() {
   return (
@@ -11,12 +12,11 @@ export default function ProcedureValidationPage() {
         title="Pedidos de validações"
         subtitle="Veja abaixo a listagem de procedimentos e planos de tratamento que você precisa revisar."
       />
-      <Group align="flex-start" py="md" px="lg" h="100%">
+      <Group className={styles.subpage}>
         <Box flex="1" h="100%">
           <ValidationsSection />
         </Box>
 
-        {/* TODO: Colocar o DetailSection do Procedure */}
         <Box flex="1" h="100%" visibleFrom="md">
           <ValidationDetailSection />
         </Box>

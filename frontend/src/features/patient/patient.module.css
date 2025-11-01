@@ -1,0 +1,12 @@
+.subpage {
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+}
+
+@media (min-width: 62em) {
+  .subpage {
+    height: 100%;
+    overflow-y: hidden;
+  }
+}

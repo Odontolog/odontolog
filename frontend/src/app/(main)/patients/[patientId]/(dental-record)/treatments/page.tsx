@@ -1,5 +1,6 @@
 import { Box, Group } from '@mantine/core';
 
+import styles from '@/features/patient/patient.module.css';
 import TreatmentPlanDetailSection from '@/features/treatment-plans/treatment-plan-detail-section';
 import TreatmentPlansSection from '@/features/treatment-plans/treatment-plans-section';
 
@@ -15,14 +16,7 @@ export default async function PatientTreatmentPlansPage({
   const { patientId } = await params;
 
   return (
-    <Group
-      align="flex-start"
-      py="md"
-      px="lg"
-      h="100%"
-      wrap="nowrap"
-      style={{ overflowY: 'hidden' }}
-    >
+    <Group className={styles.subpage}>
       <Box flex="1" h="100%">
         <TreatmentPlansSection patientId={patientId} />
       </Box>
