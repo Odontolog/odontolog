@@ -3,6 +3,7 @@ package br.ufal.ic.odontolog.controllers;
 import br.ufal.ic.odontolog.api.StudentApi;
 import br.ufal.ic.odontolog.dtos.StudentDTO;
 import br.ufal.ic.odontolog.services.StudentService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import jakarta.validation.Valid;
 
 @PreAuthorize("isAuthenticated()")
 @RestController

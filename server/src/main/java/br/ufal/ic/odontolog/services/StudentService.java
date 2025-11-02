@@ -50,7 +50,7 @@ public class StudentService {
     student.setEnrollmentCode(studentDTO.getEnrollmentCode());
     student.setEnrollmentYear(studentDTO.getEnrollmentYear());
     student.setEnrollmentSemester(studentDTO.getEnrollmentSemester());
-      student.setRole(Role.STUDENT);
+    student.setRole(Role.STUDENT);
 
     // TODO: using enrolment code as default password
     student.setPassword(passwordEncoder.encode(studentDTO.getEnrollmentCode()));

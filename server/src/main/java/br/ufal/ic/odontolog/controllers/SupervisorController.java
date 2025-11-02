@@ -42,7 +42,8 @@ public class SupervisorController {
 
   @PostMapping
   @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
-  public ResponseEntity<SupervisorDTO> createSupervisor(@RequestBody @Valid SupervisorDTO supervisorDTO) {
+  public ResponseEntity<SupervisorDTO> createSupervisor(
+      @RequestBody @Valid SupervisorDTO supervisorDTO) {
     SupervisorDTO created = supervisorService.createSupervisor(supervisorDTO);
     return new ResponseEntity<>(created, HttpStatus.CREATED);
   }
