@@ -39,4 +39,12 @@ public class SupervisorController {
     SupervisorDTO supervisorDTO = supervisorService.updateSupervisor(id, supervisorUpdateDTO);
     return new ResponseEntity<>(supervisorDTO, HttpStatus.OK);
   }
+
+  @PostMapping
+  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  public ResponseEntity<SupervisorDTO> createSupervisor(
+      @RequestBody @Valid SupervisorUpsertDTO dto) {
+    SupervisorDTO created = supervisorService.createSupervisor(dto);
+    return ResponseEntity.status(201).body(created);
+  }
 }
