@@ -7,6 +7,7 @@ import {
   Divider,
   Drawer,
   Group,
+  Menu,
   NavLink,
   Stack,
   Text,
@@ -19,6 +20,8 @@ import {
   IconDental,
   IconLogout,
   IconPlus,
+  IconUser,
+  IconUserPlus,
   IconUsers,
 } from '@tabler/icons-react';
 import { type User } from 'next-auth';
@@ -30,10 +33,14 @@ import { useState } from 'react';
 import classes from './navbar-mobile.module.css';
 import SearchTrigger from './search-trigger';
 import RecordModal from '../patient/record-modal';
+import StudentRecordModal from '../student/record-modal';
+import SupervisorRecordModal from '../supervisor/record-modal';
+
+type ModalType = 'patient' | 'student' | 'supervisor' | null;
 
 export default function NavbarMobile() {
   const [opened, { open, close }] = useDisclosure(false);
-  const [openedModal, setOpen] = useState<boolean>(false);
+  const [openedModal, setOpenedModal] = useState<ModalType>(null);
   const pathname = usePathname();
   const router = useRouter();
   const { data } = useSession();
@@ -146,16 +153,56 @@ export default function NavbarMobile() {
         </Group>
         <Group>
           <SearchTrigger variant="mobile" />
-          <ActionIcon
-            variant="default"
-            color="black"
-            size="lg"
-            aria-label="Criar um novo prontuário"
-            onClick={() => setOpen(true)}
-          >
-            <IconPlus />
-          </ActionIcon>
-          <RecordModal opened={openedModal} onClose={() => setOpen(false)} />
+          {user?.role !== 'STUDENT' && (
+            <>
+              <Menu position="bottom-end" shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon
+                    variant="default"
+                    color="black"
+                    size="lg"
+                    aria-label="Criar um novo registro"
+                  >
+                    <IconPlus />
+                  </ActionIcon>
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  <Menu.Label>Criar novo registro</Menu.Label>
+                  <Menu.Item
+                    leftSection={<IconUser size={14} />}
+                    onClick={() => setOpenedModal('patient')}
+                  >
+                    Paciente
+                  </Menu.Item>
+                  <Menu.Item
+                    leftSection={<IconUserPlus size={14} />}
+                    onClick={() => setOpenedModal('student')}
+                  >
+                    Aluno
+                  </Menu.Item>
+                  <Menu.Item
+                    leftSection={<IconUsers size={14} />}
+                    onClick={() => setOpenedModal('supervisor')}
+                  >
+                    Supervisor
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+              <RecordModal
+                opened={openedModal === 'patient'}
+                onClose={() => setOpenedModal(null)}
+              />
+              <StudentRecordModal
+                opened={openedModal === 'student'}
+                onClose={() => setOpenedModal(null)}
+              />
+              <SupervisorRecordModal
+                opened={openedModal === 'supervisor'}
+                onClose={() => setOpenedModal(null)}
+              />
+            </>
+          )}
         </Group>
       </Group>
     </nav>
