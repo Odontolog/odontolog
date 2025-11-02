@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import br.ufal.ic.odontolog.dtos.StudentDTO;
+import br.ufal.ic.odontolog.dtos.StudentUpsertDTO;
+import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.mappers.StudentMapper;
 import br.ufal.ic.odontolog.models.Student;
 import br.ufal.ic.odontolog.repositories.StudentRepository;
@@ -17,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,6 +27,7 @@ public class StudentServiceUnitTest {
 
   @Mock private StudentRepository studentRepository;
   @Mock private StudentMapper studentMapper;
+  @Mock private PasswordEncoder passwordEncoder;
   @InjectMocks private StudentService studentService;
 
   private Student createStudent(UUID id, String email) {
@@ -129,5 +133,51 @@ public class StudentServiceUnitTest {
 
     verify(studentRepository, times(1)).findById(nonExistentId);
     verify(studentMapper, never()).toDTO(any());
+  }
+
+  @Test
+  public void givenValidUpsertDTO_whenCreateStudent_thenReturnCreatedStudent() {
+    // Arrange
+    StudentUpsertDTO dto = new StudentUpsertDTO();
+    dto.setName("Test Student");
+    dto.setEmail("test@example.com");
+    dto.setEnrollmentCode("20250914");
+    dto.setEnrollmentYear(2025);
+    dto.setEnrollmentSemester(1);
+    dto.setClinicNumber(1);
+
+    Student student = new Student();
+    student.setName(dto.getName());
+    student.setEmail(dto.getEmail());
+    student.setEnrollmentCode(dto.getEnrollmentCode());
+    student.setRole(Role.STUDENT);
+
+    Student savedStudent = new Student();
+    savedStudent.setId(UUID.randomUUID());
+    savedStudent.setName(dto.getName());
+    savedStudent.setEmail(dto.getEmail());
+
+    StudentDTO resultDTO = new StudentDTO();
+    resultDTO.setId(savedStudent.getId());
+    resultDTO.setName(savedStudent.getName());
+    resultDTO.setEmail(savedStudent.getEmail());
+
+    when(studentMapper.toEntity(dto)).thenReturn(student);
+    when(passwordEncoder.encode(dto.getEnrollmentCode())).thenReturn("encodedPassword");
+    when(studentRepository.save(any(Student.class))).thenReturn(savedStudent);
+    when(studentMapper.toDTO(savedStudent)).thenReturn(resultDTO);
+
+    // Act
+    StudentDTO result = studentService.createStudent(dto);
+
+    // Assert
+    assertThat(result).isNotNull();
+    assertThat(result.getName()).isEqualTo(dto.getName());
+    assertThat(result.getEmail()).isEqualTo(dto.getEmail());
+
+    verify(studentMapper, times(1)).toEntity(dto);
+    verify(passwordEncoder, times(1)).encode(dto.getEnrollmentCode());
+    verify(studentRepository, times(1)).save(any(Student.class));
+    verify(studentMapper, times(1)).toDTO(savedStudent);
   }
 }
