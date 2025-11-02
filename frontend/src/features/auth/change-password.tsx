@@ -56,7 +56,6 @@ export default function ChangePasswordForm() {
     }
 
     setIsLoading(true);
-
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/change-password`,
