@@ -44,7 +44,6 @@ function StudentForm({ onClose }: { onClose: () => void }) {
     enrollmentCode: '',
     enrollmentYear: '',
     enrollmentSemester: '',
-    avatarUrl: '',
   };
   type Student = { name: string };
   const mutation = useMutation({
@@ -117,7 +116,6 @@ function StudentForm({ onClose }: { onClose: () => void }) {
             required
           />
         </Group>
-        <TextInput label="Avatar URL" {...form.getInputProps('avatarUrl')} />
         <Group justify="flex-end" mt="md" gap="xs">
           <Button type="submit" loading={mutation.isPending}>
             Criar Estudante
