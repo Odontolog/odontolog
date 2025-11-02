@@ -10,8 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 @PreAuthorize("isAuthenticated()")
 @RestController
@@ -32,5 +35,12 @@ public class StudentController implements StudentApi {
   @GetMapping("/{id}")
   public ResponseEntity<StudentDTO> getStudent(@PathVariable UUID id) {
     return new ResponseEntity<>(studentService.getStudentById(id), HttpStatus.OK);
+  }
+
+  @PostMapping
+  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  public ResponseEntity<StudentDTO> createStudent(@RequestBody @Valid StudentDTO studentDTO) {
+    StudentDTO created = studentService.createStudent(studentDTO);
+    return new ResponseEntity<>(created, HttpStatus.CREATED);
   }
 }

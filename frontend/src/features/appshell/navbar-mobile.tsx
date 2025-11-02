@@ -7,6 +7,7 @@ import {
   Divider,
   Drawer,
   Group,
+  Menu,
   NavLink,
   Stack,
   Text,
@@ -30,10 +31,14 @@ import { useState } from 'react';
 import classes from './navbar-mobile.module.css';
 import SearchTrigger from './search-trigger';
 import RecordModal from '../patient/record-modal';
+import SupervisorModal from '../supervisors/supervisor-modal';
+import StudentModal from '../students/student-modal';
 
 export default function NavbarMobile() {
   const [opened, { open, close }] = useDisclosure(false);
   const [openedModal, setOpen] = useState<boolean>(false);
+  const [supervisorModalOpen, setSupervisorModalOpen] = useState(false);
+  const [studentModalOpen, setStudentModalOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { data } = useSession();
@@ -146,16 +151,51 @@ export default function NavbarMobile() {
         </Group>
         <Group>
           <SearchTrigger variant="mobile" />
-          <ActionIcon
-            variant="default"
-            color="black"
-            size="lg"
-            aria-label="Criar um novo prontuário"
-            onClick={() => setOpen(true)}
-          >
-            <IconPlus />
-          </ActionIcon>
-          <RecordModal opened={openedModal} onClose={() => setOpen(false)} />
+          {user?.role !== 'STUDENT' && (
+            <>
+              <Menu shadow="md" width={200}>
+                <Menu.Target>
+                  <ActionIcon
+                    variant="default"
+                    color="black"
+                    size="lg"
+                    aria-label="Criar novo"
+                  >
+                    <IconPlus />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item onClick={() => setOpen(true)}>
+                    Novo Paciente
+                  </Menu.Item>
+                  <Menu.Item
+                    onClick={() => setSupervisorModalOpen(true)}
+                    color="blue"
+                  >
+                    Novo Supervisor
+                  </Menu.Item>
+                  <Menu.Item
+                    onClick={() => setStudentModalOpen(true)}
+                    color="green"
+                  >
+                    Novo Estudante
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+              <RecordModal
+                opened={openedModal}
+                onClose={() => setOpen(false)}
+              />
+              <SupervisorModal
+                opened={supervisorModalOpen}
+                onClose={() => setSupervisorModalOpen(false)}
+              />
+              <StudentModal
+                opened={studentModalOpen}
+                onClose={() => setStudentModalOpen(false)}
+              />
+            </>
+          )}
         </Group>
       </Group>
     </nav>
