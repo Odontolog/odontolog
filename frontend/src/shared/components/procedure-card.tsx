@@ -59,7 +59,7 @@ function getProcedureCardInfoProps(
       return {
         icon: IconSchool,
         text: procedure.assignee.name,
-        href: `/students/${procedure.assignee.id}`,
+        // href: `/students/${procedure.assignee.id}`,
       };
     case 'patient':
       return {
@@ -147,7 +147,6 @@ export default function ProcedureCard(props: ProcedureCardProps) {
         <Stack p="md" gap="sm" className={styles.root}>
           <Group justify="space-between" align="center" wrap="nowrap">
             <Group gap="xs" justify="start" align="center">
-              {/* <Text span fw={600} c="gray.9"> */}
               <Anchor
                 size="sm"
                 underline="hover"
@@ -164,7 +163,6 @@ export default function ProcedureCard(props: ProcedureCardProps) {
                   className={styles.indicator}
                 />
               </Anchor>
-              {/* </Text> */}
             </Group>
 
             <Group gap="sm" wrap="nowrap" style={{ alignSelf: 'flex-start' }}>
