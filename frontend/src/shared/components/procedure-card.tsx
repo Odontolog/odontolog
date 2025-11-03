@@ -65,7 +65,7 @@ function getProcedureCardInfoProps(
       return {
         icon: IconUser,
         text: procedure.patient.name,
-        href: `/patients/${procedure.patient.id}`,
+        // href: `/patients/${procedure.patient.id}`,
       };
     case 'teeth':
       return {
@@ -124,6 +124,41 @@ export default function ProcedureCard(props: ProcedureCardProps) {
       ? '1px solid var(--mantine-color-blue-6)'
       : '1px solid var(--mantine-color-default-border)';
 
+  let title;
+  if (onSelect === undefined) {
+    title = (
+      <Anchor
+        size="sm"
+        underline="hover"
+        href={`/patients/${procedure.patient.id}/procedures/${procedure.id}`}
+        fw={600}
+        c="gray.9"
+      >
+        {procedure.name}{' '}
+        <Text span c="dimmed" fw={600}>
+          #{procedure.id}
+        </Text>
+        <StatusIndicator
+          status={procedure.status}
+          className={styles.indicator}
+        />
+      </Anchor>
+    );
+  } else {
+    title = (
+      <Text span fw={600} c="gray.9">
+        {procedure.name}{' '}
+        <Text span c="dimmed" fw={600}>
+          #{procedure.id}
+        </Text>
+        <StatusIndicator
+          status={procedure.status}
+          className={styles.indicator}
+        />
+      </Text>
+    );
+  }
+
   return (
     <Card
       shadow="sm"
@@ -147,22 +182,7 @@ export default function ProcedureCard(props: ProcedureCardProps) {
         <Stack p="md" gap="sm" className={styles.root}>
           <Group justify="space-between" align="center" wrap="nowrap">
             <Group gap="xs" justify="start" align="center">
-              <Anchor
-                size="sm"
-                underline="hover"
-                href={`/patients/${procedure.patient.id}/procedures/${procedure.id}`}
-                fw={600}
-                c="gray.9"
-              >
-                {procedure.name}{' '}
-                <Text span c="dimmed" fw={600}>
-                  #{procedure.id}
-                </Text>
-                <StatusIndicator
-                  status={procedure.status}
-                  className={styles.indicator}
-                />
-              </Anchor>
+              {title}
             </Group>
 
             <Group gap="sm" wrap="nowrap" style={{ alignSelf: 'flex-start' }}>
