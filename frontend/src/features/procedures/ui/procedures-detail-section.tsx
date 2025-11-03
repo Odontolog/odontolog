@@ -8,8 +8,8 @@ import {
   Divider,
   Flex,
   Group,
-  Loader,
   ScrollArea,
+  Skeleton,
   Stack,
   Text,
   Tooltip,
@@ -73,11 +73,7 @@ export function ProcedureDetailContent({
   });
 
   if (isLoading) {
-    return (
-      <Center py="md" h="100%">
-        <Loader size="lg" />
-      </Center>
-    );
+    return <ProedureDetailsSkeleton />;
   }
 
   if (isError) {
@@ -170,6 +166,44 @@ export function ProcedureDetailContent({
             </Button>
           </Flex>
         </ScrollArea>
+      </Card.Section>
+    </Box>
+  );
+}
+
+function ProedureDetailsSkeleton() {
+  return (
+    <Box h="100%">
+      <Card.Section inheritPadding py="sm">
+        <Group justify="space-between" align="center">
+          <Skeleton h={16} w="40%" />
+          <Skeleton height={16} radius="xl" width="15%" />
+        </Group>
+      </Card.Section>
+
+      <Divider />
+
+      <Card.Section inheritPadding py="sm" h="100%">
+        <Stack gap="md" flex="1">
+          <Group gap="md">
+            <Skeleton h={12} w="12%" />
+            <Skeleton h={12} w="12%" />
+          </Group>
+          <Skeleton h={120} />
+          <Skeleton h={120} />
+        </Stack>
+
+        <Flex justify="end" py="lg">
+          <Button
+            variant="outline"
+            disabled
+            color="blue"
+            rightSection={<IconArrowRight size={16} />}
+            size="xs"
+          >
+            Ver completo
+          </Button>
+        </Flex>
       </Card.Section>
     </Box>
   );

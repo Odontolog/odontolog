@@ -6,8 +6,8 @@ import {
   Divider,
   Grid,
   Group,
-  Loader,
   ScrollArea,
+  Skeleton,
   Stack,
   Text,
   Tooltip,
@@ -89,9 +89,16 @@ function DocsSectionContent({
 
   if (isLoading) {
     return (
-      <Center py="md">
-        <Loader size="sm" />
-      </Center>
+      <Grid p="md">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Grid.Col
+            span={{ sm: 12, md: 6, lg: 4, xl: 3 }}
+            key={`skeleton-${i}`}
+          >
+            <DocumentPreviewSkeleton />
+          </Grid.Col>
+        ))}
+      </Grid>
     );
   }
 
@@ -148,5 +155,25 @@ function DocsSectionContent({
         opened={modalOpened}
       />
     </ScrollArea>
+  );
+}
+
+function DocumentPreviewSkeleton() {
+  return (
+    <Card shadow="sm" padding="lg" radius="sm" withBorder>
+      <Card.Section>
+        <Skeleton h={180} />
+      </Card.Section>
+      <Stack pt="md" gap="xs">
+        <Group justify="space-between">
+          <Skeleton h={8} w="30%" />
+          <Skeleton height={16} radius="xl" width="20%" />
+        </Group>
+        <Skeleton h={16} w="90%" />
+        <Group>
+          <Skeleton h={12} w="75%" />
+        </Group>
+      </Stack>
+    </Card>
   );
 }
