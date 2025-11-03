@@ -30,6 +30,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(DEFAULT_REDIRECT, request.url));
   }
 
+  if (isAuthenticated && request.nextUrl.pathname === '/') {
+    return NextResponse.redirect(new URL(DEFAULT_REDIRECT, request.url));
+  }
+
   const isSupervisorRoute = SUPERVISOR_ROUTES.includes(
     request.nextUrl.pathname,
   );
