@@ -65,7 +65,7 @@ export default function Navbar() {
           )}
           <Avatar
             component="a"
-            href={`/students/${user?.id}`}
+            // href={`/students/${user?.id}`}
             color="initials"
             name={user?.name}
             src={user?.photoUrl}

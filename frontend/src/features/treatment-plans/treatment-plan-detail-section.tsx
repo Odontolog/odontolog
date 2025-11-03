@@ -8,8 +8,8 @@ import {
   Divider,
   Flex,
   Group,
-  Loader,
   ScrollArea,
+  Skeleton,
   Stack,
   Text,
   Tooltip,
@@ -66,21 +66,18 @@ export function TreatmentPlanDetailContent({
   treatmentPlanId,
   scrollAreaHeight = '610px',
 }: TreatmentPlanDetailContentProps) {
+  const options = getTratmentPlanOptions(treatmentPlanId);
   const {
     data: treatmentPlan,
     isLoading,
     isError,
   } = useQuery({
-    ...getTratmentPlanOptions(treatmentPlanId),
+    ...options,
     enabled: !!treatmentPlanId,
   });
 
   if (isLoading) {
-    return (
-      <Center py="md" h="100%">
-        <Loader size="lg" />
-      </Center>
-    );
+    return <TPDetailsSkeleton />;
   }
 
   if (isError) {
@@ -187,6 +184,19 @@ export function TreatmentPlanDetailContent({
                 </Stack>
               )}
             </Stack>
+            <Stack gap="xs" h="100%">
+              <Text fw={600} size="md" style={{ flexShrink: 0 }}>
+                Observações
+              </Text>
+
+              <Text
+                size="sm"
+                c={treatmentPlan.notes ? 'black' : 'dimmed'}
+                style={{ whiteSpace: 'pre-line', textAlign: 'justify' }}
+              >
+                {treatmentPlan.notes || 'Nenhum valor definido'}
+              </Text>
+            </Stack>
           </Stack>
           <Flex justify="end" py="lg">
             <Button
@@ -201,6 +211,45 @@ export function TreatmentPlanDetailContent({
             </Button>
           </Flex>
         </ScrollArea>
+      </Card.Section>
+    </Box>
+  );
+}
+
+function TPDetailsSkeleton() {
+  return (
+    <Box h="100%">
+      <Card.Section inheritPadding py="sm">
+        <Group justify="space-between" align="center">
+          <Skeleton h={16} w="40%" />
+          <Skeleton height={16} radius="xl" width="15%" />
+        </Group>
+      </Card.Section>
+
+      <Divider />
+
+      <Card.Section inheritPadding py="sm" h="100%">
+        <Stack gap="md" flex="1">
+          <Group gap="md">
+            <Skeleton h={12} w="12%" />
+            <Skeleton h={12} w="12%" />
+            <Skeleton h={12} w="12%" />
+          </Group>
+          <Skeleton h={120} />
+          <Skeleton h={120} />
+        </Stack>
+
+        <Flex justify="end" py="lg">
+          <Button
+            variant="outline"
+            disabled
+            color="blue"
+            rightSection={<IconArrowRight size={16} />}
+            size="xs"
+          >
+            Ver completo
+          </Button>
+        </Flex>
       </Card.Section>
     </Box>
   );

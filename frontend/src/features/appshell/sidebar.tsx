@@ -5,7 +5,7 @@ import {
   IconBook,
   IconDental,
   IconLogout,
-  IconUsers,
+  // IconUsers,
 } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -48,7 +48,7 @@ export function Sidebar() {
   if (user && user.role !== 'STUDENT') {
     sidebarLinks.push(
       ...[
-        { icon: IconUsers, label: 'Alunos', route: '/students' },
+        // { icon: IconUsers, label: 'Alunos', route: '/students' },
         {
           icon: IconBook,
           label: 'Pedidos de validações',
