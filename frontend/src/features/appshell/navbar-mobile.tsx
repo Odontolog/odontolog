@@ -16,7 +16,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconBook,
-  IconChevronRight,
+  // IconChevronRight,
   IconDental,
   IconLogout,
   IconPlus,
@@ -47,8 +47,8 @@ export default function NavbarMobile() {
 
   function getUserPageLink(user: User) {
     switch (user.role) {
-      case 'STUDENT':
-        return `/students/${user?.id}`;
+      // case 'STUDENT':
+      //   return `/students/${user?.id}`;
       default:
         return '#';
     }
@@ -130,7 +130,7 @@ export default function NavbarMobile() {
                       </Text>
                     </Stack>
                   </Group>
-                  <IconChevronRight color="gray" />
+                  {/* <IconChevronRight color="gray" /> */}
                 </Group>
               </Drawer.Header>
               <Drawer.Body>
