@@ -5,6 +5,7 @@ import { DatePickerInput } from '@mantine/dates';
 import { IconEdit, IconExclamationCircle } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import 'dayjs/locale/pt-br';
 
 import { getNextAppointmentOptions, saveNextAppointment } from '../requests';
 import { notifications } from '@mantine/notifications';
@@ -92,6 +93,8 @@ function NextAppointmentMenuContent({
           popoverProps={{ withinPortal: false }}
           value={date}
           onChange={handleDateChange}
+          firstDayOfWeek={0}
+          locale="pt-br"
         />
         <Button
           size="xs"
