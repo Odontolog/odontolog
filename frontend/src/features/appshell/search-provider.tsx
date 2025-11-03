@@ -22,6 +22,7 @@ import {
 import { StatusBadge } from '@/shared/components/status';
 import RecordModal from '../patient/record-modal';
 import { getAllPatients } from './requests';
+import styles from './search.module.css';
 
 export default function SearchProvider({
   children,
@@ -93,6 +94,9 @@ function SearchContent({
       <Spotlight.Action
         key={patient.name}
         onClick={() => router.push(`/patients/${patient.id}/procedures`)}
+        classNames={{
+          action: styles.action,
+        }}
       >
         <Group wrap="nowrap" w="100%">
           <Center>

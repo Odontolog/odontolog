@@ -1,0 +1,4 @@
+.action[data-selected='true'] {
+  background-color: var(--mantine-color-blue-1);
+  color: var(--mantine-color-gray-9);
+}
