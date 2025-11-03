@@ -25,7 +25,7 @@ export default function NextAppointmentMenu({
       onChange={setMenuOpened}
     >
       <Menu.Target>
-        <ActionIcon variant="white" color="gray">
+        <ActionIcon variant="subtle" color="gray">
           <IconEdit size={16} />
         </ActionIcon>
       </Menu.Target>
