@@ -162,7 +162,7 @@ function DocumentPreviewSkeleton() {
   return (
     <Card shadow="sm" padding="lg" radius="sm" withBorder>
       <Card.Section>
-        <Skeleton h={180} w={330} />
+        <Skeleton h={180} />
       </Card.Section>
       <Stack pt="md" gap="xs">
         <Group justify="space-between">
