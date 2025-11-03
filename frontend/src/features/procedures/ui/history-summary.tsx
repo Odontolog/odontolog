@@ -37,8 +37,10 @@ export default function HistorySummary({
       </Card>
       <Card withBorder shadow="sm" radius="md" p="sm" flex={1}>
         <Stack gap="4" h="100%" justify="center">
-          <Group justify="space-between">
-            <Text size="sm">Próxima consulta</Text>
+          <Group justify="space-between" wrap="nowrap">
+            <Text size="sm" truncate>
+              Próxima consulta
+            </Text>
             <NextAppointmentMenu patientId={patientId} />
           </Group>
           {isAppointmentLoading ? (
