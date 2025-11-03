@@ -18,10 +18,6 @@ export default async function PatientSettingsPage({
       <Box flex="1" h="100%">
         <PermissionSection patientId={patientId} />
       </Box>
-
-      <Box flex="1" h="100%">
-        opa
-      </Box>
     </Group>
   );
 }
