@@ -4,7 +4,7 @@ import {
   Avatar,
   Center,
   Group,
-  Loader,
+  Skeleton,
   Stack,
   Text,
   UnstyledButton,
@@ -75,8 +75,12 @@ function SearchContent({
 
   if (isLoading || data === undefined) {
     return (
-      <Stack p="xl" gap="sm" align="center" w="100%">
-        <Loader size="sm" />
+      <Stack px="xl" py="xs" w="100%">
+        <PatientSkeleton />
+        <PatientSkeleton />
+        <PatientSkeleton />
+        <PatientSkeleton />
+        <PatientSkeleton />
       </Stack>
     );
   }
@@ -144,5 +148,22 @@ function SearchContent({
         </Spotlight.Empty>
       )}
     </Spotlight.ActionsList>
+  );
+}
+
+function PatientSkeleton() {
+  return (
+    <Group wrap="nowrap" w="100%">
+      <Center>
+        <Skeleton height={40} circle />
+      </Center>
+
+      <Stack gap="sm" w="100%">
+        <Skeleton height={8} radius="xl" width="50%" />
+        <Skeleton height={8} radius="xl" width="60%" />
+      </Stack>
+
+      <Skeleton height={16} radius="xl" width="20%" />
+    </Group>
   );
 }
