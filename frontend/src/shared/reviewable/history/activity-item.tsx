@@ -1,3 +1,5 @@
+'use client';
+
 import { ptBR } from 'date-fns/locale';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Timeline, Text, Avatar, Tooltip, Stack } from '@mantine/core';
