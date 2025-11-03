@@ -20,7 +20,7 @@ import {
   IconDental,
   IconLogout,
   IconPlus,
-  IconUsers,
+  // IconUsers,
 } from '@tabler/icons-react';
 import { type User } from 'next-auth';
 import { signOut, useSession } from 'next-auth/react';
@@ -63,7 +63,7 @@ export default function NavbarMobile() {
   if (user && user.role !== 'STUDENT') {
     navLinks.push(
       ...[
-        { icon: <IconUsers />, label: 'Alunos', route: '/students' },
+        // { icon: <IconUsers />, label: 'Alunos', route: '/students' },
         {
           icon: <IconBook />,
           label: 'Pedidos de validação',
