@@ -205,6 +205,7 @@ function RecordForm({
               leftSectionPointerEvents="none"
               required
               valueFormat="DD/MM/YYYY"
+              locale="pt-br"
               firstDayOfWeek={0}
               dateParser={parseDateDDMMYYYY}
               key={form.key('birthDate')}
@@ -278,7 +279,7 @@ function RecordForm({
           </Stack>
           <Stack gap={0} style={{ minHeight: 78 }}>
             <Select
-              label="Cor autodeclarada"
+              label="Cor"
               placeholder="Selecione uma opção"
               data={ethnicity}
               searchable
