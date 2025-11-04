@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.states.procedure.ProcedureState;
 import br.ufal.ic.odontolog.states.procedure.ProcedureStates;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -104,7 +105,7 @@ public abstract class Procedure extends Reviewable {
 
   @Override
   public void submitSupervisorReview(
-      Supervisor supervisor, String comments, Float grade, Boolean approved) {
+      Supervisor supervisor, String comments, BigDecimal grade, Boolean approved) {
     this.getState().submitSupervisorReview(this, supervisor, comments, grade, approved);
   }
 

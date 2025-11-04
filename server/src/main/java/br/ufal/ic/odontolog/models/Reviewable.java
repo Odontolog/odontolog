@@ -5,6 +5,7 @@ import br.ufal.ic.odontolog.enums.ReviewableType;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
@@ -124,7 +125,7 @@ public abstract class Reviewable {
   public abstract void submitForReview();
 
   public abstract void submitSupervisorReview(
-      Supervisor supervisor, String comments, Float grade, Boolean approved);
+      Supervisor supervisor, String comments, BigDecimal grade, Boolean approved);
 
   public abstract void approve();
 
