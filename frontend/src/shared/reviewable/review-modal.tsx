@@ -104,7 +104,7 @@ function ReviewModalBody<T extends Reviewable>({
 
         const num = Number(value);
         if (isNaN(num)) {
-          return 'Insira uma nota válida entre 0.0 e 10.0..';
+          return 'Insira uma nota válida entre 0.0 e 10.0.';
         }
         if (num < 0 || num > 10) {
           return 'A nota deve estar entre 0.0 e 10.0.';
