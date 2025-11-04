@@ -30,9 +30,10 @@ export type User = {
 };
 
 export type Student = User & {
-  clinic: number;
-  enrollment: number;
-  semester: number;
+  clinicNumber: number;
+  enrollmentCode: number;
+  enrollmentYear: number;
+  enrollmentSemester: number;
 };
 
 export type Supervisor = User & {
