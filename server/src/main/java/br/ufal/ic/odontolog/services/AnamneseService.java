@@ -89,7 +89,7 @@ public class AnamneseService {
     metadata.put("previousData", anamnese.getAntecedents());
     activity.setMetadata(metadata);
 
-    anamnese.setNotes(dto.getAntecedents());
+    anamnese.setAntecedents(dto.getAntecedents());
     activityRepository.save(activity);
     anamnese.getHistory().add(activity);
 
@@ -116,7 +116,7 @@ public class AnamneseService {
     metadata.put("previousData", anamnese.getHistoryOfPresentIllness());
     activity.setMetadata(metadata);
 
-    anamnese.setNotes(dto.getHistoryOfPresentIllness());
+    anamnese.setHistoryOfPresentIllness(dto.getHistoryOfPresentIllness());
     activityRepository.save(activity);
     anamnese.getHistory().add(activity);
 
@@ -143,7 +143,7 @@ public class AnamneseService {
     metadata.put("previousData", anamnese.getMainComplaint());
     activity.setMetadata(metadata);
 
-    anamnese.setNotes(dto.getMainComplaint());
+    anamnese.setMainComplaint(dto.getMainComplaint());
     activityRepository.save(activity);
     anamnese.getHistory().add(activity);
 
