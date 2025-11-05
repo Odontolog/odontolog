@@ -22,6 +22,9 @@ public class Anamnese {
   @JoinColumn(name = "id")
   private Patient patient;
 
+  private String mainComplaint;
+  private String historyOfPresentIllness;
+  private String antecedents;
   private String notes;
 
   @OneToMany(
