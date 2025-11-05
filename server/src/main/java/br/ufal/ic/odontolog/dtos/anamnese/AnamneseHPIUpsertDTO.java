@@ -7,4 +7,3 @@ import lombok.Data;
 public class AnamneseHPIUpsertDTO {
   @NotNull private String historyOfPresentIllness;
 }
-
