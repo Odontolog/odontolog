@@ -77,8 +77,7 @@ public class ReviewableService {
       Pageable pageable,
       UserDetails currentUserDetails,
       ReviewableCurrentStudentFilterDTO filter,
-      UUID studentId
-      ) {
+      UUID studentId) {
 
     User authenticatedUser =
         userRepository
