@@ -240,4 +240,142 @@ class AnamnesePermissionIntegrationTest {
                 .content(body))
         .andExpect(status().isOk());
   }
+
+  // -------------------------
+  // PATCH /api/patients/{patientId}/anamnese/antecedents
+  // -------------------------
+  @Test
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
+  void patchAntecedents_asSupervisor_allowed() throws Exception {
+    String body = objectMapper.writeValueAsString(java.util.Map.of("antecedents", "Teste"));
+    mockMvc
+        .perform(
+            patch("/api/patients/{id}/anamnese/antecedents", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
+  void patchAntecedents_studentWithoutPermission_forbidden() throws Exception {
+    String body = objectMapper.writeValueAsString(java.util.Map.of("antecedents", "Teste"));
+    mockMvc
+        .perform(
+            patch("/api/patients/{id}/anamnese/antecedents", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
+  void patchAntecedents_studentWithPermission_allowed() throws Exception {
+    grantPermissionToStudent();
+    String body = objectMapper.writeValueAsString(java.util.Map.of("antecedents", "Teste"));
+    mockMvc
+        .perform(
+            patch("/api/patients/{id}/anamnese/antecedents", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isOk());
+  }
+
+  // -------------------------
+  // PATCH /api/patients/{patientId}/anamnese/main-complaint
+  // -------------------------
+  @Test
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
+  void patchMainComplaint_asSupervisor_allowed() throws Exception {
+    String body = objectMapper.writeValueAsString(java.util.Map.of("mainComplaint", "Teste"));
+    mockMvc
+        .perform(
+            patch("/api/patients/{id}/anamnese/main-complaint", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
+  void patchMainComplaint_studentWithoutPermission_forbidden() throws Exception {
+    String body = objectMapper.writeValueAsString(java.util.Map.of("mainComplaint", "Teste"));
+    mockMvc
+        .perform(
+            patch("/api/patients/{id}/anamnese/main-complaint", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
+  void patchMainComplaint_studentWithPermission_allowed() throws Exception {
+    grantPermissionToStudent();
+    String body = objectMapper.writeValueAsString(java.util.Map.of("mainComplaint", "Teste"));
+    mockMvc
+        .perform(
+            patch("/api/patients/{id}/anamnese/main-complaint", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isOk());
+  }
+
+  // -------------------------
+  // PATCH /api/patients/{patientId}/anamnese/main-complaint
+  // -------------------------
+  @Test
+  @WithMockUser(
+      username = "supervisor@test.com",
+      roles = {"SUPERVISOR"})
+  void patchHPI_asSupervisor_allowed() throws Exception {
+    String body = objectMapper.writeValueAsString(java.util.Map.of("historyOfPresentIllness", "Teste"));
+    mockMvc
+        .perform(
+            patch("/api/patients/{id}/anamnese/hpi", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
+  void patchHPI_studentWithoutPermission_forbidden() throws Exception {
+    String body = objectMapper.writeValueAsString(java.util.Map.of("historyOfPresentIllness", "Teste"));
+    mockMvc
+        .perform(
+            patch("/api/patients/{id}/anamnese/hpi", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @WithMockUser(
+      username = "student@test.com",
+      roles = {"STUDENT"})
+  void patchHPI_studentWithPermission_allowed() throws Exception {
+    grantPermissionToStudent();
+    String body = objectMapper.writeValueAsString(java.util.Map.of("historyOfPresentIllness", "Teste"));
+    mockMvc
+        .perform(
+            patch("/api/patients/{id}/anamnese/hpi", patient.getId())
+                .contentType(APPLICATION_JSON)
+                .content(body))
+        .andExpect(status().isOk());
+    }
 }
