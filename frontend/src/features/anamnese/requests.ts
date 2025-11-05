@@ -52,6 +52,30 @@ export async function saveAnamneseNotes(patientId: string, notes: string) {
   }
 }
 
+export function getSaveAnamneseStringFieldFn(
+  urlSection: string,
+  field: string,
+) {
+  return async (patientId: string, value: string) => {
+    const token = await getAuthToken();
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/anamnese/${urlSection}`;
+    const options = {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ [field]: value }),
+    };
+
+    const res = await fetch(url, options);
+
+    if (!res.ok) {
+      throw new Error(`[${res.status}] Erro ao salvar formulário de ${field}.`);
+    }
+  };
+}
+
 export async function saveAnamnese(
   patientId: string,
   anamnese: AnamneseFormValues,
