@@ -77,29 +77,23 @@ public class ReviewableService {
       Pageable pageable,
       UserDetails currentUserDetails,
       ReviewableCurrentStudentFilterDTO filter,
-      UUID studentId // Parâmetro opcional que vem da Controller
+      UUID studentId
       ) {
 
-    // Pega o usuário logado para checar sua role
     User authenticatedUser =
         userRepository
             .findByEmail(currentUserDetails.getUsername())
             .orElseThrow(
                 () -> new UnprocessableRequestException("Usuário autenticado não encontrado"));
 
-    Student targetStudent; // O aluno que de fato pesquisaremos
+    Student targetStudent;
 
     if (studentId != null) {
-      // CASO 1: Um ID foi fornecido (uso do Supervisor)
-
-      // Verifica se o usuário logado tem permissão (ex: Supervisor ou Admin)
-      // Adapte as 'Roles' se necessário
       if (!authenticatedUser.getRole().equals(Role.SUPERVISOR)
           && !authenticatedUser.getRole().equals(Role.ADMIN)) {
         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado");
       }
 
-      // Busca o aluno pelo ID fornecido
       targetStudent =
           studentRepository
               .findById(studentId)
@@ -107,16 +101,11 @@ public class ReviewableService {
                   () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
 
     } else {
-      // CASO 2: Nenhum ID foi fornecido (uso do Aluno)
-
-      // Verifica se o usuário logado é um aluno
       if (!authenticatedUser.getRole().equals(Role.STUDENT)) {
         throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST, "O parâmetro 'studentId' é obrigatório para este perfil");
       }
 
-      // Busca o perfil de aluno do *próprio* usuário logado
-      // (Reutiliza a lógica que já tínhamos)
       targetStudent =
           studentRepository
               .findByEmail(currentUserDetails.getUsername())
@@ -126,13 +115,9 @@ public class ReviewableService {
                           "Perfil de Aluno não encontrado para o usuário atual"));
     }
 
-    // Agora que temos o 'targetStudent', executamos a lógica de busca
     return executeStudentReviewableQuery(targetStudent, pageable, filter);
   }
 
-  /**
-   * Método privado auxiliar para executar a query e aplicar filtros, evitando duplicação de código.
-   */
   private Page<ReviewableShortDTO> executeStudentReviewableQuery(
       Student student, Pageable pageable, ReviewableCurrentStudentFilterDTO filter) {
 
