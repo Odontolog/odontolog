@@ -60,24 +60,24 @@ public class PatientService {
     List<TreatmentPlan> lastPlans = patientRepository.findLastTreatmentPlans(patientIds);
 
     Map<Long, TreatmentPlan> lastPlanByPatientId =
-            lastPlans.stream()
-                    .collect(Collectors.toMap(tp -> tp.getPatient().getId(), Function.identity()));
+        lastPlans.stream()
+            .collect(Collectors.toMap(tp -> tp.getPatient().getId(), Function.identity()));
 
     return patients.stream()
-            .map(p -> {
+        .map(
+            p -> {
               TreatmentPlan plan = lastPlanByPatientId.get(p.getId());
               return PatientAndTreatmentPlanDTO.builder()
-                      .id(p.getId())
-                      .name(p.getName())
-                      .avatarUrl(p.getAvatarUrl())
-                      .lastTreatmentPlanId(plan != null ? plan.getId() : null)
-                      .lastTreatmentPlanStatus(plan != null ? plan.getStatus() : null)
-                      .lastTreatmentPlanUpdatedAt(plan != null ? plan.getUpdatedAt() : null)
-                      .build();
+                  .id(p.getId())
+                  .name(p.getName())
+                  .avatarUrl(p.getAvatarUrl())
+                  .lastTreatmentPlanId(plan != null ? plan.getId() : null)
+                  .lastTreatmentPlanStatus(plan != null ? plan.getStatus() : null)
+                  .lastTreatmentPlanUpdatedAt(plan != null ? plan.getUpdatedAt() : null)
+                  .build();
             })
-            .toList();
+        .toList();
   }
-
 
   public PatientDTO getPatientById(Long id) {
     Patient patient =
