@@ -1,4 +1,4 @@
-import { Box } from '@mantine/core';
+import { Group } from '@mantine/core';
 
 import DocsSection from '@/features/documents/ui/documents-section';
 
@@ -9,8 +9,8 @@ export default async function PatientDocumentsPage({
 }) {
   const { patientId } = await params;
   return (
-    <Box p="md" flex="1" h="100%">
+    <Group p="md" flex="1" h="100%" style={{ overflowY: 'hidden' }}>
       <DocsSection patientId={patientId} />
-    </Box>
+    </Group>
   );
 }

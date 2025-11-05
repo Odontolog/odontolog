@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewableController implements ReviewableApi {
   private final ReviewableService reviewableService;
 
-  @PreAuthorize("hasRole('SUPERVISOR')")
   @GetMapping("/me")
+  @PreAuthorize("hasRole('SUPERVISOR')")
   public ResponseEntity<PagedModel<ReviewableShortDTO>> getCurrentSupervisorReviewables(
       Pageable pageable,
       ReviewableCurrentSupervisorFilterDTO filter,
@@ -48,8 +48,8 @@ public class ReviewableController implements ReviewableApi {
     return ResponseEntity.ok(pagedModel);
   }
 
-  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @PutMapping("/{reviewableId}/reviewers")
+  @PreAuthorize("hasPermission(#reviewableId, 'Reviewable', 'edit')")
   public ResponseEntity<ReviewableDTO> updateReviewers(
       @PathVariable Long reviewableId, @Valid @RequestBody ReviewersDTO request) {
 
@@ -58,14 +58,14 @@ public class ReviewableController implements ReviewableApi {
   }
 
   @PatchMapping("/{reviewableId}/notes")
-  @PreAuthorize("hasAnyRole('STUDENT','SUPERVISOR')")
+  @PreAuthorize("hasPermission(#reviewableId, 'Reviewable', 'edit')")
   public ReviewableDTO updateNotes(
       @PathVariable Long reviewableId, @RequestBody UpdateNotesRequestDTO request) {
     return reviewableService.updateNotes(reviewableId, request.getNotes());
   }
 
-  @PreAuthorize("hasAnyRole('SUPERVISOR', 'STUDENT')")
   @GetMapping("/{reviewableId}/history")
+  @PreAuthorize("hasPermission(#reviewableId, 'Reviewable', 'edit')")
   public ResponseEntity<List<ActivityDTO>> getReviewableHistory(@PathVariable Long reviewableId) {
     var history = reviewableService.getReviewableHistory(reviewableId);
 
@@ -73,7 +73,7 @@ public class ReviewableController implements ReviewableApi {
   }
 
   @PostMapping("/{reviewableId}/assignee")
-  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
+  @PreAuthorize("hasPermission(#reviewableId, 'Reviewable', 'edit')")
   public ResponseEntity<ReviewableDTO> assignUserToReviewable(
       @RequestBody ReviewableAssignUserRequestDTO requestDTO, @PathVariable Long reviewableId) {
     ReviewableDTO updatedReviewable =
@@ -83,7 +83,7 @@ public class ReviewableController implements ReviewableApi {
   }
 
   @PostMapping("/{reviewableId}/submit-for-review")
-  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR')")
+  @PreAuthorize("hasPermission(#reviewableId, 'Reviewable', 'edit')")
   public ResponseEntity<ReviewableDTO> submitForReview(
       @PathVariable Long reviewableId, @RequestBody SubmitForReviewDTO requestDTO) {
     ReviewableDTO updatedReviewable = reviewableService.submitForReview(reviewableId, requestDTO);

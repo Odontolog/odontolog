@@ -34,7 +34,7 @@ export default function DocumentPreviewCard({
           src={attachment.location}
           height={180}
           alt={`imagem de ${attachment.filename}`}
-          fallbackSrc="https://placehold.co/600x400?text=Placeholder"
+          fallbackSrc="/not-preview.svg"
         />
       </Card.Section>
       <Stack pt="md" gap="xs">
@@ -51,7 +51,7 @@ export default function DocumentPreviewCard({
             {extensionExtractor(attachment.type)}
           </Badge>
         </Group>
-        <Text fw={600} size="md" truncate="end">
+        <Text fw={600} size="md" truncate="end" maw="400px">
           {attachment.filename}
         </Text>
         <Group>

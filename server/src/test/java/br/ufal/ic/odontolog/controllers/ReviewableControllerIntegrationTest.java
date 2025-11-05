@@ -64,14 +64,11 @@ public class ReviewableControllerIntegrationTest {
       username = "supervisor@test.com",
       roles = {"SUPERVISOR"})
   void updateNotes_createsActivityAndUpdatesNotes() throws Exception {
-    var createBody =
-        """
-                {"patientId":"%s"}
-                """.formatted(patient.getId());
+    var url = "/api/patients/%s/treatment-plan".formatted(patient.getId());
 
     String postJson =
         mockMvc
-            .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(createBody))
+            .perform(post(url))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -148,14 +145,11 @@ public class ReviewableControllerIntegrationTest {
       username = "supervisor@test.com",
       roles = {"SUPERVISOR"})
   void updateReviewers_createsActivityForAddAndRemove() throws Exception {
-    var createBody =
-        """
-                {"patientId":"%s"}
-                """.formatted(patient.getId());
+    var url = "/api/patients/%s/treatment-plan".formatted(patient.getId());
 
     String postJson =
         mockMvc
-            .perform(post("/api/treatment-plan").contentType(APPLICATION_JSON).content(createBody))
+            .perform(post(url))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()

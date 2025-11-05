@@ -38,14 +38,12 @@ export async function createPatientTreatmentPlan(patientId: string) {
   const token = await getAuthToken();
 
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/treatment-plan`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/patients/${patientId}/treatment-plan`,
     {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ patientId }),
     },
   );
 

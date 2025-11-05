@@ -19,19 +19,20 @@ public class AnamneseController {
   private final AnamneseService service;
 
   @GetMapping
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<AnamneseDTO> get(@PathVariable Long patientId) {
     return ResponseEntity.ok(service.getByPatientId(patientId));
   }
 
   @PatchMapping("/notes")
-  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'STUDENT')")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<AnamneseDTO> upsertNotes(
       @PathVariable Long patientId, @RequestBody @Valid AnamneseNotesUpsertDTO dto) {
     return ResponseEntity.ok(service.upsertNotes(patientId, dto));
   }
 
   @PutMapping("/conditions")
-  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'STUDENT')")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<AnamneseDTO> upsertConditions(
       @PathVariable Long patientId, @RequestBody @Valid AnamneseConditionsUpsertDTO dto) {
     return ResponseEntity.ok(service.upsertConditions(patientId, dto));

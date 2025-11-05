@@ -39,18 +39,20 @@ public class PatientController implements PatientApi {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<PatientDTO> getPatientById(@PathVariable Long id) {
     return ResponseEntity.ok(patientService.getPatientById(id));
   }
 
   @GetMapping("/{id}/next-appointment")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<AppointmentDTO> getNextAppointment(@PathVariable Long id) {
     AppointmentDTO appointmentDTO = patientService.getNextAppointment(id);
     return ResponseEntity.ok(appointmentDTO);
   }
 
   @PutMapping("/{id}/next-appointment")
-  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR', 'STUDENT')")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<AppointmentDTO> updateNextAppointment(
       @PathVariable Long id, @RequestBody @Valid AppointmentDTO appointmentDTO) {
 
@@ -59,6 +61,7 @@ public class PatientController implements PatientApi {
   }
 
   @PostMapping("/{id}/attachments/init-upload")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<UploadAttachmentInitResponseDTO> initUploadAttachment(
       @PathVariable Long id) {
     var response = patientService.initUploadAttachment(id);
@@ -67,6 +70,7 @@ public class PatientController implements PatientApi {
   }
 
   @PostMapping("/{id}/attachments")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<AttachmentDTO> createAttachment(
       @PathVariable Long id, @Valid @RequestBody CreateAttachmentRequestDTO request) {
     var createdAttachment = patientService.createAttachment(id, request);
@@ -75,6 +79,7 @@ public class PatientController implements PatientApi {
   }
 
   @GetMapping("/{patientId}/attachments/{attachmentId}")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<AttachmentDTO> getAttachmentByPatientAndId(
       @PathVariable Long patientId, @PathVariable Long attachmentId) {
     var attachment = patientService.getAttachmentById(patientId, attachmentId);
@@ -83,6 +88,7 @@ public class PatientController implements PatientApi {
   }
 
   @GetMapping("/{patientId}/attachments")
+  @PreAuthorize("hasPermission(#patientId, 'Patient', 'edit')")
   public ResponseEntity<List<AttachmentDTO>> getAttachments(@PathVariable Long patientId) {
     var attachments = patientService.getAttachmentsByPatientId(patientId);
     return ResponseEntity.ok(attachments);
@@ -96,7 +102,7 @@ public class PatientController implements PatientApi {
   }
 
   @PutMapping("/{id}")
-  @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
+  @PreAuthorize("hasPermission(#id, 'Patient', 'edit')")
   public ResponseEntity<PatientDTO> updatePatient(
       @PathVariable Long id, @RequestBody @Valid PatientUpsertDTO dto) {
     PatientDTO updated = patientService.updatePatient(id, dto);

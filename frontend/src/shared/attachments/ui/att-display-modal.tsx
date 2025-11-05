@@ -1,3 +1,5 @@
+'use client';
+
 import { Attachments } from '@/shared/models';
 import { Button, Group, Image, Modal, Stack, Text } from '@mantine/core';
 import { useState } from 'react';
@@ -5,17 +7,17 @@ import { useState } from 'react';
 import DeletionConfirmModal from '@/features/documents/ui/deletion-confirm-modal';
 import { deleteAttachment } from '@/features/procedure/requests';
 
-interface AttachmentsModalProps {
+interface AttachmentsDisplayModalProps {
   opened: boolean;
   onClose: () => void;
   attachment: Attachments | null;
 }
 
-export default function AttachmentsModal({
+export default function AttachmentsDisplayModal({
   opened,
   onClose,
   attachment,
-}: AttachmentsModalProps) {
+}: AttachmentsDisplayModalProps) {
   const [confirmOpened, setModalOpened] = useState(false);
 
   if (!attachment) {
@@ -53,7 +55,7 @@ export default function AttachmentsModal({
   }
 
   const isImage = attachment.filename.match(
-    /\.(jpg|jpeg|png|gif|webp|svg|pdf)$/i,
+    /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i,
   );
 
   return (
@@ -61,7 +63,9 @@ export default function AttachmentsModal({
       <Modal.Overlay />
       <Modal.Content>
         <Modal.Header>
-          <Modal.Title fw={600}>{attachment.filename}</Modal.Title>
+          <Text fw={600} truncate>
+            {attachment.filename}
+          </Text>
           <Modal.CloseButton />
         </Modal.Header>
         <Modal.Body>
@@ -84,21 +88,14 @@ export default function AttachmentsModal({
                 </Text>
               </Stack>
             )}
-            <Text>
-              <Text span fw="bold">
-                Anotações:
-              </Text>{' '}
-              {attachment.description !== undefined ? (
-                attachment.description
-              ) : (
-                <Text span c="dimmed">
-                  Não há anotações
-                </Text>
-              )}
+            <Text c="dimmed" style={{ overflowX: 'hidden' }}>
+              {attachment.description !== null
+                ? attachment.description
+                : 'Não há descrição'}
             </Text>
 
             <Group justify="flex-end" mt="sm">
-              <Button color="red" onClick={openConfirmModal}>
+              <Button color="red" onClick={openConfirmModal} disabled>
                 Deletar
               </Button>
               <Button

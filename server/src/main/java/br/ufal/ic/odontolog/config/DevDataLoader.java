@@ -275,31 +275,6 @@ public class DevDataLoader implements CommandLineRunner {
       treatmentPlanTest001 = treatmentPlanRepository.save(treatmentPlanTest001);
       logger.info("Treatment Plan Procedure created: {}", treatmentPlanProcedureTest001.getName());
 
-      Attachment attachmentTest001 =
-          attachmentRepository.save(
-              Attachment.builder()
-                  .filename("ficha_preenchida.pdf")
-                  .size(1000000)
-                  .location("/test/path/ficha_preenchida.pdf")
-                  .uploader(studentTest001)
-                  .build());
-      logger.info("Attachment created: {}", attachmentTest001.getFilename());
-
-      if (treatmentPlanTest001.getProcedures().stream().findFirst().isPresent()) {
-        treatmentPlanTest001.getProcedures().stream()
-            .findFirst()
-            .get()
-            .getAttachments()
-            .add(attachmentTest001);
-        treatmentPlanTest001 = treatmentPlanRepository.save(treatmentPlanTest001);
-        logger.info(
-            "Attachment {} added to Procedure {}",
-            attachmentTest001.getFilename(),
-            treatmentPlanTest001.getProcedures().stream().findFirst().get().getName());
-      } else {
-        logger.error("No procedure found in treatment plan while trying to add attachment");
-      }
-
       PreProcedure preProcedureTest001 =
           preProcedureRepository.save(
               PreProcedure.builder()
@@ -317,7 +292,6 @@ public class DevDataLoader implements CommandLineRunner {
                           "Indícios de gengivite. Será necessário Periograma completo."))
                   .build());
 
-      preProcedureTest001.getAttachments().add(attachmentTest001);
       preProcedureTest001 = preProcedureRepository.save(preProcedureTest001);
       logger.info("Pre Procedure created: {}", preProcedureTest001.getName());
 

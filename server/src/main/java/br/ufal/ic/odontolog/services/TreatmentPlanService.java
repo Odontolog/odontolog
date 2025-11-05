@@ -1,6 +1,5 @@
 package br.ufal.ic.odontolog.services;
 
-import br.ufal.ic.odontolog.dtos.CreateTreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.ProcedureUpsertDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanDTO;
 import br.ufal.ic.odontolog.dtos.TreatmentPlanShortDTO;
@@ -37,12 +36,12 @@ public class TreatmentPlanService {
   private final ActivityRepository activityRepository;
 
   @Transactional
-  public TreatmentPlanDTO createTreatmentPlan(CreateTreatmentPlanDTO request) {
+  public TreatmentPlanDTO createTreatmentPlan(Long patientId) {
     User currentUser = currentUserProvider.getCurrentUser();
 
     Patient patient =
         patientRepository
-            .findById(request.getPatientId())
+            .findById(patientId)
             .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
     TreatmentPlan plan =
