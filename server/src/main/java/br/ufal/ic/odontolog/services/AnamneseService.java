@@ -228,6 +228,9 @@ public class AnamneseService {
     Anamnese anamnese = new Anamnese();
     anamnese.setPatient(patient);
     anamnese.setNotes("");
+    anamnese.setAntecedents("");
+    anamnese.setHistoryOfPresentIllness("");
+    anamnese.setMainComplaint("");
     anamnese = anamneseRepository.save(anamnese);
 
     for (ClinicalCondition c : ClinicalCondition.values()) {
