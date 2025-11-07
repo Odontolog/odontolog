@@ -18,11 +18,11 @@ export default function StudentModal({ opened, onClose }: StudentModalProps) {
         <Modal.Header>
           <Stack gap="0" style={{ flex: 1 }}>
             <Group>
-              <Modal.Title fw="600">Criação de Estudante</Modal.Title>
+              <Modal.Title fw="600">Criação de Aluno</Modal.Title>
               <Modal.CloseButton />
             </Group>
             <Text size="sm" c="dimmed">
-              Para criar um novo estudante, insira os dados abaixo.
+              Para criar um novo aluno, insira os dados abaixo.
             </Text>
           </Stack>
         </Modal.Header>
@@ -60,14 +60,14 @@ function StudentForm({ onClose }: { onClose: () => void }) {
         },
       );
       if (!res.ok) {
-        throw new Error('Erro ao criar estudante');
+        throw new Error('Erro ao criar aluno');
       }
       return (await res.json()) as Student;
     },
     onSuccess: (student: Student) => {
       notifications.show({
-        title: 'Estudante criado',
-        message: `Estudante ${student.name} criado com sucesso.`,
+        title: 'Aluno criado',
+        message: `Aluno ${student.name} criado com sucesso.`,
         color: 'green',
         autoClose: 5000,
       });
@@ -76,7 +76,7 @@ function StudentForm({ onClose }: { onClose: () => void }) {
     },
     onError: () => {
       notifications.show({
-        message: 'Erro ao criar estudante',
+        message: 'Erro ao criar Aluno',
         color: 'red',
         autoClose: 5000,
       });
@@ -118,7 +118,7 @@ function StudentForm({ onClose }: { onClose: () => void }) {
         </Group>
         <Group justify="flex-end" mt="md" gap="xs">
           <Button type="submit" loading={mutation.isPending}>
-            Criar Estudante
+            Criar Aluno
           </Button>
           <Button variant="default" fw="normal" onClick={onClose}>
             Cancelar
