@@ -116,14 +116,15 @@ function RecordForm({
     mutationFn = editPatientRecord;
   }
 
+  const isEdit = mutationFn === editPatientRecord;
   const mutation = useMutation({
     mutationFn: (patient: PatientRecordForm) => mutationFn(patient),
     onSuccess: (patient: Patient) => {
       form.reset();
       onClose();
       notifications.show({
-        title: 'Prontuário criado',
-        message: `Prontuário de ${patient.name} criado com sucesso.`,
+        title: isEdit ? 'Prontuário atualizado' : 'Prontuário criado',
+        message: `Prontuário de ${patient.name} ${isEdit ? 'atualizado' : 'criado'} com sucesso.`,
         color: 'green',
         autoClose: 5000,
       });
@@ -143,6 +144,16 @@ function RecordForm({
     mode: 'uncontrolled',
     initialValues,
     validate: {
+      birthDate: (v: Date) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const birth = new Date(v);
+        birth.setHours(0, 0, 0, 0);
+        if (birth.getTime() > today.getTime()) {
+          return 'Data de nascimento não pode ser depois de hoje';
+        }
+        return null;
+      },
       phoneNumber: (v: string) =>
         /^\(\d{2}\)\s\d{4,5}-\d{4}$/.test(v) ? null : 'Telefone inválido',
       cpf: (v: string) => {
@@ -205,6 +216,7 @@ function RecordForm({
               leftSectionPointerEvents="none"
               required
               valueFormat="DD/MM/YYYY"
+              locale="pt-br"
               firstDayOfWeek={0}
               dateParser={parseDateDDMMYYYY}
               key={form.key('birthDate')}
@@ -278,7 +290,7 @@ function RecordForm({
           </Stack>
           <Stack gap={0} style={{ minHeight: 78 }}>
             <Select
-              label="Cor autodeclarada"
+              label="Cor"
               placeholder="Selecione uma opção"
               data={ethnicity}
               searchable

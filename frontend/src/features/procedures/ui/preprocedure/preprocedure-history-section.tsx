@@ -76,7 +76,7 @@ export default function PreprocedureHistorySection({
     <>
       <Card withBorder shadow="sm" radius="md" px="sm" h="100%">
         <Card.Section inheritPadding py="sm">
-          <Group justify="space-between">
+          <Group justify="space-between" wrap="nowrap">
             <Text fw={600} size="lg">
               Histórico de Pré-procedimentos
             </Text>

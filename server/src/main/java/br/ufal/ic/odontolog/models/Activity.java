@@ -3,7 +3,7 @@ package br.ufal.ic.odontolog.models;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.HashMap;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +18,7 @@ import org.hibernate.type.SqlTypes;
 @Setter
 @NoArgsConstructor
 @Table(name = "activities")
-public class Activity {
+public class Activity implements GenericActivity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -42,7 +42,7 @@ public class Activity {
   // and https://www.baeldung.com/hibernate-persist-json-object
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb") // PostgreSQL specific setting
-  private HashMap<String, Object> metadata;
+  private Map<String, Object> metadata;
 
   @CreationTimestamp private Instant createdAt;
 }

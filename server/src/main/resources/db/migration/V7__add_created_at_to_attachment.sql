@@ -1,0 +1,2 @@
+ALTER TABLE attachments
+    ADD created_at TIMESTAMP WITHOUT TIME ZONE;

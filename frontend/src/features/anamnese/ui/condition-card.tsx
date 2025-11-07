@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   Flex,
@@ -7,6 +9,7 @@ import {
   Switch,
   Text,
   Textarea,
+  Tooltip,
 } from '@mantine/core';
 import { type UseFormReturnType } from '@mantine/form';
 
@@ -16,14 +19,14 @@ import styles from './condition-card.module.css';
 interface PatientConditionCardProps {
   index: number;
   form: UseFormReturnType<AnamneseFormValues>;
-  condition: string;
+  title: string;
   editing: boolean;
 }
 
 export default function PatientConditionCard({
   index,
   form,
-  condition,
+  title,
   editing,
 }: PatientConditionCardProps) {
   const notes = form.getValues().conditions[index].notes;
@@ -38,11 +41,11 @@ export default function PatientConditionCard({
     >
       <Stack p="md" gap="sm" flex="1">
         <Group justify="space-between" align="center" wrap="nowrap">
-          <Group gap="xs" justify="start" align="center">
-            <Text span fw={600} c="gray.9">
-              {condition}
+          <Tooltip label={title}>
+            <Text span fw={600} c="gray.9" truncate>
+              {title}
             </Text>
-          </Group>
+          </Tooltip>
 
           <Group gap="sm" wrap="nowrap" style={{ alignSelf: 'flex-start' }}>
             <Switch

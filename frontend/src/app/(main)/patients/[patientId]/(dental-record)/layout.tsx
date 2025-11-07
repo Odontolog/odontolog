@@ -1,5 +1,6 @@
 import PatientHeader from '@/features/patient/header/header';
 import { getPatientById } from '@/features/patient/requests';
+import { requireAuth } from '@/shared/utils';
 
 export default async function PatientPageLayout({
   children,
@@ -9,11 +10,13 @@ export default async function PatientPageLayout({
   params: Promise<{ patientId: string }>;
 }) {
   const { patientId } = await params;
+
+  const user = await requireAuth();
   const patient = await getPatientById(patientId);
 
   return (
     <>
-      <PatientHeader patient={patient} />
+      <PatientHeader patient={patient} user={user} />
       {children}
     </>
   );
