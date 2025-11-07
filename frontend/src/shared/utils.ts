@@ -1,6 +1,7 @@
 import { auth } from '@/shared/auth';
 import type { Session } from 'next-auth';
 import { getSession } from 'next-auth/react';
+import { ProcedureShort, ReviewableShort, TreatmentPlanShort } from './models';
 
 type User = NonNullable<Session['user']>;
 
@@ -46,4 +47,12 @@ export function formatFileSize(size: number): string {
   }
 
   return `${fileSize.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+}
+
+export function isProcedure(r: ReviewableShort): r is ProcedureShort {
+  return r.type === 'PROCEDURE';
+}
+
+export function isTreatmentPlan(r: ReviewableShort): r is TreatmentPlanShort {
+  return r.type === 'TREATMENT_PLAN';
 }

@@ -87,12 +87,12 @@ function RightContent() {
         <Text>Pacientes</Text>
       </Stack>
       <Divider />
-      <Stack gap={2} align="center">
+      {/* <Stack gap={2} align="center">
         <Title order={2} size="h1" c="indigo">
           74%
         </Title>
         <Text>Meta de Clínica</Text>
-      </Stack>
+      </Stack> */}
     </Group>
   );
 }

@@ -1,4 +1,4 @@
-import { Supervisor, User } from '@/shared/models';
+import { ReviewableShort, Supervisor, User } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
 import { ReviewFormValues } from './models';
 
@@ -162,4 +162,27 @@ export async function submitReview(
   if (!res.ok) {
     throw new Error(`[${res.status}] Erro ao submeter revisão.`);
   }
+}
+
+export async function getStudentReviewable(
+  studentId: string,
+): Promise<ReviewableShort[]> {
+  const token = await getAuthToken();
+  const page = 0;
+  const size = 50;
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/reviewables/student?page=${page}&size=${size}&id=${studentId}`,
+    {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error(`[${res.status}] Erro ao carregar os artefatos.`);
+  }
+
+  const data = (await res.json()) as { content: ReviewableShort[] };
+  return data.content;
 }

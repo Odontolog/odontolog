@@ -128,7 +128,6 @@ export default function ProcedureCard(props: ProcedureCardProps) {
   if (onSelect === undefined) {
     title = (
       <Anchor
-        size="sm"
         underline="hover"
         href={`/patients/${procedure.patient.id}/procedures/${procedure.id}`}
         fw={600}
@@ -191,9 +190,13 @@ export default function ProcedureCard(props: ProcedureCardProps) {
             </Group>
           </Group>
 
-          {procedure.notes && (
+          {procedure.notes ? (
             <Text size="sm" c="dimmed">
               {procedure.notes}
+            </Text>
+          ) : (
+            <Text size="sm" c="dimmed">
+              Não há observações
             </Text>
           )}
 

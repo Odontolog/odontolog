@@ -17,12 +17,9 @@ import { useMediaQuery } from '@mantine/hooks';
 
 import ProcedureCard from '@/shared/components/procedure-card';
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
-import {
-  ProcedureShort,
-  ReviewableShort,
-  TreatmentPlanShort,
-} from '@/shared/models';
+import { ReviewableShort } from '@/shared/models';
 import { getValidationsOptions } from './requests';
+import { isProcedure, isTreatmentPlan } from '@/shared/utils';
 
 export default function ValidationsSection() {
   const options = getValidationsOptions();
@@ -65,14 +62,6 @@ export default function ValidationsSection() {
       </Card.Section>
     </Card>
   );
-}
-
-function isProcedure(r: ReviewableShort): r is ProcedureShort {
-  return r.type === 'PROCEDURE';
-}
-
-function isTreatmentPlan(r: ReviewableShort): r is TreatmentPlanShort {
-  return r.type === 'TREATMENT_PLAN';
 }
 
 function ValidationsContent({ data }: { data: ReviewableShort[] }) {

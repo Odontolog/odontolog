@@ -1,6 +1,14 @@
 'use client';
 
-import { Badge, Card, Divider, Grid, Group, Text } from '@mantine/core';
+import {
+  Badge,
+  Card,
+  Divider,
+  Grid,
+  Group,
+  ScrollArea,
+  Text,
+} from '@mantine/core';
 
 import { PatientCard } from '@/shared/components/patient-card';
 import { PatientAndTreatmentPlan } from '@/shared/models';
@@ -30,15 +38,16 @@ export default function PatientsSection({ patients }: PatientsSectionProps) {
       </Card.Section>
 
       <Divider my="none" />
-
       <Card.Section inheritPadding px="md" py="sm">
-        <Grid gutter="xs">
-          {patients.map((patient) => (
-            <Grid.Col span={{ sm: 12, md: 6 }} key={patient.id}>
-              <PatientCard patient={patient} />
-            </Grid.Col>
-          ))}
-        </Grid>
+        <ScrollArea scrollbars="y" mah={300}>
+          <Grid gutter="xs">
+            {patients.map((patient) => (
+              <Grid.Col span={{ sm: 12, md: 6 }} key={patient.id}>
+                <PatientCard patient={patient} />
+              </Grid.Col>
+            ))}
+          </Grid>
+        </ScrollArea>
       </Card.Section>
     </Card>
   );

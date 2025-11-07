@@ -85,34 +85,40 @@ public class ReviewableService {
             .orElseThrow(
                 () -> new UnprocessableRequestException("Usuário autenticado não encontrado"));
 
-    Student targetStudent;
-
-    if (studentId != null) {
-      if (!authenticatedUser.getRole().equals(Role.SUPERVISOR)
-          && !authenticatedUser.getRole().equals(Role.ADMIN)) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado");
-      }
-
-      targetStudent =
+    Student targetStudent =
           studentRepository
               .findById(studentId)
               .orElseThrow(
-                  () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
+                  () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));;
 
-    } else {
-      if (!authenticatedUser.getRole().equals(Role.STUDENT)) {
-        throw new ResponseStatusException(
-            HttpStatus.BAD_REQUEST, "O parâmetro 'studentId' é obrigatório para este perfil");
-      }
 
-      targetStudent =
-          studentRepository
-              .findByEmail(currentUserDetails.getUsername())
-              .orElseThrow(
-                  () ->
-                      new UnprocessableRequestException(
-                          "Perfil de Aluno não encontrado para o usuário atual"));
-    }
+    // TODO: Alguém tem que ver isso aqui ein
+    // if (studentId != null) {
+    //   if (!authenticatedUser.getRole().equals(Role.SUPERVISOR)
+    //       && !authenticatedUser.getRole().equals(Role.ADMIN)) {
+    //     throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado");
+    //   }
+
+    //   targetStudent =
+    //       studentRepository
+    //           .findById(studentId)
+    //           .orElseThrow(
+    //               () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
+
+    // } else {
+    //   if (!authenticatedUser.getRole().equals(Role.STUDENT)) {
+    //     throw new ResponseStatusException(
+    //         HttpStatus.BAD_REQUEST, "O parâmetro 'studentId' é obrigatório para este perfil");
+    //   }
+
+    //   targetStudent =
+    //       studentRepository
+    //           .findByEmail(currentUserDetails.getUsername())
+    //           .orElseThrow(
+    //               () ->
+    //                   new UnprocessableRequestException(
+    //                       "Perfil de Aluno não encontrado para o usuário atual"));
+    // }
 
     return executeStudentReviewableQuery(targetStudent, pageable, filter);
   }

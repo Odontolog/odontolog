@@ -2,8 +2,8 @@ import { Student, User } from '@/shared/models';
 import StudentHeader from './header';
 import { ScrollArea, Stack } from '@mantine/core';
 import PatientsSection from '../patients/patients';
-import { getAllPatients } from '../appshell/requests';
-import StudentProcedureHistorySection from './procedures-history';
+import StudentReviewableHistorySection from './reviewables-history';
+import { getStudentPatients } from '../patient/requests';
 
 interface StudentPageProps {
   student: Student;
@@ -11,7 +11,7 @@ interface StudentPageProps {
 }
 
 export default async function StudentPage({ student, user }: StudentPageProps) {
-  const patients = await getAllPatients();
+  const patients = await getStudentPatients(student.id);
 
   return (
     <>
@@ -19,7 +19,7 @@ export default async function StudentPage({ student, user }: StudentPageProps) {
       <ScrollArea w="100%" flex={1}>
         <Stack gap="lg" px="lg" py="md">
           <PatientsSection patients={patients} />
-          <StudentProcedureHistorySection />
+          <StudentReviewableHistorySection studentId={student.id} />
         </Stack>
       </ScrollArea>
     </>
