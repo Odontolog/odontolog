@@ -1,21 +1,21 @@
 'use client';
 
+import {
+  Card,
+  Center,
+  Divider,
+  Grid,
+  Group,
+  Skeleton,
+  Stack,
+  Text,
+} from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
+
 import ProcedureCard from '@/shared/components/procedure-card';
 import TreatmentPlanCard from '@/shared/components/treatment-plan-card';
 import { getStudentReviewable } from '@/shared/reviewable/requests';
 import { isProcedure, isTreatmentPlan } from '@/shared/utils';
-import {
-  Card,
-  Group,
-  Divider,
-  Grid,
-  Text,
-  Skeleton,
-  Stack,
-  Center,
-  ScrollArea,
-} from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
 
 export default function StudentReviewableHistorySection({
   studentId,
@@ -36,10 +36,8 @@ export default function StudentReviewableHistorySection({
 
       <Divider my="none" />
 
-      <Card.Section inheritPadding px="md" py="sm">
-        <ScrollArea scrollbars="y" mah={300}>
-          <ReviewableContent studentId={studentId} />
-        </ScrollArea>
+      <Card.Section inheritPadding px="md" py="sm" mih="220">
+        <ReviewableContent studentId={studentId} />
       </Card.Section>
     </Card>
   );
@@ -56,19 +54,16 @@ function ReviewableContent({ studentId }: ReviewableContentProps) {
 
   if (isLoading) {
     return (
-      <Grid gutter="xs">
-        <Stack h="100%" gap="xs">
-          <Skeleton height={131} radius="none" />
-          <Skeleton height={131} radius="none" />
-          <Skeleton height={131} radius="none" />
-        </Stack>
-      </Grid>
+      <Stack gap="xs">
+        <Skeleton height={90} radius="none" />
+        <Skeleton height={90} radius="none" />
+      </Stack>
     );
   }
 
   if (isError) {
     return (
-      <Center py="md" h="100%">
+      <Center py="md">
         <Text fw={600} size="lg" c="dimmed" ta="center">
           Algo deu errado. <br />
           Não foi possível carregar os artefatos.
@@ -77,36 +72,48 @@ function ReviewableContent({ studentId }: ReviewableContentProps) {
     );
   }
 
-  if (data === undefined || data.length === 0) {
+  if (data === undefined) {
     return null;
+  }
+
+  if (data.length === 0) {
+    return (
+      <Text size="sm" c="dimmed" ta="center">
+        Nenhum artefato para este aluno.
+      </Text>
+    );
   }
 
   return (
     <Grid gutter="xs">
-      {data.map((rev) => {
-        if (isProcedure(rev)) {
-          return (
-            <Grid.Col span={{ sm: 12, md: 6 }} key={rev.id}>
-              <ProcedureCard
-                procedure={rev}
-                disableSession
-                fields={['patient', 'updated', 'teeth', 'study_sector']}
-              />
-            </Grid.Col>
-          );
-        }
-        if (isTreatmentPlan(rev)) {
-          return (
-            <Grid.Col span={{ sm: 12, md: 6 }} key={rev.id}>
-              <TreatmentPlanCard
-                treatmentPlan={rev}
-                fields={['patient', 'updated']}
-              />
-            </Grid.Col>
-          );
-        }
-        return null;
-      })}
+      {data
+        .sort((a, b) => +b.updatedAt - +a.updatedAt)
+        .map((rev) => {
+          if (isProcedure(rev)) {
+            return (
+              <Grid.Col span={{ sm: 12, md: 6 }} key={rev.id}>
+                <ProcedureCard
+                  procedure={rev}
+                  hideNotes
+                  disableSession
+                  fields={['updated', 'teeth', 'study_sector']}
+                />
+              </Grid.Col>
+            );
+          }
+          if (isTreatmentPlan(rev)) {
+            return (
+              <Grid.Col span={{ sm: 12, md: 6 }} key={rev.id}>
+                <TreatmentPlanCard
+                  hideNotes
+                  treatmentPlan={rev}
+                  fields={['updated']}
+                />
+              </Grid.Col>
+            );
+          }
+          return null;
+        })}
     </Grid>
   );
 }
