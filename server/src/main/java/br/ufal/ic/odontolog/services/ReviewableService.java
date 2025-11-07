@@ -73,9 +73,7 @@ public class ReviewableService {
 
   @Transactional(readOnly = true)
   public Page<ReviewableShortDTO> findStudentReviewables(
-      Pageable pageable,
-      ReviewableCurrentStudentFilterDTO filter,
-      UUID studentId) {
+      Pageable pageable, ReviewableCurrentStudentFilterDTO filter, UUID studentId) {
     Student targetStudent =
         studentRepository
             .findById(studentId)

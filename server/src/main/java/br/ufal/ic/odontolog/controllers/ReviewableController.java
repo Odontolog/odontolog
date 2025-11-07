@@ -39,9 +39,8 @@ public class ReviewableController implements ReviewableApi {
       Pageable pageable,
       ReviewableCurrentStudentFilterDTO filter,
       @RequestParam(name = "id", required = false) UUID studentId) {
-        
-    var response =
-        reviewableService.findStudentReviewables(pageable, filter, studentId);
+
+    var response = reviewableService.findStudentReviewables(pageable, filter, studentId);
 
     var pagedModel = new PagedModel<>(response);
     return ResponseEntity.ok(pagedModel);
