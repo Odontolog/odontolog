@@ -2,7 +2,6 @@ package br.ufal.ic.odontolog.services;
 
 import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.enums.ActivityType;
-import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.ActivityMapper;
@@ -86,11 +85,11 @@ public class ReviewableService {
                 () -> new UnprocessableRequestException("Usuário autenticado não encontrado"));
 
     Student targetStudent =
-          studentRepository
-              .findById(studentId)
-              .orElseThrow(
-                  () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));;
-
+        studentRepository
+            .findById(studentId)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
+    ;
 
     // TODO: Alguém tem que ver isso aqui ein
     // if (studentId != null) {
@@ -103,7 +102,8 @@ public class ReviewableService {
     //       studentRepository
     //           .findById(studentId)
     //           .orElseThrow(
-    //               () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
+    //               () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não
+    // encontrado"));
 
     // } else {
     //   if (!authenticatedUser.getRole().equals(Role.STUDENT)) {
