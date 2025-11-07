@@ -102,34 +102,36 @@ function ValidationsContent({ data }: { data: ReviewableShort[] }) {
 
   return (
     <Stack>
-      {data.map((rev, index) => {
-        if (isProcedure(rev)) {
-          return (
-            <ProcedureCard
-              key={index}
-              procedure={rev}
-              selected={rev.id === active?.toString()}
-              onSelect={() =>
-                onReviewableSelect(rev.id, rev.patient.id, rev.type)
-              }
-              disableSession
-            />
-          );
-        }
-        if (isTreatmentPlan(rev)) {
-          return (
-            <TreatmentPlanCard
-              key={index}
-              treatmentPlan={rev}
-              selected={rev.id === active?.toString()}
-              onSelect={() =>
-                onReviewableSelect(rev.id, rev.patient.id, rev.type)
-              }
-            />
-          );
-        }
-        return null;
-      })}
+      {data
+        .sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt))
+        .map((rev, index) => {
+          if (isProcedure(rev)) {
+            return (
+              <ProcedureCard
+                key={index}
+                procedure={rev}
+                selected={rev.id === active?.toString()}
+                onSelect={() =>
+                  onReviewableSelect(rev.id, rev.patient.id, rev.type)
+                }
+                disableSession
+              />
+            );
+          }
+          if (isTreatmentPlan(rev)) {
+            return (
+              <TreatmentPlanCard
+                key={index}
+                treatmentPlan={rev}
+                selected={rev.id === active?.toString()}
+                onSelect={() =>
+                  onReviewableSelect(rev.id, rev.patient.id, rev.type)
+                }
+              />
+            );
+          }
+          return null;
+        })}
     </Stack>
   );
 }

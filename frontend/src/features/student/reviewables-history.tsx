@@ -87,7 +87,7 @@ function ReviewableContent({ studentId }: ReviewableContentProps) {
   return (
     <Grid gutter="xs">
       {data
-        .sort((a, b) => +b.updatedAt - +a.updatedAt)
+        .sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt))
         .map((rev) => {
           if (isProcedure(rev)) {
             return (
