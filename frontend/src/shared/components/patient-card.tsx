@@ -9,9 +9,9 @@ import { StatusBadge, StatusIndicator } from './status';
 
 export function getBadgeProps(status: string) {
   switch (status) {
-    case 'finished':
+    case 'FINISHED':
       return { color: 'gray', text: 'ENCERRADO' };
-    case 'in_progress':
+    case 'IN_PROGRESS':
       return { color: 'teal', text: 'PLANO ABERTO' };
     default:
       return { color: 'indigo', text: 'NÃO INICIADO' };
