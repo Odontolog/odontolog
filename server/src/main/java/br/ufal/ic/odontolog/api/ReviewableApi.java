@@ -192,7 +192,6 @@ public interface ReviewableApi {
   public ResponseEntity<PagedModel<ReviewableShortDTO>> getStudentReviewables(
       @ParameterObject Pageable pageable,
       @ParameterObject ReviewableCurrentStudentFilterDTO filter,
-      @Parameter(hidden = true) UserDetails currentUser,
       @Parameter(
               description = "O ID do aluno. (Obrigatório para Supervisores, omitido para Alunos)",
               required = false)

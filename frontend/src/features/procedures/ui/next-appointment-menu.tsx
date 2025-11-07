@@ -21,6 +21,7 @@ export default function NextAppointmentMenu({
     <Menu
       withinPortal
       position="bottom"
+      floatingStrategy="fixed"
       shadow="sm"
       opened={menuOpened}
       onChange={setMenuOpened}
@@ -95,6 +96,9 @@ function NextAppointmentMenuContent({
           onChange={handleDateChange}
           firstDayOfWeek={0}
           locale="pt-br"
+          excludeDate={(d) => {
+            return new Date(d) <= new Date();
+          }}
         />
         <Button
           size="xs"

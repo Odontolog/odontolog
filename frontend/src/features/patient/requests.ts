@@ -1,7 +1,11 @@
 import { notFound } from 'next/navigation';
 
-import { Patient } from '@/shared/models';
+import { Patient, PatientAndTreatmentPlan } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
+import {
+  mapToPatientandTreatmentPlan,
+  PatientAndTreatmentPlanDTO,
+} from '@/shared/mappers';
 import { mapToPatient, PatientDTO } from './mappers';
 import { PatientRecordForm } from './models';
 
@@ -39,6 +43,29 @@ export async function getPatientById(patientId: string): Promise<Patient> {
   }
   const data = (await res.json()) as PatientDTO;
   return mapToPatient(data);
+}
+
+export async function getStudentPatients(
+  studentId: string,
+): Promise<PatientAndTreatmentPlan[]> {
+  const token = await getAuthToken();
+
+  const res = await fetch(
+    `${process.env.BACKEND_URL}/patients/by-student/${studentId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  if (res.status >= 500) {
+    throw new Error(`Erro ao buscar pacientes: ${res.status}`);
+  } else if (res.status >= 400) {
+    notFound();
+  }
+  const data = (await res.json()) as PatientAndTreatmentPlanDTO[];
+  return data.map((p) => mapToPatientandTreatmentPlan(p));
 }
 
 export async function createPatientRecord(

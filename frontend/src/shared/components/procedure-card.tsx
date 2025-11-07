@@ -43,6 +43,7 @@ interface ProcedureCardProps {
   procedure: ProcedureShort;
   fields?: ProcedureCardField[];
   disableSession?: boolean;
+  hideNotes?: boolean;
   onEdit?: (procedure: ProcedureShort) => void;
   onDelete?: (procedure: ProcedureShort) => void;
   selected?: boolean;
@@ -108,6 +109,7 @@ function getProcedureCardInfoProps(
 export default function ProcedureCard(props: ProcedureCardProps) {
   const {
     disableSession = false,
+    hideNotes = false,
     procedure,
     onEdit,
     onDelete,
@@ -128,7 +130,6 @@ export default function ProcedureCard(props: ProcedureCardProps) {
   if (onSelect === undefined) {
     title = (
       <Anchor
-        size="sm"
         underline="hover"
         href={`/patients/${procedure.patient.id}/procedures/${procedure.id}`}
         fw={600}
@@ -191,11 +192,16 @@ export default function ProcedureCard(props: ProcedureCardProps) {
             </Group>
           </Group>
 
-          {procedure.notes && (
-            <Text size="sm" c="dimmed">
-              {procedure.notes}
-            </Text>
-          )}
+          {hideNotes === false &&
+            (procedure.notes ? (
+              <Text size="sm" c="dimmed">
+                {procedure.notes}
+              </Text>
+            ) : (
+              <Text size="sm" c="dimmed">
+                Não há observações
+              </Text>
+            ))}
 
           <Flex gap="md" rowGap={0} direction="row" wrap="wrap">
             <CardInfo

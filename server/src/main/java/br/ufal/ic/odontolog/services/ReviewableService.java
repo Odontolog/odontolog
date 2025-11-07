@@ -2,7 +2,6 @@ package br.ufal.ic.odontolog.services;
 
 import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.enums.ActivityType;
-import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.ActivityMapper;
@@ -74,45 +73,12 @@ public class ReviewableService {
 
   @Transactional(readOnly = true)
   public Page<ReviewableShortDTO> findStudentReviewables(
-      Pageable pageable,
-      UserDetails currentUserDetails,
-      ReviewableCurrentStudentFilterDTO filter,
-      UUID studentId) {
-
-    User authenticatedUser =
-        userRepository
-            .findByEmail(currentUserDetails.getUsername())
+      Pageable pageable, ReviewableCurrentStudentFilterDTO filter, UUID studentId) {
+    Student targetStudent =
+        studentRepository
+            .findById(studentId)
             .orElseThrow(
-                () -> new UnprocessableRequestException("Usuário autenticado não encontrado"));
-
-    Student targetStudent;
-
-    if (studentId != null) {
-      if (!authenticatedUser.getRole().equals(Role.SUPERVISOR)
-          && !authenticatedUser.getRole().equals(Role.ADMIN)) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado");
-      }
-
-      targetStudent =
-          studentRepository
-              .findById(studentId)
-              .orElseThrow(
-                  () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
-
-    } else {
-      if (!authenticatedUser.getRole().equals(Role.STUDENT)) {
-        throw new ResponseStatusException(
-            HttpStatus.BAD_REQUEST, "O parâmetro 'studentId' é obrigatório para este perfil");
-      }
-
-      targetStudent =
-          studentRepository
-              .findByEmail(currentUserDetails.getUsername())
-              .orElseThrow(
-                  () ->
-                      new UnprocessableRequestException(
-                          "Perfil de Aluno não encontrado para o usuário atual"));
-    }
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
 
     return executeStudentReviewableQuery(targetStudent, pageable, filter);
   }
