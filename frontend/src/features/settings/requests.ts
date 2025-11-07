@@ -44,9 +44,10 @@ export async function getAllowedStudents(
     name: dto.name,
     email: dto.email,
     role: 'STUDENT',
-    clinic: dto.clinicNumber,
-    enrollment: dto.enrollmentCode,
-    semester: dto.enrollmentSemester,
+    clinicNumber: dto.clinicNumber,
+    enrollmentCode: dto.enrollmentCode,
+    enrollmentYear: dto.enrollmentYear,
+    enrollmentSemester: dto.enrollmentSemester,
     avatarUrl: dto.avatarUrl,
   }));
 
