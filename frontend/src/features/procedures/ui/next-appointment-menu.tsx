@@ -95,6 +95,9 @@ function NextAppointmentMenuContent({
           onChange={handleDateChange}
           firstDayOfWeek={0}
           locale="pt-br"
+          excludeDate={(d) => {
+            return new Date(d) <= new Date();
+          }}
         />
         <Button
           size="xs"
