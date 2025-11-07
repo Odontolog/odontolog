@@ -44,6 +44,7 @@ export default function SupervisorMenu<T extends Reviewable>(
     <Menu
       withinPortal
       position="bottom"
+      floatingStrategy="fixed"
       shadow="sm"
       opened={menuOpened}
       onChange={setMenuOpened}

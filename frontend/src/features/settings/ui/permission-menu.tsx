@@ -43,6 +43,7 @@ export default function PermissionMenu({
     <Menu
       withinPortal
       position="bottom"
+      floatingStrategy="fixed"
       shadow="sm"
       opened={menuOpened}
       onChange={setMenuOpened}

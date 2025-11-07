@@ -40,6 +40,7 @@ export default function AssigneeMenu<T extends Reviewable>({
     <Menu
       withinPortal
       position="bottom"
+      floatingStrategy="fixed"
       shadow="sm"
       opened={menuOpened}
       onChange={setMenuOpened}

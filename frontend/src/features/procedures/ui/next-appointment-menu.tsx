@@ -21,6 +21,7 @@ export default function NextAppointmentMenu({
     <Menu
       withinPortal
       position="bottom"
+      floatingStrategy="fixed"
       shadow="sm"
       opened={menuOpened}
       onChange={setMenuOpened}
