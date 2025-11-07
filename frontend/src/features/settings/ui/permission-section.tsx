@@ -139,9 +139,9 @@ function PermissionSectionContent(props: PemissionSectionContentProps) {
                 <Text>{student.name}</Text>
 
                 <Text c="dimmed" size="xs">
-                  Clínica {student.clinic} •{' '}
+                  Clínica {student.clinicNumber} •{' '}
                   <Text span fw={700}>
-                    {student.enrollment}
+                    {student.enrollmentCode}
                   </Text>
                 </Text>
               </div>
