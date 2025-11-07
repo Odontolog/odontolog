@@ -1,15 +1,8 @@
 package br.ufal.ic.odontolog.services;
 
-import br.ufal.ic.odontolog.dtos.ActivityDTO;
-import br.ufal.ic.odontolog.dtos.ReviewDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableSubmitSupervisorReviewDTO;
-import br.ufal.ic.odontolog.dtos.ReviewersDTO;
-import br.ufal.ic.odontolog.dtos.SubmitForReviewDTO;
+import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.enums.ActivityType;
+import br.ufal.ic.odontolog.enums.Role;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
 import br.ufal.ic.odontolog.mappers.ActivityMapper;
@@ -17,6 +10,7 @@ import br.ufal.ic.odontolog.mappers.ReviewMapper;
 import br.ufal.ic.odontolog.mappers.ReviewableMapper;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.ReviewableRepository;
+import br.ufal.ic.odontolog.repositories.StudentRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.repositories.specifications.ReviewableSpecification;
@@ -31,15 +25,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewableService {
   private final ReviewableRepository reviewableRepository;
   private final SupervisorRepository supervisorRepository;
+  private final StudentRepository studentRepository;
   private final UserRepository userRepository;
   private final ReviewableMapper reviewableMapper;
   private final CurrentUserProvider currentUserProvider;
@@ -73,6 +70,68 @@ public class ReviewableService {
     Page<ReviewableShortDTO> dtoPage = page.map(reviewableMapper::toShortDTO);
 
     return dtoPage;
+  }
+
+  @Transactional(readOnly = true)
+  public Page<ReviewableShortDTO> findStudentReviewables(
+      Pageable pageable,
+      UserDetails currentUserDetails,
+      ReviewableCurrentStudentFilterDTO filter,
+      UUID studentId) {
+
+    User authenticatedUser =
+        userRepository
+            .findByEmail(currentUserDetails.getUsername())
+            .orElseThrow(
+                () -> new UnprocessableRequestException("Usuário autenticado não encontrado"));
+
+    Student targetStudent;
+
+    if (studentId != null) {
+      if (!authenticatedUser.getRole().equals(Role.SUPERVISOR)
+          && !authenticatedUser.getRole().equals(Role.ADMIN)) {
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado");
+      }
+
+      targetStudent =
+          studentRepository
+              .findById(studentId)
+              .orElseThrow(
+                  () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
+
+    } else {
+      if (!authenticatedUser.getRole().equals(Role.STUDENT)) {
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST, "O parâmetro 'studentId' é obrigatório para este perfil");
+      }
+
+      targetStudent =
+          studentRepository
+              .findByEmail(currentUserDetails.getUsername())
+              .orElseThrow(
+                  () ->
+                      new UnprocessableRequestException(
+                          "Perfil de Aluno não encontrado para o usuário atual"));
+    }
+
+    return executeStudentReviewableQuery(targetStudent, pageable, filter);
+  }
+
+  private Page<ReviewableShortDTO> executeStudentReviewableQuery(
+      Student student, Pageable pageable, ReviewableCurrentStudentFilterDTO filter) {
+
+    Specification<Reviewable> spec = ReviewableSpecification.isAssignedTo(student);
+
+    if (filter.getName() != null && !filter.getName().isBlank()) {
+      spec = spec.and(ReviewableSpecification.hasNameLike(filter.getName()));
+    }
+
+    if (filter.getIsInReview() != null && filter.getIsInReview()) {
+      spec = spec.and(ReviewableSpecification.isInReview());
+    }
+
+    Page<Reviewable> page = reviewableRepository.findAll(spec, pageable);
+    return page.map(reviewableMapper::toShortDTO);
   }
 
   @Transactional

@@ -5,6 +5,7 @@ import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.services.ReviewableService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
@@ -29,6 +30,21 @@ public class ReviewableController implements ReviewableApi {
     var response = reviewableService.findForCurrentSupervisor(pageable, currentUser, filter);
     var pagedModel = new PagedModel<>(response);
 
+    return ResponseEntity.ok(pagedModel);
+  }
+
+  @PreAuthorize("hasAnyRole('STUDENT', 'SUPERVISOR', 'ADMIN')")
+  @GetMapping("/student")
+  public ResponseEntity<PagedModel<ReviewableShortDTO>> getStudentReviewables(
+      Pageable pageable,
+      ReviewableCurrentStudentFilterDTO filter,
+      @AuthenticationPrincipal UserDetails currentUser,
+      @RequestParam(name = "id", required = false) UUID studentId) {
+
+    var response =
+        reviewableService.findStudentReviewables(pageable, currentUser, filter, studentId);
+
+    var pagedModel = new PagedModel<>(response);
     return ResponseEntity.ok(pagedModel);
   }
 

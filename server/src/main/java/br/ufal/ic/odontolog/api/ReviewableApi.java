@@ -1,14 +1,6 @@
 package br.ufal.ic.odontolog.api;
 
-import br.ufal.ic.odontolog.dtos.ActivityDTO;
-import br.ufal.ic.odontolog.dtos.ReviewDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableAssignUserRequestDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableCurrentSupervisorFilterDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableShortDTO;
-import br.ufal.ic.odontolog.dtos.ReviewableSubmitSupervisorReviewDTO;
-import br.ufal.ic.odontolog.dtos.ReviewersDTO;
-import br.ufal.ic.odontolog.dtos.SubmitForReviewDTO;
+import br.ufal.ic.odontolog.dtos.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
@@ -172,4 +165,36 @@ public interface ReviewableApi {
       @Parameter Long reviewableId,
       @RequestBody ReviewableSubmitSupervisorReviewDTO requestDTO,
       @Parameter(hidden = true) UserDetails currentUser);
+
+  @Operation(
+      summary = "Fetch reviewable items related to a student",
+      description =
+          """
+            Returns a paginated list of items (Procedures, Treatment Plans) assigned to a student.
+            Este endpoint tem dois modos baseados no perfil do usuário autenticado:
+
+            - **Para Alunos:** Omita o parâmetro 'studentId'. A API retornará os revisáveis atribuídos ao *aluno atualmente autenticado*.
+            - **Para Supervisores/Admins:** Inclua o parâmetro 'studentId'. A API retornará os revisáveis daquele aluno específico.
+            """)
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "Busca completada com sucesso."),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Bad Request. Ex: Um Supervisor não forneceu o 'studentId'."),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Forbidden. Ex: Um Aluno tentou usar o parâmetro 'studentId'."),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Aluno não encontrado para o 'studentId' fornecido."),
+      })
+  public ResponseEntity<PagedModel<ReviewableShortDTO>> getStudentReviewables(
+      @ParameterObject Pageable pageable,
+      @ParameterObject ReviewableCurrentStudentFilterDTO filter,
+      @Parameter(hidden = true) UserDetails currentUser,
+      @Parameter(
+              description = "O ID do aluno. (Obrigatório para Supervisores, omitido para Alunos)",
+              required = false)
+          UUID studentId);
 }
