@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
+import java.math.BigDecimal;
 import java.util.Set;
 
 public interface TreatmentPlanState {
@@ -25,7 +26,7 @@ public interface TreatmentPlanState {
       TreatmentPlan treatmentPlan,
       Supervisor supervisor,
       String comments,
-      Integer grade,
+      BigDecimal grade,
       Boolean approved) {
     throw new UnsupportedOperationException("Operation not allowed in the current state.");
   }

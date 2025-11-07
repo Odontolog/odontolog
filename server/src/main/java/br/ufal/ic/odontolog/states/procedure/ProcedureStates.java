@@ -7,6 +7,7 @@ import br.ufal.ic.odontolog.models.Procedure;
 import br.ufal.ic.odontolog.models.Review;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.User;
+import java.math.BigDecimal;
 import java.util.Set;
 
 public class ProcedureStates {
@@ -81,7 +82,7 @@ public class ProcedureStates {
         Procedure procedure,
         Supervisor supervisor,
         String comments,
-        Integer grade,
+        BigDecimal grade,
         Boolean approved) {
       // TODO: CERTAMENTE eu deveria implementar testes unitários para este método x2
       Review review =

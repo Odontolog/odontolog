@@ -29,6 +29,7 @@ import br.ufal.ic.odontolog.repositories.ReviewableRepository;
 import br.ufal.ic.odontolog.repositories.SupervisorRepository;
 import br.ufal.ic.odontolog.repositories.UserRepository;
 import br.ufal.ic.odontolog.utils.CurrentUserProvider;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -285,7 +286,7 @@ public class ReviewableServiceUnitTest {
 
     ReviewableSubmitSupervisorReviewDTO requestDTO = new ReviewableSubmitSupervisorReviewDTO();
     requestDTO.setComments("Good job");
-    requestDTO.setGrade(9);
+    requestDTO.setGrade(BigDecimal.valueOf(9.0));
     requestDTO.setApproved(true);
 
     UserDetails mockUserDetails = mock(UserDetails.class);
@@ -335,7 +336,8 @@ public class ReviewableServiceUnitTest {
     assertThat(activity.getDescription()).isEqualTo(expectedDescription);
 
     verify(reviewableRepository, times(1)).findById(reviewableId);
-    verify(reviewable, times(1)).submitSupervisorReview(supervisor, "Good job", 9, true);
+    verify(reviewable, times(1))
+        .submitSupervisorReview(supervisor, "Good job", BigDecimal.valueOf(9.0), true);
     verify(reviewableRepository, times(1)).save(reviewable);
   }
 }
