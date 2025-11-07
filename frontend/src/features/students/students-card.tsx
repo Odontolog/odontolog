@@ -1,5 +1,3 @@
-import CardInfo from '@/shared/components/card-info';
-import { Student } from '@/shared/models';
 import { Avatar, Card, Center, Group, Text } from '@mantine/core';
 import {
   IconBuildingHospital,
@@ -7,6 +5,9 @@ import {
   IconIdBadge2,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+
+import CardInfo from '@/shared/components/card-info';
+import { Student } from '@/shared/models';
 
 interface StudentCardProps {
   student: Student;
@@ -46,10 +47,7 @@ export function StudentCard({ student }: StudentCardProps) {
               icon={IconCalendar}
               text={`${student.enrollmentYear}.${student.enrollmentSemester}`}
             />
-            <CardInfo
-              icon={IconIdBadge2}
-              text={`Clínica ${student.clinicNumber}`}
-            />
+            <CardInfo icon={IconIdBadge2} text={`${student.enrollmentCode}`} />
           </Group>
         </div>
       </Group>
