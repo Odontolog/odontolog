@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation';
 
-import { PatientAndTreatmentPlan } from '@/shared/models';
-import { getAuthToken } from '@/shared/utils';
 import {
   mapToPatientandTreatmentPlan,
   PatientAndTreatmentPlanDTO,
-} from './mappers';
+} from '@/shared/mappers';
+import { PatientAndTreatmentPlan } from '@/shared/models';
+import { getAuthToken } from '@/shared/utils';
 
 export async function getAllPatients(
   search?: string,

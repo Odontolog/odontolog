@@ -2,6 +2,10 @@ import { notFound } from 'next/navigation';
 
 import { Patient, PatientAndTreatmentPlan } from '@/shared/models';
 import { getAuthToken } from '@/shared/utils';
+import {
+  mapToPatientandTreatmentPlan,
+  PatientAndTreatmentPlanDTO,
+} from '@/shared/mappers';
 import { mapToPatient, PatientDTO } from './mappers';
 import { PatientRecordForm } from './models';
 
@@ -60,8 +64,8 @@ export async function getStudentPatients(
   } else if (res.status >= 400) {
     notFound();
   }
-  const data = (await res.json()) as PatientAndTreatmentPlan[];
-  return data;
+  const data = (await res.json()) as PatientAndTreatmentPlanDTO[];
+  return data.map((p) => mapToPatientandTreatmentPlan(p));
 }
 
 export async function createPatientRecord(
