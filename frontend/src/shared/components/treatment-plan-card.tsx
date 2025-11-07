@@ -14,6 +14,7 @@ type TreatmentPlanCardField = 'assignee' | 'patient' | 'updated';
 
 interface TreatmentPlanCardProps {
   treatmentPlan: TreatmentPlanShort;
+  hideNotes?: boolean;
   fields?: TreatmentPlanCardField[];
   onSelect?: (treatmentPlanId: string) => void;
   selected?: boolean;
@@ -62,6 +63,7 @@ function getTreatmentPlanCardInfoProps(
 export default function TreatmentPlanCard(props: TreatmentPlanCardProps) {
   const {
     treatmentPlan,
+    hideNotes = false,
     fields = ['assignee', 'updated'],
     onSelect,
     selected,
@@ -106,11 +108,16 @@ export default function TreatmentPlanCard(props: TreatmentPlanCardProps) {
             </Group>
           </Group>
 
-          {treatmentPlan.notes && (
-            <Text size="sm" c="dimmed">
-              {treatmentPlan.notes}
-            </Text>
-          )}
+          {hideNotes === false &&
+            (treatmentPlan.notes ? (
+              <Text size="sm" c="dimmed">
+                {treatmentPlan.notes}
+              </Text>
+            ) : (
+              <Text size="sm" c="dimmed">
+                Não há observações
+              </Text>
+            ))}
 
           <Flex gap="md" rowGap={0} direction="row" wrap="wrap">
             {fields.map((field, index) => (
