@@ -74,51 +74,13 @@ public class ReviewableService {
   @Transactional(readOnly = true)
   public Page<ReviewableShortDTO> findStudentReviewables(
       Pageable pageable,
-      UserDetails currentUserDetails,
       ReviewableCurrentStudentFilterDTO filter,
       UUID studentId) {
-
-    User authenticatedUser =
-        userRepository
-            .findByEmail(currentUserDetails.getUsername())
-            .orElseThrow(
-                () -> new UnprocessableRequestException("Usuário autenticado não encontrado"));
-
     Student targetStudent =
         studentRepository
             .findById(studentId)
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não encontrado"));
-    ;
-
-    // TODO: Alguém tem que ver isso aqui ein
-    // if (studentId != null) {
-    //   if (!authenticatedUser.getRole().equals(Role.SUPERVISOR)
-    //       && !authenticatedUser.getRole().equals(Role.ADMIN)) {
-    //     throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acesso negado");
-    //   }
-
-    //   targetStudent =
-    //       studentRepository
-    //           .findById(studentId)
-    //           .orElseThrow(
-    //               () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Aluno não
-    // encontrado"));
-
-    // } else {
-    //   if (!authenticatedUser.getRole().equals(Role.STUDENT)) {
-    //     throw new ResponseStatusException(
-    //         HttpStatus.BAD_REQUEST, "O parâmetro 'studentId' é obrigatório para este perfil");
-    //   }
-
-    //   targetStudent =
-    //       studentRepository
-    //           .findByEmail(currentUserDetails.getUsername())
-    //           .orElseThrow(
-    //               () ->
-    //                   new UnprocessableRequestException(
-    //                       "Perfil de Aluno não encontrado para o usuário atual"));
-    // }
 
     return executeStudentReviewableQuery(targetStudent, pageable, filter);
   }
