@@ -9,7 +9,6 @@ import {
   Group,
   Modal,
   ScrollArea,
-  Select,
   Skeleton,
   Stack,
   Text,
@@ -23,11 +22,11 @@ import { useState } from 'react';
 
 import ProcedureCard from '@/shared/components/procedure-card';
 import { ProcedureShort } from '@/shared/models';
-import { preproceduresValues } from '../../data';
 import {
   createPreprocedure,
   getPatientPreprocedureOptions,
 } from '../../requests';
+import { PhysicalExameSelect } from './physical-exam-select';
 
 interface ProcedureHistorySectionProps {
   patientId: string;
@@ -78,7 +77,7 @@ export default function PreprocedureHistorySection({
         <Card.Section inheritPadding py="sm">
           <Group justify="space-between" wrap="nowrap">
             <Text fw={600} size="lg">
-              Histórico de Pré-procedimentos
+              Histórico de Exames Físicos
             </Text>
             <ActionIcon
               variant="subtle"
@@ -118,19 +117,18 @@ export default function PreprocedureHistorySection({
       <Modal
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
-        title="Deseja criar um novo Pré-procedimento?"
+        title="Deseja criar um novo Exame Físico?"
+        size="lg"
       >
         <Stack gap={8}>
-          <Text size="sm">
-            Clicando em confirmar você cria um novo Pré-procedimento em branco
-            para o paciente.
+          <Text size="sm" c="dimmed">
+            Clicando em confirmar você cria um novo Exame Físico para o
+            paciente. Lembre-se de seguir a ordem lógica dos exames. Caso
+            precise seguir uma ordem diferente, consulte um professor.
           </Text>
-          <Select
-            placeholder="Escolha o pré-procedimento que vai realizar"
-            data={preproceduresValues}
+          <PhysicalExameSelect
             value={selectedPreprocedure}
-            onChange={(v) => setSelectedPreprocedure(v)}
-            data-autofocus
+            setValue={setSelectedPreprocedure}
           />
           <Group justify="flex-end" mt="md">
             <Button variant="subtle" onClick={() => setModalOpened(false)}>
@@ -185,7 +183,7 @@ function PreproceduresContent({ data }: { data: ProcedureShort[] }) {
     return (
       <Center py="md" h="100%" px="lg">
         <Text fw={600} size="lg" c="dimmed" ta="center">
-          O paciente ainda não tem nenhum pré-procedimento.
+          O paciente ainda não tem nenhum exame físico.
         </Text>
       </Center>
     );

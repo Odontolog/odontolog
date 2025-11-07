@@ -54,9 +54,9 @@ function getTabs(user: User) {
       label: 'Anamnese',
     },
     {
-      value: 'preprocedures',
+      value: 'exams',
       icon: <IconMicroscope size={14} />,
-      label: 'Pré-Procedimentos',
+      label: 'Exames Físicos',
     },
     {
       value: 'treatments',

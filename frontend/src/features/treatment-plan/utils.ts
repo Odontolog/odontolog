@@ -5,7 +5,7 @@ const MODE_MATRIX: Record<
   Partial<Record<UserRole, Mode>>
 > = {
   DRAFT: {
-    SUPERVISOR: 'read',
+    SUPERVISOR: 'edit',
     STUDENT: 'edit',
   },
   IN_REVIEW: {
