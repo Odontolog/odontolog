@@ -15,7 +15,11 @@ export default async function StudentPage({ student, user }: StudentPageProps) {
 
   return (
     <>
-      <StudentHeader student={student} user={user} />
+      <StudentHeader
+        student={student}
+        user={user}
+        patientsTotal={patients.length}
+      />
       <ScrollArea w="100%" flex={1}>
         <Stack gap="lg" px="lg" py="md">
           <PatientsSection patients={patients} />

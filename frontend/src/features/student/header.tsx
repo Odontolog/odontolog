@@ -11,9 +11,14 @@ import {
 interface StudentHeaderProps {
   student: Student;
   user: User;
+  patientsTotal: number;
 }
 
-export default function StudentHeader({ student, user }: StudentHeaderProps) {
+export default function StudentHeader({
+  student,
+  user,
+  patientsTotal,
+}: StudentHeaderProps) {
   const breadcrumbsData = [
     { title: 'Alunos', href: '/students' },
     { title: `${student.name}` },
@@ -31,7 +36,7 @@ export default function StudentHeader({ student, user }: StudentHeaderProps) {
         )}
         <Group justify="space-between">
           <LeftContent student={student} />
-          <RightContent />
+          <RightContent patientsTotal={patientsTotal} />
         </Group>
       </Stack>
     </Stack>
@@ -77,12 +82,12 @@ function LeftContent({ student }: { student: Student }) {
   );
 }
 
-function RightContent() {
+function RightContent({ patientsTotal }: { patientsTotal: number }) {
   return (
     <Group>
       <Stack gap={2} align="center">
         <Title order={2} size="h1" c="indigo">
-          4
+          {patientsTotal}
         </Title>
         <Text>Pacientes</Text>
       </Stack>
