@@ -7,6 +7,7 @@ import br.ufal.ic.odontolog.models.Review;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.TreatmentPlan;
 import br.ufal.ic.odontolog.models.User;
+import java.math.BigDecimal;
 import java.util.Set;
 
 public class TreatmentPlanStates {
@@ -61,7 +62,7 @@ public class TreatmentPlanStates {
         TreatmentPlan treatmentPlan,
         Supervisor supervisor,
         String comments,
-        Integer grade,
+        BigDecimal grade,
         Boolean approved) {
       // TODO: CERTAMENTE eu deveria implementar testes unitários para este método
       // não fiz porque preciso entregar essa funcionalidade logo. ;-;

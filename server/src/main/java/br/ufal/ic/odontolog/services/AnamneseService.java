@@ -1,7 +1,10 @@
 package br.ufal.ic.odontolog.services;
 
+import br.ufal.ic.odontolog.dtos.anamnese.AnamneseAntecedentsUpsertDTO;
 import br.ufal.ic.odontolog.dtos.anamnese.AnamneseConditionsUpsertDTO;
 import br.ufal.ic.odontolog.dtos.anamnese.AnamneseDTO;
+import br.ufal.ic.odontolog.dtos.anamnese.AnamneseHPIUpsertDTO;
+import br.ufal.ic.odontolog.dtos.anamnese.AnamneseMainComplaintUpsertDTO;
 import br.ufal.ic.odontolog.dtos.anamnese.AnamneseNotesUpsertDTO;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.enums.ClinicalCondition;
@@ -60,6 +63,87 @@ public class AnamneseService {
     activity.setMetadata(metadata);
 
     anamnese.setNotes(dto.getNotes());
+    activityRepository.save(activity);
+    anamnese.getHistory().add(activity);
+
+    return anamneseMapper.toDTO(anamneseRepository.save(anamnese));
+  }
+
+  @Transactional
+  public AnamneseDTO upsertAntecedents(Long patientId, AnamneseAntecedentsUpsertDTO dto) {
+    Anamnese anamnese =
+        anamneseRepository.findById(patientId).orElseGet(() -> initForPatient(patientId));
+
+    AnamneseActivity activity = new AnamneseActivity();
+    activity.setAnamnese(anamnese);
+    activity.setActor(currentUserProvider.getCurrentUser());
+    activity.setType(ActivityType.EDITED);
+    activity.setDescription(
+        String.format(
+            "Antecedentes atualizados por %s (%s)",
+            currentUserProvider.getCurrentUser().getName(),
+            currentUserProvider.getCurrentUser().getEmail()));
+    Map<String, Object> metadata = new HashMap<>();
+    metadata.put("uiType", "EDIT_NOTES");
+    metadata.put("data", dto.getAntecedents());
+    metadata.put("previousData", anamnese.getAntecedents());
+    activity.setMetadata(metadata);
+
+    anamnese.setAntecedents(dto.getAntecedents());
+    activityRepository.save(activity);
+    anamnese.getHistory().add(activity);
+
+    return anamneseMapper.toDTO(anamneseRepository.save(anamnese));
+  }
+
+  @Transactional
+  public AnamneseDTO upsertHPI(Long patientId, AnamneseHPIUpsertDTO dto) {
+    Anamnese anamnese =
+        anamneseRepository.findById(patientId).orElseGet(() -> initForPatient(patientId));
+
+    AnamneseActivity activity = new AnamneseActivity();
+    activity.setAnamnese(anamnese);
+    activity.setActor(currentUserProvider.getCurrentUser());
+    activity.setType(ActivityType.EDITED);
+    activity.setDescription(
+        String.format(
+            "História da doença recente atualizada por %s (%s)",
+            currentUserProvider.getCurrentUser().getName(),
+            currentUserProvider.getCurrentUser().getEmail()));
+    Map<String, Object> metadata = new HashMap<>();
+    metadata.put("uiType", "EDIT_NOTES");
+    metadata.put("data", dto.getHistoryOfPresentIllness());
+    metadata.put("previousData", anamnese.getHistoryOfPresentIllness());
+    activity.setMetadata(metadata);
+
+    anamnese.setHistoryOfPresentIllness(dto.getHistoryOfPresentIllness());
+    activityRepository.save(activity);
+    anamnese.getHistory().add(activity);
+
+    return anamneseMapper.toDTO(anamneseRepository.save(anamnese));
+  }
+
+  @Transactional
+  public AnamneseDTO upsertMainComplaint(Long patientId, AnamneseMainComplaintUpsertDTO dto) {
+    Anamnese anamnese =
+        anamneseRepository.findById(patientId).orElseGet(() -> initForPatient(patientId));
+
+    AnamneseActivity activity = new AnamneseActivity();
+    activity.setAnamnese(anamnese);
+    activity.setActor(currentUserProvider.getCurrentUser());
+    activity.setType(ActivityType.EDITED);
+    activity.setDescription(
+        String.format(
+            "Queixa principal atualizada por %s (%s)",
+            currentUserProvider.getCurrentUser().getName(),
+            currentUserProvider.getCurrentUser().getEmail()));
+    Map<String, Object> metadata = new HashMap<>();
+    metadata.put("uiType", "EDIT_NOTES");
+    metadata.put("data", dto.getMainComplaint());
+    metadata.put("previousData", anamnese.getMainComplaint());
+    activity.setMetadata(metadata);
+
+    anamnese.setMainComplaint(dto.getMainComplaint());
     activityRepository.save(activity);
     anamnese.getHistory().add(activity);
 
@@ -144,6 +228,9 @@ public class AnamneseService {
     Anamnese anamnese = new Anamnese();
     anamnese.setPatient(patient);
     anamnese.setNotes("");
+    anamnese.setAntecedents("");
+    anamnese.setHistoryOfPresentIllness("");
+    anamnese.setMainComplaint("");
     anamnese = anamneseRepository.save(anamnese);
 
     for (ClinicalCondition c : ClinicalCondition.values()) {

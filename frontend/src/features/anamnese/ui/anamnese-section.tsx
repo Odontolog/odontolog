@@ -37,7 +37,7 @@ import { saveAnamnese } from '../requests';
 const CATEGORY_MAP: { [key: string]: string } = {
   MEDICAL: 'História Médica',
   FEMALE: 'Saúde Feminina',
-  HABITS: 'Hábitos',
+  HABITS: 'Hábitos e Vícios',
 };
 
 interface AnamneseSectionProps {

@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class Review {
   private Long id;
 
   private String comments;
-  private Integer grade;
+  private BigDecimal grade;
 
   @Enumerated(EnumType.STRING)
   private ReviewStatus reviewStatus;

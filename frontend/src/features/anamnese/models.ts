@@ -30,6 +30,9 @@ export type AnamneseEditConditionsMetadata = {
 
 export type Anamnese = {
   patientId: string;
+  antecedents: string;
+  historyOfPresentIllness: string;
+  mainComplaint: string;
   notes: string;
   history: AnamneseActivity[];
   conditions: PatientCondition[];

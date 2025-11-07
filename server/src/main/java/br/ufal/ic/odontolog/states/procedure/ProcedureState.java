@@ -4,6 +4,7 @@ import br.ufal.ic.odontolog.enums.ProcedureStatus;
 import br.ufal.ic.odontolog.models.Procedure;
 import br.ufal.ic.odontolog.models.Supervisor;
 import br.ufal.ic.odontolog.models.User;
+import java.math.BigDecimal;
 import java.util.Set;
 
 public interface ProcedureState {
@@ -25,7 +26,7 @@ public interface ProcedureState {
       Procedure procedure,
       Supervisor supervisor,
       String comments,
-      Integer grade,
+      BigDecimal grade,
       Boolean approved) {
     throw new UnsupportedOperationException("Operation not allowed in the current state.");
   }

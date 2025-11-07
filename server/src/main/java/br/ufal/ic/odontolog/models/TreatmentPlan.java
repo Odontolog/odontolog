@@ -5,6 +5,7 @@ import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.states.treatmentPlan.TreatmentPlanState;
 import br.ufal.ic.odontolog.states.treatmentPlan.TreatmentPlanStates;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
@@ -85,7 +86,7 @@ public class TreatmentPlan extends Reviewable {
 
   @Override
   public void submitSupervisorReview(
-      Supervisor supervisor, String comments, Integer grade, Boolean approved) {
+      Supervisor supervisor, String comments, BigDecimal grade, Boolean approved) {
     this.getState().submitSupervisorReview(this, supervisor, comments, grade, approved);
   }
 

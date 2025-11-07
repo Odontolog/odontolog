@@ -48,7 +48,7 @@ export default function Navbar() {
                     onClick={() => setStudentModalOpen(true)}
                     color="green"
                   >
-                    Novo Estudante
+                    Novo Aluno
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>

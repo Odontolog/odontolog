@@ -12,6 +12,7 @@ import br.ufal.ic.odontolog.enums.TreatmentPlanStatus;
 import br.ufal.ic.odontolog.models.*;
 import br.ufal.ic.odontolog.repositories.*;
 import io.awspring.cloud.s3.S3Template;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -319,7 +320,7 @@ public class DevDataLoader implements CommandLineRunner {
           Review.builder()
               .comments("")
               .reviewStatus(ReviewStatus.DRAFT)
-              .grade(8)
+              .grade(BigDecimal.valueOf(8.0))
               .supervisor(supervisorTest001)
               .build();
       treatmentPlanTest001.addReview(reviewTest001);

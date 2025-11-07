@@ -3,7 +3,7 @@ import { Box, Group } from '@mantine/core';
 import ProcedureDetailSection from '@/features/procedures/ui/procedures-detail-section';
 import PreprocedureHistorySection from '@/features/procedures/ui/preprocedure/preprocedure-history-section';
 
-export default async function PatientPreproceduresPage({
+export default async function PatientPhysicalExamsPage({
   params,
 }: {
   params: { patientId: string };

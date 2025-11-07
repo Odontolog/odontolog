@@ -6,6 +6,9 @@ import lombok.Data;
 @Data
 public class AnamneseDTO {
   private Long patientId;
+  private String mainComplaint;
+  private String historyOfPresentIllness;
+  private String antecedents;
   private String notes;
   private List<AnamneseActivityDTO> history;
   private List<AnamneseConditionDTO> conditions;
