@@ -1,6 +1,6 @@
-import { Student } from "@/shared/models";
-import { getAuthToken } from "@/shared/utils";
-import { notFound } from "next/navigation";
+import { Student } from '@/shared/models';
+import { getAuthToken } from '@/shared/utils';
+import { notFound } from 'next/navigation';
 
 export async function getStudentById(studentId: string): Promise<Student> {
   const token = await getAuthToken();
