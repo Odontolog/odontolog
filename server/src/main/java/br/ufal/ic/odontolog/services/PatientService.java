@@ -3,13 +3,7 @@ package br.ufal.ic.odontolog.services;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import br.ufal.ic.odontolog.config.S3Properties;
-import br.ufal.ic.odontolog.dtos.AppointmentDTO;
-import br.ufal.ic.odontolog.dtos.AttachmentDTO;
-import br.ufal.ic.odontolog.dtos.CreateAttachmentRequestDTO;
-import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
-import br.ufal.ic.odontolog.dtos.PatientDTO;
-import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
-import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
+import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.enums.ActivityType;
 import br.ufal.ic.odontolog.exceptions.ResourceNotFoundException;
 import br.ufal.ic.odontolog.exceptions.UnprocessableRequestException;
@@ -58,6 +52,37 @@ public class PatientService {
   public List<PatientDTO> getPatients() {
     List<Patient> patients = patientRepository.findAllActive();
     return patientMapper.toDTOList(patients);
+  }
+
+  public List<PatientAndTreatmentPlanDTO> getPatientsByStudent(UUID studentId) {
+    List<Patient> patients = patientRepository.findPatientsByStudentId(studentId);
+
+    if (patients.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<Long> patientIds = patients.stream().map(Patient::getId).toList();
+
+    List<TreatmentPlan> lastPlans = patientRepository.findLastTreatmentPlans(patientIds);
+
+    Map<Long, TreatmentPlan> lastPlanByPatientId =
+        lastPlans.stream()
+            .collect(Collectors.toMap(tp -> tp.getPatient().getId(), Function.identity()));
+
+    return patients.stream()
+        .map(
+            p -> {
+              TreatmentPlan plan = lastPlanByPatientId.get(p.getId());
+              return PatientAndTreatmentPlanDTO.builder()
+                  .id(p.getId())
+                  .name(p.getName())
+                  .avatarUrl(p.getAvatarUrl())
+                  .lastTreatmentPlanId(plan != null ? plan.getId() : null)
+                  .lastTreatmentPlanStatus(plan != null ? plan.getStatus() : null)
+                  .lastTreatmentPlanUpdatedAt(plan != null ? plan.getUpdatedAt() : null)
+                  .build();
+            })
+        .toList();
   }
 
   public PatientDTO getPatientById(Long id) {
