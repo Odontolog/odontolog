@@ -1,17 +1,12 @@
 package br.ufal.ic.odontolog.controllers;
 
 import br.ufal.ic.odontolog.api.PatientApi;
-import br.ufal.ic.odontolog.dtos.AppointmentDTO;
-import br.ufal.ic.odontolog.dtos.AttachmentDTO;
-import br.ufal.ic.odontolog.dtos.CreateAttachmentRequestDTO;
-import br.ufal.ic.odontolog.dtos.PatientAndTreatmentPlanDTO;
-import br.ufal.ic.odontolog.dtos.PatientDTO;
-import br.ufal.ic.odontolog.dtos.PatientUpsertDTO;
-import br.ufal.ic.odontolog.dtos.UploadAttachmentInitResponseDTO;
+import br.ufal.ic.odontolog.dtos.*;
 import br.ufal.ic.odontolog.services.PatientService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,6 +24,12 @@ public class PatientController implements PatientApi {
   @GetMapping
   public ResponseEntity<List<PatientDTO>> getAllPatients() {
     return ResponseEntity.ok(patientService.getPatients());
+  }
+
+  @GetMapping("/by-student/{studentId}")
+  public ResponseEntity<List<PatientAndTreatmentPlanDTO>> getPatientsByStudent(
+      @PathVariable UUID studentId) {
+    return ResponseEntity.ok(patientService.getPatientsByStudent(studentId));
   }
 
   @GetMapping("/search")
