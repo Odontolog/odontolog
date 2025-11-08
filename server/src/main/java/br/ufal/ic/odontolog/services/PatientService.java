@@ -139,9 +139,10 @@ public class PatientService {
   }
 
   public List<PatientAndTreatmentPlanDTO> searchForPatients(Optional<String> searchTerm) {
+    // TODO: Somebody has to see this - Handle pageable
     List<Patient> patients =
         patientRepository
-            .searchPatients(searchTerm.orElse(null), PageRequest.of(0, 10))
+            .searchPatients(searchTerm.orElse(null), PageRequest.of(0, 100))
             .getContent();
 
     if (patients.isEmpty()) {
