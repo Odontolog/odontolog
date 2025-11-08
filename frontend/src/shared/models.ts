@@ -10,7 +10,13 @@ export type Patient = PatientShort & {
   cpf: string;
   rg: string;
   ssp: string;
-  maritalStatus: 'SINGLE' | 'MARRIED' | 'DIVORCED' | 'WIDOWED' | 'CIVIL_UNION';
+  maritalStatus:
+    | 'SINGLE'
+    | 'MARRIED'
+    | 'DIVORCED'
+    | 'SEPARATED'
+    | 'WIDOWED'
+    | 'OTHER';
   sex: 'FEMALE' | 'MALE' | 'OTHER';
   ethnicity: 'WHITE' | 'BLACK' | 'BROWN' | 'YELLOW' | 'INDIGENOUS' | 'OTHER';
   address: string;
