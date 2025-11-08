@@ -215,6 +215,9 @@ function RecordForm({
               leftSection={<IconCalendar size={18} stroke={1.5} />}
               leftSectionPointerEvents="none"
               required
+              excludeDate={(d) => {
+                return new Date(d) > new Date();
+              }}
               valueFormat="DD/MM/YYYY"
               locale="pt-br"
               firstDayOfWeek={0}
