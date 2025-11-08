@@ -1,4 +1,4 @@
-import { Box } from '@mantine/core';
+import { Box, ScrollArea } from '@mantine/core';
 
 import { getAllPatients } from '@/features/appshell/requests';
 import CreatePatientButton from '@/features/patients/create-patient-button';
@@ -17,9 +17,11 @@ export default async function PatientsListPage() {
         subtitle="Veja abaixo a listagem dos pacientes cadastrados no sistema."
         {...(user.role !== 'STUDENT' && { button: <CreatePatientButton /> })}
       />
-      <Box py="md" px="lg" h="100%">
-        <PatientsSection patients={patients} />
-      </Box>
+      <ScrollArea w="100%" h="100%" offsetScrollbars scrollbars="y">
+        <Box py="md" px="lg" h="100%">
+          <PatientsSection patients={patients} />
+        </Box>
+      </ScrollArea>
     </>
   );
 }

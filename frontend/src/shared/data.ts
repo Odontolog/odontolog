@@ -48,8 +48,9 @@ export const maritalStatus = [
   { value: 'SINGLE', label: 'Solteiro' },
   { value: 'MARRIED', label: 'Casado' },
   { value: 'DIVORCED', label: 'Divorciado' },
+  { value: 'SEPARATED', label: 'Separado' },
   { value: 'WIDOWED', label: 'Viúvo' },
-  { value: 'CIVIL_UNION', label: 'União Estável' },
+  { value: 'OTHER', label: 'Outro' },
 ];
 
 export const sex = [
